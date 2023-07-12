@@ -1,0 +1,14 @@
+audit:
+	python -m pip_audit
+
+lint:
+	python -m black --line-length 127 .
+	python -m flake8 --max-line-length=127 --exclude=./scripts,venv
+	python -m mypy . --exclude venv --disable-error-code attr-defined --disable-error-code import
+	python -m isort . --profile black
+
+lint-check:
+	python -m black . --check --line-length 127
+	python -m flake8 --max-line-length=127 --exclude=./scripts,venv
+	python -m mypy . --exclude venv --disable-error-code attr-defined --disable-error-code import
+	python -m isort . --check-only --profile black

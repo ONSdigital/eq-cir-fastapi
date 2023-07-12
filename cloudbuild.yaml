@@ -1,0 +1,95 @@
+steps:
+  - name: python
+    id: 'Setup Python'
+    entrypoint: pip
+    args: ['install', '-r', 'requirements.txt', '--user']
+
+  - name: python
+    id: 'Audit packages'
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        make audit
+
+  - name: python
+    id: 'linting and code formatting'
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        make lint-check
+
+  - name: python
+    id: 'pytest unit tests'
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        export CI_STORAGE_BUCKET_NAME=$PROJECT_ID
+        export PROJECT_ID=$PROJECT_ID
+        make unit-tests
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy cloud functions'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        functions=(
+          "http_post_ci_v1"
+          "http_get_ci_metadata_v1"
+          "http_delete_ci_v1"
+          "http_put_status_v1"
+          "http_get_ci_schema_v2"
+          "http_get_ci_schema_v1"
+          "http_get_ci_metadata_v2"
+        )
+        for function in "${functions[@]}"; do
+          gcloud functions deploy $function \
+            --allow-unauthenticated \
+            --region=$LOCATION \
+            --runtime=python311 \
+            --set-env-vars=CI_STORAGE_BUCKET_NAME=${PROJECT_ID},LOG_LEVEL=${_LOG_LEVEL},PROJECT_ID=${PROJECT_ID} \
+            --source=. \
+            --trigger-http &
+        done
+        wait
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'Retrieve `OAUTH_BRAND_NAME` and save it to workspace'
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        gcloud iap oauth-brands list --format='value(name)' --limit=1 --project=${PROJECT_ID} \
+        > /workspace/oauth_brand_name
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'Retrieve `OAUTH_CLIENT_NAME` and save it to workspace'
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        gcloud iap oauth-clients list $(cat /workspace/oauth_brand_name) --format='value(name)' \
+        --limit=1 \
+        > /workspace/oauth_client_name
+
+  - name: python
+    id: 'pytest integration tests'
+    # gcloud returns OAUTH_CLIENT_NAME as '$OAUTH_BRAND_NAME/identityAwareProxy/OAUTH_CLIENT_ID'
+    # so we have to split by / and use the last part of the string here to get OAUTH_CLIENT_ID
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        export DEFAULT_HOSTNAME=$_SSL_CERTIFICATE_DOMAIN
+        export CI_STORAGE_BUCKET_NAME=$PROJECT_ID
+        OAUTH_CLIENT_NAME=$(cat /workspace/oauth_client_name)
+        export OAUTH_CLIENT_ID=${OAUTH_CLIENT_NAME##*/}
+        export PROJECT_ID=$PROJECT_ID
+        export TOPIC_ID=$_TOPIC_ID
+        make integration-tests
+
+options:
+  logging: CLOUD_LOGGING_ONLY
