@@ -3,6 +3,7 @@ This project is Collection Instrument Registry. It will manage the storage and v
 
 ## Project requirements and initial setup
 This project has the following dependencies:
+* [Docker Desktop](https://www.docker.com/products/docker-desktop/) or [Rancher Desktop](https://rancherdesktop.io/)
 * [google-cloud-sdk](https://cloud.google.com/sdk)
 * [pipenv](https://pipenv.pypa.io/en/latest/)
 * [pyenv](https://github.com/pyenv/pyenv)
@@ -10,20 +11,21 @@ This project has the following dependencies:
 You will also need a Google Cloud account with the relevant permissions to create projects within the ONS Digital project.
 
 To install dependencies and configure the project for first use, follow the instructions below:
-1. Open a terminal at the project root
-2. Install dependencies using `brew`
+1. If required, install either Docker Desktop or Rancher Desktop
+2. Open a terminal at the project root
+3. Install other dependencies using `brew`
 
    ```$ brew upgrade && brew install google-cloud-sdk pipenv pyenv```
-3. Install the Python version defined in the `.python-version` file using `pyenv`
+4. Install the Python version defined in the `.python-version` file using `pyenv`
 
    ```$ pyenv install```
-4. Set the Python version we want to use, if not already done by the installation
+5. Set the Python version we want to use, if not already done by the installation
 
    ```$ pyenv use $(cat .python-version)```
-5. Create a new virtual environment to manage Python packages for the project. This action will read the attributes in the `Pipfile` and `Pipfile.lock` and install the right packages and versions we need, which insures we can set the correct dependencies for other devs and when deploying to production
+6. Create a new virtual environment to manage Python packages for the project. This action will read the attributes in the `Pipfile` and `Pipfile.lock` and install the right packages and versions we need, which insures we can set the correct dependencies for other devs and when deploying to production
 
    ```$ pipenv install --dev```
-6. Activate your newly created virtual environment by running
+7. Activate your newly created virtual environment by running
 
    ```$ pipenv shell```
 

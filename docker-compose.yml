@@ -1,0 +1,46 @@
+version: "3.2"
+services:
+  storage:
+    image: oittaa/gcp-storage-emulator
+    environment:
+      - PORT=9023
+    ports:
+      - 9024:9023
+    volumes:
+      - ./devtools/gcp-storage-emulator/data:/storage
+    container_name: storage-cir
+  firestore:
+    image: spine3/firebase-emulator
+    ports:
+      - 8300:8080
+      - 5000:5000
+    environment:
+      - PROJECT_NAME=mock-project-id
+      - ENABLE_UI=true
+    volumes:
+      - ./devtools/firebase-emulator:/firebase
+      - ./devtools/firebase-emulator:/firebase/baseline-data
+    container_name: firestore-cir
+  api:
+    build:
+      context: .
+    ports:
+      - 3000:3000
+    environment:
+      - CI_FIRESTORE_COLLECTION_NAME=ons-firestore-collection
+      - CI_STORAGE_BUCKET_NAME=ci-bucket
+      - FIRESTORE_EMULATOR_HOST=firestore:8080
+      - LOG_LEVEL=DEBUG
+      - PORT=3000
+      - PROJECT_NAME=mock-project-id
+      - PUBSUB_EMULATOR_HOST=firestore:8085
+      - SERVICE_ACCOUNT_JSON_FILE=test
+      - STORAGE_EMULATOR_HOST=http://storage:9023
+    volumes:
+      - ./app:/code/app
+      - ./devtools:/devtools
+    restart: on-failure
+    depends_on:
+      - firestore
+      - storage
+    container_name: api-cir
