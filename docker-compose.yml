@@ -32,7 +32,7 @@ services:
       - FIRESTORE_EMULATOR_HOST=firestore:8080
       - LOG_LEVEL=DEBUG
       - PORT=3000
-      - PROJECT_NAME=mock-project-id
+      - PROJECT_ID=mock-project-id
       - PUBSUB_EMULATOR_HOST=firestore:8085
       - SERVICE_ACCOUNT_JSON_FILE=test
       - STORAGE_EMULATOR_HOST=http://storage:9023

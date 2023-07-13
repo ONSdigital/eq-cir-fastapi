@@ -1,8 +1,11 @@
 from fastapi import FastAPI
 
+from app.config import Settings
+
 app = FastAPI()
+settings = Settings()
 
 
 @app.get("/")
-def read_root():
-    return {"Hello": "World"}
+async def read_root():
+    return settings.dict()
