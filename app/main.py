@@ -8,4 +8,4 @@ settings = Settings()
 
 @app.get("/")
 async def read_root():
-    return settings.dict()
+    return settings.model_dump()
