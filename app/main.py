@@ -10,9 +10,10 @@ logger = logging.getLogger(__name__)
 settings = Settings()
 
 
-@app.get("/")
-async def read_root():
-    return settings.model_dump()
+app.description = "Open api schema for CIR"
+app.openapi_version = "2.0"
+app.title = "Collection Instrumentation Register"
+app.version = "1.0.0"
 
 
 @app.get("/v1/ci_metadata")

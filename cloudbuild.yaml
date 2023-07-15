@@ -30,31 +30,21 @@ steps:
         export PROJECT_ID=$PROJECT_ID
         make unit-tests
 
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: 'deploy cloud functions'
-    entrypoint: bash
+  - name: docker
+    id: build_and_push
+    entrypoint: sh
     args:
       - '-c'
       - |
-        functions=(
-          "http_post_ci_v1"
-          "http_get_ci_metadata_v1"
-          "http_delete_ci_v1"
-          "http_put_status_v1"
-          "http_get_ci_schema_v2"
-          "http_get_ci_schema_v1"
-          "http_get_ci_metadata_v2"
-        )
-        for function in "${functions[@]}"; do
-          gcloud functions deploy $function \
-            --allow-unauthenticated \
-            --region=$LOCATION \
-            --runtime=python311 \
-            --set-env-vars=CI_STORAGE_BUCKET_NAME=${PROJECT_ID},LOG_LEVEL=${_LOG_LEVEL},PROJECT_ID=${PROJECT_ID} \
-            --source=. \
-            --trigger-http &
-        done
-        wait
+        docker build -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:$SHORT_SHA" -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest" .
+        docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:$SHORT_SHA"
+        docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest"
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: "Run image"
+    entrypoint: gcloud
+    args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:$SHORT_SHA',
+            '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
 
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'Retrieve `OAUTH_BRAND_NAME` and save it to workspace'

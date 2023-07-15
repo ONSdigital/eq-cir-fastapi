@@ -12,3 +12,8 @@ lint-check:
 	python -m flake8 --max-line-length=127 --exclude=./scripts,venv
 	python -m mypy . --exclude venv --disable-error-code attr-defined --disable-error-code import
 	python -m isort . --check-only --profile black
+
+unit-tests:
+	export CI_STORAGE_BUCKET_NAME='$(shell gcloud config get project)' && \
+	export PROJECT_NAME='$(shell gcloud config get project)' && \
+	python -m pytest tests/unit_tests -W ignore::DeprecationWarning
