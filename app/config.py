@@ -21,15 +21,7 @@ class Settings(BaseSettings):
 settings = Settings()
 
 
-def get_log_level():
-    """
-    Get the logging level from the LOG_LEVEL environment variable, or use the default value of INFO
-    """
-    log_level = settings.LOG_LEVEL
-    return getattr(logging, log_level)
-
-
 logging.basicConfig(
-    level=get_log_level(),
+    level=settings.LOG_LEVEL,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
