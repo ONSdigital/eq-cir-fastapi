@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
 from app.handlers import get_ci_metadata_v1
-from app.models.requests import GetCiMetadataParams
+from app.models.requests import GetCiMetadataV1Params
 
 
 @patch("app.handlers.query_ci_metadata")
@@ -21,7 +21,7 @@ class TestGetCiMetadataV1:
         "title": "test",
     }
 
-    query_params = GetCiMetadataParams(form_type=mock_form_type, language=mock_language, survey_id=mock_survey_id)
+    query_params = GetCiMetadataV1Params(form_type=mock_form_type, language=mock_language, survey_id=mock_survey_id)
 
     def test_handler_calls_query_ci_metadata(self, mocked_query_ci_metadata):
         """

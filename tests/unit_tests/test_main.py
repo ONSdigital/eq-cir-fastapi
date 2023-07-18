@@ -5,7 +5,7 @@ from fastapi import status
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.models.requests import GetCiMetadataParams
+from app.models.requests import GetCiMetadataV1Params
 from app.models.responses import bad_request
 
 client = TestClient(app)
@@ -29,8 +29,8 @@ class TestHttpGetCiMetadataV1:
     }
 
     base_url = "/v1/ci_metadata"
-    query_params = GetCiMetadataParams(form_type=mock_form_type, language=mock_language, survey_id=mock_survey_id)
-    url = f"{base_url}?{urlencode(query_params.model_dump())}"
+    query_params = GetCiMetadataV1Params(form_type=mock_form_type, language=mock_language, survey_id=mock_survey_id)
+    url = f"{base_url}?{urlencode(query_params.__dict__)}"
 
     def test_endpoint_returns_200_if_ci_metadata_found(self, mocked_get_ci_metadata_v1):
         """
@@ -72,4 +72,4 @@ class TestHttpGetCiMetadataV1:
         mocked_get_ci_metadata_v1.return_value = None
 
         response = client.get(self.url)
-        assert response.json() == bad_request(f"No CI metadata found for: {self.query_params.model_dump()}")
+        assert response.json() == bad_request(f"No CI metadata found for: {self.query_params.__dict__}")

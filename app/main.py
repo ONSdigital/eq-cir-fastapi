@@ -1,8 +1,8 @@
 from fastapi import Depends, FastAPI, Response, status
 
-from app.config import logging, Settings
+from app.config import Settings, logging
 from app.handlers import get_ci_metadata_v1
-from app.models.requests import GetCiMetadataParams
+from app.models.requests import GetCiMetadataV1Params
 from app.models.responses import bad_request
 
 app = FastAPI()
@@ -11,13 +11,13 @@ settings = Settings()
 
 
 app.description = "Open api schema for CIR"
-app.openapi_version = "2.0"
+# app.openapi_version = "2.0.0"
 app.title = "Collection Instrumentation Register"
 app.version = "1.0.0"
 
 
 @app.get("/v1/ci_metadata")
-async def http_get_ci_metadata_v1(response: Response, query_params: GetCiMetadataParams = Depends()):
+async def http_get_ci_metadata_v1(response: Response, query_params: GetCiMetadataV1Params = Depends()):
     """
     GET method that returns any metadata objects from Firestore that match the parameters passed.
     """
@@ -30,6 +30,6 @@ async def http_get_ci_metadata_v1(response: Response, query_params: GetCiMetadat
     else:
         response.status_code = status.HTTP_404_NOT_FOUND
         logger.info(
-            f"get_ci_metadata_v1: exception raised - No CI(s) found for: {query_params.model_dump()}",
+            f"get_ci_metadata_v1: exception raised - No CI(s) found for: {query_params.__dict__}",
         )
-        return bad_request(f"No CI metadata found for: {query_params.model_dump()}")
+        return bad_request(f"No CI metadata found for: {query_params.__dict__}")
