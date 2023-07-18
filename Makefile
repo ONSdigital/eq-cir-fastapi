@@ -1,6 +1,9 @@
 audit:
 	python -m pip_audit
 
+generate-spec:
+	python scripts/generate_openapi.py
+
 lint:
 	python -m black --line-length 127 .
 	python -m flake8 --max-line-length=127 --exclude=./scripts,venv
