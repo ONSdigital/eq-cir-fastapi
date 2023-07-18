@@ -1,6 +1,6 @@
 from app.config import logging
-from app.database import query_ci_metadata
 from app.models.requests import GetCiMetadataV1Params
+from app.repositories.firestore import query_ci_metadata
 
 logger = logging.getLogger(__name__)
 

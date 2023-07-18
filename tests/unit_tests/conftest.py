@@ -24,9 +24,9 @@ def setup_mock_firestore():
 @pytest.fixture(autouse=True)
 def mock_firestore_collection(mocker, setup_mock_firestore):
     logger.debug("***mock_firestore_collection")
-    mocker.patch("app.database.db", return_value=setup_mock_firestore)
+    mocker.patch("app.repositories.firestore.db", return_value=setup_mock_firestore)
     collection = setup_mock_firestore.collection(settings.CI_FIRESTORE_COLLECTION_NAME)
-    mocker.patch("app.database.ci_collection", collection)
+    mocker.patch("app.repositories.firestore.ci_collection", collection)
     yield collection
     setup_mock_firestore.reset()
 

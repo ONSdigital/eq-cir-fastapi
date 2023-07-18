@@ -1,5 +1,8 @@
 from app.config import logging
-from app.database import query_latest_ci_version, query_latest_ci_version_id
+from app.repositories.firestore import (
+    query_latest_ci_version,
+    query_latest_ci_version_id,
+)
 
 logger = logging.getLogger(__name__)
 logger.info("***test_true.py")
