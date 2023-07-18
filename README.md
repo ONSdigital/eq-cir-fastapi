@@ -1,5 +1,5 @@
 # eq-collection-instrument-registry
-This project is Collection Instrument Registry. It will manage the storage and versioning of Electronic Questionnaires used but the EQ services.
+This project is Collection Instrument Registry. It will manage the storage and versioning of Electronic Questionnaires used but the EQ services. It uses the [FastAPI](https://fastapi.tiangolo.com/) Python web framework.
 
 ## Project requirements and initial setup
 This project has the following dependencies:
@@ -41,16 +41,5 @@ The project is now ready for development or to use for deployments.
 ### Unit testing
 To run unit tests from root folder run `make unit-tests`
 
-### Integration testing
-To run integration tests, run `make integration-tests`
-
 ## Linting
 To run the linter on the project, run ```make lint```. This will have to be ran in order for the build to be successful.
-
-## FAQs
-
-### How to add new packages/tools to the project?
-All the new packages/tools need to be added in the appropriate requirments file present under the .build directory
-
-### Why do we set up FIRESTORE_EMULATOR_HOST and STORAGE_EMULATOR_HOST?
-FIRESTORE_EMULATOR_HOST environment variable is set so that server client libraries can automatically connect to the local emulator.STORAGE_EMULATOR_HOST environment variable is set to tell emulator which address you are running at.
