@@ -36,14 +36,14 @@ steps:
     args:
       - '-c'
       - |
-        docker build -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:$SHORT_SHA" -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest" .
-        docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:$SHORT_SHA"
-        docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest"
+        docker build -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:$SHORT_SHA" -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest" .
+        docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:$SHORT_SHA"
+        docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest"
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: "Run image"
     entrypoint: gcloud
-    args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:$SHORT_SHA',
+    args: [ 'run', 'deploy', 'cir', '--image', 'europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:$SHORT_SHA',
             '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
 
   - name: 'gcr.io/cloud-builders/gcloud'
