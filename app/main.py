@@ -66,3 +66,9 @@ async def http_get_ci_metadata_v1(query_params: GetCiMetadataV1Params = Depends(
         )
         response_content = BadRequest(message=f"No CI metadata found for: {query_params.__dict__}")
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)
+
+
+@functions_framework.http
+def http_get_ci_metadata_v2(request):
+    logger.info("http_get_ci_metadata_v2 request made")
+    return get_ci_metadata_v2(request)
