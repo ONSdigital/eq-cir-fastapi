@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 class BadRequest:
     """Model for a generic bad request response"""
 
-    message: str = "No CI {metadata/schema} found for {parameters}"
+    message: str
     status: str = "error"
 
 

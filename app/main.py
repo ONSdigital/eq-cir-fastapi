@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, status
+from fastapi import Depends, FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
@@ -19,7 +19,12 @@ app.version = "1.0.0"
 
 
 @app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request, exc):
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    """
+    When a request contains invalid data, FastAPI internally raises a
+    RequestValidationError. This function override the default
+    validation exception handler to return 400 instead of 422
+    """
     return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message": str(exc)})
 
 
@@ -54,11 +59,10 @@ async def http_get_ci_metadata_v1(query_params: GetCiMetadataV1Params = Depends(
 
     if ci_metadata:
         logger.info("get_ci_metadata_v1 success")
-        return JSONResponse(status_code=status.HTTP_200_OK, content={})
+        return JSONResponse(status_code=status.HTTP_200_OK, content=ci_metadata)
     else:
         logger.info(
             f"get_ci_metadata_v1: exception raised - No CI(s) found for: {query_params.__dict__}",
         )
-        return JSONResponse(
-            status_code=status.HTTP_404_NOT_FOUND, content={"message": f"No CI metadata found for: {query_params.__dict__}"}
-        )
+        response_content = BadRequest(message=f"No CI metadata found for: {query_params.__dict__}")
+        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)
