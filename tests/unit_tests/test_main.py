@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 from app.models.requests import GetCiMetadataV1Params
-from app.models.responses import bad_request
+from app.models.responses import BadRequest
 
 client = TestClient(app)
 
@@ -46,11 +46,20 @@ class TestHttpGetCiMetadataV1:
         """
         Endpoint should return ci metadata as part of the response if ci metadata is found
         """
-        # Update mocked `get_ci_metadata_v1` to return valid ci metadata
-        mocked_get_ci_metadata_v1.return_value = self.mock_ci_metadata
+        # Update mocked `get_ci_metadata_v1` to return list of valid ci metadata
+        mocked_get_ci_metadata_v1.return_value = [self.mock_ci_metadata]
 
         response = client.get(self.url)
-        assert response.json() == self.mock_ci_metadata
+        assert response.json() == [self.mock_ci_metadata]
+
+    def test_endpoint_returns_400_if_query_parameters_are_not_present(self, mocked_get_ci_metadata_v1):
+        """
+        Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `form_type`,
+        `language` and/or `survey_id` are not part of the querystring parameters
+        """
+        # Make request to base url without any query params
+        response = client.get(self.base_url)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_endpoint_returns_404_if_ci_metadata_not_found(self, mocked_get_ci_metadata_v1):
         """
@@ -70,6 +79,6 @@ class TestHttpGetCiMetadataV1:
         """
         # Update mocked `get_ci_metadata_v1` to return `None` showing ci metadata is not found
         mocked_get_ci_metadata_v1.return_value = None
-
+        expected_response = BadRequest(message=f"No CI metadata found for: {self.query_params.__dict__}")
         response = client.get(self.url)
-        assert response.json() == bad_request(f"No CI metadata found for: {self.query_params.__dict__}")
+        assert response.json() == expected_response.__dict__

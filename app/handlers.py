@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 def get_ci_metadata_v1(query_params: GetCiMetadataV1Params):
     """
     Handler for GET /collection_instrument
-    :param query_params: GetCiMetadataParams
+    :param query_params: GetCiMetadataV1Params
     :return: ci_metadata || None
     """
     logger.info("Stepping into get_ci_metadata")

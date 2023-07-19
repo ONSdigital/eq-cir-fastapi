@@ -3,3 +3,4 @@
 */__pycache__
 */*/__pycache__
 *.log
+*-cloudbuild-sa-key.json

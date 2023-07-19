@@ -36,6 +36,55 @@ The project is now ready for development or to use for deployments.
 * For the adding the new key to the account, follow the [link](https://docs.github.com/en/authentication/managing-commit-signature-verification/adding-a-gpg-key-to-your-github-account)
 * For telling Git about the Signing Key(Only needed once),follow the [link](https://docs.github.com/en/authentication/managing-commit-signature-verification/telling-git-about-your-signing-key)
 
+## Running the application locally
+We can build and run the FastAPI application, including emulators for firestore and cloud storage, locally for testing. To build and run the application for testing, follow the instructions below:
+
+1. Start your Docker container manager (Docker Desktop or Rancher Desktop)
+2. Open a terminal at the project root
+3. Build the Docker containers for the FastAPI application and emulators
+
+   ```$ docker-compose build```
+4. Start the Docker containers
+
+   ```$ docker-compose up```
+
+The FastAPI application will now be running and available at the host `0.0.0.0:3000`. You can use the interactive Swagger docs at `0.0.0.0:3000/docs`.
+
+## Deploying the application containers for testing
+We can deploy the Collection Instrument Registry container to a project within the `cir-sandbox` GCP project for development and testing. You will need a cloud project configured for the Collection Instrument Registry to do this.
+
+### Creating a Google Cloud project
+If you don't already have a project, see the instructions on how to create one in the [EQ Collection Instrument Registry IAC](https://github.com/ONSdigital/eq-collection-instrument-registry-iac) repository. Make a note of the `project_id` for use later.
+
+### Url routing
+The terraform script used to provision your project in the step above will set up routing from the host and authentication using a Load Balancer and Identity Aware Proxy (IAP). The url routes for your application as managed by FastAPI as part of the routes defined in `app/main.py`.
+
+### Deploying the container
+Once you have a Google Cloud project including a Load Balancer and Identity Aware Proxy (IAP) configuration, we can build and push our container to the cloud using the `./scripts/deploy_to_dev_project.sh` script. This will build and push the Docker container and create an auth key required for integration testing.
+To deploy cloud functions for testing, follow the instructions below:
+
+1. Open a terminal at the project root
+2. Authenticate with Google Cloud
+
+    ```$ gcloud auth application-default login```
+3. Execute the script and follow the instructions. Note that this could take up to 5 minutes!
+
+    ```$ source ./scripts/deploy_to_dev_project.sh```
+
+When this script has completed, it will export values for the following environment variables:
+* BUILD_ID
+* CI_STORAGE_BUCKET_NAME
+* DEFAULT_HOSTNAME
+* GOOGLE_APPLICATION_CREDENTIALS
+* OAUTH_CLIENT_ID
+* PROJECT_ID
+
+These variables will be configured to work with the project the Docker image was deployed to and the Load Balancer and IAP. These can then be used when debugging and running tests (e.g. when running `make integration-tests`).
+
+`GOOGLE_APPLICATION_CREDENTIALS` and `OAUTH_CLIENT_ID` are required to generate an auth token to authenticate requests with the IAP when running integration tests. See the `make_iap_request` code in `tests/integration_tests/utils/utils.py` for more details.
+
+If you want to test posting data to these functions using Postman or similar, you should use a url constructed using the `DEFAULT_HOSTNAME` variable value with an appropriate http schema and endpoint e.g. `https://<DEFAULT_HOSTNAME>/v1/publish_collection_instrument`. You will need to generate an auth token to authenticate with these endpoints, see the `make_iap_request` code in `tests/integration_tests/utils/utils.py`.
+
 ## Testing
 
 ### Unit testing
