@@ -101,7 +101,6 @@ class TestGetCiMetadataV2:
 
         mocked_get_all_ci_metadata.return_value = mock_ci_list
 
-        mock_request = MockRequestArgs(mock_request)
         items = get_ci_metadata_v2(mock_request)
         expected_response = (
             good_response_200(mock_ci_list),
@@ -109,6 +108,7 @@ class TestGetCiMetadataV2:
         )
 
         assert expected_response == items
+
 
     def test_get_ci_metadata_v2_with_no_parameters_with_404_status(mocker):
         """
@@ -135,7 +135,9 @@ class TestGetCiMetadataV2:
         )
         assert expected_response == items
 
+
     # Test for status param ONLY
+
 
     def test_get_ci_metadata_v2_returns_ci_found_when_querying_with_status_return_200(mocker):
         """
@@ -174,6 +176,7 @@ class TestGetCiMetadataV2:
         expected_resp = (good_response_200(mock_ci_list), 200)
         assert items == expected_resp
 
+
     def test_get_ci_metadata_v2_returns_ci_not_found_when_querying_with_status_return_404(mocker):
         """
         Why am I testing:
@@ -199,7 +202,9 @@ class TestGetCiMetadataV2:
         )
         assert items == expected_resp
 
+
     # Test for survey_id, language, form_type and status params
+
 
     def test_get_ci_metadata_v2_returns_ci_found_when_querying_survey_lan_formtype_status_return_200(mocker):
         """
@@ -244,6 +249,7 @@ class TestGetCiMetadataV2:
         expected_resp = (good_response_200(mock_ci_list), 200)
         assert items == expected_resp
 
+
     def test_get_ci_metadata_v2_returns_ci_not_found_when_querying_survey_lan_formtype_status_return_404(mocker):
         """
         Why am I testing:
@@ -273,6 +279,7 @@ class TestGetCiMetadataV2:
             404,
         )
         assert items == expected_resp
+
 
     # Test for survey_id, language, form_type params
     def test_get_ci_metadata_v2_returns_ci_found_when_querying_with_survey_lan_formtype_returns_200(mocker):
@@ -319,6 +326,7 @@ class TestGetCiMetadataV2:
         )
         assert expected_response == items
 
+
     def test_get_ci_metadata_v2_returns_ci_not_found_when_querying_with_survey_lan_formtype_returns_404(mocker):
         """
         Why am I testing:
@@ -347,6 +355,7 @@ class TestGetCiMetadataV2:
             404,
         )
         assert expected_response == items
+
 
     def test_get_ci_metadata_v2_returns_returns_400_with_bad_parameter_set(mocker):
         """
