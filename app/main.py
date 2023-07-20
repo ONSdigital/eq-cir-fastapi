@@ -68,23 +68,44 @@ async def http_get_ci_metadata_v1(query_params: GetCiMetadataV1Params = Depends(
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)
 
 
-@app.get("/v1/retrieve_collection_instrument")
-async def http_get_ci_schema_v1(response: Response, query_params: GetCiSchemaV1Params = Depends()):
+@app.get(
+    "/v1/retrieve_collection_instrument",
+    responses={
+        status.HTTP_200_OK: {
+            "model": CiMetadata,
+            "description": (
+                "Successfully fetched the metadata of a CI. This is illustrated with the returned response containing the "
+                "metadata of the CI."
+            ),
+        },
+        status.HTTP_400_BAD_REQUEST: {
+            "model": BadRequest,
+            "description": (
+                "Bad request. This is triggered by when a bad request body is provided. The response will inform the user "
+                "what required parameter they are missing from the request."
+            ),
+        },
+        status.HTTP_404_NOT_FOUND: {
+            "model": BadRequest,
+            "description": "Bad request. This is triggered when there is no CI data that matches the request provided.",
+        },
+    },
+)
+async def http_get_ci_schema_v1(query_params: GetCiSchemaV1Params = Depends()):
     """
     GET method that returns any metadata objects from Firestore that match the parameters passed.
     """
     ci_metadata_id, ci_schema = get_ci_schema_v1(query_params)
 
     if ci_metadata_id and ci_schema:
-        response.status_code = status.HTTP_200_OK
-        logger.info("get_ci_schema_v1 success")
-        return ci_schema
+        logger.info("get_ci_metadata_v1 success")
+        return JSONResponse(status_code=status.HTTP_200_OK, content=ci_schema)
     if not ci_metadata_id:
         message = f"No metadata found for: {query_params.__dict__}"
     else:
         message = f"No schema found for: {query_params.__dict__}"
-    response.status_code = status.HTTP_404_NOT_FOUND
     logger.info(
         f"get_ci_schema_v1: exception raised - {message}",
     )
-    return bad_request(message)
+    response_content = BadRequest(message=message)
+    return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)

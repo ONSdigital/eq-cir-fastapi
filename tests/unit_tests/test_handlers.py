@@ -57,6 +57,7 @@ class TestGetCISchemaV1:
     mock_form_type = "t"
     mock_language = "em"
     mock_survey_id = "12124141"
+    mock_id = "123578"
 
     mock_ci_schema = {
         "data_version": "1",
@@ -69,27 +70,34 @@ class TestGetCISchemaV1:
 
     query_params = GetCiSchemaV1Params(form_type=mock_form_type, language=mock_language, survey_id=mock_survey_id)
 
-    def test_handler_calls_retrive_ci_schema(self, mocked_query_ci_schema):
+    def test_handler_calls_retrive_ci_schema(self, mocked_query_ci_schema, mocked_query_latest_ci_version_id):
         """
         `get_ci_metadata_v1` should call `query_ci_metadata` to query the database for ci metadata
         """
+
         get_ci_schema_v1(self.query_params)
         mocked_query_ci_schema.assert_called_once()
+        mocked_query_latest_ci_version_id.assert_called_once()
 
-    def test_handler_calls_query_ci_metadata_with_correct_inputs(self, mocked_query_ci_schema):
+    def test_handler_calls_retrive_ci_schema_with_correct_inputs(
+        self, mocked_query_ci_schema, mocked_query_latest_ci_version_id
+    ):
         """
         `get_ci_metadata_v1` should call `query_ci_metadata` to query the database for ci metadata
         `query_ci_metadata` should be called with the correct, `form_type`, `language` and
         `survey_id` inputs
         """
+
         get_ci_schema_v1(self.query_params)
         mocked_query_ci_schema.assert_called_with(self.mock_survey_id, self.mock_form_type, self.mock_language)
 
-    def test_handler_returns_output_of_query_ci_metadata(self, mocked_query_ci_schema):
+    def test_handler_returns_output_of_retrive_ci_schema(self, mocked_query_ci_schema, mocked_query_latest_ci_version_id):
         """
         `get_ci_metadata_v1` should return the output of `query_ci_metadata`
         """
         # Update mocked `query_ci_metadata` to return valid ci metadata
+        mocked_query_latest_ci_version_id.return_value = "123578"
         mocked_query_ci_schema.return_value = self.mock_ci_schema
-        response = get_ci_schema_v1(self.query_params)
-        assert response == self.mock_ci_metadata
+        response, metadata_id = get_ci_schema_v1(self.query_params)
+        assert response == self.mock_ci_schema
+        assert metadata_id == "123578"
