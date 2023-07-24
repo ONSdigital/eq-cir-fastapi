@@ -76,7 +76,7 @@ class TestGetCISchemaV1:
 
     def test_handler_calls_retrive_ci_schema(self, mocked_query_ci_schema, mocked_query_latest_ci_version_id):
         """
-        `get_ci_metadata_v1` should call `query_ci_metadata` to query the database for ci metadata
+        `get_ci_schema_v1` should call `query_ci_metadata` to query the database for ci metadata
         """
 
         get_ci_schema_v1(self.query_params)
@@ -87,8 +87,8 @@ class TestGetCISchemaV1:
         self, mocked_query_ci_schema, mocked_query_latest_ci_version_id
     ):
         """
-        `get_ci_metadata_v1` should call `query_ci_metadata` to query the database for ci metadata
-        `query_ci_metadata` should be called with the correct, `form_type`, `language` and
+        `get_ci_schema_v1`` should call `retrieve_ci_schema` to retrive the schema
+        `retrive_ci_schema` should be called with the correct, `form_type`, `language` and
         `survey_id` inputs
         """
 
@@ -97,7 +97,7 @@ class TestGetCISchemaV1:
 
     def test_handler_returns_output_of_retrive_ci_schema(self, mocked_query_ci_schema, mocked_query_latest_ci_version_id):
         """
-        `get_ci_metadata_v1` should return the output of `query_ci_metadata`
+        `get_ci_schema_v1` should return the output of `query_ci_metadata`
         """
         # Update mocked `query_ci_metadata` to return valid ci metadata
         mocked_query_latest_ci_version_id.return_value = "123578"
@@ -110,7 +110,7 @@ class TestGetCISchemaV1:
 @patch("app.handlers.retrieve_ci_schema")
 @patch("app.handlers.query_ci_metadata_with_guid")
 class TestGetCISchemaV2:
-    """Tests for the `get_ci_metadata_v1` handler"""
+    """Tests for the `get_ci_schema_v1` handler"""
 
     mock_form_type = "t"
     mock_language = "em"
@@ -130,7 +130,7 @@ class TestGetCISchemaV2:
 
     def test_handler_calls_retrive_ci_schema(self, mocked_query_ci_schema, mocked_query_ci_metadata_with_guid):
         """
-        `get_ci_metadata_v1` should call `query_ci_metadata` to query the database for ci metadata
+        `get_ci_schema_v2` should call `retrive_ci_schema` to query the database for ci metadata
         """
 
         get_ci_schema_v2(self.query_params)
@@ -141,9 +141,8 @@ class TestGetCISchemaV2:
         self, mocked_query_ci_schema, mocked_query_ci_metadata_with_guid
     ):
         """
-        `get_ci_metadata_v1` should call `query_ci_metadata` to query the database for ci metadata
-        `query_ci_metadata` should be called with the correct, `form_type`, `language` and
-        `survey_id` inputs
+        `get_ci_metadata_v2` should call `retrive_ci_schema` to query the database for ci metadata
+        `retrive_ci_schema` should be called with the correct, `id` inputs
         """
 
         get_ci_schema_v2(self.query_params)
@@ -151,7 +150,7 @@ class TestGetCISchemaV2:
 
     def test_handler_returns_output_of_retrive_ci_schema(self, mocked_query_ci_schema, mocked_query_ci_metadata_with_guid):
         """
-        `get_ci_metadata_v1` should return the output of `query_ci_metadata`
+        `get_ci_schema_v2` should return the output of `retrive_ci_schema`
         """
         # Update mocked `query_ci_metadata` to return valid ci metadata
         mocked_query_ci_metadata_with_guid.return_value = self.mock_ci_schema

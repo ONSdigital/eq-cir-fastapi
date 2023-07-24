@@ -182,7 +182,7 @@ class TestHttpGetCiSchemaV2:
         """
         Endpoint should return `HTTP_200_OK` as part of the response if ci schema is found
         """
-        # mocked `get_ci_schema_v1` to return valid ci metadata
+        # mocked `get_ci_schema_v2` to return valid ci metadata
         mocked_get_ci_schema_v2.return_value = (self.mock_ci, self.mock_ci)
 
         response = client.get(self.url)
@@ -202,7 +202,7 @@ class TestHttpGetCiSchemaV2:
         Endpoint should return `BadRequest` as part of the response if metadata is not
         found
         """
-        # Update mocked `get_ci_schema_v1` to return `None` showing ci metadata is not found
+        # Update mocked `get_ci_schema_v2` to return `None` showing ci metadata is not found
         mocked_get_ci_schema_v2.return_value = None, None
         expected_response = BadRequest(message=f"No CI metadata found for: {self.mock_id}")
         response = client.get(self.url)
@@ -213,7 +213,7 @@ class TestHttpGetCiSchemaV2:
         Endpoint should return `BadRequest` as part of the response if schema is not
         found
         """
-        # Update mocked `get_ci_schema_v1` to return `None` showing ci metadata is not found
+        # Update mocked `get_ci_schema_v2` to return `None` showing ci metadata is not found
         mocked_get_ci_schema_v1.return_value = (self.mock_ci, None)
         expected_response = BadRequest(message=f"No schema found for: {self.mock_id}")
         response = client.get(self.url)
