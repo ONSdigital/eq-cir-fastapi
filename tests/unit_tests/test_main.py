@@ -155,3 +155,66 @@ class TestHttpGetCiSchemaV1:
         # Make request to base url without any query params
         response = client.get(self.base_url)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@patch("app.main.get_ci_schema_v2")
+class TestHttpGetCiSchemaV2:
+    """Tests for the `http_get_ci_schema_v2` endpoint"""
+
+    mock_form_type = "t"
+    mock_language = "em"
+    mock_survey_id = "12124141"
+    mock_id = "123578"
+
+    mock_ci = {
+        "data_version": "1",
+        "form_type": mock_form_type,
+        "language": mock_language,
+        "schema_version": "12",
+        "survey_id": mock_survey_id,
+        "title": "test",
+    }
+
+    base_url = "/v2/retrieve_collection_instrument"
+    url = f"{base_url}/123578"
+
+    def test_endpoint_returns_200_if_ci_schema_found(self, mocked_get_ci_schema_v2):
+        """
+        Endpoint should return `HTTP_200_OK` as part of the response if ci schema is found
+        """
+        # mocked `get_ci_schema_v1` to return valid ci metadata
+        mocked_get_ci_schema_v2.return_value = (self.mock_ci, self.mock_ci)
+
+        response = client.get(self.url)
+        assert response.status_code == status.HTTP_200_OK
+
+    def test_endpoint_resturns_if_ci_schema_found(self, mocked_get_ci_schema_v2):
+        """
+        Endpoint should return ci schema as part of the response if ci metadata is found
+        """
+        mocked_get_ci_schema_v2.return_value = (self.mock_ci, self.mock_ci)
+
+        response = client.get(self.url)
+        assert response.json() == self.mock_ci
+
+    def test_endpoint_returns_BadRequest_if_metadata_not_found(self, mocked_get_ci_schema_v2):
+        """
+        Endpoint should return `BadRequest` as part of the response if metadata is not
+        found
+        """
+        # Update mocked `get_ci_schema_v1` to return `None` showing ci metadata is not found
+        mocked_get_ci_schema_v2.return_value = None, None
+        expected_response = BadRequest(message=f"No CI metadata found for: {self.mock_id}")
+        response = client.get(self.url)
+        assert response.json() == expected_response.__dict__
+
+    def test_endpoint_returns_BadRequest_if_schema_not_found(self, mocked_get_ci_schema_v1):
+        """
+        Endpoint should return `BadRequest` as part of the response if schema is not
+        found
+        """
+        # Update mocked `get_ci_schema_v1` to return `None` showing ci metadata is not found
+        mocked_get_ci_schema_v1.return_value = (self.mock_ci, None)
+        expected_response = BadRequest(message=f"No schema found for: {self.mock_id}")
+        response = client.get(self.url)
+        assert response.json() == expected_response.__dict__
