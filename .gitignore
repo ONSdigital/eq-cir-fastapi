@@ -4,3 +4,4 @@
 */*/__pycache__
 *.log
 *-cloudbuild-sa-key.json
+.idea
