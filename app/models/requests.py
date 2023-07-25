@@ -12,11 +12,20 @@ class GetCiMetadataV1Params:
     survey_id: str = Query(description="The survey ID of the CI", example="123")
 
 
+@dataclass
+class PostCiMetadataV1Params:
+    """Model for `post_ci_metadata_v1` request query params"""
 
+    survey_id: str = Query(description="The survey id of the CI", example="0005")
+    language: str = Query(description="The language of the CI", example="en")
+    form_type: str = Query(description="The form type of the CI", example="123")
+    title: str = Query(description="The title of the CI", example="123")
+    schema_version: str = Query(description="The schema version of the CI", example="123")
+    data_version: str = Query(description="The data version of the CI", example="123")
 
 
 @dataclass
-class DeleteCiMetadataV1Params:
+class DeleteCiV1Params:
     """Model for `delete_ci_metadata_v1` request query params"""
 
     survey_id: str = Query(description="The survey id of the CI", example="0005")

@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 
 from app.config import Settings, logging
 from app.handlers import get_ci_metadata_v1, delete_ci_v1, post_ci_v1
-from app.models.requests import GetCiMetadataV1Params, PostCiMetadataV1Params, DeleteCiMetadataV1Params
+from app.models.requests import GetCiMetadataV1Params, PostCiMetadataV1Params, DeleteCiV1Params
 from app.models.responses import BadRequest, CiMetadata
 
 app = FastAPI()
@@ -131,18 +131,18 @@ async def http_post_ci_metadata_v1(query_params: PostCiMetadataV1Params = Depend
         },
     },
 )
-async def http_delete_ci_v1(query_params: DeleteCiMetadataV1Params = Depends()):
+async def http_delete_ci_v1(query_params: DeleteCiV1Params = Depends()):
     """
     Delete method that returns any metadata objects from Firestore that match the parameters passed.
     """
     ci_metadata = delete_ci_v1(query_params)
 
     if ci_metadata:
-        logger.info("delete_ci_metadata_v1 success")
+        logger.info("delete_ci_v1 success")
         return JSONResponse(status_code=status.HTTP_200_OK, content=ci_metadata)
     else:
         logger.info(
-            f"delete_ci_metadata_v1: exception raised - No CI(s) found for: {query_params.__dict__}",
+            f"delete_ci_v1: exception raised - No CI(s) found for: {query_params.__dict__}",
         )
-        response_content = BadRequest(message=f"No CI metadata found for: {query_params.__dict__}")
+        response_content = BadRequest(message=f"No CI found for: {query_params.__dict__}")
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)

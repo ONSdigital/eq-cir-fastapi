@@ -5,7 +5,7 @@ from fastapi import status
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.models.requests import GetCiMetadataV1Params
+from app.models.requests import GetCiMetadataV1Params, DeleteCiV1Params
 from app.models.responses import BadRequest
 
 client = TestClient(app)
@@ -82,3 +82,144 @@ class TestHttpGetCiMetadataV1:
         expected_response = BadRequest(message=f"No CI metadata found for: {self.query_params.__dict__}")
         response = client.get(self.url)
         assert response.json() == expected_response.__dict__
+
+
+@patch("app.main.delete_ci_v1")
+class TestHttpDeleteCiV1:
+
+    mock_survey_id = "12124141"
+
+    base_url = "/v1/dev/teardown"
+    query_params = DeleteCiV1Params(survey_id=mock_survey_id)
+    url = f"{base_url}?{urlencode(query_params.__dict__)}"
+
+def test_delete_ci_v1_can_delete_ci_and_return_200(self, mocked_delete_ci_v1):
+    """
+    Why am I testing:
+        To check that a single metadata and schema are deleted.
+    What am I testing:
+        200 success message and survey_id deleted
+    """
+    mocked_delete_ci_v1.return_value = self.mock_survey_id
+
+    response = client.delete(self.url)
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_delete_ci_v1_can_delete_mulitple_ci_and_return_200(mocker):
+    """
+    Why am I testing:
+        To check that multiple metadata and schema are deleted.
+    What am I testing:
+        200 success message and survey_id deleted
+    """
+    mock_db = mocker.Mock()
+    mock_transaction = MagicMock()
+    mock_query_ci_by_survey_id = mocker.patch(
+        "src.handlers.collection_instrument.query_ci_by_survey_id",
+        return_value=["1256", "2345", "1456"],
+    )
+    mock_delete_ci_metadata = mocker.patch(
+        "src.handlers.collection_instrument.delete_ci_metadata",
+        return_value=None,
+    )
+    mock_delete_ci_schema = mocker.patch(
+        "src.handlers.collection_instrument.delete_ci_schema",
+        return_value=None,
+    )
+    mocker.patch("src.handlers.collection_instrument.db", new=mock_db)
+
+    mock_request = {
+        "survey_id": "3456",
+    }
+    mock_request = MockRequestArgs(mock_request)
+    # set the __enter__ method of the mock transaction to return the mock transaction itself
+    mock_transaction.__enter__.return_value = mock_transaction
+
+    # set the __exit__ method of the mock transaction to do nothing
+    mock_transaction.__exit__.return_value = None
+
+    # set the __call__ method of the mock_db object to return the mock transaction
+    mock_db.transaction.return_value = mock_transaction
+    response = delete_ci_v1(mock_request)
+    mock_response = "3456 deleted"
+    expected_resp = good_response_200(mock_response), 200
+
+    assert expected_resp == response
+    mock_query_ci_by_survey_id.assert_called_once_with("3456")
+    mock_delete_ci_metadata.assert_called_once_with("3456")
+    mock_delete_ci_schema.assert_called_once_with(["1256", "2345", "1456"])
+    mock_db.transaction.assert_called_once_with()
+
+
+def test_delete_ci_v1_returns_400_given_invalid_survey_id(mocker):
+    """
+    Why am I testing:
+         To check that a 400 error is returned if an ivalid survey_id is passed
+     What am I testing:
+         400 and Bad request: Survey ID must be an integer"
+    """
+    mock_request = {
+        "survey_id": "abcd",
+    }
+    mock_request = MockRequestArgs(mock_request)
+    response = delete_ci_v1(mock_request)
+
+    mock_response = "Bad request: Survey ID must be an integer"
+    expected_resp = bad_request(mock_response), 400
+    assert expected_resp == response
+
+
+def test_delete_ci_v1_returns_500_for_any_exception_for_metadata(mocker):
+    """
+    Why am I testing:
+        To ensure any un-expected exception is handled when called for metadata
+    What am I testing:
+        Ability for API to return 500 response
+    """
+    mock_delete_ci_metadata = mocker.patch(
+        "src.handlers.collection_instrument.delete_ci_metadata",
+        return_value=None,
+    )
+
+    mock_request = {
+        "survey_id": "3456",
+    }
+    mock_request = MockRequestArgs(mock_request)
+
+    mock_delete_ci_metadata.side_effect = (Exception("Test"),)
+
+    response = delete_ci_v1(mock_request)
+    expected_resp = (internal_error("Something went wrong"), 500)
+
+    assert expected_resp == response
+    mock_delete_ci_metadata.assert_called_once_with("3456")
+
+
+def test_delete_ci_v1_returns_500_for_any_exception_for_schema(mocker):
+    """
+     Why am I testing:
+        To ensure any un-expected exception when called for schema
+    What am I testing:
+        Ability for API to return 500 response
+    """
+    mocker.patch(
+        "src.handlers.collection_instrument.query_ci_by_survey_id",
+        return_value="1",
+    )
+    mock_delete_ci_schema = mocker.patch(
+        "src.handlers.collection_instrument.delete_ci_schema",
+        return_value=None,
+    )
+    mock_request = {
+        "survey_id": "3456",
+    }
+    mock_request = MockRequestArgs(mock_request)
+
+    mock_delete_ci_schema.side_effect = (Exception("Test"),)
+
+    response = delete_ci_v1(mock_request)
+    expected_resp = (internal_error("Something went wrong"), 500)
+
+    assert expected_resp == response
+    mock_delete_ci_schema.assert_called_once_with("1")
