@@ -1,7 +1,7 @@
 from app.config import logging
-from app.models.requests import GetCiMetadataV1Params, PostCiMetadataV1Params, DeleteCiV1Params
+from app.models.requests import GetCiMetadataV1Params, DeleteCiV1Params
 from app.repositories.cloud_storage import delete_ci_schema
-from app.repositories.firestore import query_ci_metadata, post_ci_metadata, query_ci_by_survey_id, delete_ci_metadata, \
+from app.repositories.firestore import query_ci_metadata, query_ci_by_survey_id, delete_ci_metadata, \
     db
 
 logger = logging.getLogger(__name__)

@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
 from app.handlers import get_ci_metadata_v1
-from app.models.requests import GetCiMetadataV1Params
+from app.models.requests import GetCiMetadataV1Params, DeleteCiV1Params
 
 
 @patch("app.handlers.query_ci_metadata")
@@ -48,3 +48,12 @@ class TestGetCiMetadataV1:
         response = get_ci_metadata_v1(self.query_params)
 
         assert response == self.mock_ci_metadata
+
+
+@patch("app.main.delete_ci_v1")
+class TestHttpDeleteCiV1:
+
+    mock_survey_id = "12124141"
+
+    query_params = DeleteCiV1Params(survey_id=mock_survey_id)
+

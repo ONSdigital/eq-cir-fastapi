@@ -1,9 +1,8 @@
 from fastapi import Depends, FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-
 from app.config import Settings, logging
-from app.handlers import get_ci_metadata_v1, delete_ci_v1, post_ci_v1
+from app.handlers import get_ci_metadata_v1, delete_ci_v1
 from app.models.requests import GetCiMetadataV1Params, PostCiMetadataV1Params, DeleteCiV1Params
 from app.models.responses import BadRequest, CiMetadata
 
