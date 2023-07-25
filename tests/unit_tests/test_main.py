@@ -5,7 +5,11 @@ from fastapi import status
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.models.requests import GetCiMetadataV1Params, GetCiSchemaV1Params
+from app.models.requests import (
+    GetCiMetadataV1Params,
+    GetCiSchemaV1Params,
+    GetCiSchemaV2Params,
+)
 from app.models.responses import BadRequest
 
 client = TestClient(app)
@@ -176,7 +180,8 @@ class TestHttpGetCiSchemaV2:
     }
 
     base_url = "/v2/retrieve_collection_instrument"
-    url = f"{base_url}/123578"
+    query_params = GetCiSchemaV2Params(id=mock_id)
+    url = f"{base_url}?{urlencode(query_params.__dict__)}"
 
     def test_endpoint_returns_200_if_ci_schema_found(self, mocked_get_ci_schema_v2):
         """
@@ -218,3 +223,12 @@ class TestHttpGetCiSchemaV2:
         expected_response = BadRequest(message=f"No schema found for: {self.mock_id}")
         response = client.get(self.url)
         assert response.json() == expected_response.__dict__
+
+    def test_endpoint_returns_400_if_query_parameters_are_not_present(self, mocked_get_ci_metadata_v1):
+        """
+        Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `id` is not
+        part of the querystring parameters
+        """
+        # Make request to base url without any query params
+        response = client.get(self.base_url)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST

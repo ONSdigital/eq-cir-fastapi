@@ -119,7 +119,7 @@ async def http_get_ci_schema_v1(query_params: GetCiSchemaV1Params = Depends()):
 
 # Fetching CI schema from Bucket Version 2
 @app.get(
-    "/v2/retrieve_collection_instrument/{id}",
+    "/v2/retrieve_collection_instrument/",
     responses={
         status.HTTP_200_OK: {
             "model": CiMetadata,
@@ -141,19 +141,19 @@ async def http_get_ci_schema_v1(query_params: GetCiSchemaV1Params = Depends()):
         },
     },
 )
-async def http_get_ci_schema_v2(path_params: GetCiSchemaV2Params = Depends()):
+async def http_get_ci_schema_v2(query_params: GetCiSchemaV2Params = Depends()):
     """
     GET method that returns any metadata objects from Firestore that match the parameters passed.
     """
-    ci_metadata, ci_schema = get_ci_schema_v2(path_params)
+    ci_metadata, ci_schema = get_ci_schema_v2(query_params)
 
     if ci_metadata and ci_schema:
         logger.info("get_ci_metadata_v1 success")
         return JSONResponse(status_code=status.HTTP_200_OK, content=ci_schema)
     if not ci_metadata:
-        message = f"No CI metadata found for: {path_params.id}"
+        message = f"No CI metadata found for: {query_params.id}"
     else:
-        message = f"No schema found for: {path_params.id}"
+        message = f"No schema found for: {query_params.id}"
     logger.info(
         f"get_ci_schema_v2: exception raised - {message}",
     )
