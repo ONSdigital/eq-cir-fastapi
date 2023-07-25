@@ -5,4 +5,4 @@
 *.log
 *-cloudbuild-sa-key.json
 .idea/
-.idea/*
+.idea
