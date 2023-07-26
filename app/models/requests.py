@@ -28,4 +28,4 @@ class PostCiMetadataV1Params:
 class DeleteCiV1Params:
     """Model for `delete_ci_metadata_v1` request query params"""
 
-    survey_id: str = Query(description="The survey id of the CI", example="0005")
+    survey_id: int = Query(description="The survey id of the CI", example="0005")

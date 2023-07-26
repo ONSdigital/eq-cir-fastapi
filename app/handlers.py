@@ -24,22 +24,28 @@ def get_ci_metadata_v1(query_params: GetCiMetadataV1Params):
 
 
 
-
 def delete_ci_v1(query_params: DeleteCiV1Params):
     """
-    Handler for Delete
+    Handler for delete /collection_instrument
     """
     logger.info("Stepping into delete_ci")
-    ci_schemas = query_ci_by_survey_id(query_params.survey_id)
-    with db.transaction() as transaction:
-        # Deleting the metadata from firestore
-        delete_ci_metadata(query_params.survey_id)
-        logger.info("Delete Metedata Success")
-        # Deleting the schema from bucket
-        delete_ci_schema(query_params.survey_id)
-        logger.info("Delete Schema success")
-        # commit the transaction
-        transaction.commit()
-        logger.debug("Transaction committed")
-    return ci_schemas
+    survey_id = query_params.survey_id
+    print(survey_id)
+    if survey_id.isnumeric():
+        ci_schemas = query_ci_by_survey_id(query_params.survey_id)
+        with db.transaction() as transaction:
+            # Deleting the metadata from firestore
+            delete_ci_metadata(query_params.survey_id)
+            logger.info("Delete Metedata Success")
+            # Deleting the schema from bucket
+            delete_ci_schema(ci_schemas)
+            logger.info("Delete Schema success")
+            # commit the transaction
+            transaction.commit()
+            logger.debug("Transaction committed")
+        return f"{query_params.survey_id} deleted", 200
+    else:
+        raise ValueError("Survey ID must be an integer")
+
+
 
