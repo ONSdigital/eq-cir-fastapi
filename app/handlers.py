@@ -25,7 +25,6 @@ def get_ci_metadata_v1(query_params: GetCiMetadataV1Params):
 
 
 
-
 def delete_ci_v1(query_params: DeleteCiV1Params):
     """
     Handler for Delete
@@ -37,7 +36,7 @@ def delete_ci_v1(query_params: DeleteCiV1Params):
         delete_ci_metadata(query_params.survey_id)
         logger.info("Delete Metedata Success")
         # Deleting the schema from bucket
-        delete_ci_schema(ci_schemas)
+        delete_ci_schema(query_params.survey_id)
         logger.info("Delete Schema success")
         # commit the transaction
         transaction.commit()

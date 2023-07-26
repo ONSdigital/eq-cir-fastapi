@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4d0c3a2e-112b-4237-b5df-da904db0d786" name="Changes" comment="added v2 ci_metadata endpoint to FastApi Application" />
+    <list default="true" id="4d0c3a2e-112b-4237-b5df-da904db0d786" name="Changes" comment="added .idea to gitignore" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,7 +13,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="main" />
+        <entry key="$PROJECT_DIR$" value="CIR-136-convert-ci-metadata-v2" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -26,61 +26,96 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;
   }
-}]]></component>
-  <component name="RunManager" selected="Docker.docker-compose.yml.api: Compose Deployment">
+}</component>
+  <component name="RunManager" selected="Python tests.Python tests for test_handlers.TestHttpDeleteCiV1.test_handler_calls_delete_ci_metadata_with_correct_inputs">
     <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
-      <deployment type="docker-compose.yml" />
-      <method v="2" />
-    </configuration>
-    <configuration name="docker-compose.yml.api: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
       <deployment type="docker-compose.yml">
-        <settings>
-          <option name="services">
-            <list>
-              <option value="api" />
-            </list>
-          </option>
-          <option name="sourceFilePath" value="docker-compose.yml" />
-        </settings>
+        <settings />
       </deployment>
       <method v="2" />
     </configuration>
-    <configuration name="docker-compose.yml.firestore: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
-      <deployment type="docker-compose.yml">
-        <settings>
-          <option name="services">
-            <list>
-              <option value="firestore" />
-            </list>
-          </option>
-          <option name="sourceFilePath" value="docker-compose.yml" />
-        </settings>
-      </deployment>
+    <configuration name="Python tests for test_handlers.TestGetCiMetadataV1.test_handler_calls_query_ci_metadata_with_correct_inputs" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="eq-cir-fastapi" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/unit_tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_handlers.TestGetCiMetadataV1.test_handler_calls_query_ci_metadata_with_correct_inputs&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="docker-compose.yml.storage: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
-      <deployment type="docker-compose.yml">
-        <settings>
-          <option name="services">
-            <list>
-              <option value="storage" />
-            </list>
-          </option>
-          <option name="sourceFilePath" value="docker-compose.yml" />
-        </settings>
-      </deployment>
+    <configuration name="Python tests for test_handlers.TestHttpDeleteCiV1.test_handler_calls_delete_ci_metadata_with_correct_inputs" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="eq-cir-fastapi" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/unit_tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_handlers.TestHttpDeleteCiV1.test_handler_calls_delete_ci_metadata_with_correct_inputs&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for test_handlers.TestHttpDeleteCiV1.test_handler_calls_delete_ci_schema_with_correct_inputs" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="eq-cir-fastapi" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/unit_tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_handlers.TestHttpDeleteCiV1.test_handler_calls_delete_ci_schema_with_correct_inputs&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for test_handlers.TestHttpDeleteCiV1.test_handler_calls_query_ci_by_survey_id_with_correct_inputs" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="eq-cir-fastapi" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/unit_tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_handlers.TestHttpDeleteCiV1.test_handler_calls_query_ci_by_survey_id_with_correct_inputs&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for test_handlers.TestHttpDeleteCiV1.test_handler_calls_query_ci_metadata" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="eq-cir-fastapi" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/unit_tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_handlers.TestHttpDeleteCiV1.test_handler_calls_query_ci_metadata&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Docker.docker-compose.yml.api: Compose Deployment" />
-        <item itemvalue="Docker.docker-compose.yml.firestore: Compose Deployment" />
-        <item itemvalue="Docker.docker-compose.yml.storage: Compose Deployment" />
+        <item itemvalue="Python tests.Python tests for test_handlers.TestHttpDeleteCiV1.test_handler_calls_delete_ci_metadata_with_correct_inputs" />
+        <item itemvalue="Python tests.Python tests for test_handlers.TestHttpDeleteCiV1.test_handler_calls_delete_ci_schema_with_correct_inputs" />
+        <item itemvalue="Python tests.Python tests for test_handlers.TestHttpDeleteCiV1.test_handler_calls_query_ci_by_survey_id_with_correct_inputs" />
+        <item itemvalue="Python tests.Python tests for test_handlers.TestHttpDeleteCiV1.test_handler_calls_query_ci_metadata" />
+        <item itemvalue="Python tests.Python tests for test_handlers.TestGetCiMetadataV1.test_handler_calls_query_ci_metadata_with_correct_inputs" />
       </list>
     </recent_temporary>
   </component>
@@ -100,11 +135,77 @@
       <option name="project" value="LOCAL" />
       <updated>1689929826606</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="added post and delete fast api functions to main.py, added delete functions to handler and requests">
+      <created>1690206659007</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1690206659007</updated>
+    </task>
+    <task id="LOCAL-00003" summary="imported delete tests">
+      <created>1690273315867</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1690273315867</updated>
+    </task>
+    <task id="LOCAL-00004" summary="added .idea to gitignore">
+      <created>1690275929996</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1690275929996</updated>
+    </task>
+    <task id="LOCAL-00005" summary="added .idea to gitignore">
+      <created>1690275994350</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1690275994350</updated>
+    </task>
+    <task id="LOCAL-00006" summary="added .idea to gitignore">
+      <created>1690276105844</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1690276105844</updated>
+    </task>
+    <task id="LOCAL-00007" summary="added .idea to gitignore">
+      <created>1690276308282</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1690276308282</updated>
+    </task>
+    <task id="LOCAL-00008" summary="added .idea to gitignore">
+      <created>1690276443250</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1690276443250</updated>
+    </task>
+    <task id="LOCAL-00009" summary="added .idea to gitignore">
+      <created>1690276559733</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1690276559733</updated>
+    </task>
+    <task id="LOCAL-00010" summary="added .idea to gitignore">
+      <created>1690276664295</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1690276664295</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="added v2 ci_metadata endpoint to FastApi Application" />
-    <option name="LAST_COMMIT_MESSAGE" value="added v2 ci_metadata endpoint to FastApi Application" />
+    <MESSAGE value="added post and delete fast api functions to main.py, added delete functions to handler and requests" />
+    <MESSAGE value="imported delete tests" />
+    <MESSAGE value="added .idea to gitignore" />
+    <option name="LAST_COMMIT_MESSAGE" value="added .idea to gitignore" />
   </component>
 </project>
