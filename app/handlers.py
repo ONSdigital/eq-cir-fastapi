@@ -16,7 +16,6 @@ def get_ci_metadata_v1(query_params: GetCiMetadataV1Params):
     :return: ci_metadata || None
     """
     logger.info("Stepping into get_ci_metadata")
-
     logger.debug(f"get_ci_metadata_v1 data received: {query_params.__dict__}")
     ci_metadata = query_ci_metadata(query_params.survey_id, query_params.form_type, query_params.language)
     logger.debug(f"get_ci_metadata_v1 output: {ci_metadata}")
@@ -30,7 +29,6 @@ def get_ci_metadata_v2(query_params: GetCiMetadataV2Params):
     :return: good_response_200 || bad_request || internal_error
     """
     logger.info("Stepping into get_ci_metadata_v2")
-    logger.info("Inside the Status check")
     logger.debug(f"Data received: {query_params}")
 
     # Condition where author is requesting CIs by status with survey_id, form_type and language
