@@ -16,16 +16,13 @@ To install dependencies and configure the project for first use, follow the inst
 3. Install other dependencies using `brew`
 
    ```$ brew upgrade && brew install google-cloud-sdk pipenv pyenv```
-4. Install the Python version defined in the `.python-version` file using `pyenv`
+4. Install and start using the Python version defined in the `.python-version` file using `pyenv`
 
    ```$ pyenv install```
-5. Set the Python version we want to use, if not already done by the installation
-
-   ```$ pyenv use $(cat .python-version)```
-6. Create a new virtual environment to manage Python packages for the project. This action will read the attributes in the `Pipfile` and `Pipfile.lock` and install the right packages and versions we need, which insures we can set the correct dependencies for other devs and when deploying to production
+5. Create a new virtual environment to manage Python packages for the project. This action will read the attributes in the `Pipfile` and `Pipfile.lock` and install the right packages and versions we need, which insures we can set the correct dependencies for other devs and when deploying to production
 
    ```$ pipenv install --dev```
-7. Activate your newly created virtual environment by running
+6. Activate your newly created virtual environment by running
 
    ```$ pipenv shell```
 
