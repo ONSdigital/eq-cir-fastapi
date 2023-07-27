@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4d0c3a2e-112b-4237-b5df-da904db0d786" name="Changes" comment="added .idea to gitignore" />
+    <list default="true" id="4d0c3a2e-112b-4237-b5df-da904db0d786" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/app/handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/handlers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/unit_tests/test_handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/unit_tests/test_handlers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/unit_tests/test_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/unit_tests/test_main.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -26,31 +30,39 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "CIR-132-covert__publish__and__teardown"
   }
-}</component>
-  <component name="RunManager" selected="Python tests.Python tests for test_handlers.TestHttpDeleteCiV1.test_handler_calls_delete_ci_metadata_with_correct_inputs">
-    <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
-      <deployment type="docker-compose.yml">
-        <settings />
-      </deployment>
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests for test_handlers.TestGetCiMetadataV1.test_handler_calls_query_ci_metadata_with_correct_inputs" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+}]]></component>
+  <component name="RunManager" selected="Python.test_main">
+    <configuration name="test_main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="eq-cir-fastapi" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/unit_tests" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_handlers.TestGetCiMetadataV1.test_handler_calls_query_ci_metadata_with_correct_inputs&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tests/unit_tests/test_main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
+      <deployment type="docker-compose.yml">
+        <settings />
+      </deployment>
       <method v="2" />
     </configuration>
     <configuration name="Python tests for test_handlers.TestHttpDeleteCiV1.test_handler_calls_delete_ci_metadata_with_correct_inputs" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
@@ -111,11 +123,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.test_main" />
         <item itemvalue="Python tests.Python tests for test_handlers.TestHttpDeleteCiV1.test_handler_calls_delete_ci_metadata_with_correct_inputs" />
         <item itemvalue="Python tests.Python tests for test_handlers.TestHttpDeleteCiV1.test_handler_calls_delete_ci_schema_with_correct_inputs" />
         <item itemvalue="Python tests.Python tests for test_handlers.TestHttpDeleteCiV1.test_handler_calls_query_ci_by_survey_id_with_correct_inputs" />
         <item itemvalue="Python tests.Python tests for test_handlers.TestHttpDeleteCiV1.test_handler_calls_query_ci_metadata" />
-        <item itemvalue="Python tests.Python tests for test_handlers.TestGetCiMetadataV1.test_handler_calls_query_ci_metadata_with_correct_inputs" />
       </list>
     </recent_temporary>
   </component>
@@ -198,7 +210,14 @@
       <option name="project" value="LOCAL" />
       <updated>1690276664295</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="update handler and requests">
+      <created>1690382343303</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1690382343303</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -206,6 +225,7 @@
     <MESSAGE value="added post and delete fast api functions to main.py, added delete functions to handler and requests" />
     <MESSAGE value="imported delete tests" />
     <MESSAGE value="added .idea to gitignore" />
-    <option name="LAST_COMMIT_MESSAGE" value="added .idea to gitignore" />
+    <MESSAGE value="update handler and requests" />
+    <option name="LAST_COMMIT_MESSAGE" value="update handler and requests" />
   </component>
 </project>

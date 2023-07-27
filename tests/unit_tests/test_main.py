@@ -86,7 +86,6 @@ class TestHttpGetCiMetadataV1:
 
 @patch("app.main.delete_ci_v1")
 class TestHttpDeleteCiV1:
-
     mock_form_type = "t"
     mock_language = "em"
     mock_survey_id = "12124141"
@@ -103,7 +102,6 @@ class TestHttpDeleteCiV1:
     base_url = "/v1/dev/teardown"
     query_params = DeleteCiV1Params(survey_id=mock_survey_id)
     url = f"{base_url}?{urlencode(query_params.__dict__)}"
-
 
     def test_endpoint_returns_200_if_ci_metadata_found(self, mocked_delete_ci_v1):
         """
@@ -127,8 +125,8 @@ class TestHttpDeleteCiV1:
 
     def test_endpoint_returns_400_if_query_parameters_are_not_present(self, mocked_delete_ci_v1):
         """
-        Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `form_type`,
-        `language` and/or `survey_id` are not part of the querystring parameters
+        Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `
+        `survey_id` are not part of the querystring parameters
         """
         # Make request to base url without any query params
         response = client.delete(self.base_url)

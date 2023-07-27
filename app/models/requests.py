@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from enum import Enum
 
 from fastapi import Query
 
@@ -22,6 +23,12 @@ class PostCiMetadataV1Params:
     title: str = Query(description="The title of the CI", example="123")
     schema_version: str = Query(description="The schema version of the CI", example="123")
     data_version: str = Query(description="The data version of the CI", example="123")
+    sds_schema: str = Query(description="The sds schema version of the CI", example="123")
+
+
+class Status(Enum):
+    DRAFT = "DRAFT"
+    PUBLISHED = "PUBLISHED"
 
 
 @dataclass

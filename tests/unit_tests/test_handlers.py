@@ -50,9 +50,8 @@ class TestGetCiMetadataV1:
         assert response == self.mock_ci_metadata
 
 
-#@patch("app.handlers.delete_ci_v1")
+# @patch("app.handlers.delete_ci_v1")
 class TestHttpDeleteCiV1:
-
     mock_form_type = "t"
     mock_language = "em"
     mock_survey_id = "12124141"
@@ -80,7 +79,7 @@ class TestHttpDeleteCiV1:
     @patch("app.handlers.query_ci_by_survey_id")
     def test_handler_calls_query_ci_by_survey_id_with_correct_inputs(self, mocked_delete_ci_metadata):
         """
-        `delete_ci_metadata_v1` should call `query_ci_bu survey`
+        `delete_ci_metadata_v1` should call `query_ci_by_survey_id`
         """
 
         delete_ci_v1(self.query_params)
@@ -97,7 +96,7 @@ class TestHttpDeleteCiV1:
     @patch("app.handlers.delete_ci_metadata")
     def test_handler_calls_delete_ci_metadata_with_correct_inputs(self, mocked_delete_ci_metadata):
         """
-           `delete_ci_metadata_v1` should call `delete ci metadata'
+        `delete_ci_metadata_v1` should call `delete ci metadata'
         """
         delete_ci_v1(self.query_params)
         mocked_delete_ci_metadata.assert_called_with(self.mock_survey_id)
@@ -117,11 +116,3 @@ class TestHttpDeleteCiV1:
         """
         delete_ci_v1(self.query_params)
         mocked_delete_ci_schema.assert_called_with(self.mock_survey_id)
-
-
-
-
-
-
-
-

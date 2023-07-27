@@ -2,7 +2,7 @@ from fastapi import Depends, FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from app.config import Settings, logging
-from app.handlers import get_ci_metadata_v1, delete_ci_v1
+from app.handlers import get_ci_metadata_v1, delete_ci_v1, post_ci_v1
 from app.models.requests import GetCiMetadataV1Params, PostCiMetadataV1Params, DeleteCiV1Params
 from app.models.responses import BadRequest, CiMetadata
 
@@ -67,7 +67,6 @@ async def http_get_ci_metadata_v1(query_params: GetCiMetadataV1Params = Depends(
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)
 
 
-
 @app.post(
     "/v1/publish_collection_instrument",
     responses={
@@ -81,7 +80,8 @@ async def http_get_ci_metadata_v1(query_params: GetCiMetadataV1Params = Depends(
             "model": BadRequest,
             "description": (
                 "Bad request. This is triggered by when a bad request body is provided. The response will inform the user "
-                "what required parameter they are missing from the request or what is incorrect with the value that they have provided"
+                "what required parameter they are missing from the request or what is incorrect with the "
+                "value that they have provided"
             ),
         },
         status.HTTP_404_NOT_FOUND: {
