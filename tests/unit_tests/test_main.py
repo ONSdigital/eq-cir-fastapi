@@ -4,7 +4,6 @@ from fastapi import status
 from fastapi.testclient import TestClient
 from app.main import app
 from app.models.requests import GetCiMetadataV1Params, GetCiMetadataV2Params, DeleteCiV1Params
-from app.models.requests import GetCiMetadataV1Params, GetCiMetadataV2Params
 from app.models.responses import BadRequest
 
 client = TestClient(app)

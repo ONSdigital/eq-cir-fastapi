@@ -2,8 +2,8 @@ from fastapi import Depends, FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from app.config import Settings, logging
-from app.handlers import get_ci_metadata_v1, delete_ci_v1, post_ci_v1
-from app.models.requests import GetCiMetadataV1Params, PostCiMetadataV1Params, DeleteCiV1Params
+from app.handlers import get_ci_metadata_v1, delete_ci_v1, post_ci_v1, get_ci_metadata_v2
+from app.models.requests import GetCiMetadataV1Params, PostCiMetadataV1Params, DeleteCiV1Params, GetCiMetadataV2Params
 from app.models.responses import BadRequest, CiMetadata
 
 app = FastAPI()
@@ -93,7 +93,7 @@ async def http_get_ci_metadata_v1(query_params: GetCiMetadataV1Params = Depends(
 async def http_get_ci_metadata_v2(query_params: GetCiMetadataV2Params = Depends()):
     """
     GET method that returns any metadata objects from Firestore that match the parameters passed.
-    The user has multiple ways of quering the metadata. 1. Provide survey_id, form_type, language and status. 2.
+    The user has multiple ways of querying the metadata. 1. Provide survey_id, form_type, language and status. 2.
     Provide survey_id, form_type, language. 3. Provide status. 4. Provide no parameters.
     """
     ci_metadata = get_ci_metadata_v2(query_params)

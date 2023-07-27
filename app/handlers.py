@@ -1,5 +1,6 @@
 from app.config import logging
-from app.models.requests import GetCiMetadataV1Params, DeleteCiV1Params, PostCiMetadataV1Params, Status
+from app.models.requests import GetCiMetadataV1Params, DeleteCiV1Params, PostCiMetadataV1Params, Status, \
+    GetCiMetadataV2Params
 from app.models.responses import BadRequest
 from app.repositories.cloud_storage import delete_ci_schema, store_ci_schema
 from app.repositories.firestore import (
@@ -8,7 +9,7 @@ from app.repositories.firestore import (
     delete_ci_metadata,
     db,
     post_ci_metadata,
-    query_latest_ci_version,
+    query_latest_ci_version, query_ci_by_status, get_all_ci_metadata,
 )
 
 logger = logging.getLogger(__name__)
