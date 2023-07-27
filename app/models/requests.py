@@ -12,6 +12,7 @@ class GetCiMetadataV1Params:
     language: str = Query(description="The language of the CI", example="en")
     survey_id: str = Query(description="The survey ID of the CI", example="123")
 
+@dataclass
 class GetCiMetadataV2Params:
     """
     Model for `get_ci_metadata_v2` request query params

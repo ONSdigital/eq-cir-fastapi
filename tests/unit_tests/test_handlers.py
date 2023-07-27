@@ -83,7 +83,7 @@ class TestGetCiMetadataV2:
     ]
 
     # Create a default, empty request (all params set to `None`)
-    query_params = GetCiMetadataV2Params(form_type=None, language=None, status=None, survey_id=None)  # type: ignore [arg-type]
+    query_params = GetCiMetadataV2Params(form_type=None, language=None, status=None, survey_id=None)  # typeignore [arg-type]
 
     @patch("app.handlers.get_all_ci_metadata")
     def test_get_ci_metadata_v2_with_no_parameters_returns_all_ci(self, mocked_get_all_ci_metadata):
