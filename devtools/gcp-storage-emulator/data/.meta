@@ -1,0 +1,28 @@
+{
+  "buckets": {
+    "ci-bucket": {
+      "kind": "storage#bucket",
+      "id": "ci-bucket",
+      "selfLink": "/storage/v1/b/ci-bucket",
+      "projectNumber": "1234",
+      "name": "ci-bucket",
+      "timeCreated": "2023-07-20T14:38:07.032714Z",
+      "updated": "2023-07-20T14:38:07.032714Z",
+      "metageneration": "1",
+      "iamConfiguration": {
+        "bucketPolicyOnly": {
+          "enabled": false
+        },
+        "uniformBucketLevelAccess": {
+          "enabled": false
+        }
+      },
+      "location": "US",
+      "locationType": "multi-region",
+      "storageClass": "STANDARD",
+      "etag": "CAE="
+    }
+  },
+  "objects": {},
+  "resumable": {}
+}
