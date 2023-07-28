@@ -1,6 +1,5 @@
 from app.config import logging
-from app.models.requests import GetCiMetadataV1Params, DeleteCiV1Params, PostCiMetadataV1Params, Status, \
-    GetCiMetadataV2Params
+from app.models.requests import GetCiMetadataV1Params, DeleteCiV1Params, PostCiMetadataV1Params, Status, GetCiMetadataV2Params
 from app.models.responses import BadRequest
 from app.repositories.cloud_storage import delete_ci_schema, store_ci_schema
 from app.repositories.firestore import (
@@ -9,7 +8,9 @@ from app.repositories.firestore import (
     delete_ci_metadata,
     db,
     post_ci_metadata,
-    query_latest_ci_version, query_ci_by_status, get_all_ci_metadata,
+    query_latest_ci_version,
+    query_ci_by_status,
+    get_all_ci_metadata,
 )
 
 logger = logging.getLogger(__name__)
@@ -31,8 +32,8 @@ def get_ci_metadata_v1(query_params: GetCiMetadataV1Params):
 def get_ci_metadata_v2(query_params: GetCiMetadataV2Params):
     """
     Handler for GET V2 of collection_instrument
-    :param request: flask request object survey_id, form_type,language and status
-    :return: good_response_200 || bad_request || internal_error
+    :param query_params: GetCiMetadataV2Params
+    :return: ci_metadata
     """
     logger.info("Stepping into get_ci_metadata_v2")
     logger.debug(f"Data received: {query_params}")
@@ -78,28 +79,24 @@ def get_ci_metadata_v2(query_params: GetCiMetadataV2Params):
 
     return search_result
 
+
 def delete_ci_v1(query_params: DeleteCiV1Params):
     """
     Handler for delete /collection_instrument
     """
     logger.info("Stepping into delete_ci")
-    survey_id = query_params.survey_id
-    if survey_id.isnumeric():
-        ci_schemas = query_ci_by_survey_id(query_params.survey_id)
-        with db.transaction() as transaction:
-            # Deleting the metadata from firestore
-            delete_ci_metadata(query_params.survey_id)
-            logger.info("Delete Metedata Success")
-            # Deleting the schema from bucket
-            delete_ci_schema(ci_schemas)
-            logger.info("Delete Schema success")
-            # commit the transaction
-            transaction.commit()
-            logger.debug("Transaction committed")
-        return f"{query_params.survey_id} deleted", 200
-    else:
-        raise ValueError("Survey ID must be an integer")
-
+    ci_schemas = query_ci_by_survey_id(query_params.survey_id)
+    with db.transaction() as transaction:
+        # Deleting the metadata from firestore
+        delete_ci_metadata(query_params.survey_id)
+        logger.info("Delete Metedata Success")
+        # Deleting the schema from bucket
+        delete_ci_schema(ci_schemas)
+        logger.info("Delete Schema success")
+        # commit the transaction
+        transaction.commit()
+        logger.debug("Transaction committed")
+    return f"{query_params.survey_id} deleted", 200
 
 def post_ci_v1(query_params: PostCiMetadataV1Params):
     logger.info("post_ci_v1")
@@ -152,5 +149,3 @@ def post_ci_v1(query_params: PostCiMetadataV1Params):
             transaction.rollback()
             logger.info("Deleted schema from bucket")
             return BadRequest("Something went wrong"), 500
-
-

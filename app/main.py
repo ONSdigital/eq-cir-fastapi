@@ -66,6 +66,7 @@ async def http_get_ci_metadata_v1(query_params: GetCiMetadataV1Params = Depends(
         response_content = BadRequest(message=f"No CI metadata found for: {query_params.__dict__}")
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)
 
+
 @app.get(
     "/v2/ci_metadata",
     responses={
@@ -107,9 +108,8 @@ async def http_get_ci_metadata_v2(query_params: GetCiMetadataV2Params = Depends(
         )
         response_content = BadRequest(message=f"No CI metadata found for: {query_params.__dict__}")
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)
-      
-         
-      
+
+
 @app.post(
     "/v1/publish_collection_instrument",
     responses={
@@ -188,11 +188,4 @@ async def http_delete_ci_v1(query_params: DeleteCiV1Params = Depends()):
         logger.info(
             f"delete_ci_v1: exception raised - No CI(s) found for: {query_params.__dict__}",
         )
-        response_content = BadRequest(message=f"No CI found for: {query_params.__dict__}")
-
-  
-  
-  
-
-              
-  
+        return BadRequest(message=f"No CI found for: {query_params.__dict__}")

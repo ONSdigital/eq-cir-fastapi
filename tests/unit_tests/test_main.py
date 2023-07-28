@@ -80,8 +80,8 @@ class TestHttpGetCiMetadataV1:
         expected_response = BadRequest(message=f"No CI metadata found for: {self.query_params.__dict__}")
         response = client.get(self.url)
         assert response.json() == expected_response.__dict__
-       
-        
+
+
 @patch("app.main.get_ci_metadata_v2")
 class TestHttpGetCiMetadataV2:
     """Tests for the `http_get_ci_metadata_v2` endpoint"""
@@ -181,14 +181,14 @@ class TestHttpGetCiMetadataV2:
         mocked_get_ci_metadata_v2.return_value = None
         expected_response = BadRequest(message=f"No CI metadata found for: {self.query_params.__dict__}")
         response = client.get(self.url)
-        assert response.json() == expected_response.__dict__    
-          
-        
+        assert response.json() == expected_response.__dict__
+
+
 @patch("app.main.delete_ci_v1")
 class TestHttpDeleteCiV1:
     mock_form_type = "t"
     mock_language = "em"
-    mock_survey_id = "12124141"
+    mock_survey_id = 12124141
 
     mock_ci_metadata = {
         "data_version": "1",

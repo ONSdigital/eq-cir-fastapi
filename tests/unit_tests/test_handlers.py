@@ -3,7 +3,6 @@ from app.handlers import get_ci_metadata_v1, get_ci_metadata_v2, delete_ci_v1
 from app.models.requests import GetCiMetadataV1Params, GetCiMetadataV2Params, DeleteCiV1Params
 
 
-
 @patch("app.handlers.query_ci_metadata")
 class TestGetCiMetadataV1:
     """
@@ -53,7 +52,7 @@ class TestGetCiMetadataV1:
 
         assert response == self.mock_ci_metadata
 
-        
+
 class TestGetCiMetadataV2:
     """Tests for the `get_ci_metadata_v2` handler"""
 
@@ -83,7 +82,8 @@ class TestGetCiMetadataV2:
     ]
 
     # Create a default, empty request (all params set to `None`)
-    query_params = GetCiMetadataV2Params(form_type=None, language=None, status=None, survey_id=None)  # typeignore [arg-type]
+    query_params = GetCiMetadataV2Params(form_type=None, language=None, status=None, survey_id=None)
+    # typeignore [arg-type]
 
     @patch("app.handlers.get_all_ci_metadata")
     def test_get_ci_metadata_v2_with_no_parameters_returns_all_ci(self, mocked_get_all_ci_metadata):
@@ -173,11 +173,12 @@ class TestGetCiMetadataV2:
         items = get_ci_metadata_v2(self.query_params)
         assert items == self.mock_ci_list
 
+
 # @patch("app.handlers.delete_ci_v1")
 class TestHttpDeleteCiV1:
     mock_form_type = "t"
     mock_language = "em"
-    mock_survey_id = "12124141"
+    mock_survey_id = 12124141
 
     mock_ci_metadata = {
         "data_version": "1",

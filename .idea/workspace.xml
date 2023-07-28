@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4d0c3a2e-112b-4237-b5df-da904db0d786" name="Changes" comment="">
+    <list default="true" id="4d0c3a2e-112b-4237-b5df-da904db0d786" name="Changes" comment="update test handler and requests">
       <change beforePath="$PROJECT_DIR$/app/handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/handlers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/unit_tests/test_handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/unit_tests/test_handlers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/unit_tests/test_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/unit_tests/test_main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,14 +28,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "CIR-132-covert__publish__and__teardown"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;CIR-132-covert__publish__and__teardown&quot;
   }
-}]]></component>
-  <component name="RunManager" selected="Python.test_main">
+}</component>
+  <component name="RunManager">
     <configuration name="test_main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="eq-cir-fastapi" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -217,7 +215,14 @@
       <option name="project" value="LOCAL" />
       <updated>1690382343303</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="update test handler and requests">
+      <created>1690468471595</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1690468471595</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -226,6 +231,7 @@
     <MESSAGE value="imported delete tests" />
     <MESSAGE value="added .idea to gitignore" />
     <MESSAGE value="update handler and requests" />
-    <option name="LAST_COMMIT_MESSAGE" value="update handler and requests" />
+    <MESSAGE value="update test handler and requests" />
+    <option name="LAST_COMMIT_MESSAGE" value="update test handler and requests" />
   </component>
 </project>

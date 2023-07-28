@@ -12,6 +12,7 @@ class GetCiMetadataV1Params:
     language: str = Query(description="The language of the CI", example="en")
     survey_id: str = Query(description="The survey ID of the CI", example="123")
 
+
 @dataclass
 class GetCiMetadataV2Params:
     """
@@ -37,7 +38,7 @@ class GetCiMetadataV2Params:
 
         return True
 
-      
+
 @dataclass
 class PostCiMetadataV1Params:
     """Model for `post_ci_metadata_v1` request query params"""
@@ -61,4 +62,3 @@ class DeleteCiV1Params:
     """Model for `delete_ci_metadata_v1` request query params"""
 
     survey_id: int = Query(description="The survey id of the CI", example="0005")
-
