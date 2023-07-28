@@ -1,5 +1,5 @@
 from app.config import logging
-from app.models.requests import GetCiMetadataV1Params, DeleteCiV1Params, PostCiMetadataV1Params, Status, GetCiMetadataV2Params
+from app.models.requests import GetCiMetadataV1Params, DeleteCiV1Params, PostCiMetadataV1Params, GetCiMetadataV2Params
 from app.models.responses import BadRequest
 from app.repositories.cloud_storage import delete_ci_schema, store_ci_schema
 from app.repositories.firestore import (
@@ -89,16 +89,17 @@ def delete_ci_v1(query_params: DeleteCiV1Params):
     with db.transaction() as transaction:
         # Deleting the metadata from firestore
         delete_ci_metadata(query_params.survey_id)
-        logger.info("Delete Metedata Success")
+        logger.info("Delete Metadata Success")
         # Deleting the schema from bucket
         delete_ci_schema(ci_schemas)
         logger.info("Delete Schema success")
         # commit the transaction
         transaction.commit()
         logger.debug("Transaction committed")
-    return f"{query_params.survey_id} deleted", 200
+    return f"{query_params.survey_id} deleted"
 
-def post_ci_v1(query_params: PostCiMetadataV1Params):
+
+def post_ci_metadata_v1(query_params: PostCiMetadataV1Params):
     logger.info("post_ci_v1")
     """
     Handler for POST /collection_instrument
@@ -111,7 +112,7 @@ def post_ci_v1(query_params: PostCiMetadataV1Params):
     logger.debug(f"post_ci_v1 CollectionInstrument output: {ci_metadata}")
 
     # add status with default DRAFT value
-    ci_metadata.status = Status.DRAFT.value
+    #ci_metadata.status = Status.DRAFT.value
 
     # get latest ci version for combination of survey_id, form_type, language
     ci_metadata.ci_version = (
@@ -141,11 +142,11 @@ def post_ci_v1(query_params: PostCiMetadataV1Params):
             logger.debug("Transaction committed")
 
             logger.debug(f"post_ci_v1 output data: {ci_metadata_with_new_version.to_dict()}")
-            return (ci_metadata_with_new_version.to_dict()), 200
+            return ci_metadata_with_new_version.to_dict()
         except Exception as e:
             # if any part of the transaction fails, rollback and delete CI schema from bucket
             logger.error(f"post_ci_v1: exception raised - {e}")
             logger.error("Rolling back transaction")
             transaction.rollback()
             logger.info("Deleted schema from bucket")
-            return BadRequest("Something went wrong"), 500
+            return BadRequest("Something went wrong")

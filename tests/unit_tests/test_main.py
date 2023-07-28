@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 from fastapi import status
 from fastapi.testclient import TestClient
 from app.main import app
-from app.models.requests import GetCiMetadataV1Params, GetCiMetadataV2Params, DeleteCiV1Params
+from app.models.requests import GetCiMetadataV1Params, GetCiMetadataV2Params, DeleteCiV1Params, PostCiMetadataV1Params
 from app.models.responses import BadRequest
 
 client = TestClient(app)
@@ -253,3 +253,53 @@ class TestHttpDeleteCiV1:
         expected_response = BadRequest(message=f"No CI found for: {self.query_params.__dict__}")
         response = client.delete(self.url)
         assert response.json() == expected_response.__dict__
+
+
+@patch("app.main.post_ci_metadata_v1")
+class TestHttpPostCiV1:
+    mock_survey_id = "12124141"
+    mock_language = "em"
+    mock_form_type = "t"
+    mock_title = "test"
+    mock_schema_version = "12"
+    mock_data_version = "1"
+    mock_sds_schema = ""
+
+    mock_ci_metadata = {
+        "data_version": "1",
+        "form_type": mock_form_type,
+        "language": mock_language,
+        "schema_version": "12",
+        "survey_id": mock_survey_id,
+        "title": "test",
+    }
+
+    base_url = "/v1/publish_collection_instrument"
+    query_params = PostCiMetadataV1Params(
+        survey_id=mock_survey_id,
+        language=mock_language,
+        form_type=mock_form_type,
+        title=mock_title,
+        schema_version=mock_schema_version,
+        data_version=mock_data_version,
+        sds_schema=mock_sds_schema,
+    )
+    url = f"{base_url}?{urlencode(query_params.__dict__)}"
+
+    def test_endpoint_returns_200_if_ci_metadata_found(self, mocked_post_ci_metadata):
+        """
+        Endpoint should return `HTTP_200_OK` as part of the response if ci metadata is found
+        """
+        # Update mocked `get_ci_metadata_v1` to return valid ci metadata
+        mocked_post_ci_metadata.return_value = self.mock_ci_metadata
+
+        response = client.post(self.url)
+        assert response.status_code == status.HTTP_200_OK
+
+    def test_endpoint_returns_400_if_query_parameters_are_not_present(self, mocked_post_ci_metadata):
+        """
+        Endpoint should return `HTTP_400_BAD_REQUEST`
+        """
+        # Make request to base url without any query params
+        response = client.post(self.base_url)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST

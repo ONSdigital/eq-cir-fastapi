@@ -1,6 +1,6 @@
 from unittest.mock import patch
-from app.handlers import get_ci_metadata_v1, get_ci_metadata_v2, delete_ci_v1
-from app.models.requests import GetCiMetadataV1Params, GetCiMetadataV2Params, DeleteCiV1Params
+from app.handlers import get_ci_metadata_v1, get_ci_metadata_v2, delete_ci_v1, post_ci_metadata_v1
+from app.models.requests import GetCiMetadataV1Params, GetCiMetadataV2Params, DeleteCiV1Params, PostCiMetadataV1Params
 
 
 @patch("app.handlers.query_ci_metadata")
@@ -83,7 +83,7 @@ class TestGetCiMetadataV2:
 
     # Create a default, empty request (all params set to `None`)
     query_params = GetCiMetadataV2Params(form_type=None, language=None, status=None, survey_id=None)
-    # typeignore [arg-type]
+    # type ignore [arg-type]
 
     @patch("app.handlers.get_all_ci_metadata")
     def test_get_ci_metadata_v2_with_no_parameters_returns_all_ci(self, mocked_get_all_ci_metadata):
@@ -132,7 +132,7 @@ class TestGetCiMetadataV2:
 
     # Test for survey_id, language, form_type and status params
     @patch("app.handlers.query_ci_metadata")
-    def test_get_ci_metadata_v2_returns_ci_found_when_querying_survey_lan_formtype_status(self, mocked_query_ci_metadata):
+    def test_get_ci_metadata_v2_returns_ci_found_when_querying_survey_lan_form_type_status(self, mocked_query_ci_metadata):
         """
         Why am I testing:
             To check that CIs are returned when survey_id, form_type, language, and status are
@@ -155,7 +155,7 @@ class TestGetCiMetadataV2:
 
     # Test for survey_id, language, form_type params
     @patch("app.handlers.query_ci_metadata")
-    def test_get_ci_metadata_v2_returns_ci_found_when_querying_with_survey_lan_formtype(self, mocked_query_ci_metadata):
+    def test_get_ci_metadata_v2_returns_ci_found_when_querying_with_survey_lan_form_type(self, mocked_query_ci_metadata):
         """
         Why am I testing:
             To check that CIs are returned when survey_id, form_type, and language are supplied.
@@ -240,3 +240,65 @@ class TestHttpDeleteCiV1:
         """
         delete_ci_v1(self.query_params)
         mocked_delete_ci_schema.assert_called_with(self.mock_survey_id)
+
+
+class TestHttpPostCiV1:
+    mock_survey_id = "12124141"
+    mock_language = "em"
+    mock_form_type = "t"
+    mock_title = "test"
+    mock_schema_version = "12"
+    mock_data_version = "1"
+    mock_sds_schema = ""
+
+    mock_ci_metadata = {
+        "data_version": "1",
+        "form_type": mock_form_type,
+        "language": mock_language,
+        "schema_version": "12",
+        "survey_id": mock_survey_id,
+        "title": "test",
+    }
+
+    query_params = PostCiMetadataV1Params(
+        survey_id=mock_survey_id,
+        language=mock_language,
+        form_type=mock_form_type,
+        title=mock_title,
+        schema_version=mock_schema_version,
+        data_version=mock_data_version,
+        sds_schema=mock_sds_schema,
+    )
+
+    @patch("app.handlers.post_ci_metadata")
+    def test_handler_calls_post_ci_metadata(self, mocked_post_ci_metadata):
+        """
+        `get_ci_metadata_v1` should call `query_ci_metadata` to query the database for ci metadata
+        """
+        post_ci_metadata_v1(self.query_params)
+        mocked_post_ci_metadata.assert_called_once()
+
+    @patch("app.handlers.post_ci_metadata")
+    def test_handler_calls_query_ci_by_survey_id_with_correct_inputs(self, mocked_post_ci_metadata):
+        """
+        `delete_ci_metadata_v1` should call `query_ci_by_survey_id`
+        """
+
+        post_ci_metadata_v1(self.query_params)
+        mocked_post_ci_metadata.assert_called_with(self.mock_survey_id)
+
+    @patch("app.handlers.store_ci_schema")
+    def test_handler_calls_delete_ci_schema(self, mocked_store_ci_schema):
+        """
+        `get_ci_metadata_v1` should call `query_ci_metadata` to query the database for ci metadata
+        """
+        post_ci_metadata_v1(self.query_params)
+        mocked_store_ci_schema.assert_called_once()
+
+    @patch("app.handlers.store_ci_schema")
+    def test_handler_calls_delete_ci_schema_with_correct_inputs(self, mocked_store_ci_schema):
+        """
+        `delete_ci_schema_v1` should call `delete ci schema'
+        """
+        post_ci_metadata_v1(self.query_params)
+        mocked_store_ci_schema.assert_called_with(self.mock_survey_id)

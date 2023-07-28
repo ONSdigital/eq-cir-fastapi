@@ -2,7 +2,7 @@ from fastapi import Depends, FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from app.config import Settings, logging
-from app.handlers import get_ci_metadata_v1, delete_ci_v1, post_ci_v1, get_ci_metadata_v2
+from app.handlers import get_ci_metadata_v1, delete_ci_v1, get_ci_metadata_v2, post_ci_metadata_v1
 from app.models.requests import GetCiMetadataV1Params, PostCiMetadataV1Params, DeleteCiV1Params, GetCiMetadataV2Params
 from app.models.responses import BadRequest, CiMetadata
 
@@ -137,7 +137,7 @@ async def http_post_ci_metadata_v1(query_params: PostCiMetadataV1Params = Depend
     """
     GET method that returns any metadata objects from Firestore that match the parameters passed.
     """
-    ci_metadata = post_ci_v1(query_params)
+    ci_metadata = post_ci_metadata_v1(query_params)
 
     if ci_metadata:
         logger.info("post_ci_metadata_v1 success")
