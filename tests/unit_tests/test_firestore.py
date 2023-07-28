@@ -1,5 +1,6 @@
 from app.config import logging
 from app.repositories.firestore import (
+    query_ci_metadata_with_guid,
     query_latest_ci_version,
     query_latest_ci_version_id,
 )
@@ -59,3 +60,16 @@ def test_get_latest_ci_version_id_returns_none(mock_firestore_collection):
     mock_firestore_collection.document("456").set(mock_survey_2)
     ci_id = query_latest_ci_version_id("124", mock_form_type, mock_language)
     assert not ci_id
+
+
+def test_get_query_ci_metadata_with_guid_returns_ci(mock_firestore_collection):
+    mock_firestore_collection.document("123").set(mock_survey_1)
+    mock_firestore_collection.document("456").set(mock_survey_2)
+    ci = query_ci_metadata_with_guid("123")
+    assert ci == mock_survey_1
+
+
+def test_get_query_ci_metadata_with_guid_returns_none(mock_firestore_collection):
+    mock_firestore_collection.document("123").set(mock_survey_1)
+    ci = query_ci_metadata_with_guid("124")
+    assert not ci
