@@ -1,6 +1,12 @@
 from dataclasses import dataclass
+from enum import Enum
 
 from fastapi import Query
+
+
+class Status(Enum):
+    DRAFT = "DRAFT"
+    PUBLISHED = "PUBLISHED"
 
 
 @dataclass
@@ -37,3 +43,12 @@ class GetCiMetadataV2Params:
                 return False
 
         return True
+
+
+@dataclass
+class UpdateStatusV2Params:
+    """
+    Model for `put_status_v1` request params
+    """
+
+    id: str = Query(description="The id of the CI", example="123578")
