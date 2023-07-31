@@ -142,7 +142,7 @@ async def http_post_ci_metadata_v1(post_data: PostCiMetadataV1PostData):
 
     if ci_metadata:
         logger.info("post_ci_metadata_v1 success")
-        return JSONResponse(status_code=status.HTTP_200_OK, content=ci_metadata)
+        return JSONResponse(status_code=status.HTTP_200_OK, content=ci_metadata.__dict__)
     else:
         response_content = InternalError(message="Something went wrong")
         return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content=response_content.__dict__)
@@ -156,17 +156,6 @@ async def http_post_ci_metadata_v1(post_data: PostCiMetadataV1PostData):
                 "Successfully deleted a CI's schema and metadata. This is illustrated with the response informing the "
                 "user of the survey_id that has been deleted."
             ),
-        },
-        status.HTTP_400_BAD_REQUEST: {
-            "model": BadRequest,
-            "description": (
-                "Bad request. This is triggered by when a bad request body is provided. "
-                "The response will inform the user what required parameter they are missing from the request."
-            ),
-        },
-        status.HTTP_404_NOT_FOUND: {
-            "model": BadRequest,
-            "description": "Bad request. This is triggered when there is no CI data that matches the request provided.",
         },
     },
 )

@@ -5,4 +5,5 @@
 *.log
 *-cloudbuild-sa-key.json
 .idea/
+/devtools/gcp-storage-emulator/data/ci-bucket/*
 

@@ -23,6 +23,28 @@
       "etag": "CAE="
     }
   },
-  "objects": {},
+  "objects": {
+    "ci-bucket": {
+      "string": {
+        "kind": "storage#object",
+        "id": "ci-bucket/string/1690818420",
+        "selfLink": "/storage/v1/b/ci-bucket/o/string",
+        "name": "string",
+        "bucket": "ci-bucket",
+        "generation": "1690818420",
+        "metageneration": "2",
+        "contentType": "text/plain",
+        "timeCreated": "2023-07-31T15:47:00.390570Z",
+        "updated": "2023-07-31T15:47:00.390570Z",
+        "storageClass": "STANDARD",
+        "timeStorageClassUpdated": "2023-07-31T15:47:00.390570Z",
+        "size": "164",
+        "md5Hash": "D1Xv4aglX5Lo9B53UqL3/w==",
+        "mediaLink": "http://0.0.0.0:9023/download/storage/v1/b/ci-bucket/o/string?generation=1690818420&alt=media",
+        "crc32c": "kO2L3w==",
+        "etag": "D1Xv4aglX5Lo9B53UqL3/w=="
+      }
+    }
+  },
   "resumable": {}
 }
