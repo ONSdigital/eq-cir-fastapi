@@ -3,7 +3,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from app.config import Settings, logging
 from app.handlers import get_ci_metadata_v1, delete_ci_v1, get_ci_metadata_v2, post_ci_metadata_v1
-from app.models.requests import GetCiMetadataV1Params, DeleteCiV1Params, GetCiMetadataV2Params, CollectionInstrumentMetadata
+from app.models.requests import GetCiMetadataV1Params, DeleteCiV1Params, GetCiMetadataV2Params, \
+    PostCiMetadataV1PostData
 from app.models.responses import BadRequest, CiMetadata, InternalError
 
 app = FastAPI()
@@ -133,7 +134,7 @@ async def http_get_ci_metadata_v2(query_params: GetCiMetadataV2Params = Depends(
         },
     },
 )
-async def http_post_ci_metadata_v1(post_data: CollectionInstrumentMetadata):
+async def http_post_ci_metadata_v1(post_data: PostCiMetadataV1PostData):
     """
     post method
     """
