@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from enum import Enum
 
 from app.config import logging
 
@@ -21,10 +22,15 @@ class CiMetadata:
     data_version: str
     form_type: str
     id: str
-    langugage: str
+    language: str
     published_at: str
     schema_version: str
     sds_schema: str
     status: str
     survey_id: str
     title: str
+
+
+class CiStatus(Enum):
+    DRAFT = "DRAFT"
+    PUBLISHED = "PUBLISHED"

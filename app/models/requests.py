@@ -1,6 +1,5 @@
-import datetime
 from dataclasses import dataclass
-from enum import Enum
+
 from fastapi import Query
 
 
@@ -40,8 +39,8 @@ class GetCiMetadataV2Params:
 
 
 @dataclass
-class PostCiMetadataV1Params:
-    """Model for `post_ci_metadata_v1` request query params"""
+class PostCiMetadataV1PostData:
+    """Model for `post_ci_metadata_v1` request post data"""
 
     survey_id: str = Query(description="The survey id of the CI", example="0005")
     language: str = Query(description="The language of the CI", example="en")
@@ -49,19 +48,7 @@ class PostCiMetadataV1Params:
     title: str = Query(description="The title of the CI", example="123")
     schema_version: str = Query(description="The schema version of the CI", example="123")
     data_version: str = Query(description="The data version of the CI", example="123")
-    sds_schema: str = Query(description="The sds schema version of the CI", example="123")
-
-    status: str = Query(default="DRAFT", description="The status version of the CI", example="")
-    ci_version: int = Query(default= 0, description="The ci version of the CI", example="")
-    published_at: str = Query(default= datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ"), description=" The published at time of the CI", example="")
-    id: str = Query(default=None, description="The id version of the CI", example="")
-
-
-
-
-class Status(Enum):
-    DRAFT = "DRAFT"
-    PUBLISHED = "PUBLISHED"
+    sds_schema: str = Query(default="", description="The sds schema version of the CI", example="123")
 
 
 @dataclass
