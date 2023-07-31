@@ -1,6 +1,6 @@
 from unittest.mock import patch
 from app.handlers import get_ci_metadata_v1, get_ci_metadata_v2, delete_ci_v1, post_ci_metadata_v1
-from app.models.requests import GetCiMetadataV1Params, GetCiMetadataV2Params, DeleteCiV1Params, PostCiMetadataV1Params
+from app.models.requests import GetCiMetadataV1Params, GetCiMetadataV2Params, DeleteCiV1Params, CollectionInstrumentMetadata
 
 
 @patch("app.handlers.query_ci_metadata")
@@ -260,7 +260,7 @@ class TestHttpPostCiV1:
         "title": "test",
     }
 
-    query_params = PostCiMetadataV1Params(
+    query_params = CollectionInstrumentMetadata(
         survey_id=mock_survey_id,
         language=mock_language,
         form_type=mock_form_type,

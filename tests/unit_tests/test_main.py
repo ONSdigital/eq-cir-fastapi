@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 from fastapi import status
 from fastapi.testclient import TestClient
 from app.main import app
-from app.models.requests import GetCiMetadataV1Params, GetCiMetadataV2Params, DeleteCiV1Params, PostCiMetadataV1Params
+from app.models.requests import GetCiMetadataV1Params, GetCiMetadataV2Params, DeleteCiV1Params, CollectionInstrumentMetadata
 from app.models.responses import BadRequest
 
 client = TestClient(app)
@@ -275,7 +275,7 @@ class TestHttpPostCiV1:
     }
 
     base_url = "/v1/publish_collection_instrument"
-    query_params = PostCiMetadataV1Params(
+    query_params = CollectionInstrumentMetadata(
         survey_id=mock_survey_id,
         language=mock_language,
         form_type=mock_form_type,

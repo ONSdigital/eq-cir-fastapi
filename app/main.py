@@ -3,7 +3,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from app.config import Settings, logging
 from app.handlers import get_ci_metadata_v1, delete_ci_v1, get_ci_metadata_v2, post_ci_metadata_v1
-from app.models.requests import GetCiMetadataV1Params, PostCiMetadataV1Params, DeleteCiV1Params, GetCiMetadataV2Params
+from app.models.requests import GetCiMetadataV1Params, DeleteCiV1Params, GetCiMetadataV2Params, \
+    CollectionInstrumentMetadata
 from app.models.responses import BadRequest, CiMetadata
 
 app = FastAPI()
@@ -100,11 +101,11 @@ async def http_get_ci_metadata_v2(query_params: GetCiMetadataV2Params = Depends(
     ci_metadata = get_ci_metadata_v2(query_params)
 
     if ci_metadata:
-        logger.info("get_ci_metadata_v1 success")
+        logger.info("get_ci_metadata_v2 success")
         return JSONResponse(status_code=status.HTTP_200_OK, content=ci_metadata)
     else:
         logger.info(
-            f"get_ci_metadata_v1: exception raised - No CI(s) found for: {query_params.__dict__}",
+            f"get_ci_metadata_v2: exception raised - No CI(s) found for: {query_params.__dict__}",
         )
         response_content = BadRequest(message=f"No CI metadata found for: {query_params.__dict__}")
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)
@@ -122,9 +123,9 @@ async def http_get_ci_metadata_v2(query_params: GetCiMetadataV2Params = Depends(
         status.HTTP_400_BAD_REQUEST: {
             "model": BadRequest,
             "description": (
-                "Bad request. This is triggered by when a bad request body is provided. The response will inform the user "
-                "what required parameter they are missing from the request or what is incorrect with the "
-                "value that they have provided"
+                "Bad request. This is triggered by when a bad request body is provided. "
+                "The response will inform the user what required parameter they are missing from the "
+                "request or what is incorrect with the value that they have provided."
             ),
         },
         status.HTTP_404_NOT_FOUND: {
@@ -133,20 +134,20 @@ async def http_get_ci_metadata_v2(query_params: GetCiMetadataV2Params = Depends(
         },
     },
 )
-async def http_post_ci_metadata_v1(query_params: PostCiMetadataV1Params = Depends()):
+async def http_post_ci_metadata_v1(post_data: CollectionInstrumentMetadata):
     """
-    GET method that returns any metadata objects from Firestore that match the parameters passed.
+    post method
     """
-    ci_metadata = post_ci_metadata_v1(query_params)
+    ci_metadata, ci_schema = post_ci_metadata_v1(post_data)
 
-    if ci_metadata:
+    if ci_metadata and ci_schema:
         logger.info("post_ci_metadata_v1 success")
         return JSONResponse(status_code=status.HTTP_200_OK, content=ci_metadata)
     else:
         logger.info(
-            f"post_ci_metadata_v1: exception raised - No CI(s) found for: {query_params.__dict__}",
+            f"post_ci_metadata_v1: exception raised - No CI(s) found for: {post_data.__dict__}",
         )
-        response_content = BadRequest(message=f"No CI metadata found for: {query_params.__dict__}")
+        response_content = BadRequest(message=f"No CI metadata found for: {post_data.__dict__}")
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)
 
 
@@ -154,19 +155,16 @@ async def http_post_ci_metadata_v1(query_params: PostCiMetadataV1Params = Depend
     "/v1/dev/teardown",
     responses={
         status.HTTP_200_OK: {
-            "model": CiMetadata,
             "description": (
-                "Successfully fetched the metadata of a CI. This is illustrated with the returned response containing the "
-                "metadata of the CI."
+                "Successfully deleted a CI's schema and metadata. This is illustrated with the response informing the "
+                "user of the survey_id that has been deleted."
             ),
         },
         status.HTTP_400_BAD_REQUEST: {
             "model": BadRequest,
             "description": (
-                "Bad request. This is triggered by when a bad request body is provided. The response will inform the user "
                 "Bad request. This is triggered by when a bad request body is provided. "
-                "The response will inform the user what required parameter they are missing from the request. "
-                "what required parameter they are missing from the request."
+                "The response will inform the user what required parameter they are missing from the request."
             ),
         },
         status.HTTP_404_NOT_FOUND: {
@@ -179,13 +177,6 @@ async def http_delete_ci_v1(query_params: DeleteCiV1Params = Depends()):
     """
     Delete method that returns any metadata objects from Firestore that match the parameters passed.
     """
-    ci_metadata = delete_ci_v1(query_params)
-
-    if ci_metadata:
-        logger.info("delete_ci_v1 success")
-        return JSONResponse(status_code=status.HTTP_200_OK, content=ci_metadata)
-    else:
-        logger.info(
-            f"delete_ci_v1: exception raised - No CI(s) found for: {query_params.__dict__}",
-        )
-        return BadRequest(message=f"No CI found for: {query_params.__dict__}")
+    success_message = delete_ci_v1(query_params)
+    logger.info("delete_ci_v1 success")
+    return JSONResponse(status_code=status.HTTP_200_OK, content=success_message)
