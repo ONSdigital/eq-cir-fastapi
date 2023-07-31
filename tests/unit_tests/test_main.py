@@ -10,6 +10,8 @@ from app.models.requests import (
     GetCiMetadataV2Params,
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
+    Status,
+    UpdateStatusV2Params,
 )
 from app.models.responses import BadRequest
 
@@ -334,4 +336,79 @@ class TestHttpGetCiSchemaV2:
         """
         # Make request to base url without any query params
         response = client.get(self.base_url)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@patch("app.main.put_status_v1")
+class TestUpdateStatusV1:
+    "Tests for Update Status Endpoint"
+
+    mock_form_type = "t"
+    mock_language = "em"
+    mock_survey_id = "12124141"
+    mock_id = "123578"
+
+    mock_ci = {
+        "data_version": "1",
+        "form_type": mock_form_type,
+        "language": mock_language,
+        "schema_version": "12",
+        "survey_id": mock_survey_id,
+        "title": "test",
+    }
+
+    base_url = "/v1/update_status/"
+    query_params = UpdateStatusV2Params(id=mock_id)
+    url = f"{base_url}?{urlencode(query_params.__dict__)}"
+
+    def test_endpoint_returns_200_if_Status_Updated(self, mocked_update_status_v1):
+        """
+        Endpoint should return `HTTP_200_OK` if status is updated to published
+        """
+        # mocked `get_ci_schema_v2` to return valid ci metadata
+
+        self.mock_ci["status"] = Status.PUBLISHED.value
+        mocked_update_status_v1.return_value = (self.mock_ci, True)
+        response = client.put(self.url)
+        assert response.status_code == status.HTTP_200_OK
+        expected_message = f"CI status has been changed to published for {self.query_params.id}"
+        assert expected_message in response.content.decode("utf-8")
+
+    def test_endpoint_returns_200_if_Status_already_Updated(self, mocked_update_status_v1):
+        """
+        Endpoint should return `HTTP_200_OK` if status is already updated to published
+        """
+        # mocked `get_ci_schema_v2` to return valid ci metadata
+
+        self.mock_ci["status"] = Status.PUBLISHED.value
+        mocked_update_status_v1.return_value = (self.mock_ci, False)
+        response = client.put(self.url)
+        assert response.status_code == status.HTTP_200_OK
+        expected_message = f"CI status has already been changed to Published for {self.query_params.id}"
+        assert expected_message in response.content.decode("utf-8")
+
+    def test_endpoint_returns_BadRequest_if_ci_metadata_not_found(self, mocked_update_status_v1):
+        """
+        Endpoint should return BadRequest if metadata is not found
+        """
+        mocked_update_status_v1.return_value = (None, None)
+        expected_response = BadRequest(message=f"No CI metadata found for: {self.mock_id}")
+        response = client.put(self.url)
+        assert response.json() == expected_response.__dict__
+
+    def test_endpoint_returns_400_if_query_parameters_are_not_present(self, mocked_update_status_v1):
+        """
+        Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `id` is not
+        part of the querystring parameters
+        """
+        # Make request to base url without any query params
+        response = client.put(self.base_url)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_endpoint_returns_Exceptiom_if_query_parameters_invalid(self, mocked_update_status_v1):
+        """
+        Endpoint should thrown an HTTP_400_BAD_REQUEST if invalid status parameter is present in the metadata
+        """
+        mocked_update_status_v1.return_value = (self.mock_ci, None)
+        response = client.put(self.base_url)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

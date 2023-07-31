@@ -2,10 +2,10 @@ from app.config import logging
 from app.models.requests import (
     GetCiMetadataV1Params,
     GetCiMetadataV2Params,
-    Status,
-    UpdateStatusV2Params,
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
+    Status,
+    UpdateStatusV2Params,
 )
 from app.repositories.cloud_storage import retrieve_ci_schema
 from app.repositories.firestore import (
@@ -13,7 +13,8 @@ from app.repositories.firestore import (
     query_ci_by_status,
     query_ci_metadata,
     query_ci_metadata_with_guid,
-    update_ci_metadata_status_to_published
+    query_latest_ci_version_id,
+    update_ci_metadata_status_to_published,
 )
 
 logger = logging.getLogger(__name__)
@@ -129,8 +130,6 @@ def put_status_v1(query_params: UpdateStatusV2Params):
     if ci_metadata and ci_metadata["status"] == Status.PUBLISHED.value:
         return ci_metadata, False
 
-    elif ci_metadata and ci_metadata["status"] == Status.DRAFT.value:
+    if ci_metadata and ci_metadata["status"] == Status.DRAFT.value:
         update_ci_metadata_status_to_published(query_params.id, {"status": Status.PUBLISHED.value})
         return ci_metadata, True
-    else:
-        return ci_metadata, None

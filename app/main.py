@@ -8,7 +8,7 @@ from app.handlers import (
     get_ci_metadata_v2,
     get_ci_schema_v1,
     get_ci_schema_v2,
-    put_status_v1
+    put_status_v1,
 )
 from app.models.requests import (
     GetCiMetadataV1Params,
@@ -242,15 +242,13 @@ async def http_put_status_v1(query_params: UpdateStatusV2Params = Depends()):
     """
     ci_metadata, update_status = put_status_v1(query_params)
     if not ci_metadata:
-        response_content = BadRequest(message=f"No CI metadata found for: {query_params.__dict__}")
+        response_content = BadRequest(message=f"No CI metadata found for: {query_params.id}")
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)
     if ci_metadata and update_status is False:
         logger.info("CI already set to PUBLISHED")
-        message = f"CI status has already been changed to Published for{query_params.id}"
+        message = f"CI status has already been changed to Published for {query_params.id}"
         return JSONResponse(status_code=status.HTTP_200_OK, content=message)
     if ci_metadata and update_status is True:
         logger.info("update_status success")
         message = f"CI status has been changed to published for {query_params.id}"
         return JSONResponse(status_code=status.HTTP_200_OK, content=message)
-    else:
-        raise Exception("unknown status value")
