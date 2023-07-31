@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4d0c3a2e-112b-4237-b5df-da904db0d786" name="Changes" comment="update test handler and requests">
+    <list default="true" id="4d0c3a2e-112b-4237-b5df-da904db0d786" name="Changes" comment="update main, handler and requests">
       <change beforePath="$PROJECT_DIR$/app/handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/handlers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,7 +36,7 @@
     &quot;git-widget-placeholder&quot;: &quot;CIR-132-covert__publish__and__teardown&quot;
   }
 }</component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.test_main">
     <configuration name="test_main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="eq-cir-fastapi" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -222,7 +223,21 @@
       <option name="project" value="LOCAL" />
       <updated>1690468471595</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="update main, handler and requests">
+      <created>1690559344572</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1690559344572</updated>
+    </task>
+    <task id="LOCAL-00014" summary="update main, handler and requests">
+      <created>1690813483602</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1690813483602</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -232,6 +247,7 @@
     <MESSAGE value="added .idea to gitignore" />
     <MESSAGE value="update handler and requests" />
     <MESSAGE value="update test handler and requests" />
-    <option name="LAST_COMMIT_MESSAGE" value="update test handler and requests" />
+    <MESSAGE value="update main, handler and requests" />
+    <option name="LAST_COMMIT_MESSAGE" value="update main, handler and requests" />
   </component>
 </project>

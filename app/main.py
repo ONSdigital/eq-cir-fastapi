@@ -3,9 +3,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from app.config import Settings, logging
 from app.handlers import get_ci_metadata_v1, delete_ci_v1, get_ci_metadata_v2, post_ci_metadata_v1
-from app.models.requests import GetCiMetadataV1Params, DeleteCiV1Params, GetCiMetadataV2Params, \
-    CollectionInstrumentMetadata
-from app.models.responses import BadRequest, CiMetadata
+from app.models.requests import GetCiMetadataV1Params, DeleteCiV1Params, GetCiMetadataV2Params, CollectionInstrumentMetadata
+from app.models.responses import BadRequest, CiMetadata, InternalError
 
 app = FastAPI()
 logger = logging.getLogger(__name__)
@@ -128,8 +127,8 @@ async def http_get_ci_metadata_v2(query_params: GetCiMetadataV2Params = Depends(
                 "request or what is incorrect with the value that they have provided."
             ),
         },
-        status.HTTP_404_NOT_FOUND: {
-            "model": BadRequest,
+        status.HTTP_500_INTERNAL_SERVER_ERROR: {
+            "model": InternalError,
             "description": "Internal error. This is triggered when something an unexpected error occurs on the server side.",
         },
     },
@@ -138,17 +137,14 @@ async def http_post_ci_metadata_v1(post_data: CollectionInstrumentMetadata):
     """
     post method
     """
-    ci_metadata, ci_schema = post_ci_metadata_v1(post_data)
+    ci_metadata = post_ci_metadata_v1(post_data)
 
-    if ci_metadata and ci_schema:
+    if ci_metadata:
         logger.info("post_ci_metadata_v1 success")
         return JSONResponse(status_code=status.HTTP_200_OK, content=ci_metadata)
     else:
-        logger.info(
-            f"post_ci_metadata_v1: exception raised - No CI(s) found for: {post_data.__dict__}",
-        )
-        response_content = BadRequest(message=f"No CI metadata found for: {post_data.__dict__}")
-        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)
+        response_content = InternalError(message="Something went wrong")
+        return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content=response_content.__dict__)
 
 
 @app.delete(
