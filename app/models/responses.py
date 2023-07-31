@@ -34,3 +34,11 @@ class CiMetadata:
 class CiStatus(Enum):
     DRAFT = "DRAFT"
     PUBLISHED = "PUBLISHED"
+
+
+@dataclass
+class InternalError:
+    """Model for a generic internal error response"""
+
+    message: str
+    status: str = "error"
