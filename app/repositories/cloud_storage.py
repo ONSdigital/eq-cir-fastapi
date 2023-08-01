@@ -3,6 +3,7 @@ import json
 from google.cloud import exceptions, storage
 
 from app.config import Settings, logging
+from app.models.responses import CiMetadata
 
 __bucket = None
 logger = logging.getLogger(__name__)
@@ -46,11 +47,11 @@ def retrieve_ci_schema(blob_name):
     return json.loads(data)
 
 
-def delete_ci_schema(ci_schemas):
+def delete_ci_schema(ci_schemas: list[CiMetadata]):
     logger.info("attempting to delete schema")
     bucket = get_storage_bucket()
     for schema in ci_schemas:
-        blob_name = schema["id"]
+        blob_name = schema.id
         logger.debug(f"delete_ci_schema: {blob_name}")
         blob = bucket.blob(blob_name)
         blob.delete()

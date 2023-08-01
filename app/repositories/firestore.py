@@ -7,7 +7,6 @@ from app.config import Settings, logging
 from app.models.requests import PostCiMetadataV1PostData
 from app.models.responses import CiMetadata, CiStatus
 
-
 logger = logging.getLogger(__name__)
 settings = Settings()
 

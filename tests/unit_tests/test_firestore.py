@@ -2,10 +2,10 @@ from unittest.mock import patch
 
 from app.models.requests import PostCiMetadataV1PostData
 from app.repositories.firestore import (
+    post_ci_metadata,
     query_ci_by_survey_id,
     query_latest_ci_version,
     query_latest_ci_version_id,
-    post_ci_metadata,
 )
 
 # Mock data for all tests
