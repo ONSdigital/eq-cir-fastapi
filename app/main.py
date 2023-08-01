@@ -15,7 +15,7 @@ from app.models.requests import (
     GetCiMetadataV2Params,
     PostCiMetadataV1PostData,
 )
-from app.models.responses import BadRequest, CiMetadata, InternalError
+from app.models.responses import BadRequest, CiMetadata
 
 app = FastAPI()
 logger = logging.getLogger(__name__)
@@ -142,7 +142,6 @@ async def http_get_ci_metadata_v2(query_params: GetCiMetadataV2Params = Depends(
             ),
         },
         status.HTTP_500_INTERNAL_SERVER_ERROR: {
-            "model": InternalError,
             "description": "Internal error. This is triggered when something an unexpected error occurs on the server side.",
         },
     },
