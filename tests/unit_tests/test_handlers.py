@@ -12,6 +12,7 @@ from app.models.requests import (
     GetCiMetadataV2Params,
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
+    Status,
     UpdateStatusV2Params,
 )
 
@@ -292,8 +293,8 @@ class TestGetCISchemaV2:
         assert schema == self.mock_ci_schema
 
 
-@patch("app.handlers.query_ci_metadata_with_guid")
 @patch("app.handlers.update_ci_metadata_status_to_published")
+@patch("app.handlers.query_ci_metadata_with_guid")
 class TestUpdateStatusV2:
     """Tests for the `put_status_v1` handler"""
 
@@ -317,9 +318,11 @@ class TestUpdateStatusV2:
         self, mocked_query_ci_metadata_with_guid, mocked_update_ci_metadata_status_to_published
     ):
         """
-        `get_ci_schema_v2` should call `retrive_ci_schema` to query the database for ci metadata
+         `put_status_v1` should call `query_ci_metadata_with_guid`and `update_ci_metadata_status_to_published`
+        to update the status of CI
         """
-
+        ci_metadata = {"status": Status.DRAFT.value}
+        mocked_query_ci_metadata_with_guid.return_value = ci_metadata
         put_status_v1(self.query_params)
         mocked_query_ci_metadata_with_guid.assert_called_once()
         mocked_update_ci_metadata_status_to_published.assert_called_once()
@@ -328,19 +331,45 @@ class TestUpdateStatusV2:
         self, mocked_query_ci_metadata_with_guid, mocked_update_ci_metadata_status_to_published
     ):
         """
-        `get_ci_schema_v2` should call `retrive_ci_schema` to query the database for ci metadata
+        `put_status_v1` should call `query_ci_metadata_with_guid`and `update_ci_metadata_status_to_published`
+         to update the status of CI with right inputs
         """
 
+        ci_metadata = {"status": Status.DRAFT.value}
+        mocked_query_ci_metadata_with_guid.return_value = ci_metadata
         put_status_v1(self.query_params)
-        mocked_update_ci_metadata_status_to_published.assert_called_with(self.mock_id)
 
-    def test_handler_calls_updated_with_update_ci_with_right_inputs(
+        # Assert that query_ci_metadata_with_guid was called with the correct parameter
+        mocked_query_ci_metadata_with_guid.assert_called_once_with(self.query_params.id)
+
+        # Assert that update_ci_metadata_status_to_published was called with the correct parameters
+        mocked_update_ci_metadata_status_to_published.assert_called_once_with(
+            self.query_params.id, {"status": Status.PUBLISHED.value}
+        )
+
+    def test_handler_returns_right_output_of_query_ci_with_guid_and_update_ci_if_status_DRAFT(
         self, mocked_query_ci_metadata_with_guid, mocked_update_ci_metadata_status_to_published
     ):
         """
-        `get_ci_schema_v2` should return the output of `retrive_ci_schema`
+        `put_status_v1` should return right output of `query_ci_metadata_with_guid`and
+        `update_ci_metadata_status_to_published` once status of CI is updated
         """
-        mocked_query_ci_metadata_with_guid.return_value = self.mock_ci_schema
-        ci_metadata, status = put_status_v1(self.query_params)
-        print(ci_metadata, status)
-        assert ci_metadata == self.mock_ci_schema
+        ci_metadata = {"status": Status.DRAFT.value}
+        mocked_query_ci_metadata_with_guid.return_value = ci_metadata
+        expected_metadata, status = put_status_v1(self.query_params)
+        assert expected_metadata == ci_metadata
+        assert status is True
+
+    def test_handler_returns_right_output_of_query_ci_with_guid_and_update_ci_if_status_PUBLISHED(
+        self, mocked_query_ci_metadata_with_guid, mocked_update_ci_metadata_status_to_published
+    ):
+        """
+        `put_status_v1` should return output `query_ci_metadata_with_guid` and
+        `update_ci_metadata_status_to_published` if status of CI is already updated
+
+        """
+        ci_metadata = {"status": Status.PUBLISHED.value}
+        mocked_query_ci_metadata_with_guid.return_value = ci_metadata
+        expected_metadata, status = put_status_v1(self.query_params)
+        assert expected_metadata == ci_metadata
+        assert status is False

@@ -127,9 +127,8 @@ def put_status_v1(query_params: UpdateStatusV2Params):
     ci_metadata = query_ci_metadata_with_guid(query_params.id)
     if not ci_metadata:
         return None, None
-    if ci_metadata and ci_metadata["status"] == Status.PUBLISHED.value:
+    if ci_metadata["status"] == Status.PUBLISHED.value:
         return ci_metadata, False
-
-    if ci_metadata and ci_metadata["status"] == Status.DRAFT.value:
+    if ci_metadata["status"] == Status.DRAFT.value:
         update_ci_metadata_status_to_published(query_params.id, {"status": Status.PUBLISHED.value})
         return ci_metadata, True
