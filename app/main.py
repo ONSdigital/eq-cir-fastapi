@@ -105,8 +105,11 @@ async def http_get_ci_metadata_v1(query_params: GetCiMetadataV1Params = Depends(
 async def http_get_ci_metadata_v2(query_params: GetCiMetadataV2Params = Depends()):
     """
     GET method that returns any metadata objects from Firestore that match the parameters passed.
-    The user has multiple ways of querying the metadata. 1. Provide survey_id, form_type, language and status. 2.
-    Provide survey_id, form_type, language. 3. Provide status. 4. Provide no parameters.
+    The user has multiple ways of querying the metadata.
+    1. Provide survey_id, form_type, language and status.
+    2. Provide survey_id, form_type, language.
+    3. Provide status.
+    4. Provide no parameters.
     """
     ci_metadata = get_ci_metadata_v2(query_params)
 
