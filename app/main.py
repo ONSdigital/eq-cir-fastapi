@@ -1,10 +1,20 @@
 from fastapi import Depends, FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+
 from app.config import Settings, logging
-from app.handlers import get_ci_metadata_v1, delete_ci_v1, get_ci_metadata_v2, post_ci_metadata_v1
-from app.models.requests import GetCiMetadataV1Params, DeleteCiV1Params, GetCiMetadataV2Params, \
-    PostCiMetadataV1PostData
+from app.handlers import (
+    delete_ci_v1,
+    get_ci_metadata_v1,
+    get_ci_metadata_v2,
+    post_ci_metadata_v1,
+)
+from app.models.requests import (
+    DeleteCiV1Params,
+    GetCiMetadataV1Params,
+    GetCiMetadataV2Params,
+    PostCiMetadataV1PostData,
+)
 from app.models.responses import BadRequest, CiMetadata, InternalError
 
 app = FastAPI()
@@ -136,16 +146,12 @@ async def http_get_ci_metadata_v2(query_params: GetCiMetadataV2Params = Depends(
 )
 async def http_post_ci_metadata_v1(post_data: PostCiMetadataV1PostData):
     """
-    post method
+    POST method that creates a Collection Instrument. This will post the metadata to Firestore and
+    the whole request body to a Google Cloud Bucket.
     """
     ci_metadata = post_ci_metadata_v1(post_data)
-
-    if ci_metadata:
-        logger.info("post_ci_metadata_v1 success")
-        return JSONResponse(status_code=status.HTTP_200_OK, content=ci_metadata.__dict__)
-    else:
-        response_content = InternalError(message="Something went wrong")
-        return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content=response_content.__dict__)
+    logger.info("post_ci_metadata_v1 success")
+    return JSONResponse(status_code=status.HTTP_200_OK, content=ci_metadata.__dict__)
 
 
 @app.delete(
@@ -157,12 +163,30 @@ async def http_post_ci_metadata_v1(post_data: PostCiMetadataV1PostData):
                 "user of the survey_id that has been deleted."
             ),
         },
+        status.HTTP_400_BAD_REQUEST: {
+            "model": BadRequest,
+            "description": (
+                "Bad request. This is triggered by when a bad request body is provided. "
+                "The response will inform the user what required parameter they are missing from the "
+                "request or what is incorrect with the value that they have provided."
+            ),
+        },
+        status.HTTP_404_NOT_FOUND: {
+            "model": BadRequest,
+            "description": "Bad request. This is triggered when there is no CI data that matches the request provided.",
+        },
     },
 )
 async def http_delete_ci_v1(query_params: DeleteCiV1Params = Depends()):
     """
-    Delete method that returns any metadata objects from Firestore that match the parameters passed.
+    DELETE method that deletes the CI schema from the bucket as well as the CI metadata from Firestore.
     """
     success_message = delete_ci_v1(query_params)
-    logger.info("delete_ci_v1 success")
-    return JSONResponse(status_code=status.HTTP_200_OK, content=success_message)
+
+    if success_message:
+        logger.info("delete_ci_v1 success")
+        return JSONResponse(status_code=status.HTTP_200_OK, content=success_message)
+    else:
+        # Nothing to delete so return 404
+        response_content = BadRequest(message=f"No CI found for: {query_params.__dict__}")
+        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)

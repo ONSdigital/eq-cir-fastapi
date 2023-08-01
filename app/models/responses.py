@@ -18,6 +18,7 @@ class BadRequest:
 class CiMetadata:
     """Model for collection instrument metadata"""
 
+    # Required fields
     ci_version: int
     data_version: str
     form_type: str
@@ -25,10 +26,11 @@ class CiMetadata:
     language: str
     published_at: str
     schema_version: str
-    sds_schema: str
     status: str
     survey_id: str
     title: str
+    # Optional fields
+    sds_schema: str | None = ""
 
 
 class CiStatus(Enum):

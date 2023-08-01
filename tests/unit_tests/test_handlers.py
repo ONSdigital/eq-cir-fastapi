@@ -282,7 +282,7 @@ class TestHttpPostCiMetadataV1:
     tests
     """
 
-    query_params = PostCiMetadataV1PostData(
+    post_data = PostCiMetadataV1PostData(
         survey_id=mock_survey_id,
         language=mock_language,
         form_type=mock_form_type,
@@ -296,7 +296,7 @@ class TestHttpPostCiMetadataV1:
         `delete_ci_metadata_v1` should call `post_ci_metadata` to write metadata to the firestore
         db
         """
-        post_ci_metadata_v1(self.query_params)
+        post_ci_metadata_v1(self.post_data)
         mocked_post_ci_metadata.assert_called_once()
 
     def test_handler_calls_post_ci_metadata_with_correct_inputs(
@@ -307,14 +307,14 @@ class TestHttpPostCiMetadataV1:
         db. It should be called with the input post data model
         """
 
-        post_ci_metadata_v1(self.query_params)
-        mocked_post_ci_metadata.assert_called_with(self.query_params)
+        post_ci_metadata_v1(self.post_data)
+        mocked_post_ci_metadata.assert_called_with(self.post_data)
 
     def test_handler_calls_store_ci_schema(self, mocked_store_ci_schema, mocked_post_ci_metadata, mocked_db):
         """
         `delete_ci_metadata_v1` should call `store_ci_schema` to write metadata to the firestore db
         """
-        post_ci_metadata_v1(self.query_params)
+        post_ci_metadata_v1(self.post_data)
         mocked_store_ci_schema.assert_called_once()
 
     def test_handler_calls_store_ci_schema_with_correct_inputs(
@@ -327,8 +327,8 @@ class TestHttpPostCiMetadataV1:
         # Configure mocked `post_ci_metadata` to return the the new metadata model
         mocked_post_ci_metadata.return_value = mock_ci_metadata
 
-        post_ci_metadata_v1(self.query_params)
-        mocked_store_ci_schema.assert_called_with(mock_ci_metadata.survey_id, self.query_params.__dict__)
+        post_ci_metadata_v1(self.post_data)
+        mocked_store_ci_schema.assert_called_with(mock_ci_metadata.survey_id, self.post_data.__dict__)
 
     def test_handler_returns_new_ci_metadata_if_creation_successful(
         self, mocked_store_ci_schema, mocked_post_ci_metadata, mocked_db
@@ -340,7 +340,7 @@ class TestHttpPostCiMetadataV1:
         # Configure mocked `post_ci_metadata` to return the the new metadata model
         mocked_post_ci_metadata.return_value = mock_ci_metadata
 
-        return_value = post_ci_metadata_v1(self.query_params)
+        return_value = post_ci_metadata_v1(self.post_data)
         assert return_value == mock_ci_metadata
 
     def test_handler_returns_none_if_exception_raised(self, mocked_store_ci_schema, mocked_post_ci_metadata, mocked_db):
@@ -351,5 +351,5 @@ class TestHttpPostCiMetadataV1:
         # Configure mocked `post_ci_metadata` to raise a generic exception
         mocked_post_ci_metadata.side_effect = Exception()
 
-        return_value = post_ci_metadata_v1(self.query_params)
+        return_value = post_ci_metadata_v1(self.post_data)
         assert return_value is None

@@ -40,15 +40,32 @@ class GetCiMetadataV2Params:
 
 @dataclass
 class PostCiMetadataV1PostData:
-    """Model for `post_ci_metadata_v1` request post data"""
+    """
+    Model for `post_ci_metadata_v1` request post data
 
-    survey_id: str = Query(description="The survey id of the CI", example="0005")
-    language: str = Query(description="The language of the CI", example="en")
-    form_type: str = Query(description="The form type of the CI", example="123")
-    title: str = Query(description="The title of the CI", example="123")
-    schema_version: str = Query(description="The schema version of the CI", example="123")
-    data_version: str = Query(description="The data version of the CI", example="123")
-    sds_schema: str = Query(default="", description="The sds schema version of the CI", example="123")
+    This is the entire CI JSON object that you would like to publish. The example below illustrates
+    the required attributes to put into the request body. The POST will fail if these are not
+    included.
+    """
+
+    # Required fields
+    data_version: str
+    form_type: str
+    language: str
+    survey_id: str
+    title: str
+    schema_version: str
+    # Optional fields
+    legal_basis: str | None = ""
+    metadata: list | None = None
+    mime_type: str | None = ""
+    navigation: dict | None = None
+    questionnaire_flow: dict | None = None
+    post_submission: dict | None = None
+    sds_schema: str | None = ""
+    sections: list | None = None
+    submission: dict | None = None
+    theme: str | None = ""
 
 
 @dataclass

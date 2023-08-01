@@ -1,19 +1,20 @@
 from app.config import logging
 from app.models.requests import (
-    GetCiMetadataV1Params,
     DeleteCiV1Params,
+    GetCiMetadataV1Params,
     GetCiMetadataV2Params,
     PostCiMetadataV1PostData,
 )
+from app.models.responses import CiMetadata
 from app.repositories.cloud_storage import delete_ci_schema, store_ci_schema
 from app.repositories.firestore import (
-    query_ci_metadata,
-    query_ci_by_survey_id,
-    delete_ci_metadata,
     db,
+    delete_ci_metadata,
+    get_all_ci_metadata,
     post_ci_metadata,
     query_ci_by_status,
-    get_all_ci_metadata,
+    query_ci_by_survey_id,
+    query_ci_metadata,
 )
 
 logger = logging.getLogger(__name__)
@@ -83,26 +84,34 @@ def get_ci_metadata_v2(query_params: GetCiMetadataV2Params):
     return search_result
 
 
-def delete_ci_v1(query_params: DeleteCiV1Params):
+def delete_ci_v1(query_params: DeleteCiV1Params) -> str | None:
     """
-    Handler for delete /collection_instrument
+    Handler for delete /collection_instrument.
+    If ci with `survey_id` found in firestore db, deletes metadata from firestore and schema from
+    storage bucket
+    If ci with `survey_id` not found, returns `None`
     """
     logger.info("Stepping into delete_ci")
     ci_schemas = query_ci_by_survey_id(query_params.survey_id)
-    with db.transaction() as transaction:
-        # Deleting the metadata from firestore
-        delete_ci_metadata(query_params.survey_id)
-        logger.info("Delete Metadata Success")
-        # Deleting the schema from bucket
-        delete_ci_schema(ci_schemas)
-        logger.info("Delete Schema success")
-        # commit the transaction
-        transaction.commit()
-        logger.debug("Transaction committed")
-    return f"{query_params.survey_id} deleted"
+
+    if ci_schemas:
+        with db.transaction() as transaction:
+            # Deleting the metadata from firestore
+            delete_ci_metadata(query_params.survey_id)
+            logger.info("Delete Metadata Success")
+            # Deleting the schema from bucket
+            delete_ci_schema(ci_schemas)
+            logger.info("Delete Schema success")
+            # commit the transaction
+            transaction.commit()
+            logger.debug("Transaction committed")
+        return f"{query_params.survey_id} deleted"
+    else:
+        # No ci found with the input `survey_id` so return `None`
+        return None
 
 
-def post_ci_metadata_v1(post_data: PostCiMetadataV1PostData):
+def post_ci_metadata_v1(post_data: PostCiMetadataV1PostData) -> CiMetadata | None:
     """
     Handler for POST /collection_instrument
     """
@@ -112,25 +121,25 @@ def post_ci_metadata_v1(post_data: PostCiMetadataV1PostData):
     # Unable to test the transaction rollback in tests
     # start transaction
     with db.transaction() as transaction:
-        #try:
+        try:
             # post metadata to firestore
-        ci_metadata_with_new_version = post_ci_metadata(post_data)
-        logger.debug(f"New CI created: {ci_metadata_with_new_version.__dict__}")
+            ci_metadata_with_new_version = post_ci_metadata(post_data)
+            logger.debug(f"New CI created: {ci_metadata_with_new_version.__dict__}")
 
-        # put the schema in cloud storage where filename is the unique CI id
-        store_ci_schema(ci_metadata_with_new_version.survey_id, post_data.__dict__)
-        logger.info("put_schema success")
+            # put the schema in cloud storage where filename is the unique CI id
+            store_ci_schema(ci_metadata_with_new_version.survey_id, post_data.__dict__)
+            logger.info("put_schema success")
 
-        # commit the transaction
-        transaction.commit()
-        logger.debug("Transaction committed")
+            # commit the transaction
+            transaction.commit()
+            logger.debug("Transaction committed")
 
-        logger.debug(f"post_ci_v1 output data: {ci_metadata_with_new_version.__dict__}")
-        return ci_metadata_with_new_version
-        #except Exception as e:
+            logger.debug(f"post_ci_v1 output data: {ci_metadata_with_new_version.__dict__}")
+            return ci_metadata_with_new_version
+        except Exception as e:
             # if any part of the transaction fails, rollback and delete CI schema from bucket
-           # logger.error(f"post_ci_v1: exception raised - {e}")
-           # logger.error("Rolling back transaction")
-           # transaction.rollback()
-           # logger.info("Deleted schema from bucket")
-            #return None
+            logger.error(f"post_ci_v1: exception raised - {e}")
+            logger.error("Rolling back transaction")
+            transaction.rollback()
+            logger.info("Deleted schema from bucket")
+            return None

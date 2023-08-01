@@ -93,7 +93,17 @@ def post_ci_metadata(post_data: PostCiMetadataV1PostData) -> CiMetadata:
     uid = str(uuid.uuid4())
 
     ci_metadata = CiMetadata(
-        ci_version=new_ci_version, id=uid, published_at=published_at, status=CiStatus.DRAFT.value, **post_data.__dict__
+        ci_version=new_ci_version,
+        data_version=post_data.data_version,
+        form_type=post_data.form_type,
+        id=uid,
+        language=post_data.language,
+        published_at=published_at,
+        schema_version=post_data.schema_version,
+        sds_schema=post_data.sds_schema,
+        status=CiStatus.DRAFT.value,
+        survey_id=post_data.survey_id,
+        title=post_data.title,
     )
 
     # Add new version
