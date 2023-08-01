@@ -68,7 +68,7 @@ components:
       properties:
         detail:
           items:
-            $ref: '#/components/schemas/ValidationError'
+            $ref: "#/components/schemas/ValidationError"
           title: Detail
           type: array
       title: HTTPValidationError
@@ -176,8 +176,8 @@ components:
         loc:
           items:
             anyOf:
-            - type: string
-            - type: integer
+              - type: string
+              - type: integer
           title: Location
           type: array
         msg:
@@ -187,9 +187,9 @@ components:
           title: Error Type
           type: string
       required:
-      - loc
-      - msg
-      - type
+        - loc
+        - msg
+        - type
       title: ValidationError
       type: object
 info:
@@ -200,7 +200,8 @@ openapi: 3.1.0
 paths:
   /v1/ci_metadata:
     get:
-      description: GET method that returns any metadata objects from Firestore that
+      description:
+        GET method that returns any metadata objects from Firestore that
         match the parameters passed.
       operationId: http_get_ci_metadata_v1_v1_ci_metadata_get
       parameters:
@@ -232,7 +233,7 @@ paths:
           title: Survey Id
           type: string
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
@@ -258,7 +259,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: "#/components/schemas/HTTPValidationError"
           description: Validation Error
       summary: Http Get Ci Metadata V1
   /v1/dev/teardown:

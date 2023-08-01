@@ -4,6 +4,7 @@ from app.models.requests import PostCiMetadataV1PostData
 from app.repositories.firestore import (
     post_ci_metadata,
     query_ci_by_survey_id,
+    query_ci_metadata_with_guid,
     query_latest_ci_version,
     query_latest_ci_version_id,
 )
@@ -107,6 +108,21 @@ class TestQueryLatestCiVersionId:
         assert not ci_id
 
 
+class TestQueryCiMetadataWithGuid:
+    """Tests for the `query_ci_metadata_with_guid` firestore method"""
+
+    def test_get_query_ci_metadata_with_guid_returns_ci(self, mock_firestore_collection):
+        mock_firestore_collection.document("123").set(mock_survey_1)
+        mock_firestore_collection.document("456").set(mock_survey_2)
+        ci = query_ci_metadata_with_guid("123")
+        assert ci == mock_survey_1
+
+    def test_get_query_ci_metadata_with_guid_returns_none(self, mock_firestore_collection):
+        mock_firestore_collection.document("123").set(mock_survey_1)
+        ci = query_ci_metadata_with_guid("124")
+        assert not ci
+
+
 class TestPostCiMetadata:
     """Tests for the `post_ci_metadata` firestore method"""
 
@@ -138,3 +154,7 @@ class TestPostCiMetadata:
         )
         # Confirm the where query returns a valid object
         assert ci_metadata_query.__next__ is not None
+
+
+
+

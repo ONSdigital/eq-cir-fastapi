@@ -6,12 +6,16 @@ from app.handlers import (
     delete_ci_v1,
     get_ci_metadata_v1,
     get_ci_metadata_v2,
+    get_ci_schema_v1,
+    get_ci_schema_v2,
     post_ci_metadata_v1,
 )
 from app.models.requests import (
     DeleteCiV1Params,
     GetCiMetadataV1Params,
     GetCiMetadataV2Params,
+    GetCiSchemaV1Params,
+    GetCiSchemaV2Params,
     PostCiMetadataV1PostData,
 )
 from app.models.responses import CiMetadata, CiStatus
@@ -19,6 +23,7 @@ from app.models.responses import CiMetadata, CiStatus
 # Mock data for all tests
 mock_data_version = "1"
 mock_form_type = "t"
+mock_id = "123578"
 mock_language = "em"
 mock_schema_version = "12"
 mock_status = "DRAFT"
@@ -38,6 +43,87 @@ mock_ci_metadata = CiMetadata(
     survey_id=mock_survey_id,
     title="test",
 )
+
+
+@patch("app.handlers.db")
+@patch("app.handlers.delete_ci_metadata")
+@patch("app.handlers.delete_ci_schema")
+@patch("app.handlers.query_ci_by_survey_id")
+class TestDeleteCiV1:
+    """
+    Tests for the `delete_ci_v1` handler
+    Calls to `db.transaction()`, `delete_ci_metadata`, `delete_ci_schema` and
+    `query_ci_by_survey_id` are mocked out for these tests
+    """
+
+    query_params = DeleteCiV1Params(survey_id=mock_survey_id)
+
+    def test_handler_calls_query_ci_by_survey_id(
+        self, mocked_query_ci_by_survey_id, mocked_delete_ci_schema, mocked_delete_ci_metadata, mocked_db
+    ):
+        """
+        `delete_ci_metadata_v1` should call `query_ci_by_survey_id`
+        """
+
+        delete_ci_v1(self.query_params)
+        mocked_query_ci_by_survey_id.assert_called_once()
+
+    def test_handler_calls_query_ci_by_survey_id_with_correct_inputs(
+        self, mocked_query_ci_by_survey_id, mocked_delete_ci_schema, mocked_delete_ci_metadata, mocked_db
+    ):
+        """
+        `delete_ci_metadata_v1` should call `query_ci_by_survey_id` with the correct `survey_id` input
+        """
+
+        delete_ci_v1(self.query_params)
+        mocked_query_ci_by_survey_id.assert_called_with(self.query_params.survey_id)
+
+    def test_handler_returns_none_if_ci_not_found(
+        self, mocked_query_ci_by_survey_id, mocked_delete_ci_schema, mocked_delete_ci_metadata, mocked_db
+    ):
+        """
+        `delete_ci_metadata_v1` should return `None` if no valid ci are found when calling
+        `query_ci_by_survey_id`
+        """
+        # Configure `query_ci_by_survey_id` to return an empty list showing no ci have been found
+        mocked_query_ci_by_survey_id.return_value = []
+
+        return_value = delete_ci_v1(self.query_params)
+
+        assert return_value is None
+
+    def test_handler_calls_delete_ci_metadata_delete_ci_schema(
+        self, mocked_query_ci_by_survey_id, mocked_delete_ci_schema, mocked_delete_ci_metadata, mocked_db
+    ):
+        """
+        `get_ci_metadata_v1` should call `delete_ci_metadata` and `delete_ci_schema` to delete ci
+        metadata and schema if valid ci are found by `query_ci_by_survey_id`
+        """
+        # Configure `query_ci_by_survey_id` to return a list of valid ci
+        mocked_query_ci_by_survey_id.return_value = [mock_ci_metadata]
+
+        delete_ci_v1(self.query_params)
+        # Confirm `delete_ci_metadata` and `delete_ci_schema` are called
+        mocked_db.transaction.assert_called_once()
+        mocked_delete_ci_metadata.assert_called_once()
+        mocked_delete_ci_schema.assert_called_once()
+
+    def test_handler_calls_delete_ci_metadata_delete_ci_schema_with_correct_inputs(
+        self, mocked_query_ci_by_survey_id, mocked_delete_ci_schema, mocked_delete_ci_metadata, mocked_db
+    ):
+        """
+        `get_ci_metadata_v1` should call `delete_ci_metadata` and `delete_ci_schema` to delete ci
+        metadata and schema if valid ci are found by `query_ci_by_survey_id`
+         * `delete_ci_metadata` should be called with the valid `survey_id`
+         * `delete_ci_schema` should be called with a list of valid ci
+        """
+        # Configure `query_ci_by_survey_id` to return a list of valid ci
+        mocked_query_ci_by_survey_id.return_value = [mock_ci_metadata]
+
+        delete_ci_v1(self.query_params)
+        # Confirm `delete_ci_metadata` and `delete_ci_schema` are called with the correct inputs
+        mocked_delete_ci_metadata.assert_called_with(self.query_params.survey_id)
+        mocked_delete_ci_schema.assert_called_with([mock_ci_metadata])
 
 
 @patch("app.handlers.query_ci_metadata")
@@ -191,85 +277,109 @@ class TestGetCiMetadataV2:
         assert items == self.mock_ci_list
 
 
-@patch("app.handlers.db")
-@patch("app.handlers.delete_ci_metadata")
-@patch("app.handlers.delete_ci_schema")
-@patch("app.handlers.query_ci_by_survey_id")
-class TestDeleteCiV1:
+
+@patch("app.handlers.retrieve_ci_schema")
+@patch("app.handlers.query_latest_ci_version_id")
+class TestGetCISchemaV1:
     """
-    Tests for the `delete_ci_v1` handler
-    Calls to `db.transaction()`, `delete_ci_metadata`, `delete_ci_schema` and
-    `query_ci_by_survey_id` are mocked out for these tests
+    Tests for the `get_ci_schema_v1` handler
+    Calls to `query_latest_ci_version_id` and `retrieve_ci_schema` are mocked out for these tests
     """
 
-    query_params = DeleteCiV1Params(survey_id=mock_survey_id)
+    mock_ci_schema = {
+        "data_version": "1",
+        "form_type": mock_form_type,
+        "language": mock_language,
+        "schema_version": "12",
+        "survey_id": mock_survey_id,
+        "title": "test",
+    }
 
-    def test_handler_calls_query_ci_by_survey_id(
-        self, mocked_query_ci_by_survey_id, mocked_delete_ci_schema, mocked_delete_ci_metadata, mocked_db
+    query_params = GetCiSchemaV1Params(form_type=mock_form_type, language=mock_language, survey_id=mock_survey_id)
+
+    def test_handler_calls_query_latest_ci_version_id(self, mocked_query_latest_ci_version_id, mocked_retrieve_ci_schema):
+        """
+        `get_ci_schema_v1` should call `query_latest_ci_version_id` to query the database for ci
+        metadata and return the ci id
+        """
+
+        get_ci_schema_v1(self.query_params)
+        mocked_query_latest_ci_version_id.assert_called_once()
+
+
+    def test_handler_calls_query_latest_ci_version_id_with_correct_inputs(
+        self, mocked_query_latest_ci_version_id, mocked_retrieve_ci_schema
     ):
         """
-        `delete_ci_metadata_v1` should call `query_ci_by_survey_id`
+        `get_ci_schema_v1` should call `query_latest_ci_version_id` to retrive the latest ci id
+        `query_latest_ci_version_id` should be called with the correct, `form_type`, `language` and
+        `survey_id` inputs
         """
 
-        delete_ci_v1(self.query_params)
-        mocked_query_ci_by_survey_id.assert_called_once()
+        get_ci_schema_v1(self.query_params)
+        mocked_query_latest_ci_version_id.assert_called_with(self.query_params.survey_id, self.query_params.form_type, self.query_params.language)
 
-    def test_handler_calls_query_ci_by_survey_id_with_correct_inputs(
-        self, mocked_query_ci_by_survey_id, mocked_delete_ci_schema, mocked_delete_ci_metadata, mocked_db
+    def test_handler_returns_output_of_retrieve_ci_schema(self, mocked_query_latest_ci_version_id, mocked_retrieve_ci_schema):
+        """
+        `get_ci_schema_v1` should return the output of `retrieve_ci_schema`
+        """
+        # Update mocked `query_latest_ci_version_id` to return valid ci id
+        mocked_query_latest_ci_version_id.return_value = mock_id
+        mocked_retrieve_ci_schema.return_value = self.mock_ci_schema
+        metadata_id, ci_schema = get_ci_schema_v1(self.query_params)
+        assert ci_schema == self.mock_ci_schema
+        assert metadata_id == mock_id
+
+
+@patch("app.handlers.retrieve_ci_schema")
+@patch("app.handlers.query_ci_metadata_with_guid")
+class TestGetCISchemaV2:
+    """
+    Tests for the `get_ci_schema_v2` handler
+    Calls to `query_ci_metadata_with_guid` and `retrieve_ci_schema` are mocked out for these tests
+    """
+
+    mock_ci_schema = {
+        "data_version": "1",
+        "form_type": mock_form_type,
+        "language": mock_language,
+        "schema_version": "12",
+        "survey_id": mock_survey_id,
+        "title": "test",
+    }
+
+    query_params = GetCiSchemaV2Params(id=mock_id)
+
+    def test_handler_calls_query_ci_metadata_with_guid(self, mocked_query_ci_metadata_with_guid, mocked_retrieve_ci_schema):
+        """
+        `get_ci_schema_v2` should call `query_ci_metadata_with_guid` to query the database for ci
+        metadata
+        """
+
+        get_ci_schema_v2(self.query_params)
+        mocked_query_ci_metadata_with_guid.assert_called_once()
+
+    def test_handler_calls_query_ci_metadata_with_guid_with_correct_inputs(
+        self, mocked_query_ci_metadata_with_guid, mocked_retrieve_ci_schema
     ):
         """
-        `delete_ci_metadata_v1` should call `query_ci_by_survey_id` with the correct `survey_id` input
+        `get_ci_metadata_v2` should call `query_ci_metadata_with_guid` to query the database for ci metadata
+        `query_ci_metadata_with_guid` should be called with the correct `id` input
         """
 
-        delete_ci_v1(self.query_params)
-        mocked_query_ci_by_survey_id.assert_called_with(self.query_params.survey_id)
+        get_ci_schema_v2(self.query_params)
+        mocked_query_ci_metadata_with_guid.assert_called_with(mock_id)
 
-    def test_handler_returns_none_if_ci_not_found(
-        self, mocked_query_ci_by_survey_id, mocked_delete_ci_schema, mocked_delete_ci_metadata, mocked_db
-    ):
+    def test_handler_returns_output_of_retrieve_ci_schema(self, mocked_query_ci_metadata_with_guid, mocked_retrieve_ci_schema):
         """
-        `delete_ci_metadata_v1` should return `None` if no valid ci are found when calling
-        `query_ci_by_survey_id`
+        `get_ci_schema_v2` should return the output of `retrieve_ci_schema`
         """
-        # Configure `query_ci_by_survey_id` to return an empty list showing no ci have been found
-        mocked_query_ci_by_survey_id.return_value = []
-
-        return_value = delete_ci_v1(self.query_params)
-
-        assert return_value is None
-
-    def test_handler_calls_delete_ci_metadata_delete_ci_schema(
-        self, mocked_query_ci_by_survey_id, mocked_delete_ci_schema, mocked_delete_ci_metadata, mocked_db
-    ):
-        """
-        `get_ci_metadata_v1` should call `delete_ci_metadata` and `delete_ci_schema` to delete ci
-        metadata and schema if valid ci are found by `query_ci_by_survey_id`
-        """
-        # Configure `query_ci_by_survey_id` to return a list of valid ci
-        mocked_query_ci_by_survey_id.return_value = [mock_ci_metadata]
-
-        delete_ci_v1(self.query_params)
-        # Confirm `delete_ci_metadata` and `delete_ci_schema` are called
-        mocked_db.transaction.assert_called_once()
-        mocked_delete_ci_metadata.assert_called_once()
-        mocked_delete_ci_schema.assert_called_once()
-
-    def test_handler_calls_delete_ci_metadata_delete_ci_schema_with_correct_inputs(
-        self, mocked_query_ci_by_survey_id, mocked_delete_ci_schema, mocked_delete_ci_metadata, mocked_db
-    ):
-        """
-        `get_ci_metadata_v1` should call `delete_ci_metadata` and `delete_ci_schema` to delete ci
-        metadata and schema if valid ci are found by `query_ci_by_survey_id`
-         * `delete_ci_metadata` should be called with the valid `survey_id`
-         * `delete_ci_schema` should be called with a list of valid ci
-        """
-        # Configure `query_ci_by_survey_id` to return a list of valid ci
-        mocked_query_ci_by_survey_id.return_value = [mock_ci_metadata]
-
-        delete_ci_v1(self.query_params)
-        # Confirm `delete_ci_metadata` and `delete_ci_schema` are called with the correct inputs
-        mocked_delete_ci_metadata.assert_called_with(self.query_params.survey_id)
-        mocked_delete_ci_schema.assert_called_with([mock_ci_metadata])
+        # Update mocked `query_ci_metadata` to return valid ci metadata
+        mocked_query_ci_metadata_with_guid.return_value = mock_ci_metadata
+        mocked_retrieve_ci_schema.return_value = self.mock_ci_schema
+        metadata, schema = get_ci_schema_v2(self.query_params)
+        assert metadata == self.mock_ci_schema
+        assert schema == self.mock_ci_schema
 
 
 @patch("app.handlers.db")
