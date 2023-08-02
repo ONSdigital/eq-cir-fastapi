@@ -1,3 +1,5 @@
+import json
+
 from google.cloud.pubsub_v1 import PublisherClient
 
 from app.config import Settings, logging
@@ -34,7 +36,7 @@ class Publisher:
             self.create_topic()
 
         # Convert the event object to a JSON string
-        data_str = event_msg.json()
+        data_str = json.dumps(event_msg.__dict__)
 
         # Data must be a bytestring
         data = data_str.encode("utf-8")
