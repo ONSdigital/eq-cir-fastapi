@@ -15,8 +15,7 @@ from app.models.requests import (
     GetCiMetadataV2Params,
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
-    Status,
-    UpdateStatusV2Params,
+    PutStatusV2Params,
 )
 from app.models.responses import BadRequest, CiMetadata
 
@@ -240,19 +239,19 @@ async def http_get_ci_schema_v2(query_params: GetCiSchemaV2Params = Depends()):
         },
     },
 )
-async def http_put_status_v1(query_params: UpdateStatusV2Params = Depends()):
+async def http_put_status_v1(query_params: PutStatusV2Params = Depends()):
     """
     PUT method that updates the CI based on the GUID passed.
     """
-    update_status = put_status_v1(query_params)
-    if not update_status:
+    ci_metadata, updated_status = put_status_v1(query_params)
+    if ci_metadata:
+        if updated_status:
+            message = f"CI status has been changed to published for {query_params.id}"
+        else:
+            logger.info("CI already set to PUBLISHED")
+            message = f"CI status has already been changed to Published for {query_params.id}"
+
+        return JSONResponse(status_code=status.HTTP_200_OK, content=message)
+    else:
         response_content = BadRequest(message=f"No CI metadata found for: {query_params.id}")
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)
-    if update_status is Status.PUBLISHED.value:
-        logger.info("CI already set to PUBLISHED")
-        message = f"CI status has already been changed to Published for {query_params.id}"
-        return JSONResponse(status_code=status.HTTP_200_OK, content=message)
-    if update_status is Status.DRAFT.value:
-        logger.info("update_status success")
-        message = f"CI status has been changed to published for {query_params.id}"
-        return JSONResponse(status_code=status.HTTP_200_OK, content=message)

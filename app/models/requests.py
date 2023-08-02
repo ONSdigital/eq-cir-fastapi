@@ -62,7 +62,7 @@ class GetCiSchemaV2Params:
 
 
 @dataclass
-class UpdateStatusV2Params:
+class PutStatusV2Params:
     """
     Model for `put_status_v1` request params
     """
