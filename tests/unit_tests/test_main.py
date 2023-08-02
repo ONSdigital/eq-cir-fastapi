@@ -10,7 +10,7 @@ from app.models.requests import (
     GetCiMetadataV2Params,
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
-    PutStatusV2Params,
+    PutStatusV1Params,
 )
 from app.models.responses import BadRequest
 
@@ -357,7 +357,7 @@ class TestPutStatusV1:
     }
 
     base_url = "/v1/update_status/"
-    query_params = PutStatusV2Params(id=mock_id)
+    query_params = PutStatusV1Params(id=mock_id)
     url = f"{base_url}?{urlencode(query_params.__dict__)}"
 
     def test_endpoint_returns_200_if_Status_Updated(self, mocked_update_status_v1):

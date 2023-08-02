@@ -15,7 +15,7 @@ from app.models.requests import (
     GetCiMetadataV2Params,
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
-    PutStatusV2Params,
+    PutStatusV1Params,
 )
 from app.models.responses import BadRequest, CiMetadata
 
@@ -239,7 +239,7 @@ async def http_get_ci_schema_v2(query_params: GetCiSchemaV2Params = Depends()):
         },
     },
 )
-async def http_put_status_v1(query_params: PutStatusV2Params = Depends()):
+async def http_put_status_v1(query_params: PutStatusV1Params = Depends()):
     """
     PUT method that updates the CI based on the GUID passed.
     """

@@ -4,7 +4,7 @@ from app.models.requests import (
     GetCiMetadataV2Params,
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
-    PutStatusV2Params,
+    PutStatusV1Params,
     Status,
 )
 from app.repositories.cloud_storage import retrieve_ci_schema
@@ -116,10 +116,10 @@ def get_ci_schema_v2(query_params: GetCiSchemaV2Params):
     return ci_metadata, ci_schema
 
 
-def put_status_v1(query_params: PutStatusV2Params):
+def put_status_v1(query_params: PutStatusV1Params):
     """
     HANDLER for UPDATE STATUS OF Collection Instrument
-    :param request : PutStatusV2Params
+    :param request : PutStatusV1Params
     :return Updated CI
     """
     logger.info("Stepping into put_status_v1")

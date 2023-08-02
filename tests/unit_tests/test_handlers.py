@@ -12,7 +12,7 @@ from app.models.requests import (
     GetCiMetadataV2Params,
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
-    PutStatusV2Params,
+    PutStatusV1Params,
     Status,
 )
 
@@ -295,7 +295,7 @@ class TestGetCISchemaV2:
 
 @patch("app.handlers.update_ci_metadata_status_to_published")
 @patch("app.handlers.query_ci_metadata_with_guid")
-class TestUpdateStatusV2:
+class TestPutStatusV1:
     """Tests for the `put_status_v1` handler"""
 
     mock_form_type = "t"
@@ -312,7 +312,7 @@ class TestUpdateStatusV2:
         "title": "test",
     }
 
-    query_params = PutStatusV2Params(id=mock_id)
+    query_params = PutStatusV1Params(id=mock_id)
 
     def test_handler_calls_query_ci_with_guid_and_update_ci(
         self, mocked_query_ci_metadata_with_guid, mocked_update_ci_metadata_status_to_published
