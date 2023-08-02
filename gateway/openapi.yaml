@@ -218,3 +218,35 @@ paths:
           description: Internal error. This is triggered when something an unexpected error occurs on the server side.
           schema:
             $ref: "#/definitions/internal_error_response"
+  /v1/update_status:
+    put:
+      description: PUT method that sets the status of a CI's metadata in Firestore to 'PUBLISH'.
+      operationId: http-put-status-v1
+      parameters:
+        - in: query
+          name: guid
+          type: string
+          required: true
+          x-example: "428ae4d1-8e7f-4a9d-8bef-05a266bf81e7"
+          description: The global unique ID of the CI Metadata to be updated to 'PUBLISH'.
+      responses:
+        200:
+          description: Successfully set CI status to PUBLISHED. This is illustrated by the response returning the GUID of the CI metadata that has been updated.
+          examples:
+            application/json: "CI status has been changed to Published for a048b0c4-5bcc-4455-8817-3259acd5f667."
+        400:
+          description: Bad request. This is triggered by when a bad request body is provided. The response will inform the user what required parameter they are missing from the request.
+          schema:
+            $ref: "#/definitions/400_error_response"
+        404:
+          description: Bad request. This is triggered when there is no CI data that matches the request provided.
+          schema:
+            $ref: "#/definitions/404_error_response"
+          examples:
+            application/json:
+              status: "error"
+              message: "No CI metadata found for {guid}"
+        500:
+          description: Internal error. This is triggered when something an unexpected error occurs on the server side.
+          schema:
+            $ref: "#/definitions/internal_error_response"
