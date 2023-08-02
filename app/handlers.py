@@ -8,7 +8,11 @@ from app.models.requests import (
     PostCiMetadataV1PostData,
 )
 from app.models.responses import CiMetadata
-from app.repositories.cloud_storage import delete_ci_schema, retrieve_ci_schema, store_ci_schema
+from app.repositories.cloud_storage import (
+    delete_ci_schema,
+    retrieve_ci_schema,
+    store_ci_schema,
+)
 from app.repositories.firestore import (
     db,
     delete_ci_metadata,

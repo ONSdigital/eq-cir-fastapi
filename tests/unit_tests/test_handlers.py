@@ -277,7 +277,6 @@ class TestGetCiMetadataV2:
         assert items == self.mock_ci_list
 
 
-
 @patch("app.handlers.retrieve_ci_schema")
 @patch("app.handlers.query_latest_ci_version_id")
 class TestGetCISchemaV1:
@@ -306,7 +305,6 @@ class TestGetCISchemaV1:
         get_ci_schema_v1(self.query_params)
         mocked_query_latest_ci_version_id.assert_called_once()
 
-
     def test_handler_calls_query_latest_ci_version_id_with_correct_inputs(
         self, mocked_query_latest_ci_version_id, mocked_retrieve_ci_schema
     ):
@@ -317,7 +315,9 @@ class TestGetCISchemaV1:
         """
 
         get_ci_schema_v1(self.query_params)
-        mocked_query_latest_ci_version_id.assert_called_with(self.query_params.survey_id, self.query_params.form_type, self.query_params.language)
+        mocked_query_latest_ci_version_id.assert_called_with(
+            self.query_params.survey_id, self.query_params.form_type, self.query_params.language
+        )
 
     def test_handler_returns_output_of_retrieve_ci_schema(self, mocked_query_latest_ci_version_id, mocked_retrieve_ci_schema):
         """
@@ -375,10 +375,10 @@ class TestGetCISchemaV2:
         `get_ci_schema_v2` should return the output of `retrieve_ci_schema`
         """
         # Update mocked `query_ci_metadata` to return valid ci metadata
-        mocked_query_ci_metadata_with_guid.return_value = mock_ci_metadata
+        mocked_query_ci_metadata_with_guid.return_value = mock_ci_metadata.__dict__
         mocked_retrieve_ci_schema.return_value = self.mock_ci_schema
         metadata, schema = get_ci_schema_v2(self.query_params)
-        assert metadata == self.mock_ci_schema
+        assert metadata == mock_ci_metadata.__dict__
         assert schema == self.mock_ci_schema
 
 

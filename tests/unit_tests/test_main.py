@@ -11,12 +11,11 @@ from app.models.requests import (
     DeleteCiV1Params,
     GetCiMetadataV1Params,
     GetCiMetadataV2Params,
-    PostCiMetadataV1PostData,
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
+    PostCiMetadataV1PostData,
 )
 from app.models.responses import BadRequest, CiMetadata, CiStatus
-from app.models.responses import BadRequest
 
 client = TestClient(app)
 

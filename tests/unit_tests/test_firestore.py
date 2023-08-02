@@ -154,7 +154,3 @@ class TestPostCiMetadata:
         )
         # Confirm the where query returns a valid object
         assert ci_metadata_query.__next__ is not None
-
-
-
-

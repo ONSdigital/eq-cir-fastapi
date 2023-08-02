@@ -7,17 +7,17 @@ from app.handlers import (
     delete_ci_v1,
     get_ci_metadata_v1,
     get_ci_metadata_v2,
-    post_ci_metadata_v1,
     get_ci_schema_v1,
     get_ci_schema_v2,
+    post_ci_metadata_v1,
 )
 from app.models.requests import (
     DeleteCiV1Params,
     GetCiMetadataV1Params,
     GetCiMetadataV2Params,
-    PostCiMetadataV1PostData,
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
+    PostCiMetadataV1PostData,
 )
 from app.models.responses import BadRequest, CiMetadata
 
@@ -216,7 +216,6 @@ async def http_get_ci_schema_v2(query_params: GetCiSchemaV2Params = Depends()):
     )
     response_content = BadRequest(message=message)
     return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)
-
 
 
 @app.post(
