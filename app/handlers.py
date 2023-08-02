@@ -1,4 +1,6 @@
 from app.config import logging
+from app.events.publisher import Publisher
+from app.models.events import PostCIEvent
 from app.models.requests import (
     DeleteCiV1Params,
     GetCiMetadataV1Params,
@@ -157,6 +159,7 @@ def post_ci_metadata_v1(post_data: PostCiMetadataV1PostData) -> CiMetadata | Non
     """
 
     logger.debug(f"post_ci_v1 data received: {post_data.__dict__}")
+    publisher = Publisher()
 
     # Unable to test the transaction rollback in tests
     # start transaction
@@ -169,6 +172,22 @@ def post_ci_metadata_v1(post_data: PostCiMetadataV1PostData) -> CiMetadata | Non
             # put the schema in cloud storage where filename is the unique CI id
             store_ci_schema(ci_metadata_with_new_version.survey_id, post_data.__dict__)
             logger.info("put_schema success")
+
+            # create event message
+            event_message = PostCIEvent(
+                ci_version=ci_metadata_with_new_version.ci_version,
+                data_version=ci_metadata_with_new_version.data_version,
+                form_type=ci_metadata_with_new_version.form_type,
+                id=ci_metadata_with_new_version.id,
+                language=ci_metadata_with_new_version.language,
+                published_at=ci_metadata_with_new_version.published_at,
+                schema_version=ci_metadata_with_new_version.schema_version,
+                status=ci_metadata_with_new_version.status,
+                sds_schema=ci_metadata_with_new_version.sds_schema,
+                survey_id=ci_metadata_with_new_version.survey_id,
+                title=ci_metadata_with_new_version.title,
+            )
+            publisher.publish_message(event_message)
 
             # commit the transaction
             transaction.commit()
