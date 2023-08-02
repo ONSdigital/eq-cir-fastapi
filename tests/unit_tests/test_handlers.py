@@ -442,7 +442,7 @@ class TestPostCiMetadataV1:
         mocked_post_ci_metadata.return_value = mock_ci_metadata
 
         post_ci_metadata_v1(self.post_data)
-        mocked_store_ci_schema.assert_called_with(mock_ci_metadata.survey_id, self.post_data.__dict__)
+        mocked_store_ci_schema.assert_called_with(mock_ci_metadata.id, self.post_data.__dict__)
 
     def test_handler_calls_publish_message(self, mocked_store_ci_schema, mocked_publisher, mocked_post_ci_metadata, mocked_db):
         """

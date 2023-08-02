@@ -170,7 +170,7 @@ def post_ci_metadata_v1(post_data: PostCiMetadataV1PostData) -> CiMetadata | Non
             logger.debug(f"New CI created: {ci_metadata_with_new_version.__dict__}")
 
             # put the schema in cloud storage where filename is the unique CI id
-            store_ci_schema(ci_metadata_with_new_version.survey_id, post_data.__dict__)
+            store_ci_schema(ci_metadata_with_new_version.id, post_data.__dict__)
             logger.info("put_schema success")
 
             # create event message
