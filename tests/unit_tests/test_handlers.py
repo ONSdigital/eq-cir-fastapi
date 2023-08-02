@@ -10,6 +10,7 @@ from app.handlers import (
     get_ci_schema_v2,
     post_ci_metadata_v1,
 )
+from app.models.events import PostCIEvent
 from app.models.requests import (
     DeleteCiV1Params,
     GetCiMetadataV1Params,
@@ -384,12 +385,13 @@ class TestGetCISchemaV2:
 
 @patch("app.handlers.db")
 @patch("app.handlers.post_ci_metadata")
+@patch("app.handlers.Publisher")
 @patch("app.handlers.store_ci_schema")
-class TestHttpPostCiMetadataV1:
+class TestPostCiMetadataV1:
     """
     Tests for the `post_ci_metadata_v1` handler
-    Calls to `db.transaction()`, `post_ci_metadata` and `store_ci_schema` are mocked out for these
-    tests
+    Calls to `db.transaction()`, `post_ci_metadata`, `Publisher` and `store_ci_schema` are mocked
+    out for these tests
     """
 
     post_data = PostCiMetadataV1PostData(
@@ -401,7 +403,9 @@ class TestHttpPostCiMetadataV1:
         data_version=mock_data_version,
     )
 
-    def test_handler_calls_post_ci_metadata(self, mocked_store_ci_schema, mocked_post_ci_metadata, mocked_db):
+    def test_handler_calls_post_ci_metadata(
+        self, mocked_store_ci_schema, mocked_publisher, mocked_post_ci_metadata, mocked_db
+    ):
         """
         `delete_ci_metadata_v1` should call `post_ci_metadata` to write metadata to the firestore
         db
@@ -410,7 +414,7 @@ class TestHttpPostCiMetadataV1:
         mocked_post_ci_metadata.assert_called_once()
 
     def test_handler_calls_post_ci_metadata_with_correct_inputs(
-        self, mocked_store_ci_schema, mocked_post_ci_metadata, mocked_db
+        self, mocked_store_ci_schema, mocked_publisher, mocked_post_ci_metadata, mocked_db
     ):
         """
         `delete_ci_metadata_v1` should call `post_ci_metadata` to write metadata to the firestore
@@ -420,7 +424,7 @@ class TestHttpPostCiMetadataV1:
         post_ci_metadata_v1(self.post_data)
         mocked_post_ci_metadata.assert_called_with(self.post_data)
 
-    def test_handler_calls_store_ci_schema(self, mocked_store_ci_schema, mocked_post_ci_metadata, mocked_db):
+    def test_handler_calls_store_ci_schema(self, mocked_store_ci_schema, mocked_publisher, mocked_post_ci_metadata, mocked_db):
         """
         `delete_ci_metadata_v1` should call `store_ci_schema` to write metadata to the firestore db
         """
@@ -428,7 +432,7 @@ class TestHttpPostCiMetadataV1:
         mocked_store_ci_schema.assert_called_once()
 
     def test_handler_calls_store_ci_schema_with_correct_inputs(
-        self, mocked_store_ci_schema, mocked_post_ci_metadata, mocked_db
+        self, mocked_store_ci_schema, mocked_publisher, mocked_post_ci_metadata, mocked_db
     ):
         """
         `delete_ci_metadata_v1` should call `mocked_post_ci_metadata` to write metadata to the
@@ -440,8 +444,47 @@ class TestHttpPostCiMetadataV1:
         post_ci_metadata_v1(self.post_data)
         mocked_store_ci_schema.assert_called_with(mock_ci_metadata.survey_id, self.post_data.__dict__)
 
+    def test_handler_calls_publish_message(self, mocked_store_ci_schema, mocked_publisher, mocked_post_ci_metadata, mocked_db):
+        """
+        `delete_ci_metadata_v1` should call `publisher.publish_message()` to create an event
+        message on Google pub/sub
+        """
+        # Configure mocked `post_ci_metadata` to return the the new metadata model
+        mocked_post_ci_metadata.return_value = mock_ci_metadata
+
+        post_ci_metadata_v1(self.post_data)
+        mocked_publisher.return_value.publish_message.assert_called_once()
+
+    def test_handler_calls_publish_message_with_correct_inputs(
+        self, mocked_store_ci_schema, mocked_publisher, mocked_post_ci_metadata, mocked_db
+    ):
+        """
+        `delete_ci_metadata_v1` should call `publisher.publish_message()` to create an event
+        message on Google pub/sub. It should be called with an input `PostCIEvent` model
+        """
+        # Configure mocked `post_ci_metadata` to return the the new metadata model
+        mocked_post_ci_metadata.return_value = mock_ci_metadata
+
+        # Create the expected input model using `PostCIEvent` and mock metadata
+        expected_input_model = PostCIEvent(
+            ci_version=mock_ci_metadata.ci_version,
+            data_version=mock_ci_metadata.data_version,
+            form_type=mock_ci_metadata.form_type,
+            id=mock_ci_metadata.id,
+            language=mock_ci_metadata.language,
+            published_at=mock_ci_metadata.published_at,
+            schema_version=mock_ci_metadata.schema_version,
+            status=mock_ci_metadata.status,
+            survey_id=mock_ci_metadata.survey_id,
+            title=mock_ci_metadata.title,
+            sds_schema=mock_ci_metadata.sds_schema,
+        )
+
+        post_ci_metadata_v1(self.post_data)
+        mocked_publisher.return_value.publish_message.assert_called_with(expected_input_model)
+
     def test_handler_returns_new_ci_metadata_if_creation_successful(
-        self, mocked_store_ci_schema, mocked_post_ci_metadata, mocked_db
+        self, mocked_store_ci_schema, mocked_publisher, mocked_post_ci_metadata, mocked_db
     ):
         """
         `delete_ci_metadata_v1` should return newly created metadata if creation of ci metadata
@@ -453,7 +496,9 @@ class TestHttpPostCiMetadataV1:
         return_value = post_ci_metadata_v1(self.post_data)
         assert return_value == mock_ci_metadata
 
-    def test_handler_returns_none_if_exception_raised(self, mocked_store_ci_schema, mocked_post_ci_metadata, mocked_db):
+    def test_handler_returns_none_if_exception_raised(
+        self, mocked_store_ci_schema, mocked_publisher, mocked_post_ci_metadata, mocked_db
+    ):
         """
         `delete_ci_metadata_v1` should return `None` if exception is raised at any point during
         the creation of metadata or schema to firestore and cloud storage

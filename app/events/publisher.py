@@ -3,7 +3,6 @@ from google.cloud.pubsub_v1 import PublisherClient
 from app.config import Settings, logging
 from app.models.events import PostCIEvent
 
-
 logger = logging.getLogger(__name__)
 settings = Settings()
 
