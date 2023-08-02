@@ -356,9 +356,8 @@ class TestUpdateStatusV2:
         """
         ci_metadata = {"status": Status.DRAFT.value}
         mocked_query_ci_metadata_with_guid.return_value = ci_metadata
-        expected_metadata, status = put_status_v1(self.query_params)
-        assert expected_metadata == ci_metadata
-        assert status is True
+        status = put_status_v1(self.query_params)
+        assert status is Status.DRAFT.value
 
     def test_handler_returns_right_output_of_query_ci_with_guid_and_update_ci_if_status_PUBLISHED(
         self, mocked_query_ci_metadata_with_guid, mocked_update_ci_metadata_status_to_published
@@ -370,6 +369,5 @@ class TestUpdateStatusV2:
         """
         ci_metadata = {"status": Status.PUBLISHED.value}
         mocked_query_ci_metadata_with_guid.return_value = ci_metadata
-        expected_metadata, status = put_status_v1(self.query_params)
-        assert expected_metadata == ci_metadata
-        assert status is False
+        status = put_status_v1(self.query_params)
+        assert status is Status.PUBLISHED.value

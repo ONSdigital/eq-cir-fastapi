@@ -367,8 +367,7 @@ class TestUpdateStatusV1:
         """
         # mocked `get_ci_schema_v2` to return valid ci metadata
 
-        self.mock_ci["status"] = Status.PUBLISHED.value
-        mocked_update_status_v1.return_value = (self.mock_ci, True)
+        mocked_update_status_v1.return_value = Status.DRAFT.value
         response = client.put(self.url)
         assert response.status_code == status.HTTP_200_OK
         expected_message = f"CI status has been changed to published for {self.query_params.id}"
@@ -379,9 +378,7 @@ class TestUpdateStatusV1:
         Endpoint should return `HTTP_200_OK` if status is already updated to published
         """
         # mocked `get_ci_schema_v2` to return valid ci metadata
-
-        self.mock_ci["status"] = Status.PUBLISHED.value
-        mocked_update_status_v1.return_value = (self.mock_ci, False)
+        mocked_update_status_v1.return_value = Status.PUBLISHED.value
         response = client.put(self.url)
         assert response.status_code == status.HTTP_200_OK
         expected_message = f"CI status has already been changed to Published for {self.query_params.id}"
@@ -391,7 +388,7 @@ class TestUpdateStatusV1:
         """
         Endpoint should return BadRequest if metadata is not found
         """
-        mocked_update_status_v1.return_value = (None, None)
+        mocked_update_status_v1.return_value = None
         expected_response = BadRequest(message=f"No CI metadata found for: {self.mock_id}")
         response = client.put(self.url)
         assert response.json() == expected_response.__dict__
@@ -405,10 +402,10 @@ class TestUpdateStatusV1:
         response = client.put(self.base_url)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    def test_endpoint_returns_Exceptiom_if_query_parameters_invalid(self, mocked_update_status_v1):
+    def test_endpoint_returns_Exception_if_query_parameters_invalid(self, mocked_update_status_v1):
         """
         Endpoint should thrown an HTTP_400_BAD_REQUEST if invalid status parameter is present in the metadata
         """
-        mocked_update_status_v1.return_value = (self.mock_ci, None)
+        mocked_update_status_v1.return_value = "UNKOWN"
         response = client.put(self.base_url)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
