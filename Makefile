@@ -2,7 +2,7 @@ audit:
 	python -m pip_audit
 
 generate-spec:
-	python scripts/generate_openapi.py
+	python -m scripts.generate_openapi
 
 lint:
 	python -m black --line-length 127 .
