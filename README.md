@@ -60,11 +60,12 @@ The terraform script used to provision your project in the step above will set u
 Once you have a Google Cloud project including a Load Balancer and Identity Aware Proxy (IAP) configuration, we can build and push our container to the cloud using the `./scripts/deploy_to_dev_project.sh` script. This will build and push the Docker container and create an auth key required for integration testing.
 To deploy cloud functions for testing, follow the instructions below:
 
-1. Open a terminal at the project root
-2. Authenticate with Google Cloud
+1. Start your Docker container manager (Docker Desktop or Rancher Desktop)
+2. Open a terminal at the project root
+3. Authenticate with Google Cloud
 
     ```$ gcloud auth application-default login```
-3. Execute the script and follow the instructions. Note that this could take up to 5 minutes!
+4. Execute the script and follow the instructions. Note that this could take up to 5 minutes!
 
     ```$ source ./scripts/deploy_to_dev_project.sh```
 
