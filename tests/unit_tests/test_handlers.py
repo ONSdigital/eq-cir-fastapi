@@ -27,26 +27,36 @@ from app.models.responses import CiMetadata, CiStatus
 # Mock data for all tests
 mock_data_version = "1"
 mock_form_type = "t"
-mock_id = "123578"
+mock_id = str(uuid.uuid4())
 mock_language = "em"
 mock_schema_version = "12"
+mock_sds_schema = ""
 mock_status = "DRAFT"
 mock_survey_id = "12124141"
 mock_title = "test"
 
 mock_ci_metadata = CiMetadata(
     ci_version=1,
-    data_version="1",
+    data_version=mock_data_version,
     form_type=mock_form_type,
-    id=str(uuid.uuid4()),
+    id=mock_id,
     language=mock_language,
     published_at=datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
     schema_version=mock_schema_version,
-    sds_schema="",
+    sds_schema=mock_sds_schema,
     status=CiStatus.DRAFT.value,
     survey_id=mock_survey_id,
-    title="test",
+    title=mock_title,
 )
+
+mock_ci_schema = {
+    "data_version": mock_data_version,
+    "form_type": mock_form_type,
+    "language": mock_language,
+    "schema_version": mock_schema_version,
+    "survey_id": mock_survey_id,
+    "title": mock_title,
+}
 
 
 @patch("app.handlers.db")
@@ -289,15 +299,6 @@ class TestGetCISchemaV1:
     Calls to `query_latest_ci_version_id` and `retrieve_ci_schema` are mocked out for these tests
     """
 
-    mock_ci_schema = {
-        "data_version": "1",
-        "form_type": mock_form_type,
-        "language": mock_language,
-        "schema_version": "12",
-        "survey_id": mock_survey_id,
-        "title": "test",
-    }
-
     query_params = GetCiSchemaV1Params(form_type=mock_form_type, language=mock_language, survey_id=mock_survey_id)
 
     def test_handler_calls_query_latest_ci_version_id(self, mocked_query_latest_ci_version_id, mocked_retrieve_ci_schema):
@@ -329,9 +330,9 @@ class TestGetCISchemaV1:
         """
         # Update mocked `query_latest_ci_version_id` to return valid ci id
         mocked_query_latest_ci_version_id.return_value = mock_id
-        mocked_retrieve_ci_schema.return_value = self.mock_ci_schema
+        mocked_retrieve_ci_schema.return_value = mock_ci_schema
         metadata_id, ci_schema = get_ci_schema_v1(self.query_params)
-        assert ci_schema == self.mock_ci_schema
+        assert ci_schema == mock_ci_schema
         assert metadata_id == mock_id
 
 
@@ -342,15 +343,6 @@ class TestGetCISchemaV2:
     Tests for the `get_ci_schema_v2` handler
     Calls to `query_ci_metadata_with_guid` and `retrieve_ci_schema` are mocked out for these tests
     """
-
-    mock_ci_schema = {
-        "data_version": "1",
-        "form_type": mock_form_type,
-        "language": mock_language,
-        "schema_version": "12",
-        "survey_id": mock_survey_id,
-        "title": "test",
-    }
 
     query_params = GetCiSchemaV2Params(id=mock_id)
 
@@ -380,10 +372,10 @@ class TestGetCISchemaV2:
         """
         # Update mocked `query_ci_metadata` to return valid ci metadata
         mocked_query_ci_metadata_with_guid.return_value = mock_ci_metadata.__dict__
-        mocked_retrieve_ci_schema.return_value = self.mock_ci_schema
+        mocked_retrieve_ci_schema.return_value = mock_ci_schema
         metadata, schema = get_ci_schema_v2(self.query_params)
         assert metadata == mock_ci_metadata.__dict__
-        assert schema == self.mock_ci_schema
+        assert schema == mock_ci_schema
 
 
 @patch("app.handlers.db")
@@ -517,20 +509,6 @@ class TestPostCiMetadataV1:
 @patch("app.handlers.query_ci_metadata_with_guid")
 class TestPutStatusV1:
     """Tests for the `put_status_v1` handler"""
-
-    mock_form_type = "t"
-    mock_language = "em"
-    mock_survey_id = "12124141"
-    mock_id = "123578"
-
-    mock_ci_schema = {
-        "data_version": "1",
-        "form_type": mock_form_type,
-        "language": mock_language,
-        "schema_version": "12",
-        "survey_id": mock_survey_id,
-        "title": "test",
-    }
 
     query_params = PutStatusV1Params(id=mock_id)
 
