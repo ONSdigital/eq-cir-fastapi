@@ -85,6 +85,9 @@ If you want to test posting data to these functions using Postman or similar, yo
 
 ## Testing
 
+### Integration testsing
+To run integration tests from root folder run `make integration-tests`
+
 ### Unit testing
 To run unit tests from root folder run `make unit-tests`
 
