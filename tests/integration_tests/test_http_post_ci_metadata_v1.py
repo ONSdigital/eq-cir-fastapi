@@ -1,5 +1,7 @@
 import json
 
+from fastapi import status
+
 from app.events.subscriber import Subscriber
 from tests.integration_tests.utils import (
     delete_docs,
@@ -159,7 +161,7 @@ class TestPostCiV1:
             "status": "DRAFT",
         }
 
-        assert ci_response.status_code == 200
+        assert ci_response.status_code == status.HTTP_200_OK
         assert ci_response_data["ci_version"] == 2
         # database assertions
         assert len(check_ci_in_db_data) == 2
@@ -180,7 +182,7 @@ class TestPostCiV1:
         ci_response = post_ci_v1(payload)
         self.subscriber.pull_messages_and_acknowledge()
 
-        assert ci_response.status_code == 400
+        assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
 
         ci_response_data = ci_response.json()
         assert ci_response_data == {
@@ -198,7 +200,7 @@ class TestPostCiV1:
         ci_response = post_ci_v1(payload)
         self.subscriber.pull_messages_and_acknowledge()
 
-        assert ci_response.status_code == 400
+        assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
 
         ci_response_data = ci_response.json()
         assert ci_response_data == {
@@ -216,7 +218,7 @@ class TestPostCiV1:
         ci_response = post_ci_v1(payload)
         self.subscriber.pull_messages_and_acknowledge()
 
-        assert ci_response.status_code == 400
+        assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
 
         ci_response_data = ci_response.json()
         assert ci_response_data == {
@@ -234,7 +236,7 @@ class TestPostCiV1:
         ci_response = post_ci_v1(payload)
         self.subscriber.pull_messages_and_acknowledge()
 
-        assert ci_response.status_code == 400
+        assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
 
         ci_response_data = ci_response.json()
         assert ci_response_data == {
@@ -252,7 +254,7 @@ class TestPostCiV1:
         ci_response = post_ci_v1(payload)
         self.subscriber.pull_messages_and_acknowledge()
 
-        assert ci_response.status_code == 400
+        assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
 
         ci_response_data = ci_response.json()
         assert ci_response_data == {
@@ -270,7 +272,7 @@ class TestPostCiV1:
         ci_response = post_ci_v1(payload)
         self.subscriber.pull_messages_and_acknowledge()
 
-        assert ci_response.status_code == 400
+        assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
 
         ci_response_data = ci_response.json()
         assert ci_response_data == {

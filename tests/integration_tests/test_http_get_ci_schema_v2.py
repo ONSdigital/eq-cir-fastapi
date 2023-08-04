@@ -1,3 +1,5 @@
+from fastapi import status
+
 from app.events.subscriber import Subscriber
 from tests.integration_tests.utils import (
     delete_docs,
@@ -35,7 +37,7 @@ class TestGetCiSchemaV2:
         # sends request to http_get_ci_schema_v2 endpoint for data
         get_ci_schema_v2_response = get_ci_schema_v2(get_ci_metadata_v1_response[0]["id"])
         get_ci_schema_v2_response_data = get_ci_schema_v2_response.json()
-        assert get_ci_schema_v2_response.status_code == 200
+        assert get_ci_schema_v2_response.status_code == status.HTTP_200_OK
         assert get_ci_schema_v2_response_data["survey_id"] == get_ci_metadata_v1_response[0]["survey_id"]
         assert get_ci_schema_v2_response_data["form_type"] == get_ci_metadata_v1_response[0]["form_type"]
         assert get_ci_schema_v2_response_data["language"] == get_ci_metadata_v1_response[0]["language"]

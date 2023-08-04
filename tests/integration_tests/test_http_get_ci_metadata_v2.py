@@ -1,3 +1,5 @@
+from fastapi import status
+
 from app.events.subscriber import Subscriber
 from tests.integration_tests.utils import (
     delete_docs,
@@ -52,7 +54,7 @@ class TestGetCiMetadataV2:
         ci_id = get_ci_metadata_v2_response_data[0]["id"]
         assert get_ci_metadata_v2_response_data[0]["status"] == "DRAFT"
         ci_update = put_status_v1(ci_id)
-        assert ci_update.status_code == 200
+        assert ci_update.status_code == status.HTTP_200_OK
         # sends request to http_get_ci_metadata_v2 endpoint for data
         get_ci_metadata_v2_payload = {
             "form_type": setup_payload["form_type"],
@@ -85,7 +87,7 @@ class TestGetCiMetadataV2:
         get_ci_metadata_v2_response_data = get_ci_metadata_v2_response.json()
         ci_id = get_ci_metadata_v2_response_data[0]["id"]
         ci_update = put_status_v1(ci_id)
-        assert ci_update.status_code == 200
+        assert ci_update.status_code == status.HTTP_200_OK
         # sends request, PUBLISHED only to http_get_ci_metadata_v2 endpoint for data
         get_ci_metadata_v2_post_response = get_ci_metadata_v2({"status": "PUBLISHED"})
         get_ci_metadata_v2_response_data = get_ci_metadata_v2_post_response.json()
