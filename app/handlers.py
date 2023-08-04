@@ -1,16 +1,29 @@
 from app.config import logging
+from app.events.publisher import Publisher
+from app.models.events import PostCIEvent
 from app.models.requests import (
+    DeleteCiV1Params,
     GetCiMetadataV1Params,
     GetCiMetadataV2Params,
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
+    PostCiMetadataV1PostData,
     PutStatusV1Params,
     Status,
 )
-from app.repositories.cloud_storage import retrieve_ci_schema
+from app.models.responses import CiMetadata
+from app.repositories.cloud_storage import (
+    delete_ci_schema,
+    retrieve_ci_schema,
+    store_ci_schema,
+)
 from app.repositories.firestore import (
+    db,
+    delete_ci_metadata,
     get_all_ci_metadata,
+    post_ci_metadata,
     query_ci_by_status,
+    query_ci_by_survey_id,
     query_ci_metadata,
     query_ci_metadata_with_guid,
     query_latest_ci_version_id,
@@ -18,6 +31,33 @@ from app.repositories.firestore import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def delete_ci_v1(query_params: DeleteCiV1Params) -> str | None:
+    """
+    Handler for delete /collection_instrument.
+    If ci with `survey_id` found in firestore db, deletes metadata from firestore and schema from
+    storage bucket
+    If ci with `survey_id` not found, returns `None`
+    """
+    logger.info("Stepping into delete_ci")
+    ci_schemas = query_ci_by_survey_id(query_params.survey_id)
+
+    if ci_schemas:
+        with db.transaction() as transaction:
+            # Deleting the metadata from firestore
+            delete_ci_metadata(query_params.survey_id)
+            logger.info("Delete Metadata Success")
+            # Deleting the schema from bucket
+            delete_ci_schema(ci_schemas)
+            logger.info("Delete Schema success")
+            # commit the transaction
+            transaction.commit()
+            logger.debug("Transaction committed")
+        return f"{query_params.survey_id} deleted"
+    else:
+        # No ci found with the input `survey_id` so return `None`
+        return None
 
 
 def get_ci_metadata_v1(query_params: GetCiMetadataV1Params):
@@ -36,8 +76,8 @@ def get_ci_metadata_v1(query_params: GetCiMetadataV1Params):
 def get_ci_metadata_v2(query_params: GetCiMetadataV2Params):
     """
     Handler for GET V2 of collection_instrument
-    :param request: flask request object survey_id, form_type,language and status
-    :return: good_response_200 || bad_request || internal_error
+    :param query_params: GetCiMetadataV2Params
+    :return: ci_metadata
     """
     logger.info("Stepping into get_ci_metadata_v2")
     logger.debug(f"Data received: {query_params}")
@@ -114,6 +154,57 @@ def get_ci_schema_v2(query_params: GetCiSchemaV2Params):
         ci_schema = retrieve_ci_schema(query_params.id)
         logger.debug(f"get_ci_schema_v1 output: {ci_schema}")
     return ci_metadata, ci_schema
+
+
+def post_ci_metadata_v1(post_data: PostCiMetadataV1PostData) -> CiMetadata | None:
+    """
+    Handler for POST /collection_instrument
+    """
+
+    logger.debug(f"post_ci_v1 data received: {post_data.__dict__}")
+    publisher = Publisher()
+
+    # Unable to test the transaction rollback in tests
+    # start transaction
+    with db.transaction() as transaction:
+        try:
+            # post metadata to firestore
+            ci_metadata_with_new_version = post_ci_metadata(post_data)
+            logger.debug(f"New CI created: {ci_metadata_with_new_version.__dict__}")
+
+            # put the schema in cloud storage where filename is the unique CI id
+            store_ci_schema(ci_metadata_with_new_version.id, post_data.__dict__)
+            logger.info("put_schema success")
+
+            # create event message
+            event_message = PostCIEvent(
+                ci_version=ci_metadata_with_new_version.ci_version,
+                data_version=ci_metadata_with_new_version.data_version,
+                form_type=ci_metadata_with_new_version.form_type,
+                id=ci_metadata_with_new_version.id,
+                language=ci_metadata_with_new_version.language,
+                published_at=ci_metadata_with_new_version.published_at,
+                schema_version=ci_metadata_with_new_version.schema_version,
+                status=ci_metadata_with_new_version.status,
+                sds_schema=ci_metadata_with_new_version.sds_schema,
+                survey_id=ci_metadata_with_new_version.survey_id,
+                title=ci_metadata_with_new_version.title,
+            )
+            publisher.publish_message(event_message)
+
+            # commit the transaction
+            transaction.commit()
+            logger.debug("Transaction committed")
+
+            logger.debug(f"post_ci_v1 output data: {ci_metadata_with_new_version.__dict__}")
+            return ci_metadata_with_new_version
+        except Exception as e:
+            # if any part of the transaction fails, rollback and delete CI schema from bucket
+            logger.error(f"post_ci_v1: exception raised - {e}")
+            logger.error("Rolling back transaction")
+            transaction.rollback()
+            logger.info("Deleted schema from bucket")
+            return None
 
 
 def put_status_v1(query_params: PutStatusV1Params):

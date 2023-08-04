@@ -1,7 +1,13 @@
+.DS_Store
+.idea
 .mypy_cache
 .pytest_cache
 */__pycache__
 */*/__pycache__
+*/*/*/__pycache__
 *.log
 *-cloudbuild-sa-key.json
 .idea/
+devtools/gcp-storage-emulator/data/*
+!devtools/gcp-storage-emulator/data/.placeholder
+

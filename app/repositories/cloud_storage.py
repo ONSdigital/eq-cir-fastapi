@@ -46,7 +46,7 @@ def retrieve_ci_schema(blob_name):
     return json.loads(data)
 
 
-def delete_ci_schema(ci_schemas):
+def delete_ci_schema(ci_schemas: list[dict]):
     logger.info("attempting to delete schema")
     bucket = get_storage_bucket()
     for schema in ci_schemas:

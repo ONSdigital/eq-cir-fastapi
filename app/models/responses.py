@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from enum import Enum
 
 from app.config import logging
 
@@ -17,14 +18,21 @@ class BadRequest:
 class CiMetadata:
     """Model for collection instrument metadata"""
 
+    # Required fields
     ci_version: int
     data_version: str
     form_type: str
     id: str
-    langugage: str
+    language: str
     published_at: str
     schema_version: str
-    sds_schema: str
     status: str
     survey_id: str
     title: str
+    # Optional fields
+    sds_schema: str | None = ""
+
+
+class CiStatus(Enum):
+    DRAFT = "DRAFT"
+    PUBLISHED = "PUBLISHED"

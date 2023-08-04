@@ -1,3 +1,5 @@
+import datetime
+import uuid
 from unittest.mock import patch
 from urllib.parse import urlencode
 
@@ -6,15 +8,81 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 from app.models.requests import (
+    DeleteCiV1Params,
     GetCiMetadataV1Params,
     GetCiMetadataV2Params,
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
+    PostCiMetadataV1PostData,
     PutStatusV1Params,
 )
-from app.models.responses import BadRequest
+from app.models.responses import BadRequest, CiMetadata, CiStatus
 
 client = TestClient(app)
+
+
+@patch("app.main.delete_ci_v1")
+class TestHttpDeleteCiV1:
+    """Tests for the `http_delete_ci_v1` endpoint"""
+
+    mock_survey_id = "12124141"
+
+    base_url = "/v1/dev/teardown"
+    query_params = DeleteCiV1Params(survey_id=mock_survey_id)
+    url = f"{base_url}?{urlencode(query_params.__dict__)}"
+
+    def test_endpoint_returns_200_if_ci_deleted(self, mocked_delete_ci_v1):
+        """
+        Endpoint should return `HTTP_200_OK` as part of the response if ci is found and deleted
+        """
+        # Update mocked `get_ci_metadata_v1` to return valid response
+        mocked_delete_ci_v1.return_value = f"{self.query_params.survey_id} deleted"
+
+        response = client.delete(self.url)
+        assert response.status_code == status.HTTP_200_OK
+
+    def test_endpoint_returns_correct_response_if_ci_deleted(self, mocked_delete_ci_v1):
+        """
+        Endpoint should return confirmation string as part of the response if ci is found and
+        deleted
+        """
+        success_message = f"{self.query_params.survey_id} deleted"
+        # Update mocked `get_ci_metadata_v1` to return valid response
+        mocked_delete_ci_v1.return_value = success_message
+
+        response = client.delete(self.url)
+        assert response.json() == success_message
+
+    def test_endpoint_returns_400_if_query_parameters_are_not_present(self, mocked_delete_ci_v1):
+        """
+        Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `
+        `survey_id` are not part of the querystring parameters
+        """
+        # Make request to base url without any query params
+        response = client.delete(self.base_url)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_endpoint_returns_404_if_ci__not_found(self, mocked_delete_ci_v1):
+        """
+        Endpoint should return `HTTP_404_NOT_FOUND` as part of the response if no ci is found to
+        delete
+        """
+        # Update mocked `get_ci_metadata_v1` to return `None` showing ci metadata is not found
+        mocked_delete_ci_v1.return_value = None
+
+        response = client.delete(self.url)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_endpoint_returns_bad_response_if_ci_metadata_not_found(self, mocked_delete_ci_v1):
+        """
+        Endpoint should return a string indicating a bad request as part of the response if ci
+        metadata is not found
+        """
+        # Update mocked `get_ci_metadata_v1` to return `None` showing ci metadata is not found
+        mocked_delete_ci_v1.return_value = None
+        expected_response = BadRequest(message=f"No CI found for: {self.query_params.__dict__}")
+        response = client.delete(self.url)
+        assert response.json() == expected_response.__dict__
 
 
 @patch("app.main.get_ci_metadata_v1")
@@ -335,6 +403,78 @@ class TestHttpGetCiSchemaV2:
         """
         # Make request to base url without any query params
         response = client.get(self.base_url)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@patch("app.main.post_ci_metadata_v1")
+class TestHttpPostCiV1:
+    """
+    Tests for the `http_post_ci_v1` endpoint
+    Calls to `post_ci_metadata_v1` are mocked out for these tests
+    """
+
+    mock_survey_id = "12124141"
+    mock_language = "em"
+    mock_form_type = "t"
+    mock_title = "test"
+    mock_schema_version = "12"
+    mock_data_version = "1"
+    mock_sds_schema = ""
+
+    mock_ci_metadata = CiMetadata(
+        ci_version=1,
+        data_version="1",
+        form_type=mock_form_type,
+        id=str(uuid.uuid4()),
+        language=mock_language,
+        published_at=datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+        schema_version=mock_schema_version,
+        sds_schema="",
+        status=CiStatus.DRAFT.value,
+        survey_id=mock_survey_id,
+        title="test",
+    )
+
+    post_data = PostCiMetadataV1PostData(
+        survey_id=mock_survey_id,
+        language=mock_language,
+        form_type=mock_form_type,
+        title=mock_title,
+        schema_version=mock_schema_version,
+        data_version=mock_data_version,
+        sds_schema=mock_sds_schema,
+    )
+    url = "/v1/publish_collection_instrument"
+
+    def test_endpoint_returns_200_if_ci_created_successfully(self, mocked_post_ci_metadata_v1):
+        """
+        Endpoint should return `HTTP_200_OK` as part of the response if new ci is created
+        successfully
+        """
+        # Update mocked `post_ci_metadata_v1` to return valid ci metadata
+        mocked_post_ci_metadata_v1.return_value = self.mock_ci_metadata
+
+        response = client.post(self.url, headers={"ContentType": "application/json"}, json=self.post_data.__dict__)
+        assert response.status_code == status.HTTP_200_OK
+
+    def test_endpoint_returns_serialized_ci_metadata_if_ci_created_successfully(self, mocked_post_ci_metadata_v1):
+        """
+        Endpoint should return serialized ci metadata as part of the response if new ci is created
+        successfully
+        """
+        # Update mocked `post_ci_metadata_v1` to return valid ci metadata
+        mocked_post_ci_metadata_v1.return_value = self.mock_ci_metadata
+
+        response = client.post(self.url, headers={"ContentType": "application/json"}, json=self.post_data.__dict__)
+        assert response.json() == self.mock_ci_metadata.__dict__
+
+    def test_endpoint_returns_400_if_no_post_data(self, mocked_post_ci_metadata_v1):
+        """
+        Endpoint should return `HTTP_400_BAD_REQUEST` if empty or incomplete post data is posted
+        as part of the request
+        """
+        # Make request to base url without any post data
+        response = client.post(self.url, headers={"ContentType": "application/json"})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
