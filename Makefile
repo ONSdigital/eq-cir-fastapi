@@ -4,6 +4,9 @@ audit:
 generate-spec:
 	python -m scripts.generate_openapi
 
+integration-tests:
+	python -m pytest tests/integration_tests -W ignore::DeprecationWarning
+
 lint:
 	python -m black --line-length 127 .
 	python -m flake8 --max-line-length=127 --exclude=./scripts,venv
