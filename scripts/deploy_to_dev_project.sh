@@ -20,8 +20,8 @@ gcloud auth activate-service-account $CLOUDBUILD_SA --key-file=$GOOGLE_APPLICATI
 gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://${REGION}-docker.pkg.dev
 
 echo "Building and pushing the docker container(s)..."
-# Generate a random hash to uniquely identify this build
-BUILD_ID=$(openssl rand -hex 4)
+# Generate a build id including a random hash to uniquely identify this build
+BUILD_ID="dev-$(openssl rand -hex 4)"
 docker build -t "${REGION}-docker.pkg.dev/${PROJECT_ID}/cir/cir:$BUILD_ID" -t "${REGION}-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest" .
 docker push "${REGION}-docker.pkg.dev/${PROJECT_ID}/cir/cir:$BUILD_ID"
 docker push "${REGION}-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest"
