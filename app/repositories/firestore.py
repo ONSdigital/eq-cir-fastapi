@@ -1,8 +1,11 @@
+import datetime
 import uuid
 
 from google.cloud import firestore
 
 from app.config import Settings, logging
+from app.models.requests import PostCiMetadataV1PostData
+from app.models.responses import CiMetadata, CiStatus
 
 logger = logging.getLogger(__name__)
 settings = Settings()
@@ -75,23 +78,39 @@ def query_latest_ci_version_id(survey_id, form_type, language):
 
 
 # Posts new CI metadata to Firestore
-def post_ci_metadata(ci):
-    """
-    Creates new ci version
-    :param ci: CollectionInstrument
-    :return: None
-    """
+def post_ci_metadata(post_data: PostCiMetadataV1PostData) -> CiMetadata:
+    """Creates new ci version"""
+
     logger.info("stepping into create_new_ci_version")
-    logger.debug(f"post_ci_metadata data received: {ci.to_dict()}")
+    logger.debug(f"post_ci_metadata data received: {post_data.__dict__}")
+
+    # get latest ci version for combination of survey_id, form_type, language
+    latest_ci_version = query_latest_ci_version(post_data.survey_id, post_data.form_type, post_data.language)
+    new_ci_version = latest_ci_version + 1
+    # Set published at to now
+    published_at = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+    # Generate new uid
     uid = str(uuid.uuid4())
-    ci.id = uid
-    logger.debug(f"CI id added to ci: {ci.id}")
+
+    ci_metadata = CiMetadata(
+        ci_version=new_ci_version,
+        data_version=post_data.data_version,
+        form_type=post_data.form_type,
+        id=uid,
+        language=post_data.language,
+        published_at=published_at,
+        schema_version=post_data.schema_version,
+        sds_schema=post_data.sds_schema,
+        status=CiStatus.DRAFT.value,
+        survey_id=post_data.survey_id,
+        title=post_data.title,
+    )
 
     # Add new version
-    ci_collection.document(uid).set(ci.to_dict())
-    logger.debug(f"create_new_ci_version output: {ci.to_dict()}")
+    ci_collection.document(uid).set(ci_metadata.__dict__)
+    logger.debug(f"create_new_ci_version output: {ci_metadata.__dict__}")
     logger.info("create_new_ci_version success")
-    return ci
+    return ci_metadata
 
 
 def query_ci_metadata(survey_id, form_type, language, status=None):

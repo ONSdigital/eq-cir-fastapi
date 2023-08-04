@@ -13,7 +13,7 @@ services:
     image: spine3/firebase-emulator
     ports:
       - 8300:8080
-      - 5000:5000
+      - 5000:4000
     environment:
       - PROJECT_NAME=mock-project-id
       - ENABLE_UI=true
