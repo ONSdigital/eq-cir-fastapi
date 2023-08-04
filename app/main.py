@@ -10,6 +10,7 @@ from app.handlers import (
     get_ci_schema_v1,
     get_ci_schema_v2,
     post_ci_metadata_v1,
+    put_status_v1,
 )
 from app.models.requests import (
     DeleteCiV1Params,
@@ -18,6 +19,7 @@ from app.models.requests import (
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
     PostCiMetadataV1PostData,
+    PutStatusV1Params,
 )
 from app.models.responses import BadRequest, CiMetadata
 
@@ -40,6 +42,46 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     validation exception handler to return 400 instead of 422
     """
     return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message": str(exc)})
+
+
+@app.delete(
+    "/v1/dev/teardown",
+    responses={
+        status.HTTP_200_OK: {
+            "description": (
+                "Successfully deleted a CI's schema and metadata. This is illustrated with the response informing the "
+                "user of the survey_id that has been deleted."
+            ),
+        },
+        status.HTTP_400_BAD_REQUEST: {
+            "model": BadRequest,
+            "description": (
+                "Bad request. This is triggered by when a bad request body is provided. "
+                "The response will inform the user what required parameter they are missing from the "
+                "request or what is incorrect with the value that they have provided."
+                "Bad request. This is triggered by when a bad request body is provided. The response will inform the user "
+                "what required parameter they are missing from the request."
+            ),
+        },
+        status.HTTP_404_NOT_FOUND: {
+            "model": BadRequest,
+            "description": "Bad request. This is triggered when there is no CI data that matches the request provided.",
+        },
+    },
+)
+async def http_delete_ci_v1(query_params: DeleteCiV1Params = Depends()):
+    """
+    DELETE method that deletes the CI schema from the bucket as well as the CI metadata from Firestore.
+    """
+    success_message = delete_ci_v1(query_params)
+
+    if success_message:
+        logger.info("delete_ci_v1 success")
+        return JSONResponse(status_code=status.HTTP_200_OK, content=success_message)
+    else:
+        # Nothing to delete so return 404
+        response_content = BadRequest(message=f"No CI found for: {query_params.__dict__}")
+        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)
 
 
 # Fetching CI Metadata from Firestore
@@ -250,22 +292,21 @@ async def http_post_ci_metadata_v1(post_data: PostCiMetadataV1PostData):
     return JSONResponse(status_code=status.HTTP_200_OK, content=ci_metadata.__dict__)
 
 
-@app.delete(
-    "/v1/dev/teardown",
+@app.put(
+    "/v1/update_status/",
     responses={
         status.HTTP_200_OK: {
+            "model": CiMetadata,
             "description": (
-                "Successfully deleted a CI's schema and metadata. This is illustrated with the response informing the "
-                "user of the survey_id that has been deleted."
+                "Successfully updated the status of a CI. "
+                "This is illustrated with the returned response containing the updated metadata of the CI."
             ),
         },
         status.HTTP_400_BAD_REQUEST: {
             "model": BadRequest,
             "description": (
                 "Bad request. This is triggered by when a bad request body is provided. "
-                "The response will inform the user what required parameter they are missing from the "
-                "request or what is incorrect with the value that they have provided."
-                "Bad request. This is triggered by when a bad request body is provided. The response will inform the user "
+                "The response will inform the user what required parameter they are missing from the request. "
                 "what required parameter they are missing from the request."
             ),
         },
@@ -273,18 +314,24 @@ async def http_post_ci_metadata_v1(post_data: PostCiMetadataV1PostData):
             "model": BadRequest,
             "description": "Bad request. This is triggered when there is no CI data that matches the request provided.",
         },
+        status.HTTP_500_INTERNAL_SERVER_ERROR: {
+            "description": "Internal error. This is triggered when something an unexpected error occurs on the server side.",
+        },
     },
 )
-async def http_delete_ci_v1(query_params: DeleteCiV1Params = Depends()):
+async def http_put_status_v1(query_params: PutStatusV1Params = Depends()):
     """
-    DELETE method that deletes the CI schema from the bucket as well as the CI metadata from Firestore.
+    PUT method that updates the CI based on the GUID passed.
     """
-    success_message = delete_ci_v1(query_params)
+    ci_metadata, updated_status = put_status_v1(query_params)
+    if ci_metadata:
+        if updated_status:
+            message = f"CI status has been changed to published for {query_params.id}"
+        else:
+            logger.info("CI already set to PUBLISHED")
+            message = f"CI status has already been changed to Published for {query_params.id}"
 
-    if success_message:
-        logger.info("delete_ci_v1 success")
-        return JSONResponse(status_code=status.HTTP_200_OK, content=success_message)
+        return JSONResponse(status_code=status.HTTP_200_OK, content=message)
     else:
-        # Nothing to delete so return 404
-        response_content = BadRequest(message=f"No CI found for: {query_params.__dict__}")
+        response_content = BadRequest(message=f"No CI metadata found for: {query_params.id}")
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)
