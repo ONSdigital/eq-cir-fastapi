@@ -4,6 +4,8 @@ from app.models.requests import (
     GetCiMetadataV2Params,
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
+    PutStatusV1Params,
+    Status,
 )
 from app.repositories.cloud_storage import retrieve_ci_schema
 from app.repositories.firestore import (
@@ -12,6 +14,7 @@ from app.repositories.firestore import (
     query_ci_metadata,
     query_ci_metadata_with_guid,
     query_latest_ci_version_id,
+    update_ci_metadata_status_to_published,
 )
 
 logger = logging.getLogger(__name__)
@@ -111,3 +114,21 @@ def get_ci_schema_v2(query_params: GetCiSchemaV2Params):
         ci_schema = retrieve_ci_schema(query_params.id)
         logger.debug(f"get_ci_schema_v1 output: {ci_schema}")
     return ci_metadata, ci_schema
+
+
+def put_status_v1(query_params: PutStatusV1Params):
+    """
+    HANDLER for UPDATE STATUS OF Collection Instrument
+    :param request : PutStatusV1Params
+    :return Updated CI
+    """
+    logger.info("Stepping into put_status_v1")
+    logger.debug(f"put_status_v1 GUID received: {query_params.__dict__}")
+    ci_metadata = query_ci_metadata_with_guid(query_params.id)
+    if not ci_metadata:
+        return None, False
+    if ci_metadata["status"] == Status.PUBLISHED.value:
+        return ci_metadata, False
+    if ci_metadata["status"] == Status.DRAFT.value:
+        update_ci_metadata_status_to_published(query_params.id, {"status": Status.PUBLISHED.value})
+        return ci_metadata, True

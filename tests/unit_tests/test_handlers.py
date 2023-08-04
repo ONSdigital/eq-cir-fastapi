@@ -5,12 +5,15 @@ from app.handlers import (
     get_ci_metadata_v2,
     get_ci_schema_v1,
     get_ci_schema_v2,
+    put_status_v1,
 )
 from app.models.requests import (
     GetCiMetadataV1Params,
     GetCiMetadataV2Params,
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
+    PutStatusV1Params,
+    Status,
 )
 
 
@@ -288,3 +291,86 @@ class TestGetCISchemaV2:
         metadata, schema = get_ci_schema_v2(self.query_params)
         assert metadata == self.mock_ci_schema
         assert schema == self.mock_ci_schema
+
+
+@patch("app.handlers.update_ci_metadata_status_to_published")
+@patch("app.handlers.query_ci_metadata_with_guid")
+class TestPutStatusV1:
+    """Tests for the `put_status_v1` handler"""
+
+    mock_form_type = "t"
+    mock_language = "em"
+    mock_survey_id = "12124141"
+    mock_id = "123578"
+
+    mock_ci_schema = {
+        "data_version": "1",
+        "form_type": mock_form_type,
+        "language": mock_language,
+        "schema_version": "12",
+        "survey_id": mock_survey_id,
+        "title": "test",
+    }
+
+    query_params = PutStatusV1Params(id=mock_id)
+
+    def test_handler_calls_query_ci_with_guid_and_update_ci(
+        self, mocked_query_ci_metadata_with_guid, mocked_update_ci_metadata_status_to_published
+    ):
+        """
+         `put_status_v1` should call `query_ci_metadata_with_guid`and `update_ci_metadata_status_to_published`
+        to update the status of CI
+        """
+        ci_metadata = {"status": Status.DRAFT.value}
+        mocked_query_ci_metadata_with_guid.return_value = ci_metadata
+        put_status_v1(self.query_params)
+        mocked_query_ci_metadata_with_guid.assert_called_once()
+        mocked_update_ci_metadata_status_to_published.assert_called_once()
+
+    def test_handler_calls_query_ci_with_guid_and_update_ci_with_right_inputs(
+        self, mocked_query_ci_metadata_with_guid, mocked_update_ci_metadata_status_to_published
+    ):
+        """
+        `put_status_v1` should call `query_ci_metadata_with_guid`and `update_ci_metadata_status_to_published`
+         to update the status of CI with right inputs
+        """
+
+        ci_metadata = {"status": Status.DRAFT.value}
+        mocked_query_ci_metadata_with_guid.return_value = ci_metadata
+        put_status_v1(self.query_params)
+
+        # Assert that query_ci_metadata_with_guid was called with the correct parameter
+        mocked_query_ci_metadata_with_guid.assert_called_once_with(self.query_params.id)
+
+        # Assert that update_ci_metadata_status_to_published was called with the correct parameters
+        mocked_update_ci_metadata_status_to_published.assert_called_once_with(
+            self.query_params.id, {"status": Status.PUBLISHED.value}
+        )
+
+    def test_handler_returns_right_output_of_query_ci_with_guid_and_update_ci_if_status_DRAFT(
+        self, mocked_query_ci_metadata_with_guid, mocked_update_ci_metadata_status_to_published
+    ):
+        """
+        `put_status_v1` should return right output of `query_ci_metadata_with_guid`and
+        `update_ci_metadata_status_to_published` once status of CI is updated
+        """
+        ci_metadata = {"status": Status.DRAFT.value}
+        mocked_query_ci_metadata_with_guid.return_value = ci_metadata
+        response_ci, status = put_status_v1(self.query_params)
+        assert response_ci == ci_metadata
+        assert status is True
+
+    def test_handler_returns_right_output_of_query_ci_with_guid_and_update_ci_if_status_PUBLISHED(
+        self, mocked_query_ci_metadata_with_guid, mocked_update_ci_metadata_status_to_published
+    ):
+        """
+        `put_status_v1` should return output `query_ci_metadata_with_guid` and
+        `update_ci_metadata_status_to_published` if status of CI is already updated
+
+        """
+        ci_metadata = {"status": Status.PUBLISHED.value}
+        mocked_query_ci_metadata_with_guid.return_value = ci_metadata
+        status = put_status_v1(self.query_params)
+        response_ci, status = put_status_v1(self.query_params)
+        assert response_ci == ci_metadata
+        assert status is False

@@ -1,6 +1,12 @@
 from dataclasses import dataclass
+from enum import Enum
 
 from fastapi import Query
+
+
+class Status(Enum):
+    DRAFT = "DRAFT"
+    PUBLISHED = "PUBLISHED"
 
 
 @dataclass
@@ -53,3 +59,12 @@ class GetCiSchemaV2Params:
     """Model for `get_ci_schema_v2` request query params"""
 
     id: str = Query(description="The form type of the CI", example="123578")
+
+
+@dataclass
+class PutStatusV1Params:
+    """
+    Model for `put_status_v1` request params
+    """
+
+    id: str = Query(description="The id of the CI", example="123578")
