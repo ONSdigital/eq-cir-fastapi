@@ -67,6 +67,9 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
             "model": BadRequest,
             "description": "Bad request. This is triggered when there is no CI data that matches the request provided.",
         },
+        status.HTTP_500_INTERNAL_SERVER_ERROR: {
+            "description": "Internal error. This is triggered when something an unexpected error occurs on the server side.",
+        },
     },
 )
 async def http_delete_ci_v1(query_params: DeleteCiV1Params = Depends()):
@@ -106,6 +109,9 @@ async def http_delete_ci_v1(query_params: DeleteCiV1Params = Depends()):
             "model": BadRequest,
             "description": "Bad request. This is triggered when there is no CI data that matches the request provided.",
         },
+        status.HTTP_500_INTERNAL_SERVER_ERROR: {
+            "description": "Internal error. This is triggered when something an unexpected error occurs on the server side.",
+        },
     },
 )
 async def http_get_ci_metadata_v1(query_params: GetCiMetadataV1Params = Depends()):
@@ -130,22 +136,21 @@ async def http_get_ci_metadata_v1(query_params: GetCiMetadataV1Params = Depends(
     responses={
         status.HTTP_200_OK: {
             "model": CiMetadata,
-            "description": (
-                "Successfully fetched the metadata of a CI. "
-                "This is illustrated with the returned response containing the metadata of the CI."
-            ),
+            "description": "Successfully Queried a CI",
         },
         status.HTTP_400_BAD_REQUEST: {
             "model": BadRequest,
             "description": (
-                "Bad request. This is triggered by when a bad request body is provided. "
-                "The response will inform the user what required parameter they are missing from the request. "
+                "Bad request. This is triggered by when a bad request body is provided. The response will inform the user "
                 "what required parameter they are missing from the request."
             ),
         },
         status.HTTP_404_NOT_FOUND: {
             "model": BadRequest,
             "description": "Bad request. This is triggered when there is no CI data that matches the request provided.",
+        },
+        status.HTTP_500_INTERNAL_SERVER_ERROR: {
+            "description": "Internal error. This is triggered when something an unexpected error occurs on the server side.",
         },
     },
 )
@@ -178,9 +183,7 @@ async def http_get_ci_metadata_v2(query_params: GetCiMetadataV2Params = Depends(
         status.HTTP_200_OK: {
             "model": CiMetadata,
             "description": (
-                "Successfully created a CI. This is illustrated with the returned response containing the metadata of the CI."
-                "Successfully fetched the metadata of a CI. This is illustrated with the returned response containing the "
-                "metadata of the CI."
+                "Successfully retrieved the CI schema. This is illustrated by returning the CI schema to the user."
             ),
         },
         status.HTTP_400_BAD_REQUEST: {
@@ -198,7 +201,7 @@ async def http_get_ci_metadata_v2(query_params: GetCiMetadataV2Params = Depends(
 )
 async def http_get_ci_schema_v1(query_params: GetCiSchemaV1Params = Depends()):
     """
-    GET method that returns any metadata objects from Firestore that match the parameters passed.
+    GET method that fetches a CI schema by it's survey_id, form_type and language.
     """
     ci_metadata_id, ci_schema = get_ci_schema_v1(query_params)
 
@@ -223,8 +226,7 @@ async def http_get_ci_schema_v1(query_params: GetCiSchemaV1Params = Depends()):
         status.HTTP_200_OK: {
             "model": CiMetadata,
             "description": (
-                "Successfully fetched the Schema of a CI. This is illustrated with the returned response containing the "
-                "Schema of the CI."
+                "Successfully Queried a CI. This is illustrated with the returned response containing the schema of the CI."
             ),
         },
         status.HTTP_400_BAD_REQUEST: {
@@ -236,13 +238,16 @@ async def http_get_ci_schema_v1(query_params: GetCiSchemaV1Params = Depends()):
         },
         status.HTTP_404_NOT_FOUND: {
             "model": BadRequest,
-            "description": "Bad request. This is triggered when there is no CI data that matches the request provided.",
+            "description": "Bad request. This is triggered when there is no CI schema that matches the request provided.",
+        },
+        status.HTTP_500_INTERNAL_SERVER_ERROR: {
+            "description": "Internal error. This is triggered when something an unexpected error occurs on the server side.",
         },
     },
 )
 async def http_get_ci_schema_v2(query_params: GetCiSchemaV2Params = Depends()):
     """
-    GET method that returns any metadata objects from Firestore that match the parameters passed.
+    GET method that fetches a CI schema by it's GUID.
     """
     ci_metadata, ci_schema = get_ci_schema_v2(query_params)
 
@@ -293,13 +298,13 @@ async def http_post_ci_metadata_v1(post_data: PostCiMetadataV1PostData):
 
 
 @app.put(
-    "/v1/update_status/",
+    "/v1/update_status",
     responses={
         status.HTTP_200_OK: {
             "model": CiMetadata,
             "description": (
-                "Successfully updated the status of a CI. "
-                "This is illustrated with the returned response containing the updated metadata of the CI."
+                "Successfully set CI status to PUBLISHED. This is illustrated by the response "
+                "returning the GUID of the CI metadata that has been updated."
             ),
         },
         status.HTTP_400_BAD_REQUEST: {
@@ -321,7 +326,7 @@ async def http_post_ci_metadata_v1(post_data: PostCiMetadataV1PostData):
 )
 async def http_put_status_v1(query_params: PutStatusV1Params = Depends()):
     """
-    PUT method that updates the CI based on the GUID passed.
+    PUT method that sets the status of a CI's metadata in Firestore to 'PUBLISH'.
     """
     ci_metadata, updated_status = put_status_v1(query_params)
     if ci_metadata:
