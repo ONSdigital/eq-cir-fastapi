@@ -34,6 +34,28 @@ app.title = "Collection Instrumentation Register"
 app.version = "1.0.0"
 
 
+# Definition of default response messages that can be used across all endpoints
+DEFAULT_RESPONSES = {
+    status.HTTP_400_BAD_REQUEST: {
+        "model": BadRequest,
+        "description": (
+            "Bad request. This is triggered by when a bad request body is provided. The response will inform the user "
+            "what required parameter they are missing from the request."
+        ),
+    },
+    status.HTTP_500_INTERNAL_SERVER_ERROR: {
+        "description": "Internal error. This is triggered when something an unexpected error occurs on the server side.",
+    },
+}
+
+HTTP_404_NOT_FOUND_RESPONSE = {
+    status.HTTP_404_NOT_FOUND: {
+        "model": BadRequest,
+        "description": "Bad request. This is triggered when there is no CI data that matches the request provided.",
+    },
+}
+
+
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     """
@@ -47,28 +69,13 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 @app.delete(
     "/v1/dev/teardown",
     responses={
+        **DEFAULT_RESPONSES,  # type: ignore [dict-item]
+        **HTTP_404_NOT_FOUND_RESPONSE,  # type: ignore [dict-item]
         status.HTTP_200_OK: {
             "description": (
                 "Successfully deleted a CI's schema and metadata. This is illustrated with the response informing the "
                 "user of the survey_id that has been deleted."
             ),
-        },
-        status.HTTP_400_BAD_REQUEST: {
-            "model": BadRequest,
-            "description": (
-                "Bad request. This is triggered by when a bad request body is provided. "
-                "The response will inform the user what required parameter they are missing from the "
-                "request or what is incorrect with the value that they have provided."
-                "Bad request. This is triggered by when a bad request body is provided. The response will inform the user "
-                "what required parameter they are missing from the request."
-            ),
-        },
-        status.HTTP_404_NOT_FOUND: {
-            "model": BadRequest,
-            "description": "Bad request. This is triggered when there is no CI data that matches the request provided.",
-        },
-        status.HTTP_500_INTERNAL_SERVER_ERROR: {
-            "description": "Internal error. This is triggered when something an unexpected error occurs on the server side.",
         },
     },
 )
@@ -91,26 +98,14 @@ async def http_delete_ci_v1(query_params: DeleteCiV1Params = Depends()):
 @app.get(
     "/v1/ci_metadata",
     responses={
+        **DEFAULT_RESPONSES,  # type: ignore [dict-item]
+        **HTTP_404_NOT_FOUND_RESPONSE,  # type: ignore [dict-item]
         status.HTTP_200_OK: {
             "model": CiMetadata,
             "description": (
                 "Successfully fetched the metadata of a CI. This is illustrated with the returned response containing the "
                 "metadata of the CI."
             ),
-        },
-        status.HTTP_400_BAD_REQUEST: {
-            "model": BadRequest,
-            "description": (
-                "Bad request. This is triggered by when a bad request body is provided. The response will inform the user "
-                "what required parameter they are missing from the request."
-            ),
-        },
-        status.HTTP_404_NOT_FOUND: {
-            "model": BadRequest,
-            "description": "Bad request. This is triggered when there is no CI data that matches the request provided.",
-        },
-        status.HTTP_500_INTERNAL_SERVER_ERROR: {
-            "description": "Internal error. This is triggered when something an unexpected error occurs on the server side.",
         },
     },
 )
@@ -134,23 +129,11 @@ async def http_get_ci_metadata_v1(query_params: GetCiMetadataV1Params = Depends(
 @app.get(
     "/v2/ci_metadata",
     responses={
+        **DEFAULT_RESPONSES,  # type: ignore [dict-item]
+        **HTTP_404_NOT_FOUND_RESPONSE,  # type: ignore [dict-item]
         status.HTTP_200_OK: {
             "model": CiMetadata,
             "description": "Successfully Queried a CI",
-        },
-        status.HTTP_400_BAD_REQUEST: {
-            "model": BadRequest,
-            "description": (
-                "Bad request. This is triggered by when a bad request body is provided. The response will inform the user "
-                "what required parameter they are missing from the request."
-            ),
-        },
-        status.HTTP_404_NOT_FOUND: {
-            "model": BadRequest,
-            "description": "Bad request. This is triggered when there is no CI data that matches the request provided.",
-        },
-        status.HTTP_500_INTERNAL_SERVER_ERROR: {
-            "description": "Internal error. This is triggered when something an unexpected error occurs on the server side.",
         },
     },
 )
@@ -180,22 +163,13 @@ async def http_get_ci_metadata_v2(query_params: GetCiMetadataV2Params = Depends(
 @app.get(
     "/v1/retrieve_collection_instrument",
     responses={
+        **DEFAULT_RESPONSES,  # type: ignore [dict-item]
+        **HTTP_404_NOT_FOUND_RESPONSE,  # type: ignore [dict-item]
         status.HTTP_200_OK: {
             "model": CiMetadata,
             "description": (
                 "Successfully retrieved the CI schema. This is illustrated by returning the CI schema to the user."
             ),
-        },
-        status.HTTP_400_BAD_REQUEST: {
-            "model": BadRequest,
-            "description": (
-                "Bad request. This is triggered by when a bad request body is provided. "
-                "The response will inform the user what required parameter they are missing from the "
-                "request or what is incorrect with the value that they have provided."
-            ),
-        },
-        status.HTTP_500_INTERNAL_SERVER_ERROR: {
-            "description": "Internal error. This is triggered when something an unexpected error occurs on the server side.",
         },
     },
 )
@@ -223,25 +197,13 @@ async def http_get_ci_schema_v1(query_params: GetCiSchemaV1Params = Depends()):
 @app.get(
     "/v2/retrieve_collection_instrument/",
     responses={
+        **DEFAULT_RESPONSES,  # type: ignore [dict-item]
+        **HTTP_404_NOT_FOUND_RESPONSE,  # type: ignore [dict-item]
         status.HTTP_200_OK: {
             "model": CiMetadata,
             "description": (
                 "Successfully Queried a CI. This is illustrated with the returned response containing the schema of the CI."
             ),
-        },
-        status.HTTP_400_BAD_REQUEST: {
-            "model": BadRequest,
-            "description": (
-                "Bad request. This is triggered by when a bad request body is provided. The response will inform the user "
-                "what required parameter they are missing from the request."
-            ),
-        },
-        status.HTTP_404_NOT_FOUND: {
-            "model": BadRequest,
-            "description": "Bad request. This is triggered when there is no CI schema that matches the request provided.",
-        },
-        status.HTTP_500_INTERNAL_SERVER_ERROR: {
-            "description": "Internal error. This is triggered when something an unexpected error occurs on the server side.",
         },
     },
 )
@@ -268,22 +230,12 @@ async def http_get_ci_schema_v2(query_params: GetCiSchemaV2Params = Depends()):
 @app.post(
     "/v1/publish_collection_instrument",
     responses={
+        **DEFAULT_RESPONSES,  # type: ignore [dict-item]
         status.HTTP_200_OK: {
             "model": CiMetadata,
             "description": (
                 "Successfully created a CI. This is illustrated with the returned response containing the metadata of the CI."
             ),
-        },
-        status.HTTP_400_BAD_REQUEST: {
-            "model": BadRequest,
-            "description": (
-                "Bad request. This is triggered by when a bad request body is provided. "
-                "The response will inform the user what required parameter they are missing from the "
-                "request or what is incorrect with the value that they have provided."
-            ),
-        },
-        status.HTTP_500_INTERNAL_SERVER_ERROR: {
-            "description": "Internal error. This is triggered when something an unexpected error occurs on the server side.",
         },
     },
 )
@@ -300,27 +252,14 @@ async def http_post_ci_metadata_v1(post_data: PostCiMetadataV1PostData):
 @app.put(
     "/v1/update_status",
     responses={
+        **DEFAULT_RESPONSES,  # type: ignore [dict-item]
+        **HTTP_404_NOT_FOUND_RESPONSE,  # type: ignore [dict-item]
         status.HTTP_200_OK: {
             "model": CiMetadata,
             "description": (
                 "Successfully set CI status to PUBLISHED. This is illustrated by the response "
                 "returning the GUID of the CI metadata that has been updated."
             ),
-        },
-        status.HTTP_400_BAD_REQUEST: {
-            "model": BadRequest,
-            "description": (
-                "Bad request. This is triggered by when a bad request body is provided. "
-                "The response will inform the user what required parameter they are missing from the request. "
-                "what required parameter they are missing from the request."
-            ),
-        },
-        status.HTTP_404_NOT_FOUND: {
-            "model": BadRequest,
-            "description": "Bad request. This is triggered when there is no CI data that matches the request provided.",
-        },
-        status.HTTP_500_INTERNAL_SERVER_ERROR: {
-            "description": "Internal error. This is triggered when something an unexpected error occurs on the server side.",
         },
     },
 )

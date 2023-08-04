@@ -280,10 +280,7 @@ paths:
                 $ref: '#/components/schemas/BadRequest'
           description: Bad request. This is triggered by when a bad request body is
             provided. The response will inform the user what required parameter they
-            are missing from the request or what is incorrect with the value that
-            they have provided.Bad request. This is triggered by when a bad request
-            body is provided. The response will inform the user what required parameter
-            they are missing from the request.
+            are missing from the request.
         '404':
           content:
             application/json:
@@ -329,8 +326,7 @@ paths:
                 $ref: '#/components/schemas/BadRequest'
           description: Bad request. This is triggered by when a bad request body is
             provided. The response will inform the user what required parameter they
-            are missing from the request or what is incorrect with the value that
-            they have provided.
+            are missing from the request.
         '422':
           content:
             application/json:
@@ -389,8 +385,14 @@ paths:
                 $ref: '#/components/schemas/BadRequest'
           description: Bad request. This is triggered by when a bad request body is
             provided. The response will inform the user what required parameter they
-            are missing from the request or what is incorrect with the value that
-            they have provided.
+            are missing from the request.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+          description: Bad request. This is triggered when there is no CI data that
+            matches the request provided.
         '422':
           content:
             application/json:
@@ -431,8 +433,7 @@ paths:
                 $ref: '#/components/schemas/BadRequest'
           description: Bad request. This is triggered by when a bad request body is
             provided. The response will inform the user what required parameter they
-            are missing from the request. what required parameter they are missing
-            from the request.
+            are missing from the request.
         '404':
           content:
             application/json:
@@ -569,7 +570,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequest'
-          description: Bad request. This is triggered when there is no CI schema that
+          description: Bad request. This is triggered when there is no CI data that
             matches the request provided.
         '422':
           content:
