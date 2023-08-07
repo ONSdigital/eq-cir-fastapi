@@ -21,11 +21,35 @@ from app.models.responses import BadRequest, CiMetadata, CiStatus
 client = TestClient(app)
 
 
+# Mock data for all tests
+mock_data_version = "1"
+mock_form_type = "t"
+mock_id = str(uuid.uuid4())
+mock_language = "em"
+mock_schema_version = "12"
+mock_sds_schema = ""
+mock_status = "DRAFT"
+mock_survey_id = "12124141"
+mock_title = "test"
+
+mock_ci_metadata = CiMetadata(
+    ci_version=1,
+    data_version=mock_data_version,
+    form_type=mock_form_type,
+    id=mock_id,
+    language=mock_language,
+    published_at=datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+    schema_version=mock_schema_version,
+    sds_schema=mock_sds_schema,
+    status=CiStatus.DRAFT.value,
+    survey_id=mock_survey_id,
+    title=mock_title,
+)
+
+
 @patch("app.main.delete_ci_v1")
 class TestHttpDeleteCiV1:
     """Tests for the `http_delete_ci_v1` endpoint"""
-
-    mock_survey_id = "12124141"
 
     base_url = "/v1/dev/teardown"
     query_params = DeleteCiV1Params(survey_id=mock_survey_id)
@@ -89,19 +113,6 @@ class TestHttpDeleteCiV1:
 class TestHttpGetCiMetadataV1:
     """Tests for the `http_get_ci_metadata_v1` endpoint"""
 
-    mock_form_type = "t"
-    mock_language = "em"
-    mock_survey_id = "12124141"
-
-    mock_ci_metadata = {
-        "data_version": "1",
-        "form_type": mock_form_type,
-        "language": mock_language,
-        "schema_version": "12",
-        "survey_id": mock_survey_id,
-        "title": "test",
-    }
-
     base_url = "/v1/ci_metadata"
     query_params = GetCiMetadataV1Params(form_type=mock_form_type, language=mock_language, survey_id=mock_survey_id)
     url = f"{base_url}?{urlencode(query_params.__dict__)}"
@@ -111,7 +122,7 @@ class TestHttpGetCiMetadataV1:
         Endpoint should return `HTTP_200_OK` as part of the response if ci metadata is found
         """
         # Update mocked `get_ci_metadata_v1` to return valid ci metadata
-        mocked_get_ci_metadata_v1.return_value = self.mock_ci_metadata
+        mocked_get_ci_metadata_v1.return_value = mock_ci_metadata.__dict__
 
         response = client.get(self.url)
         assert response.status_code == status.HTTP_200_OK
@@ -121,10 +132,10 @@ class TestHttpGetCiMetadataV1:
         Endpoint should return ci metadata as part of the response if ci metadata is found
         """
         # Update mocked `get_ci_metadata_v1` to return list of valid ci metadata
-        mocked_get_ci_metadata_v1.return_value = [self.mock_ci_metadata]
+        mocked_get_ci_metadata_v1.return_value = [mock_ci_metadata.__dict__]
 
         response = client.get(self.url)
-        assert response.json() == [self.mock_ci_metadata]
+        assert response.json() == [mock_ci_metadata.__dict__]
 
     def test_endpoint_returns_400_if_query_parameters_are_not_present(self, mocked_get_ci_metadata_v1):
         """
@@ -161,14 +172,6 @@ class TestHttpGetCiMetadataV1:
 @patch("app.main.get_ci_metadata_v2")
 class TestHttpGetCiMetadataV2:
     """Tests for the `http_get_ci_metadata_v2` endpoint"""
-
-    mock_survey_id = "12124141"
-    mock_language = "em"
-    mock_form_type = "t"
-    mock_title = "test"
-    mock_schema_version = "12"
-    mock_data_version = "1"
-    mock_status = "DRAFT"
 
     mock_ci_list = [
         {
@@ -264,20 +267,6 @@ class TestHttpGetCiMetadataV2:
 class TestHttpGetCiSchemaV1:
     """Tests for the `http_get_ci_schema_v1` endpoint"""
 
-    mock_form_type = "t"
-    mock_language = "em"
-    mock_survey_id = "12124141"
-    mock_id = "123578"
-
-    mock_ci_metadata = {
-        "data_version": "1",
-        "form_type": mock_form_type,
-        "language": mock_language,
-        "schema_version": "12",
-        "survey_id": mock_survey_id,
-        "title": "test",
-    }
-
     base_url = "/v1/retrieve_collection_instrument"
     query_params = GetCiSchemaV1Params(form_type=mock_form_type, language=mock_language, survey_id=mock_survey_id)
     url = f"{base_url}?{urlencode(query_params.__dict__)}"
@@ -287,7 +276,7 @@ class TestHttpGetCiSchemaV1:
         Endpoint should return `HTTP_200_OK` as part of the response if ci schema is found
         """
         # mocked `get_ci_schema_v1` to return valid ci metadata
-        mocked_get_ci_schema_v1.return_value = ("123578", self.mock_ci_metadata)
+        mocked_get_ci_schema_v1.return_value = ("123578", mock_ci_metadata.__dict__)
 
         response = client.get(self.url)
         assert response.status_code == status.HTTP_200_OK
@@ -296,10 +285,10 @@ class TestHttpGetCiSchemaV1:
         """
         Endpoint should return ci schema as part of the response if ci metadata is found
         """
-        mocked_get_ci_schema_v1.return_value = ("123578", self.mock_ci_metadata)
+        mocked_get_ci_schema_v1.return_value = ("123578", mock_ci_metadata.__dict__)
 
         response = client.get(self.url)
-        assert response.json() == self.mock_ci_metadata
+        assert response.json() == mock_ci_metadata.__dict__
 
     def test_endpoint_returns_BadRequest_if_guid_not_found(self, mocked_get_ci_schema_v1):
         """
@@ -337,20 +326,6 @@ class TestHttpGetCiSchemaV1:
 class TestHttpGetCiSchemaV2:
     """Tests for the `http_get_ci_schema_v2` endpoint"""
 
-    mock_form_type = "t"
-    mock_language = "em"
-    mock_survey_id = "12124141"
-    mock_id = "123578"
-
-    mock_ci = {
-        "data_version": "1",
-        "form_type": mock_form_type,
-        "language": mock_language,
-        "schema_version": "12",
-        "survey_id": mock_survey_id,
-        "title": "test",
-    }
-
     base_url = "/v2/retrieve_collection_instrument"
     query_params = GetCiSchemaV2Params(id=mock_id)
     url = f"{base_url}?{urlencode(query_params.__dict__)}"
@@ -360,7 +335,7 @@ class TestHttpGetCiSchemaV2:
         Endpoint should return `HTTP_200_OK` as part of the response if ci schema is found
         """
         # mocked `get_ci_schema_v2` to return valid ci metadata
-        mocked_get_ci_schema_v2.return_value = (self.mock_ci, self.mock_ci)
+        mocked_get_ci_schema_v2.return_value = (mock_ci_metadata.__dict__, mock_ci_metadata.__dict__)
 
         response = client.get(self.url)
         assert response.status_code == status.HTTP_200_OK
@@ -369,10 +344,10 @@ class TestHttpGetCiSchemaV2:
         """
         Endpoint should return ci schema as part of the response if ci metadata is found
         """
-        mocked_get_ci_schema_v2.return_value = (self.mock_ci, self.mock_ci)
+        mocked_get_ci_schema_v2.return_value = (mock_ci_metadata.__dict__, mock_ci_metadata.__dict__)
 
         response = client.get(self.url)
-        assert response.json() == self.mock_ci
+        assert response.json() == mock_ci_metadata.__dict__
 
     def test_endpoint_returns_BadRequest_if_metadata_not_found(self, mocked_get_ci_schema_v2):
         """
@@ -381,7 +356,7 @@ class TestHttpGetCiSchemaV2:
         """
         # Update mocked `get_ci_schema_v2` to return `None` showing ci metadata is not found
         mocked_get_ci_schema_v2.return_value = None, None
-        expected_response = BadRequest(message=f"No CI metadata found for: {self.mock_id}")
+        expected_response = BadRequest(message=f"No CI metadata found for: {mock_id}")
         response = client.get(self.url)
         assert response.json() == expected_response.__dict__
 
@@ -391,8 +366,8 @@ class TestHttpGetCiSchemaV2:
         found
         """
         # Update mocked `get_ci_schema_v2` to return `None` showing ci metadata is not found
-        mocked_get_ci_schema_v1.return_value = (self.mock_ci, None)
-        expected_response = BadRequest(message=f"No schema found for: {self.mock_id}")
+        mocked_get_ci_schema_v1.return_value = (mock_ci_metadata.__dict__, None)
+        expected_response = BadRequest(message=f"No schema found for: {mock_id}")
         response = client.get(self.url)
         assert response.json() == expected_response.__dict__
 
@@ -413,28 +388,6 @@ class TestHttpPostCiV1:
     Calls to `post_ci_metadata_v1` are mocked out for these tests
     """
 
-    mock_survey_id = "12124141"
-    mock_language = "em"
-    mock_form_type = "t"
-    mock_title = "test"
-    mock_schema_version = "12"
-    mock_data_version = "1"
-    mock_sds_schema = ""
-
-    mock_ci_metadata = CiMetadata(
-        ci_version=1,
-        data_version="1",
-        form_type=mock_form_type,
-        id=str(uuid.uuid4()),
-        language=mock_language,
-        published_at=datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
-        schema_version=mock_schema_version,
-        sds_schema="",
-        status=CiStatus.DRAFT.value,
-        survey_id=mock_survey_id,
-        title="test",
-    )
-
     post_data = PostCiMetadataV1PostData(
         survey_id=mock_survey_id,
         language=mock_language,
@@ -452,7 +405,7 @@ class TestHttpPostCiV1:
         successfully
         """
         # Update mocked `post_ci_metadata_v1` to return valid ci metadata
-        mocked_post_ci_metadata_v1.return_value = self.mock_ci_metadata
+        mocked_post_ci_metadata_v1.return_value = mock_ci_metadata
 
         response = client.post(self.url, headers={"ContentType": "application/json"}, json=self.post_data.__dict__)
         assert response.status_code == status.HTTP_200_OK
@@ -463,10 +416,10 @@ class TestHttpPostCiV1:
         successfully
         """
         # Update mocked `post_ci_metadata_v1` to return valid ci metadata
-        mocked_post_ci_metadata_v1.return_value = self.mock_ci_metadata
+        mocked_post_ci_metadata_v1.return_value = mock_ci_metadata
 
         response = client.post(self.url, headers={"ContentType": "application/json"}, json=self.post_data.__dict__)
-        assert response.json() == self.mock_ci_metadata.__dict__
+        assert response.json() == mock_ci_metadata.__dict__
 
     def test_endpoint_returns_400_if_no_post_data(self, mocked_post_ci_metadata_v1):
         """
@@ -482,20 +435,6 @@ class TestHttpPostCiV1:
 class TestPutStatusV1:
     "Tests for Update Status Endpoint"
 
-    mock_form_type = "t"
-    mock_language = "em"
-    mock_survey_id = "12124141"
-    mock_id = "123578"
-
-    mock_ci = {
-        "data_version": "1",
-        "form_type": mock_form_type,
-        "language": mock_language,
-        "schema_version": "12",
-        "survey_id": mock_survey_id,
-        "title": "test",
-    }
-
     base_url = "/v1/update_status/"
     query_params = PutStatusV1Params(id=mock_id)
     url = f"{base_url}?{urlencode(query_params.__dict__)}"
@@ -506,7 +445,7 @@ class TestPutStatusV1:
         """
         # mocked `get_ci_schema_v2` to return valid ci metadata
 
-        mocked_update_status_v1.return_value = (self.mock_ci, True)
+        mocked_update_status_v1.return_value = (mock_ci_metadata.__dict__, True)
         response = client.put(self.url)
         assert response.status_code == status.HTTP_200_OK
         expected_message = f"CI status has been changed to published for {self.query_params.id}"
@@ -517,7 +456,7 @@ class TestPutStatusV1:
         Endpoint should return `HTTP_200_OK` if status is already updated to published
         """
         # mocked `get_ci_schema_v2` to return valid ci metadata
-        mocked_update_status_v1.return_value = (self.mock_ci, False)
+        mocked_update_status_v1.return_value = (mock_ci_metadata.__dict__, False)
         response = client.put(self.url)
         assert response.status_code == status.HTTP_200_OK
         expected_message = f"CI status has already been changed to Published for {self.query_params.id}"
@@ -528,7 +467,7 @@ class TestPutStatusV1:
         Endpoint should return BadRequest if metadata is not found
         """
         mocked_update_status_v1.return_value = (None, False)
-        expected_response = BadRequest(message=f"No CI metadata found for: {self.mock_id}")
+        expected_response = BadRequest(message=f"No CI metadata found for: {mock_id}")
         response = client.put(self.url)
         assert response.json() == expected_response.__dict__
 
@@ -545,6 +484,6 @@ class TestPutStatusV1:
         """
         Endpoint should thrown an HTTP_400_BAD_REQUEST if invalid status parameter is present in the metadata
         """
-        mocked_update_status_v1.return_value = (self.mock_ci, "UNKOWN")
+        mocked_update_status_v1.return_value = (mock_ci_metadata.__dict__, "UNKOWN")
         response = client.put(self.base_url)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

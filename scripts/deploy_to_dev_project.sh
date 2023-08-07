@@ -11,28 +11,32 @@ SSL_CERT_NAME=${PROJECT_ID}-ssl-cert
 echo "Setting project to $PROJECT_ID..."
 gcloud config set project $PROJECT_ID
 
-# Generate a random hash to uniquely identify this build
-BUILD_ID=$(openssl rand -hex 4)
+# Get the credentials file and save locally as <PROJECT_ID>-cloudbuild-sa-key.json
+# Exports CLOUDBUILD_SA and GOOGLE_APPLICATION_CREDENTIALS env vars
+source ./scripts/generate_key.sh
 
-# Build the docker image
+echo "Activating $CLOUDBUILD_SA service account and authenticating with docker..."
+gcloud auth activate-service-account $CLOUDBUILD_SA --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://${REGION}-docker.pkg.dev
+
+echo "Building and pushing the docker container(s)..."
+# Generate a build id including a random hash to uniquely identify this build
+BUILD_ID="dev-$(openssl rand -hex 4)"
 docker build -t "${REGION}-docker.pkg.dev/${PROJECT_ID}/cir/cir:$BUILD_ID" -t "${REGION}-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest" .
-docker push "${REGION}-docker.pkg.dev/${_PROJECT_ID}/cir/cir:$BUILD_ID"
-docker push "${REGION}-docker.pkg.dev/${_PROJECT_ID}/cir/cir:latest"
+docker push "${REGION}-docker.pkg.dev/${PROJECT_ID}/cir/cir:$BUILD_ID"
+docker push "${REGION}-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest"
 
-# Deploy the docker image
+echo "Deploying the docker container(s)..."
 gcloud run deploy cir --image="${REGION}-docker.pkg.dev/${PROJECT_ID}/cir/cir:${BUILD_ID}" \
     --region=$REGION --allow-unauthenticated --ingress=internal-and-cloud-load-balancing
 
-# Get the credentials file and save locally as <PROJECT_ID>-cloudbuild-sa-key.json
-source ./scripts/generate_key.sh
-
+echo "Fetching oauth brand and client names..."
 # Get the oauth client name (required along with key to create access tokens)
 OAUTH_BRAND_NAME=$(gcloud iap oauth-brands list --format='value(name)' --limit=1 \
     --project=${PROJECT_ID})
 OAUTH_CLIENT_NAME=$(gcloud iap oauth-clients list ${OAUTH_BRAND_NAME} --format='value(name)' \
     --limit=1)
 
-# Set env variables for this new project
 echo "Setting env variables for $PROJECT_ID project..."
 export BUILD_ID=$BUILD_ID
 echo "BUILD_ID: ${BUILD_ID}"
