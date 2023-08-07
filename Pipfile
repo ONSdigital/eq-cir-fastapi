@@ -4,6 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+certifi = "==2023.7.22"
 fastapi = "==0.100.0"
 google-cloud-firestore = "==2.11.1"
 google-cloud-pubsub = "==2.18.0"
