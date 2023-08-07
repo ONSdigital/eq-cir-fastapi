@@ -1,7 +1,7 @@
 steps:
   - name: python
     id: 'Setup Python'
-    entrypoint sh
+    entrypoint: sh
     args:
       - '-c'
       - |
