@@ -7,7 +7,7 @@ steps:
   - name: python
     id: 'Use pipenv to install project requirements'
     entrypoint: 'python'
-    args: ['-m', 'pipenv', 'install', '--dev', '--system', '--deploy', '--user']
+    args: ['-m', 'pipenv', 'install', '--dev', '--user']
 
   - name: python
     id: 'Audit packages'
