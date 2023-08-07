@@ -2,7 +2,7 @@ steps:
   - name: python
     id: 'Setup Python and install project requirements'
     entrypoint: pip
-    args: ['install', '-r', 'requirements/development.txt']
+    args: ['install', '-r', 'requirements/development.txt', '--user']
 
   - name: python
     id: 'Audit packages'
