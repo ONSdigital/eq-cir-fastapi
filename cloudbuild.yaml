@@ -1,11 +1,13 @@
 steps:
   - name: python
-    id: 'Setup Python'
-    entrypoint: sh
-    args:
-      - '-c'
-      - |
-        pip install pipenv && pipenv install --dev --system --deploy
+    id: 'Setup Python and install pipenv'
+    entrypoint: pip
+    args: ['install', 'pipenv']
+
+  - name: python
+    id: 'Use pipenv to install project requirements'
+    entrypoint: pipenv
+    args: ['install', '--dev', '--system', '--deploy']
 
   - name: python
     id: 'Audit packages'
