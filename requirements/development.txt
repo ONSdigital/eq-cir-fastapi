@@ -45,5 +45,6 @@ sortedcontainers==2.4.0
 toml==0.10.2
 tomlkit==0.12.1
 typing_extensions==4.7.1
+uvicorn==0.23.2
 webencodings==0.5.1
 wrapt==1.15.0
