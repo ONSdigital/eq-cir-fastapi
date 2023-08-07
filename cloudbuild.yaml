@@ -1,13 +1,11 @@
 steps:
   - name: python
-    id: 'Setup Python and install pipenv'
-    entrypoint: 'python'
-    args: ['-m', 'pip', 'install', 'pipenv', '--user']
-
-  - name: python
-    id: 'Use pipenv to install project requirements'
-    entrypoint: 'python'
-    args: ['-m', 'pipenv', 'install', '--dev', '--system', '--deploy']
+    id: 'Setup Python and install project requirements'
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        make cloudbuild-install
 
   - name: python
     id: 'Audit packages'

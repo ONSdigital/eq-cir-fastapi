@@ -1,6 +1,10 @@
 audit:
 	python -m pip_audit
 
+cloudbuild-install:
+	python -m pip install pipenv
+	python -m pipenv install --dev --system --deploy
+
 generate-spec:
 	python -m scripts.generate_openapi
 
