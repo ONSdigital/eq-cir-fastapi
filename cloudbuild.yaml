@@ -2,7 +2,7 @@ steps:
   - name: python
     id: 'Setup Python and install pipenv'
     entrypoint: pip
-    args: ['install', 'pipenv']
+    args: ['install', 'pipenv', '--user']
 
   - name: python
     id: 'Use pipenv to install project requirements'
