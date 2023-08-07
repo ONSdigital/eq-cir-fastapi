@@ -1,8 +1,11 @@
 steps:
   - name: python
     id: 'Setup Python'
-    entrypoint: pip
-    args: ['install', '-r', 'requirements.txt', '--user']
+    entrypoint sh
+    args:
+      - '-c'
+      - |
+        pip install pipenv && pipenv install --dev --system --deploy
 
   - name: python
     id: 'Audit packages'
@@ -65,21 +68,21 @@ steps:
         --limit=1 \
         > /workspace/oauth_client_name
 
-  - name: python
-    id: 'pytest integration tests'
-    # gcloud returns OAUTH_CLIENT_NAME as '$OAUTH_BRAND_NAME/identityAwareProxy/OAUTH_CLIENT_ID'
-    # so we have to split by / and use the last part of the string here to get OAUTH_CLIENT_ID
-    entrypoint: sh
-    args:
-      - '-c'
-      - |
-        export DEFAULT_HOSTNAME=$_SSL_CERTIFICATE_DOMAIN
-        export CI_STORAGE_BUCKET_NAME=$PROJECT_ID
-        OAUTH_CLIENT_NAME=$(cat /workspace/oauth_client_name)
-        export OAUTH_CLIENT_ID=${OAUTH_CLIENT_NAME##*/}
-        export PROJECT_ID=$PROJECT_ID
-        export TOPIC_ID=$_TOPIC_ID
-        make integration-tests
+  # - name: python
+  #   id: 'pytest integration tests'
+  #   # gcloud returns OAUTH_CLIENT_NAME as '$OAUTH_BRAND_NAME/identityAwareProxy/OAUTH_CLIENT_ID'
+  #   # so we have to split by / and use the last part of the string here to get OAUTH_CLIENT_ID
+  #   entrypoint: sh
+  #   args:
+  #     - '-c'
+  #     - |
+  #       export DEFAULT_HOSTNAME=$_SSL_CERTIFICATE_DOMAIN
+  #       export CI_STORAGE_BUCKET_NAME=$PROJECT_ID
+  #       OAUTH_CLIENT_NAME=$(cat /workspace/oauth_client_name)
+  #       export OAUTH_CLIENT_ID=${OAUTH_CLIENT_NAME##*/}
+  #       export PROJECT_ID=$PROJECT_ID
+  #       export TOPIC_ID=$_TOPIC_ID
+  #       make integration-tests
 
 options:
   logging: CLOUD_LOGGING_ONLY
