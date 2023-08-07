@@ -2,12 +2,9 @@ FROM python:3.11-slim-bullseye
 
 WORKDIR /code
 
-# Install & use pipenv to install requirements
-COPY Pipfile Pipfile.lock ./code/
-ARG PIPENV_PIPFILE=./code/Pipfile
-
+# Install & use pip to install requirements
 RUN python -m pip install --upgrade pip
-RUN pip install pipenv && pipenv install --dev --system --deploy
+RUN pip install -r requirements/production.txt
 
 COPY ./app /code/app
 

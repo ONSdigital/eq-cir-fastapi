@@ -1,11 +1,8 @@
 steps:
   - name: python
     id: 'Setup Python and install project requirements'
-    entrypoint: sh
-    args:
-      - '-c'
-      - |
-        make cloudbuild-install
+    entrypoint: pip
+    args: ['install', '-r', 'requirements/development.txt']
 
   - name: python
     id: 'Audit packages'
