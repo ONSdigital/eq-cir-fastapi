@@ -5,7 +5,6 @@ This project is Collection Instrument Registry. It will manage the storage and v
 This project has the following dependencies:
 * [Docker Desktop](https://www.docker.com/products/docker-desktop/) or [Rancher Desktop](https://rancherdesktop.io/)
 * [google-cloud-sdk](https://cloud.google.com/sdk)
-* [pipenv](https://pipenv.pypa.io/en/latest/)
 * [pyenv](https://github.com/pyenv/pyenv)
 
 You will also need a Google Cloud account with the relevant permissions to create projects within the ONS Digital project.
@@ -15,16 +14,17 @@ To install dependencies and configure the project for first use, follow the inst
 2. Open a terminal at the project root
 3. Install other dependencies using `brew`
 
-   ```$ brew upgrade && brew install google-cloud-sdk pipenv pyenv```
+   ```$ brew upgrade && brew install google-cloud-sdk pyenv```
 4. Install and start using the Python version defined in the `.python-version` file using `pyenv`
 
    ```$ pyenv install```
-5. Create a new virtual environment to manage Python packages for the project. This action will read the attributes in the `Pipfile` and `Pipfile.lock` and install the right packages and versions we need, which insures we can set the correct dependencies for other devs and when deploying to production
+5. Create a new virtual environment to manage Python packages for the project using `venv` and activate it
 
-   ```$ pipenv install --dev```
-6. Activate your newly created virtual environment by running
+   ```$ python3 -m venv env && source env/bin/activate```
 
-   ```$ pipenv shell```
+6. Install project requirements using `pip`. This action will read the attributes in the `requirements.txt` file and install the right packages and versions we need, which insures we can set the correct dependencies for other devs and when deploying to production
+
+   ```$ pip install --upgrade pip && pip install -r requirements.txt```
 
 The project is now ready for development or to use for deployments.
 

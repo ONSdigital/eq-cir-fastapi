@@ -9,4 +9,5 @@
 *-cloudbuild-sa-key.json
 devtools/gcp-storage-emulator/data/*
 !devtools/gcp-storage-emulator/data/.placeholder
+env/*
 
