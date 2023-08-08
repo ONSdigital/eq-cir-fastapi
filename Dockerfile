@@ -1,11 +1,11 @@
 FROM python:3.11-slim-bullseye
 
 WORKDIR /code
-COPY ./requirements /code/requirements
+COPY ./requirements.txt /code/requirements.txt
 
 # Install & use pip to install requirements
 RUN python -m pip install --upgrade pip
-RUN pip install -r requirements/development.txt
+RUN pip install -r requirements.txt
 
 COPY ./app /code/app
 

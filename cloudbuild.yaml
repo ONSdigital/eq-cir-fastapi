@@ -1,30 +1,11 @@
 steps:
-  - name: 'python'
-    id: 'Install pip and upgrade'
-    entrypoint: 'python'
-    args: ['-m', 'pip', 'install', '--upgrade', 'pip', '--user']
-
-  - name: 'python'
-    id: 'Install pipenv'
-    entrypoint: 'python'
-    args: ['-m', 'pip', 'install', 'pipenv']
-
   - name: python
-    id: 'Install project dependencies using pipenv'
-    entrypoint: 'python'
-    args: ['-m', 'pipenv', 'sync', '--dev']
-    env:
-    - PIPENV_VENV_IN_PROJECT=1
+    id: 'Setup Python and install project requirements'
+    entrypoint: pip
+    args: ['install', '-r', 'requirements.txt', '--user']
 
   - name: python
     id: 'Audit packages'
-    entrypoint: 'python'
-    args: ['-m', 'pipenv', 'run', 'pip_audit']
-    env:
-    - PIPENV_VENV_IN_PROJECT=1
-
-  - name: python
-    id: 'Audit packages xxx'
     entrypoint: sh
     args:
       - '-c'
