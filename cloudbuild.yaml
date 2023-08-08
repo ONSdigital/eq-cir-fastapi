@@ -13,7 +13,7 @@ steps:
         make audit
 
   - name: python
-    id: 'linting and code formatting'
+    id: 'Check linting and code formatting'
     entrypoint: sh
     args:
       - '-c'
@@ -21,7 +21,7 @@ steps:
         make lint-check
 
   - name: python
-    id: 'pytest unit tests'
+    id: 'Run unit tests'
     entrypoint: sh
     args:
       - '-c'
@@ -31,7 +31,7 @@ steps:
         make unit-tests
 
   - name: docker
-    id: build_and_push
+    id: 'Build and push docker image'
     entrypoint: sh
     args:
       - '-c'
@@ -41,7 +41,7 @@ steps:
         docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest"
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: "Run image"
+    id: 'Deploy docker image to cloud run'
     entrypoint: gcloud
     args: [ 'run', 'deploy', 'cir', '--image', 'europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:$SHORT_SHA',
             '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
