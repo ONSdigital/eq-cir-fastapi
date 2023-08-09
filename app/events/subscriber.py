@@ -1,4 +1,5 @@
 import logging
+import time
 
 from google.cloud.pubsub_v1 import SubscriberClient
 
@@ -18,7 +19,7 @@ class Subscriber:
 
     def __init__(self) -> None:
         self.client = SubscriberClient()
-        self.num_messages = 5
+        self.max_messages = 5
         self.subscription_path = self.client.subscription_path(settings.PROJECT_ID, settings.SUBSCRIPTION_ID)
         self.topic_path = self.client.topic_path(settings.PROJECT_ID, settings.TOPIC_ID)
 
@@ -38,7 +39,8 @@ class Subscriber:
         logger.debug(f"Subscription deleted: {self.subscription_path}.")
 
     def pull_messages_and_acknowledge(self) -> list:
-        """Pulls `self.num_messages` messages from `self.subscription_path` and acknowledges"""
+        """Pulls `self.max_messages` messages from `self.subscription_path` and acknowledges"""
+        start = time.time()
 
         ack_ids = []
         messages = []
@@ -48,8 +50,12 @@ class Subscriber:
 
         # The subscriber pulls a specific number of messages. The actual
         # number of messages pulled may be smaller than max_messages.
-        response = self.client.pull(request={"subscription": self.subscription_path, "max_messages": self.num_messages})
-
+        pull_start = time.time()
+        response = self.client.pull(
+            max_messages=self.max_messages, return_immediately=True, subscription=self.subscription_path
+        )
+        pull_stop = time.time()
+        print(f"pull_messages_and_acknowledge pull: {pull_stop - pull_start}")
         if len(response.received_messages) > 0:
             for received_message in response.received_messages:
                 logger.debug(f"Received: {received_message.message.data}.")
@@ -57,13 +63,17 @@ class Subscriber:
                 ack_ids.append(received_message.ack_id)
 
             # Acknowledges the received messages so they will not be sent again.
+            ack_start = time.time()
             self.client.acknowledge(request={"subscription": self.subscription_path, "ack_ids": ack_ids})
-
+            ack_stop = time.time()
+            print(f"pull_messages_and_acknowledge ack: {ack_stop - ack_start}")
             logger.info(f"Received and acknowledged {len(response.received_messages)} messages from {self.subscription_path}.")
 
         else:
             logger.debug("No messages received")
 
+        stop = time.time()
+        print(f"pull_messages_and_acknowledge total: {stop - start}")
         return messages
 
     def subscription_exists(self) -> bool:
