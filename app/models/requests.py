@@ -13,16 +13,16 @@ class Status(Enum):
 class DeleteCiV1Params:
     """Model for `delete_ci_metadata_v1` request query params"""
 
-    survey_id: str = Query(description="The survey ID of the CI to be deleted.", example="123")
+    survey_id: str = Query(description="The survey ID of the CI to be deleted.", examples=["123"])
 
 
 @dataclass
 class GetCiMetadataV1Params:
     """Model for `get_ci_metadata_v1` request query params"""
 
-    form_type: str = Query(description="The form type of the CI", example="0005")
-    language: str = Query(description="The language of the CI", example="en")
-    survey_id: str = Query(description="The survey ID of the CI", example="123")
+    form_type: str = Query(description="The form type of the CI", examples=["0005"])
+    language: str = Query(description="The language of the CI", examples=["en"])
+    survey_id: str = Query(description="The survey ID of the CI", examples=["123"])
 
 
 @dataclass
@@ -32,10 +32,10 @@ class GetCiMetadataV2Params:
     All parameters are optional
     """
 
-    form_type: str = Query(default=None, description="form type to get", example="0005")
-    language: str = Query(default=None, description="language to get", example="en")
-    status: str = Query(default=None, description="status to get", example="draft")
-    survey_id: str = Query(default=None, description="survey id to get", example="123")
+    form_type: str = Query(default=None, description="form type to get", examples=["0005"])
+    language: str = Query(default=None, description="language to get", examples=["en"])
+    status: str = Query(default=None, description="status to get", examples=["draft"])
+    survey_id: str = Query(default=None, description="survey id to get", examples=["123"])
 
     def params_not_none(self, *args):
         """
@@ -55,16 +55,16 @@ class GetCiMetadataV2Params:
 class GetCiSchemaV1Params:
     """Model for `get_ci_schema_v1` request query params"""
 
-    form_type: str = Query(description="The form type of the CI", example="0005")
-    language: str = Query(description="The language of the CI", example="en")
-    survey_id: str = Query(description="The survey ID of the CI", example="123")
+    form_type: str = Query(description="The form type of the CI", examples=["0005"])
+    language: str = Query(description="The language of the CI", examples=["en"])
+    survey_id: str = Query(description="The survey ID of the CI", examples=["123"])
 
 
 @dataclass
 class GetCiSchemaV2Params:
     """Model for `get_ci_schema_v2` request query params"""
 
-    id: str = Query(description="The form type of the CI", example="123578")
+    id: str = Query(description="The form type of the CI", examples=["123578"])
 
 
 @dataclass
@@ -105,5 +105,5 @@ class PutStatusV1Params:
 
     id: str = Query(
         description="The global unique ID of the CI Metadata to be updated to 'PUBLISH'.",
-        example="428ae4d1-8e7f-4a9d-8bef-05a266bf81e7",
+        examples=["428ae4d1-8e7f-4a9d-8bef-05a266bf81e7"],
     )
