@@ -554,13 +554,13 @@ paths:
       parameters:
       - description: The form type of the CI
         in: query
-        name: id
+        name: guid
         required: true
         schema:
           description: The form type of the CI
           examples:
           - '123578'
-          title: Id
+          title: Guid
           type: string
       responses:
         '200':
