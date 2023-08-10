@@ -195,7 +195,7 @@ async def http_get_ci_schema_v1(query_params: GetCiSchemaV1Params = Depends()):
 
 # Fetching CI schema from Bucket Version 2
 @app.get(
-    "/v2/retrieve_collection_instrument/",
+    "/v2/retrieve_collection_instrument",
     responses={
         **DEFAULT_RESPONSES,  # type: ignore [dict-item]
         **HTTP_404_NOT_FOUND_RESPONSE,  # type: ignore [dict-item]

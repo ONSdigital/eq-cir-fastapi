@@ -547,10 +547,10 @@ paths:
           description: Internal error. This is triggered when something an unexpected
             error occurs on the server side.
       summary: Http Get Ci Metadata V2
-  /v2/retrieve_collection_instrument/:
+  /v2/retrieve_collection_instrument:
     get:
       description: GET method that fetches a CI schema by it's GUID.
-      operationId: http_get_ci_schema_v2_v2_retrieve_collection_instrument__get
+      operationId: http_get_ci_schema_v2_v2_retrieve_collection_instrument_get
       parameters:
       - description: The form type of the CI
         in: query
