@@ -37,6 +37,7 @@ class TestPutStatusV1:
         assert query_ci_pre_response_data[0]["status"] == "DRAFT"
 
         ci_update = put_status_v1(ci_id)
+        print(ci_update.content)
         assert ci_update.status_code == status.HTTP_200_OK
 
         # returning text as opposed to json as its a string
@@ -82,6 +83,6 @@ class TestPutStatusV1:
 
         ci_update_data = ci_update.json()
         assert ci_update_data == {
-            "message": f"No CI metadata found for {ci_id} ",
+            "message": f"No CI metadata found for: {ci_id}",
             "status": "error",
         }
