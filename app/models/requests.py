@@ -64,7 +64,7 @@ class GetCiSchemaV1Params:
 class GetCiSchemaV2Params:
     """Model for `get_ci_schema_v2` request query params"""
 
-    id: str = Query(description="The form type of the CI", examples=["123578"])
+    guid: str = Query(description="The form type of the CI", examples=["123578"])
 
 
 @dataclass

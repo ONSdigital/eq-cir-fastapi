@@ -327,7 +327,7 @@ class TestHttpGetCiSchemaV2:
     """Tests for the `http_get_ci_schema_v2` endpoint"""
 
     base_url = "/v2/retrieve_collection_instrument"
-    query_params = GetCiSchemaV2Params(id=mock_id)
+    query_params = GetCiSchemaV2Params(guid=mock_id)
     url = f"{base_url}?{urlencode(query_params.__dict__)}"
 
     def test_endpoint_returns_200_if_ci_schema_found(self, mocked_get_ci_schema_v2):
@@ -356,7 +356,7 @@ class TestHttpGetCiSchemaV2:
         """
         # Update mocked `get_ci_schema_v2` to return `None` showing ci metadata is not found
         mocked_get_ci_schema_v2.return_value = None, None
-        expected_response = BadRequest(message=f"No CI metadata found for: {mock_id}")
+        expected_response = BadRequest(message=f"No CI metadata found for: {self.query_params.guid}")
         response = client.get(self.url)
         assert response.json() == expected_response.__dict__
 
@@ -367,7 +367,7 @@ class TestHttpGetCiSchemaV2:
         """
         # Update mocked `get_ci_schema_v2` to return `None` showing ci metadata is not found
         mocked_get_ci_schema_v1.return_value = (mock_ci_metadata.__dict__, None)
-        expected_response = BadRequest(message=f"No schema found for: {mock_id}")
+        expected_response = BadRequest(message=f"No schema found for: {self.query_params.guid}")
         response = client.get(self.url)
         assert response.json() == expected_response.__dict__
 
@@ -448,7 +448,7 @@ class TestPutStatusV1:
         mocked_update_status_v1.return_value = (mock_ci_metadata.__dict__, True)
         response = client.put(self.url)
         assert response.status_code == status.HTTP_200_OK
-        expected_message = f"CI status has been changed to published for {self.query_params.guid}"
+        expected_message = f"CI status has been changed to Published for {self.query_params.guid}."
         assert expected_message in response.content.decode("utf-8")
 
     def test_endpoint_returns_200_if_Status_already_Updated(self, mocked_update_status_v1):

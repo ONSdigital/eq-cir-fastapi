@@ -149,9 +149,9 @@ def get_ci_schema_v2(query_params: GetCiSchemaV2Params):
     ci_metadata, ci_schema = None, None
     logger.info("Stepping into get_ci_schema_v2")
     logger.debug(f"get_ci_schema_v2 data received: {query_params.__dict__}")
-    ci_metadata = query_ci_metadata_with_guid(query_params.id)
+    ci_metadata = query_ci_metadata_with_guid(query_params.guid)
     if ci_metadata:
-        ci_schema = retrieve_ci_schema(query_params.id)
+        ci_schema = retrieve_ci_schema(query_params.guid)
         logger.debug(f"get_ci_schema_v1 output: {ci_schema}")
     return ci_metadata, ci_schema
 

@@ -344,7 +344,7 @@ class TestGetCISchemaV2:
     Calls to `query_ci_metadata_with_guid` and `retrieve_ci_schema` are mocked out for these tests
     """
 
-    query_params = GetCiSchemaV2Params(id=mock_id)
+    query_params = GetCiSchemaV2Params(guid=mock_id)
 
     def test_handler_calls_query_ci_metadata_with_guid(self, mocked_query_ci_metadata_with_guid, mocked_retrieve_ci_schema):
         """
@@ -364,7 +364,7 @@ class TestGetCISchemaV2:
         """
 
         get_ci_schema_v2(self.query_params)
-        mocked_query_ci_metadata_with_guid.assert_called_with(mock_id)
+        mocked_query_ci_metadata_with_guid.assert_called_with(self.query_params.guid)
 
     def test_handler_returns_output_of_retrieve_ci_schema(self, mocked_query_ci_metadata_with_guid, mocked_retrieve_ci_schema):
         """

@@ -217,9 +217,9 @@ async def http_get_ci_schema_v2(query_params: GetCiSchemaV2Params = Depends()):
         logger.info("get_ci_metadata_v1 success")
         return JSONResponse(status_code=status.HTTP_200_OK, content=ci_schema)
     if not ci_metadata:
-        message = f"No CI metadata found for: {query_params.id}"
+        message = f"No CI metadata found for: {query_params.guid}"
     else:
-        message = f"No schema found for: {query_params.id}"
+        message = f"No schema found for: {query_params.guid}"
     logger.info(
         f"get_ci_schema_v2: exception raised - {message}",
     )
