@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# Unset all relevant envars
+echo "Unsetting all relevant env variables..."
+unset BUILD_ID
+unset CI_STORAGE_BUCKET_NAME
+unset DEFAULT_HOSTNAME
+unset GOOGLE_APPLICATION_CREDENTIALS
+unset OAUTH_CLIENT_ID
+unset PROJECT_ID
+
 # Prompt the user for their GCP project ID and store it in a variable
 read PROJECT_ID"?Enter your GCP project ID: "
 
