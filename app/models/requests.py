@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 from fastapi import Query
+from pydantic import BaseModel, FieldValidationInfo, field_validator
 
 
 class Status(Enum):
@@ -67,8 +68,7 @@ class GetCiSchemaV2Params:
     guid: str = Query(description="The form type of the CI", examples=["123578"])
 
 
-@dataclass
-class PostCiMetadataV1PostData:
+class PostCiMetadataV1PostData(BaseModel):
     """
     Model for `post_ci_metadata_v1` request post data
 
@@ -95,6 +95,14 @@ class PostCiMetadataV1PostData:
     sections: list | None = None
     submission: dict | None = None
     theme: str | None = ""
+
+    @field_validator("data_version", "form_type", "language", "survey_id", "title", "schema_version")
+    @classmethod
+    def check_not_empty_string(cls, value: str, info: FieldValidationInfo) -> str:
+        """Raise `ValueError` if input `value` is an empty string or whitespace"""
+        if value == "" or value.isspace():
+            raise ValueError(f"{info.field_name} can't be empty or null")
+        return value
 
 
 @dataclass

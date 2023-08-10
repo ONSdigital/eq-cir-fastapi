@@ -3,6 +3,7 @@ import uuid
 from unittest.mock import patch
 from urllib.parse import urlencode
 
+import pytest
 from fastapi import status
 from fastapi.testclient import TestClient
 
@@ -407,7 +408,7 @@ class TestHttpPostCiV1:
         # Update mocked `post_ci_metadata_v1` to return valid ci metadata
         mocked_post_ci_metadata_v1.return_value = mock_ci_metadata
 
-        response = client.post(self.url, headers={"ContentType": "application/json"}, json=self.post_data.__dict__)
+        response = client.post(self.url, headers={"ContentType": "application/json"}, json=self.post_data.model_dump())
         assert response.status_code == status.HTTP_200_OK
 
     def test_endpoint_returns_serialized_ci_metadata_if_ci_created_successfully(self, mocked_post_ci_metadata_v1):
@@ -418,7 +419,7 @@ class TestHttpPostCiV1:
         # Update mocked `post_ci_metadata_v1` to return valid ci metadata
         mocked_post_ci_metadata_v1.return_value = mock_ci_metadata
 
-        response = client.post(self.url, headers={"ContentType": "application/json"}, json=self.post_data.__dict__)
+        response = client.post(self.url, headers={"ContentType": "application/json"}, json=self.post_data.model_dump())
         assert response.json() == mock_ci_metadata.__dict__
 
     def test_endpoint_returns_400_if_no_post_data(self, mocked_post_ci_metadata_v1):
@@ -428,6 +429,41 @@ class TestHttpPostCiV1:
         """
         # Make request to base url without any post data
         response = client.post(self.url, headers={"ContentType": "application/json"})
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    @pytest.mark.parametrize("input_param", ["data_version", "form_type", "language", "survey_id", "title", "schema_version"])
+    def test_endpoint_returns_400_if_required_field_none(self, mocked_post_ci_metadata_v1, input_param):
+        """
+        Endpoint should return `HTTP_400_BAD_REQUEST` if any required field in post data is `None`
+        """
+        # update `post_data` to contain `None` value for `input_param` field
+        setattr(self.post_data, input_param, None)
+
+        response = client.post(self.url, headers={"ContentType": "application/json"}, json=self.post_data.model_dump())
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    @pytest.mark.parametrize("input_param", ["data_version", "form_type", "language", "survey_id", "title", "schema_version"])
+    def test_endpoint_returns_400_if_required_field_empty_string(self, mocked_post_ci_metadata_v1, input_param):
+        """
+        Endpoint should return `HTTP_400_BAD_REQUEST` if any required field in post data is an
+        empty string
+        """
+        # update `post_data` to contain empty string value for `input_param` field
+        setattr(self.post_data, input_param, "")
+
+        response = client.post(self.url, headers={"ContentType": "application/json"}, json=self.post_data.model_dump())
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    @pytest.mark.parametrize("input_param", ["data_version", "form_type", "language", "survey_id", "title", "schema_version"])
+    def test_endpoint_returns_400_if_required_field_whitespace(self, mocked_post_ci_metadata_v1, input_param):
+        """
+        Endpoint should return `HTTP_400_BAD_REQUEST` if any required field in post data is
+        whitespace
+        """
+        # update `post_data` to contain whitespace value for `input_param` field
+        setattr(self.post_data, input_param, " ")
+
+        response = client.post(self.url, headers={"ContentType": "application/json"}, json=self.post_data.model_dump())
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
