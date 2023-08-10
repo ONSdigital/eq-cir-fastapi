@@ -436,7 +436,7 @@ class TestPutStatusV1:
     "Tests for Update Status Endpoint"
 
     base_url = "/v1/update_status/"
-    query_params = PutStatusV1Params(id=mock_id)
+    query_params = PutStatusV1Params(guid=mock_id)
     url = f"{base_url}?{urlencode(query_params.__dict__)}"
 
     def test_endpoint_returns_200_if_Status_Updated(self, mocked_update_status_v1):
@@ -448,7 +448,7 @@ class TestPutStatusV1:
         mocked_update_status_v1.return_value = (mock_ci_metadata.__dict__, True)
         response = client.put(self.url)
         assert response.status_code == status.HTTP_200_OK
-        expected_message = f"CI status has been changed to published for {self.query_params.id}"
+        expected_message = f"CI status has been changed to published for {self.query_params.guid}"
         assert expected_message in response.content.decode("utf-8")
 
     def test_endpoint_returns_200_if_Status_already_Updated(self, mocked_update_status_v1):
@@ -459,7 +459,7 @@ class TestPutStatusV1:
         mocked_update_status_v1.return_value = (mock_ci_metadata.__dict__, False)
         response = client.put(self.url)
         assert response.status_code == status.HTTP_200_OK
-        expected_message = f"CI status has already been changed to Published for {self.query_params.id}"
+        expected_message = f"CI status has already been changed to Published for {self.query_params.guid}"
         assert expected_message in response.content.decode("utf-8")
 
     def test_endpoint_returns_BadRequest_if_ci_metadata_not_found(self, mocked_update_status_v1):

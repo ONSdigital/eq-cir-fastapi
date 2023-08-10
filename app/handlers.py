@@ -215,11 +215,11 @@ def put_status_v1(query_params: PutStatusV1Params):
     """
     logger.info("Stepping into put_status_v1")
     logger.debug(f"put_status_v1 GUID received: {query_params.__dict__}")
-    ci_metadata = query_ci_metadata_with_guid(query_params.id)
+    ci_metadata = query_ci_metadata_with_guid(query_params.guid)
     if not ci_metadata:
         return None, False
     if ci_metadata["status"] == Status.PUBLISHED.value:
         return ci_metadata, False
     if ci_metadata["status"] == Status.DRAFT.value:
-        update_ci_metadata_status_to_published(query_params.id, {"status": Status.PUBLISHED.value})
+        update_ci_metadata_status_to_published(query_params.guid, {"status": Status.PUBLISHED.value})
         return ci_metadata, True

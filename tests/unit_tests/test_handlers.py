@@ -510,7 +510,7 @@ class TestPostCiMetadataV1:
 class TestPutStatusV1:
     """Tests for the `put_status_v1` handler"""
 
-    query_params = PutStatusV1Params(id=mock_id)
+    query_params = PutStatusV1Params(guid=mock_id)
 
     def test_handler_calls_query_ci_with_guid_and_update_ci(
         self, mocked_query_ci_metadata_with_guid, mocked_update_ci_metadata_status_to_published
@@ -538,11 +538,11 @@ class TestPutStatusV1:
         put_status_v1(self.query_params)
 
         # Assert that query_ci_metadata_with_guid was called with the correct parameter
-        mocked_query_ci_metadata_with_guid.assert_called_once_with(self.query_params.id)
+        mocked_query_ci_metadata_with_guid.assert_called_once_with(self.query_params.guid)
 
         # Assert that update_ci_metadata_status_to_published was called with the correct parameters
         mocked_update_ci_metadata_status_to_published.assert_called_once_with(
-            self.query_params.id, {"status": Status.PUBLISHED.value}
+            self.query_params.guid, {"status": Status.PUBLISHED.value}
         )
 
     def test_handler_returns_right_output_of_query_ci_with_guid_and_update_ci_if_status_DRAFT(

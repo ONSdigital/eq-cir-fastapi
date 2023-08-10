@@ -103,7 +103,7 @@ class PutStatusV1Params:
     Model for `put_status_v1` request params
     """
 
-    id: str = Query(
+    guid: str = Query(
         description="The global unique ID of the CI Metadata to be updated to 'PUBLISH'.",
         examples=["428ae4d1-8e7f-4a9d-8bef-05a266bf81e7"],
     )

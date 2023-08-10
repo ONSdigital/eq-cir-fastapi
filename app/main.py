@@ -270,12 +270,12 @@ async def http_put_status_v1(query_params: PutStatusV1Params = Depends()):
     ci_metadata, updated_status = put_status_v1(query_params)
     if ci_metadata:
         if updated_status:
-            message = f"CI status has been changed to published for {query_params.id}"
+            message = f"CI status has been changed to published for {query_params.guid}"
         else:
             logger.info("CI already set to PUBLISHED")
-            message = f"CI status has already been changed to Published for {query_params.id}"
+            message = f"CI status has already been changed to Published for {query_params.guid}"
 
         return JSONResponse(status_code=status.HTTP_200_OK, content=message)
     else:
-        response_content = BadRequest(message=f"No CI metadata found for: {query_params.id}")
+        response_content = BadRequest(message=f"No CI metadata found for: {query_params.guid}")
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)
