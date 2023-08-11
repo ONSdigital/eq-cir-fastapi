@@ -59,11 +59,13 @@ HTTP_404_NOT_FOUND_RESPONSE = {
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     """
-    When a request contains invalid data, FastAPI internally raises a
-    RequestValidationError. This function override the default
-    validation exception handler to return 400 instead of 422
+    When a request contains invalid data, FastAPI internally raises a `RequestValidationError`.
+    This function override the default validation exception handler to return 400 instead of 422
     """
-    return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message": str(exc)})
+    # Build the error message as a list of error messages
+    message = str([e["msg"] for e in exc.errors()])
+    response_content = BadRequest(message=message)
+    return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content=response_content.__dict__)
 
 
 @app.delete(
