@@ -62,8 +62,8 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     When a request contains invalid data, FastAPI internally raises a `RequestValidationError`.
     This function override the default validation exception handler to return 400 instead of 422
     """
-    # Build the error message as a list of error messages
-    message = str([e["msg"] for e in exc.errors()])
+    # Build the error message as a semi-colon separated string of error messages
+    message = ";".join([e["msg"] for e in exc.errors()])
     response_content = BadRequest(message=message)
     return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content=response_content.__dict__)
 

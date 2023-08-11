@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     STORAGE_EMULATOR_HOST: str = "only required for development environment"
     SUBSCRIPTION_ID: str = "ons-cir-publish-events-subscription-cir"
     TOPIC_ID: str = "ons-cir-publish-events"
+    URL_SCHEME: str = "only required for integration tests"
 
 
 settings = Settings()

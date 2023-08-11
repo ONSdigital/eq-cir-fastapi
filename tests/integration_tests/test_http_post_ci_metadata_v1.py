@@ -186,7 +186,7 @@ class TestPostCiV1:
 
         ci_response_data = ci_response.json()
         assert ci_response_data == {
-            "message": "Bad request: survey_id can't be empty or null",
+            "message": "Value error, survey_id can't be empty or null",
             "status": "error",
         }
 
@@ -204,7 +204,7 @@ class TestPostCiV1:
 
         ci_response_data = ci_response.json()
         assert ci_response_data == {
-            "message": "Bad request: language can't be empty or null",
+            "message": "Value error, language can't be empty or null",
             "status": "error",
         }
 
@@ -222,7 +222,7 @@ class TestPostCiV1:
 
         ci_response_data = ci_response.json()
         assert ci_response_data == {
-            "message": "Bad request: form_type can't be empty or null",
+            "message": "Value error, form_type can't be empty or null",
             "status": "error",
         }
 
@@ -240,7 +240,7 @@ class TestPostCiV1:
 
         ci_response_data = ci_response.json()
         assert ci_response_data == {
-            "message": "Bad request: title can't be empty or null",
+            "message": "Value error, title can't be empty or null",
             "status": "error",
         }
 
@@ -258,7 +258,7 @@ class TestPostCiV1:
 
         ci_response_data = ci_response.json()
         assert ci_response_data == {
-            "message": "Bad request: schema_version can't be empty or null",
+            "message": "Value error, schema_version can't be empty or null",
             "status": "error",
         }
 
@@ -276,6 +276,6 @@ class TestPostCiV1:
 
         ci_response_data = ci_response.json()
         assert ci_response_data == {
-            "message": "Bad request: data_version can't be empty or null",
+            "message": "Value error, data_version can't be empty or null",
             "status": "error",
         }

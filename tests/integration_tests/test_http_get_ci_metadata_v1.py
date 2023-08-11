@@ -9,7 +9,7 @@ class TestGetCiMetadataV1:
         print(": tearing down")
         delete_docs("3456")
 
-    def test_post__3_ci_with_same_metadata_query_ci_returns_3(self, setup_payload):
+    def test_post_3_ci_with_same_metadata_query_ci_returns_3(self, setup_payload):
         # post 3 ci with the same data
         for _ in range(3):
             post_ci_v1(setup_payload)

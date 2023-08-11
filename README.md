@@ -76,6 +76,7 @@ When this script has completed, it will export values for the following environm
 * GOOGLE_APPLICATION_CREDENTIALS
 * OAUTH_CLIENT_ID
 * PROJECT_ID
+* URL_SCHEME
 
 These variables will be configured to work with the project the Docker image was deployed to and the Load Balancer and IAP. These can then be used when debugging and running tests (e.g. when running `make integration-tests`).
 

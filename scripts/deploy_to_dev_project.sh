@@ -61,5 +61,7 @@ export OAUTH_CLIENT_ID=${${OAUTH_CLIENT_NAME}##*/}
 echo "OAUTH_CLIENT_ID: ${OAUTH_CLIENT_ID}"
 export PROJECT_ID=$PROJECT_ID
 echo "PROJECT_ID: ${PROJECT_ID}"
+export URL_SCHEME="https"
+echo "URL_SCHEME: ${URL_SCHEME}"
 
 echo "Done!"
