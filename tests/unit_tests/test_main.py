@@ -430,6 +430,14 @@ class TestHttpPostCiV1:
         response = client.post(self.url, headers={"ContentType": "application/json"})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
+    def test_endpoint_returns_500_if_transaction_failed(self, mocked_post_ci_metadata_v1):
+        """
+        Endpoint should return `HTTP_500_BAD_REQUEST` if transaction failed
+        """
+        mocked_post_ci_metadata_v1.return_value = None
+        response = client.post(self.url, headers={"ContentType": "application/json"}, json=self.post_data.__dict__)
+        assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+
 
 @patch("app.main.put_status_v1")
 class TestPutStatusV1:

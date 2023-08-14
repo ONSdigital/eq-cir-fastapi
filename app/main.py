@@ -246,6 +246,8 @@ async def http_post_ci_metadata_v1(post_data: PostCiMetadataV1PostData):
     """
     ci_metadata = post_ci_metadata_v1(post_data)
     logger.info("post_ci_metadata_v1 success")
+    if ci_metadata is None:
+        return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content="failure in transaction")
     return JSONResponse(status_code=status.HTTP_200_OK, content=ci_metadata.__dict__)
 
 
