@@ -59,11 +59,13 @@ HTTP_404_NOT_FOUND_RESPONSE = {
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     """
-    When a request contains invalid data, FastAPI internally raises a
-    RequestValidationError. This function override the default
-    validation exception handler to return 400 instead of 422
+    When a request contains invalid data, FastAPI internally raises a `RequestValidationError`.
+    This function override the default validation exception handler to return 400 instead of 422
     """
-    return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message": str(exc)})
+    # Build the error message as a semi-colon separated string of error messages
+    message = ";".join([e["msg"] for e in exc.errors()])
+    response_content = BadRequest(message=message)
+    return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content=response_content.__dict__)
 
 
 @app.delete(
@@ -195,7 +197,7 @@ async def http_get_ci_schema_v1(query_params: GetCiSchemaV1Params = Depends()):
 
 # Fetching CI schema from Bucket Version 2
 @app.get(
-    "/v2/retrieve_collection_instrument/",
+    "/v2/retrieve_collection_instrument",
     responses={
         **DEFAULT_RESPONSES,  # type: ignore [dict-item]
         **HTTP_404_NOT_FOUND_RESPONSE,  # type: ignore [dict-item]
@@ -217,9 +219,9 @@ async def http_get_ci_schema_v2(query_params: GetCiSchemaV2Params = Depends()):
         logger.info("get_ci_metadata_v1 success")
         return JSONResponse(status_code=status.HTTP_200_OK, content=ci_schema)
     if not ci_metadata:
-        message = f"No CI metadata found for: {query_params.id}"
+        message = f"No CI metadata found for: {query_params.guid}"
     else:
-        message = f"No schema found for: {query_params.id}"
+        message = f"No schema found for: {query_params.guid}"
     logger.info(
         f"get_ci_schema_v2: exception raised - {message}",
     )
@@ -270,12 +272,12 @@ async def http_put_status_v1(query_params: PutStatusV1Params = Depends()):
     ci_metadata, updated_status = put_status_v1(query_params)
     if ci_metadata:
         if updated_status:
-            message = f"CI status has been changed to published for {query_params.id}"
+            message = f"CI status has been changed to Published for {query_params.guid}."
         else:
             logger.info("CI already set to PUBLISHED")
-            message = f"CI status has already been changed to Published for {query_params.id}"
+            message = f"CI status has already been changed to Published for {query_params.guid}."
 
         return JSONResponse(status_code=status.HTTP_200_OK, content=message)
     else:
-        response_content = BadRequest(message=f"No CI metadata found for: {query_params.id}")
+        response_content = BadRequest(message=f"No CI metadata found for: {query_params.guid}")
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)

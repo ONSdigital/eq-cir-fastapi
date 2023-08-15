@@ -35,7 +35,7 @@ def make_iap_request(method, path, **kwargs):
     auth_token = id_token.fetch_id_token(Request(), audience=settings.OAUTH_CLIENT_ID)
 
     headers = {"Authorization": f"Bearer {auth_token}", "Content-Type": "application/json"}
-    url = f"https://{settings.DEFAULT_HOSTNAME}{path}"
+    url = f"{settings.URL_SCHEME}://{settings.DEFAULT_HOSTNAME}{path}"
 
     # Fetch the Identity-Aware Proxy-protected URL, including an
     # Authorization header containing "Bearer " followed by a
