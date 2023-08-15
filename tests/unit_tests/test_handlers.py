@@ -1,7 +1,9 @@
 import datetime
 import uuid
 from unittest.mock import patch
+
 import pytest
+
 from app.handlers import (
     delete_ci_v1,
     get_ci_metadata_v1,
@@ -501,8 +503,8 @@ class TestPostCiMetadataV1:
         # Configure mocked `post_ci_metadata` to raise a generic exception
         mocked_post_ci_metadata.side_effect = Exception()
         with pytest.raises(Exception):
-          post_ci_metadata_v1(self.post_data)
-        
+            post_ci_metadata_v1(self.post_data)
+
 
 @patch("app.handlers.update_ci_metadata_status_to_published")
 @patch("app.handlers.query_ci_metadata_with_guid")
