@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 from fastapi import Query
+from pydantic import BaseModel, FieldValidationInfo, field_validator
 
 
 class Status(Enum):
@@ -13,16 +14,16 @@ class Status(Enum):
 class DeleteCiV1Params:
     """Model for `delete_ci_metadata_v1` request query params"""
 
-    survey_id: str = Query(description="The survey ID of the CI to be deleted.", example="123")
+    survey_id: str = Query(description="The survey ID of the CI to be deleted.", examples=["123"])
 
 
 @dataclass
 class GetCiMetadataV1Params:
     """Model for `get_ci_metadata_v1` request query params"""
 
-    form_type: str = Query(description="The form type of the CI", example="0005")
-    language: str = Query(description="The language of the CI", example="en")
-    survey_id: str = Query(description="The survey ID of the CI", example="123")
+    form_type: str = Query(description="The form type of the CI", examples=["0005"])
+    language: str = Query(description="The language of the CI", examples=["en"])
+    survey_id: str = Query(description="The survey ID of the CI", examples=["123"])
 
 
 @dataclass
@@ -32,10 +33,10 @@ class GetCiMetadataV2Params:
     All parameters are optional
     """
 
-    form_type: str = Query(default=None, description="form type to get", example="0005")
-    language: str = Query(default=None, description="language to get", example="en")
-    status: str = Query(default=None, description="status to get", example="draft")
-    survey_id: str = Query(default=None, description="survey id to get", example="123")
+    form_type: str = Query(default=None, description="form type to get", examples=["0005"])
+    language: str = Query(default=None, description="language to get", examples=["en"])
+    status: str = Query(default=None, description="status to get", examples=["draft"])
+    survey_id: str = Query(default=None, description="survey id to get", examples=["123"])
 
     def params_not_none(self, *args):
         """
@@ -55,20 +56,19 @@ class GetCiMetadataV2Params:
 class GetCiSchemaV1Params:
     """Model for `get_ci_schema_v1` request query params"""
 
-    form_type: str = Query(description="The form type of the CI", example="0005")
-    language: str = Query(description="The language of the CI", example="en")
-    survey_id: str = Query(description="The survey ID of the CI", example="123")
+    form_type: str = Query(description="The form type of the CI", examples=["0005"])
+    language: str = Query(description="The language of the CI", examples=["en"])
+    survey_id: str = Query(description="The survey ID of the CI", examples=["123"])
 
 
 @dataclass
 class GetCiSchemaV2Params:
     """Model for `get_ci_schema_v2` request query params"""
 
-    id: str = Query(description="The form type of the CI", example="123578")
+    guid: str = Query(description="The form type of the CI", examples=["123578"])
 
 
-@dataclass
-class PostCiMetadataV1PostData:
+class PostCiMetadataV1PostData(BaseModel):
     """
     Model for `post_ci_metadata_v1` request post data
 
@@ -96,6 +96,14 @@ class PostCiMetadataV1PostData:
     submission: dict | None = None
     theme: str | None = ""
 
+    @field_validator("data_version", "form_type", "language", "survey_id", "title", "schema_version")
+    @classmethod
+    def check_not_empty_string(cls, value: str, info: FieldValidationInfo) -> str:
+        """Raise `ValueError` if input `value` is an empty string or whitespace"""
+        if value == "" or value.isspace():
+            raise ValueError(f"{info.field_name} can't be empty or null")
+        return value
+
 
 @dataclass
 class PutStatusV1Params:
@@ -103,7 +111,7 @@ class PutStatusV1Params:
     Model for `put_status_v1` request params
     """
 
-    id: str = Query(
+    guid: str = Query(
         description="The global unique ID of the CI Metadata to be updated to 'PUBLISH'.",
-        example="428ae4d1-8e7f-4a9d-8bef-05a266bf81e7",
+        examples=["428ae4d1-8e7f-4a9d-8bef-05a266bf81e7"],
     )

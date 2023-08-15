@@ -76,6 +76,7 @@ When this script has completed, it will export values for the following environm
 * GOOGLE_APPLICATION_CREDENTIALS
 * OAUTH_CLIENT_ID
 * PROJECT_ID
+* URL_SCHEME
 
 These variables will be configured to work with the project the Docker image was deployed to and the Load Balancer and IAP. These can then be used when debugging and running tests (e.g. when running `make integration-tests`).
 
@@ -84,6 +85,9 @@ These variables will be configured to work with the project the Docker image was
 If you want to test posting data to these functions using Postman or similar, you should use a url constructed using the `DEFAULT_HOSTNAME` variable value with an appropriate http schema and endpoint e.g. `https://<DEFAULT_HOSTNAME>/v1/publish_collection_instrument`. You will need to generate an auth token to authenticate with these endpoints, see the `make_iap_request` code in `tests/integration_tests/utils/utils.py`.
 
 ## Testing
+
+### Integration testsing
+To run integration tests from root folder run `make integration-tests`
 
 ### Unit testing
 To run unit tests from root folder run `make unit-tests`
