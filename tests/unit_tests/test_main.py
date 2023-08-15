@@ -18,7 +18,7 @@ from app.models.requests import (
 )
 from app.models.responses import BadRequest, CiMetadata, CiStatus
 
-client = TestClient(app)
+client = TestClient(app, raise_server_exceptions=False)
 
 
 # Mock data for all tests
@@ -434,7 +434,7 @@ class TestHttpPostCiV1:
         """
         Endpoint should return `HTTP_500_BAD_REQUEST` if transaction failed
         """
-        mocked_post_ci_metadata_v1.return_value = None
+        mocked_post_ci_metadata_v1.side_effect = Exception()
         response = client.post(self.url, headers={"ContentType": "application/json"}, json=self.post_data.__dict__)
         assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
 

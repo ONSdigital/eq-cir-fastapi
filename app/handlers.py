@@ -167,44 +167,36 @@ def post_ci_metadata_v1(post_data: PostCiMetadataV1PostData) -> CiMetadata | Non
     # Unable to test the transaction rollback in tests
     # start transaction
     with db.transaction() as transaction:
-        try:
-            # post metadata to firestore
-            ci_metadata_with_new_version = post_ci_metadata(post_data)
-            logger.debug(f"New CI created: {ci_metadata_with_new_version.__dict__}")
+        # post metadata to firestore
+        ci_metadata_with_new_version = post_ci_metadata(post_data)
+        logger.debug(f"New CI created: {ci_metadata_with_new_version.__dict__}")
 
-            # put the schema in cloud storage where filename is the unique CI id
-            store_ci_schema(ci_metadata_with_new_version.id, post_data.__dict__)
-            logger.info("put_schema success")
+        # put the schema in cloud storage where filename is the unique CI id
+        store_ci_schema(ci_metadata_with_new_version.id, post_data.__dict__)
+        logger.info("put_schema success")
 
-            # create event message
-            event_message = PostCIEvent(
-                ci_version=ci_metadata_with_new_version.ci_version,
-                data_version=ci_metadata_with_new_version.data_version,
-                form_type=ci_metadata_with_new_version.form_type,
-                id=ci_metadata_with_new_version.id,
-                language=ci_metadata_with_new_version.language,
-                published_at=ci_metadata_with_new_version.published_at,
-                schema_version=ci_metadata_with_new_version.schema_version,
-                status=ci_metadata_with_new_version.status,
-                sds_schema=ci_metadata_with_new_version.sds_schema,
-                survey_id=ci_metadata_with_new_version.survey_id,
-                title=ci_metadata_with_new_version.title,
-            )
-            publisher.publish_message(event_message)
+        # create event message
+        event_message = PostCIEvent(
+            ci_version=ci_metadata_with_new_version.ci_version,
+            data_version=ci_metadata_with_new_version.data_version,
+            form_type=ci_metadata_with_new_version.form_type,
+            id=ci_metadata_with_new_version.id,
+            language=ci_metadata_with_new_version.language,
+            published_at=ci_metadata_with_new_version.published_at,
+            schema_version=ci_metadata_with_new_version.schema_version,
+            status=ci_metadata_with_new_version.status,
+            sds_schema=ci_metadata_with_new_version.sds_schema,
+            survey_id=ci_metadata_with_new_version.survey_id,
+            title=ci_metadata_with_new_version.title,
+        )
+        publisher.publish_message(event_message)
 
-            # commit the transaction
-            transaction.commit()
-            logger.debug("Transaction committed")
+        # commit the transaction
+        transaction.commit()
+        logger.debug("Transaction committed")
 
-            logger.debug(f"post_ci_v1 output data: {ci_metadata_with_new_version.__dict__}")
-            return ci_metadata_with_new_version
-        except Exception as e:
-            # if any part of the transaction fails, rollback and delete CI schema from bucket
-            logger.error(f"post_ci_v1: exception raised - {e}")
-            logger.error("Rolling back transaction")
-            transaction.rollback()
-            logger.info("Deleted schema from bucket")
-            return None
+        logger.debug(f"post_ci_v1 output data: {ci_metadata_with_new_version.__dict__}")
+        return ci_metadata_with_new_version
 
 
 def put_status_v1(query_params: PutStatusV1Params):
