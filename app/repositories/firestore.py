@@ -107,8 +107,8 @@ def post_ci_metadata(post_data: PostCiMetadataV1PostData) -> CiMetadata:
     )
 
     # Add new version
-    ci_collection.document(uid).set(ci_metadata.__dict__)
-    logger.debug(f"create_new_ci_version output: {ci_metadata.__dict__}")
+    ci_collection.document(uid).set(ci_metadata.to_firestore_dict())
+    logger.info(f"create_new_ci_version output: {ci_metadata.to_firestore_dict()}")
     logger.info("create_new_ci_version success")
     return ci_metadata
 
