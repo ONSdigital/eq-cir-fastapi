@@ -3,6 +3,7 @@ import uuid
 
 from app.config import Settings
 from app.models.events import PostCIEvent
+from app.models.responses import CiStatus
 
 settings = Settings()
 
@@ -16,7 +17,7 @@ mock_language = "em"
 mock_published_at = datetime.datetime.utcnow().strftime(settings.PUBLISHED_AT_FORMAT)
 mock_schema_version = "12"
 mock_sds_schema = "my test schema"
-mock_status = "DRAFT"
+mock_status = CiStatus.DRAFT.value
 mock_survey_id = "12124141"
 mock_title = "test"
 
@@ -24,12 +25,12 @@ mock_title = "test"
 class TestPostCIEvent:
     """Tests for the `PostCIEvent` data class"""
 
-    def test_model_includes_sds_schema_field_if_provided(self):
+    def test_to_event_dict_includes_sds_schema_if_filled(self):
         """
-        `PostCIEvent` data model should init and return dictionary containing `sds_schema` field
-        if `sds_schema` is provided on class init
+        `to_event_dict` method should return a dictionary including `sds_schema` field as a
+        key/value pair if model is initiatised with this field as a valid string
         """
-        event_message = PostCIEvent(
+        ci_metadata = PostCIEvent(
             ci_version=mock_ci_version,
             data_version=mock_data_version,
             form_type=mock_form_type,
@@ -37,22 +38,23 @@ class TestPostCIEvent:
             language=mock_language,
             published_at=mock_published_at,
             schema_version=mock_schema_version,
-            status=mock_status,
             sds_schema=mock_sds_schema,
+            status=mock_status,
             survey_id=mock_survey_id,
             title=mock_title,
         )
 
-        event_message_dict = event_message.__dict__
-        assert "sds_schema" in event_message_dict.keys()
-        assert event_message_dict["sds_schema"] == mock_sds_schema
+        assert "sds_schema" in ci_metadata.to_event_dict().keys()
 
-    def test_model_omits_sds_schema_field_if_not_provided(self):
+        firestore_dict = ci_metadata.to_event_dict()
+        assert firestore_dict["sds_schema"] == mock_sds_schema
+
+    def test_to_event_dict_omits_sds_schema_if_not_filled(self):
         """
-        `PostCIEvent` data model should init and return dictionary omitting `sds_schema` field if
-        if `sds_schema` is provided on class init
+        `to_event_dict` method should return a dictionary omitting `sds_schema` field as a
+        key/value pair if model is initiatised without this field
         """
-        event_message = PostCIEvent(
+        ci_metadata = PostCIEvent(
             ci_version=mock_ci_version,
             data_version=mock_data_version,
             form_type=mock_form_type,
@@ -65,5 +67,4 @@ class TestPostCIEvent:
             title=mock_title,
         )
 
-        event_message_dict = event_message.__dict__
-        assert "sds_schema" not in event_message_dict.values()
+        assert "sds_schema" not in ci_metadata.to_event_dict().keys()

@@ -11,6 +11,7 @@ settings = Settings()
 mock_ci_version = "1"
 mock_data_version = "1"
 mock_form_type = "ft"
+mock_id = str(uuid.uuid4())
 mock_language = "en-US"
 mock_published_at = datetime.datetime.utcnow().strftime(settings.PUBLISHED_AT_FORMAT)
 mock_schema_version = "1"
@@ -18,7 +19,6 @@ mock_sds_schema = "my test schema"
 mock_status = CiStatus.DRAFT.value
 mock_survey_id = "123"
 mock_title = "My test survey"
-mock_uid = str(uuid.uuid4())
 
 
 class TestCiMetadata:
@@ -33,7 +33,7 @@ class TestCiMetadata:
             ci_version=mock_ci_version,
             data_version=mock_data_version,
             form_type=mock_form_type,
-            id=mock_uid,
+            id=mock_id,
             language=mock_language,
             published_at=mock_published_at,
             schema_version=mock_schema_version,
@@ -57,7 +57,7 @@ class TestCiMetadata:
             ci_version=mock_ci_version,
             data_version=mock_data_version,
             form_type=mock_form_type,
-            id=mock_uid,
+            id=mock_id,
             language=mock_language,
             published_at=mock_published_at,
             schema_version=mock_schema_version,
