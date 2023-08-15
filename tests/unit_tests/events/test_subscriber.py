@@ -27,14 +27,14 @@ class TestSubscriber:
         "title": "NotDune",
     }
 
-    def test_init_sets_num_messages_to_five(self, _):
+    def test_init_sets_max_messages_to_five(self, _):
         """
-        `__init__` method should assign a value to `self.num_messages`
+        `__init__` method should assign a value to `self.max_messages`
         This is the number of messages to pull and acknowledge each time
         """
 
         subscriber = Subscriber()
-        assert subscriber.num_messages == 5
+        assert subscriber.max_messages == 5
 
     def test_init_sets_subscription_path(self, mocked_subscriber_client):
         """
