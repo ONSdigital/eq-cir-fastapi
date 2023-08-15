@@ -88,7 +88,7 @@ def post_ci_metadata(post_data: PostCiMetadataV1PostData) -> CiMetadata:
     latest_ci_version = query_latest_ci_version(post_data.survey_id, post_data.form_type, post_data.language)
     new_ci_version = latest_ci_version + 1
     # Set published at to now
-    published_at = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+    published_at = datetime.datetime.utcnow().strftime(settings.PUBLISHED_AT_FORMAT)
     # Generate new uid
     uid = str(uuid.uuid4())
 

@@ -1,7 +1,11 @@
 import datetime
 import uuid
 
+from app.config import Settings
 from app.models.events import PostCIEvent
+
+settings = Settings()
+
 
 # Mock data for all tests
 mock_ci_version = "1"
@@ -9,7 +13,7 @@ mock_data_version = "1"
 mock_form_type = "t"
 mock_id = str(uuid.uuid4())
 mock_language = "em"
-mock_published_at = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+mock_published_at = datetime.datetime.utcnow().strftime(settings.PUBLISHED_AT_FORMAT)
 mock_schema_version = "12"
 mock_sds_schema = "my test schema"
 mock_status = "DRAFT"

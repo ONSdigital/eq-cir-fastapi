@@ -1,14 +1,18 @@
 import datetime
 import uuid
 
+from app.config import Settings
 from app.models.responses import CiMetadata, CiStatus
+
+settings = Settings()
+
 
 # Mock data for all tests
 mock_ci_version = "1"
 mock_data_version = "1"
 mock_form_type = "ft"
 mock_language = "en-US"
-mock_published_at = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+mock_published_at = datetime.datetime.utcnow().strftime(settings.PUBLISHED_AT_FORMAT)
 mock_schema_version = "1"
 mock_sds_schema = "my test schema"
 mock_status = CiStatus.DRAFT.value

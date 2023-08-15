@@ -2,6 +2,7 @@ import datetime
 import uuid
 from unittest.mock import patch
 
+from app.config import Settings
 from app.handlers import (
     delete_ci_v1,
     get_ci_metadata_v1,
@@ -24,6 +25,9 @@ from app.models.requests import (
 )
 from app.models.responses import CiMetadata, CiStatus
 
+settings = Settings()
+
+
 # Mock data for all tests
 mock_data_version = "1"
 mock_form_type = "t"
@@ -41,7 +45,7 @@ mock_ci_metadata = CiMetadata(
     form_type=mock_form_type,
     id=mock_id,
     language=mock_language,
-    published_at=datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+    published_at=datetime.datetime.utcnow().strftime(settings.PUBLISHED_AT_FORMAT),
     schema_version=mock_schema_version,
     sds_schema=mock_sds_schema,
     status=CiStatus.DRAFT.value,

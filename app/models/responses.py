@@ -33,7 +33,8 @@ class CiMetadata:
     sds_schema: str | None = ""
 
     def to_firestore_dict(self) -> dict:
-        """Returns a dictionary of data suitable for posting to firestore.
+        """
+        Returns a dictionary of data suitable for posting to firestore:
         * If `sds_schema` field is filled, include this as a key in the returned dictionary
         * If `sds_schema` field is not filled or a default value, do not include this as a key in
           the returned dictionary

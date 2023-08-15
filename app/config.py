@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     OAUTH_CLIENT_ID: str = "only required for integration tests"
     LOG_LEVEL: str = "INFO"
     PROJECT_ID: str = "ons-cir-dev"
+    PUBLISHED_AT_FORMAT: str = "%Y-%m-%dT%H:%M:%S.%fZ"
     PUBSUB_EMULATOR_HOST: str = "only required for development environment"
     STORAGE_EMULATOR_HOST: str = "only required for development environment"
     SUBSCRIPTION_ID: str = "ons-cir-publish-events-subscription-cir"
