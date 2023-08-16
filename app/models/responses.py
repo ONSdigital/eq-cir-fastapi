@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -33,7 +34,7 @@ class CiMetadata(BaseModel):
     # Optional fields
     sds_schema: str | None = ""
 
-    def model_dump(self, *args, **kwargs):
+    def model_dump(self, *args, **kwargs) -> dict[str, Any]:
         """
         Override default `model_dump` to return a dictionary of data suitable for posting to
         firestore and returning to the user:

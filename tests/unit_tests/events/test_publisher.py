@@ -74,7 +74,7 @@ class TestPublisher:
         mock_future.result.return_value = "success"
         mocked_publisher_client.return_value.topic_path.return_value = "project_id/topics/topic_id"
 
-        data_str = json.dumps(mock_event_message.to_event_dict())
+        data_str = json.dumps(mock_event_message.model_dump())
         data = data_str.encode("utf-8")
 
         publisher = Publisher()

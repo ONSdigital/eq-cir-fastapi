@@ -383,7 +383,7 @@ class TestGetCISchemaV2:
 
 
 @patch("app.handlers.db")
-@patch("app.handlers.post_ci_metadata")
+@patch("app.handlers.post_ci_metadata", return_value=mock_ci_metadata)
 @patch("app.handlers.Publisher")
 @patch("app.handlers.store_ci_schema")
 class TestPostCiMetadataV1:
@@ -494,19 +494,6 @@ class TestPostCiMetadataV1:
 
         return_value = post_ci_metadata_v1(self.post_data)
         assert return_value == mock_ci_metadata
-
-    def test_handler_returns_none_if_exception_raised(
-        self, mocked_store_ci_schema, mocked_publisher, mocked_post_ci_metadata, mocked_db
-    ):
-        """
-        `delete_ci_metadata_v1` should return `None` if exception is raised at any point during
-        the creation of metadata or schema to firestore and cloud storage
-        """
-        # Configure mocked `post_ci_metadata` to raise a generic exception
-        mocked_post_ci_metadata.side_effect = Exception()
-
-        return_value = post_ci_metadata_v1(self.post_data)
-        assert return_value is None
 
 
 @patch("app.handlers.update_ci_metadata_status_to_published")

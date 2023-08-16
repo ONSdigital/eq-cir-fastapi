@@ -422,7 +422,7 @@ class TestHttpPostCiV1:
         mocked_post_ci_metadata_v1.return_value = mock_ci_metadata
 
         response = client.post(self.url, headers={"ContentType": "application/json"}, json=self.post_data.model_dump())
-        assert response.json() == mock_ci_metadata.__dict__
+        assert response.json() == mock_ci_metadata.model_dump()
 
     def test_endpoint_returns_400_if_no_post_data(self, mocked_post_ci_metadata_v1):
         """

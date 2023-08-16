@@ -1,8 +1,9 @@
-from dataclasses import dataclass
+from typing import Any
+
+from pydantic import BaseModel
 
 
-@dataclass
-class PostCIEvent:
+class PostCIEvent(BaseModel):
     """Defines the data structure required to publish an event when a new CI has been created."""
 
     ci_version: int
@@ -17,26 +18,20 @@ class PostCIEvent:
     title: str
     sds_schema: str | None = ""
 
-    def to_event_dict(self) -> dict:
+    def model_dump(self, *args, **kwargs) -> dict[str, Any]:
         """
-        Returns a dictionary of data suitable for publishing to pub/sub:
+        Override default `model_dump` to return a dictionary of data suitable for posting to
+        pub/sub:
         * If `sds_schema` field is filled, include this as a key in the returned dictionary
         * If `sds_schema` field is not filled or a default value, do not include this as a key in
           the returned dictionary
         """
-        if self.sds_schema:
-            return self.__dict__
-        else:
-            # If `sds_schema` not filled, return a dict without this key/value pair
-            return {
-                "ci_version": self.ci_version,
-                "data_version": self.data_version,
-                "form_type": self.form_type,
-                "id": self.id,
-                "language": self.language,
-                "published_at": self.published_at,
-                "schema_version": self.schema_version,
-                "status": self.status,
-                "survey_id": self.survey_id,
-                "title": self.title,
-            }
+
+        if not self.sds_schema:
+            # Get any additional exclude fields from input `kwargs` or return empty set
+            exclude_fields = kwargs.get("exclude", set())
+            # Update kwargs to exclude `sds_schema` key/value pair if not filled
+            exclude_fields.add("sds_schema")
+            kwargs.update({"exclude": exclude_fields})
+
+        return super().model_dump(*args, **kwargs)

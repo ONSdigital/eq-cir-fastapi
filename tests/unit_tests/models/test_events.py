@@ -23,14 +23,14 @@ mock_title = "test"
 
 
 class TestPostCIEvent:
-    """Tests for the `PostCIEvent` data class"""
+    """Testsfor the `PostCIEvent` response model"""
 
-    def test_to_event_dict_includes_sds_schema_if_filled(self):
+    def test_model_dump_includes_sds_schema_if_filled(self):
         """
-        `to_event_dict` method should return a dictionary including `sds_schema` field as a
+        Overidden `model_dump` method should return a dictionary including `sds_schema` field as a
         key/value pair if model is initiatised with this field as a valid string
         """
-        ci_metadata = PostCIEvent(
+        ci_event = PostCIEvent(
             ci_version=mock_ci_version,
             data_version=mock_data_version,
             form_type=mock_form_type,
@@ -44,17 +44,17 @@ class TestPostCIEvent:
             title=mock_title,
         )
 
-        assert "sds_schema" in ci_metadata.to_event_dict().keys()
+        model_dict = ci_event.model_dump()
 
-        firestore_dict = ci_metadata.to_event_dict()
-        assert firestore_dict["sds_schema"] == mock_sds_schema
+        assert "sds_schema" in model_dict.keys()
+        assert model_dict["sds_schema"] == mock_sds_schema
 
-    def test_to_event_dict_omits_sds_schema_if_not_filled(self):
+    def test_model_dump_excludes_sds_schema_if_not_filled(self):
         """
-        `to_event_dict` method should return a dictionary omitting `sds_schema` field as a
+        Overidden `model_dump` method should return a dictionary excluding `sds_schema` field as a
         key/value pair if model is initiatised without this field
         """
-        ci_metadata = PostCIEvent(
+        ci_event = PostCIEvent(
             ci_version=mock_ci_version,
             data_version=mock_data_version,
             form_type=mock_form_type,
@@ -67,4 +67,30 @@ class TestPostCIEvent:
             title=mock_title,
         )
 
-        assert "sds_schema" not in ci_metadata.to_event_dict().keys()
+        model_dict = ci_event.model_dump()
+
+        assert "sds_schema" not in model_dict.keys()
+
+    def test_model_dump_excludes_additional_fields_if_required(self):
+        """
+        Overidden `model_dump` method should return a dictionary excluding `sds_schema` field as a
+        key/value pair if model is initiatised without this field. It should also be able to
+        exclude additional fields if called with the `exclude` kwarg.
+        """
+        ci_event = PostCIEvent(
+            ci_version=mock_ci_version,
+            data_version=mock_data_version,
+            form_type=mock_form_type,
+            id=mock_id,
+            language=mock_language,
+            published_at=mock_published_at,
+            schema_version=mock_schema_version,
+            status=mock_status,
+            survey_id=mock_survey_id,
+            title=mock_title,
+        )
+        # Include additional `published_at` exclude field
+        model_dict = ci_event.model_dump(exclude={"published_at"})
+
+        assert "sds_schema" not in model_dict.keys()
+        assert "published_at" not in model_dict.keys()
