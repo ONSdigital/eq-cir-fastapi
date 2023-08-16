@@ -106,10 +106,10 @@ def post_ci_metadata(post_data: PostCiMetadataV1PostData) -> CiMetadata:
         title=post_data.title,
     )
 
-    # Add new version using `to_firestore_dict` method to generate dictionary of metadata. This
+    # Add new version using `model_dump` method to generate dictionary of metadata. This
     # removes `sds_schema` key if not filled
-    ci_collection.document(uid).set(ci_metadata.to_firestore_dict())
-    logger.info(f"post_ci_metadata output: {ci_metadata.__dict__}")
+    ci_collection.document(uid).set(ci_metadata.model_dump())
+    logger.info(f"post_ci_metadata output: {ci_metadata.model_dump()}")
     logger.info("post_ci_metadata success")
     return ci_metadata
 
