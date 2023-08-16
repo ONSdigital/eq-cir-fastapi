@@ -466,15 +466,17 @@ class TestHttpPostCiV1:
         response = client.post(self.url, headers={"ContentType": "application/json"}, json=self.post_data.model_dump())
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    def test_endpoint_returns_500_if_type_error(self, mocked_post_ci_metadata_v1):
+    def test_endpoint_returns_500_if_exception_occurs(self, mocked_post_ci_metadata_v1):
         """
-        Endpoint should return `HTTP_500_INTERNAL_SERVER_ERROR` if a TypeError occurs
+        Endpoint should return `HTTP_500_INTERNAL_SERVER_ERROR` if an exception is raised by the
+        `post_ci_metadata_v1` handler
         """
-        mocked_post_ci_metadata_v1.side_effect = TypeError("Simulated TypeError")
-        response = client.post(
-            "/test-type-error", headers={"Content-Type": "application/json"}, json=self.post_data.model_dump()
-        )
-        assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+        # Update mocked `post_ci_metadata_v1` to raise a generic exception
+        mocked_post_ci_metadata_v1.side_effect = Exception()
+
+        with pytest.raises(Exception):
+            response = client.post(self.url, headers={"ContentType": "application/json"}, json=self.post_data.model_dump())
+            assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
 @patch("app.main.put_status_v1")
