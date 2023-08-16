@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from enum import Enum
 
+from pydantic import BaseModel
+
 from app.config import logging
 
 logger = logging.getLogger(__name__)
@@ -14,8 +16,7 @@ class BadRequest:
     status: str = "error"
 
 
-@dataclass
-class CiMetadata:
+class CiMetadata(BaseModel):
     """Model for collection instrument metadata"""
 
     # Required fields
@@ -32,29 +33,23 @@ class CiMetadata:
     # Optional fields
     sds_schema: str | None = ""
 
-    def to_firestore_dict(self) -> dict:
+    def model_dump(self, *args, **kwargs):
         """
-        Returns a dictionary of data suitable for posting to firestore:
+        Override default `model_dump` to return a dictionary of data suitable for posting to
+        firestore and returning to the user:
         * If `sds_schema` field is filled, include this as a key in the returned dictionary
         * If `sds_schema` field is not filled or a default value, do not include this as a key in
           the returned dictionary
         """
-        if self.sds_schema:
-            return self.__dict__
-        else:
-            # If `sds_schema` not filled, return a dict without this key/value pair
-            return {
-                "ci_version": self.ci_version,
-                "data_version": self.data_version,
-                "form_type": self.form_type,
-                "id": self.id,
-                "language": self.language,
-                "published_at": self.published_at,
-                "schema_version": self.schema_version,
-                "status": self.status,
-                "survey_id": self.survey_id,
-                "title": self.title,
-            }
+
+        if not self.sds_schema:
+            # Get any additional exclude fields from input `kwargs` or return empty set
+            exclude_fields = kwargs.get("exclude", set())
+            # Update kwargs to exclude `sds_schema` key/value pair if not filled
+            exclude_fields.add("sds_schema")
+            kwargs.update({"exclude": exclude_fields})
+
+        return super().model_dump(*args, **kwargs)
 
 
 class CiStatus(Enum):
