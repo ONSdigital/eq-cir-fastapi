@@ -13,6 +13,7 @@ unset PROJECT_ID
 read PROJECT_ID"?Enter your GCP project ID: "
 
 REGION="europe-west2"
+TOPIC_ID="ons-cir-publish-ci"
 
 CI_STORAGE_BUCKET_NAME=$PROJECT_ID
 SSL_CERT_NAME=${PROJECT_ID}-ssl-cert
@@ -37,7 +38,8 @@ docker push "${REGION}-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest"
 
 echo "Deploying the docker container(s)..."
 gcloud run deploy cir --image="${REGION}-docker.pkg.dev/${PROJECT_ID}/cir/cir:${BUILD_ID}" \
-    --region=$REGION --allow-unauthenticated --ingress=internal-and-cloud-load-balancing
+    --region=$REGION --allow-unauthenticated --ingress=internal-and-cloud-load-balancing \
+    --set-env-vars="CI_STORAGE_BUCKET_NAME=${PROJECT_ID},LOG_LEVEL=DEBUG,PROJECT_ID=${PROJECT_ID},TOPIC_ID=${TOPIC_ID}"
 
 echo "Fetching oauth brand and client names..."
 # Get the oauth client name (required along with key to create access tokens)
@@ -61,6 +63,8 @@ export OAUTH_CLIENT_ID=${${OAUTH_CLIENT_NAME}##*/}
 echo "OAUTH_CLIENT_ID: ${OAUTH_CLIENT_ID}"
 export PROJECT_ID=$PROJECT_ID
 echo "PROJECT_ID: ${PROJECT_ID}"
+export TOPIC_ID=$TOPIC_ID
+echo "TOPIC_ID: ${TOPIC_ID}"
 export URL_SCHEME="https"
 echo "URL_SCHEME: ${URL_SCHEME}"
 
