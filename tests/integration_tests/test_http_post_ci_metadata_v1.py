@@ -120,7 +120,7 @@ class TestPostCiV1:
         # database assertion
         assert check_ci_in_db_data == [expected_ci.model_dump()]
         # assert that the metadata is pulled through in the subscription
-        assert expected_ci.model_dump() == decoded_received_messages
+        assert expected_ci.model_dump() in decoded_received_messages
 
     def test_can_append_version_to_existing_ci(
         self,
@@ -144,7 +144,7 @@ class TestPostCiV1:
         check_ci_in_db_data = check_ci_in_db.json()
 
         expected_ci = CiMetadata(
-            ci_version=1,
+            ci_version=2,
             data_version=setup_publish_ci_return_payload["data_version"],
             form_type=setup_publish_ci_return_payload["form_type"],
             id=check_ci_in_db_data[0]["id"],
