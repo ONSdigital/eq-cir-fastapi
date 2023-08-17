@@ -7,6 +7,7 @@ import pytest
 from fastapi import status
 from fastapi.testclient import TestClient
 
+from app.config import Settings
 from app.main import app
 from app.models.requests import (
     DeleteCiV1Params,
@@ -20,6 +21,7 @@ from app.models.requests import (
 from app.models.responses import BadRequest, CiMetadata, CiStatus
 
 client = TestClient(app)
+settings = Settings()
 
 
 # Mock data for all tests
@@ -39,7 +41,7 @@ mock_ci_metadata = CiMetadata(
     form_type=mock_form_type,
     id=mock_id,
     language=mock_language,
-    published_at=datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+    published_at=datetime.datetime.utcnow().strftime(settings.PUBLISHED_AT_FORMAT),
     schema_version=mock_schema_version,
     sds_schema=mock_sds_schema,
     status=CiStatus.DRAFT.value,
@@ -420,7 +422,7 @@ class TestHttpPostCiV1:
         mocked_post_ci_metadata_v1.return_value = mock_ci_metadata
 
         response = client.post(self.url, headers={"ContentType": "application/json"}, json=self.post_data.model_dump())
-        assert response.json() == mock_ci_metadata.__dict__
+        assert response.json() == mock_ci_metadata.model_dump()
 
     def test_endpoint_returns_400_if_no_post_data(self, mocked_post_ci_metadata_v1):
         """

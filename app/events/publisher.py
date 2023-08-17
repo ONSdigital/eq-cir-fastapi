@@ -35,8 +35,9 @@ class Publisher:
         if not self.topic_exists():
             self.create_topic()
 
-        # Convert the event object to a JSON string
-        data_str = json.dumps(event_msg.__dict__)
+        # Convert the event object to a JSON string using `model_dump`, which exlcudes `sds_schema`
+        # key if this field is not filled
+        data_str = json.dumps(event_msg.model_dump())
 
         # Data must be a bytestring
         data = data_str.encode("utf-8")

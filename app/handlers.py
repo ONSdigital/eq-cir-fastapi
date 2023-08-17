@@ -156,7 +156,7 @@ def get_ci_schema_v2(query_params: GetCiSchemaV2Params):
     return ci_metadata, ci_schema
 
 
-def post_ci_metadata_v1(post_data: PostCiMetadataV1PostData) -> CiMetadata | None:
+def post_ci_metadata_v1(post_data: PostCiMetadataV1PostData) -> CiMetadata:
     """
     Handler for POST /collection_instrument
     """
@@ -169,7 +169,7 @@ def post_ci_metadata_v1(post_data: PostCiMetadataV1PostData) -> CiMetadata | Non
     with db.transaction() as transaction:
         # post metadata to firestore
         ci_metadata_with_new_version = post_ci_metadata(post_data)
-        logger.debug(f"New CI created: {ci_metadata_with_new_version.__dict__}")
+        logger.debug(f"New CI created: {ci_metadata_with_new_version.model_dump()}")
 
         # put the schema in cloud storage where filename is the unique CI id
         store_ci_schema(ci_metadata_with_new_version.id, post_data.__dict__)
@@ -195,7 +195,7 @@ def post_ci_metadata_v1(post_data: PostCiMetadataV1PostData) -> CiMetadata | Non
         transaction.commit()
         logger.debug("Transaction committed")
 
-        logger.debug(f"post_ci_v1 output data: {ci_metadata_with_new_version.__dict__}")
+        logger.debug(f"post_ci_v1 output data: {ci_metadata_with_new_version.model_dump()}")
         return ci_metadata_with_new_version
 
 
