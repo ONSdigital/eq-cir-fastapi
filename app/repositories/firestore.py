@@ -109,7 +109,7 @@ def post_ci_metadata(post_data: PostCiMetadataV1PostData) -> CiMetadata:
     # Add new version using `model_dump` method to generate dictionary of metadata. This
     # removes `sds_schema` key if not filled
     ci_collection.document(uid).set(ci_metadata.model_dump())
-    logger.info(f"post_ci_metadata output: {ci_metadata.model_dump()}")
+    logger.debug(f"post_ci_metadata output: {ci_metadata.model_dump()}")
     logger.info("post_ci_metadata success")
     return ci_metadata
 
