@@ -15,4 +15,5 @@ class PostCIEvent:
     status: str
     survey_id: str
     title: str
+    description: str
     sds_schema: str | None = ""

@@ -29,6 +29,7 @@ class CiMetadata:
     status: str
     survey_id: str
     title: str
+    description: str
     # Optional fields
     sds_schema: str | None = ""
 

@@ -7,6 +7,7 @@ mock_form_type = "0005"
 mock_language = "en"
 mock_status = CiStatus.DRAFT.value
 mock_survey_id = "123"
+mock_description = "Version of CI is for March 2023 – APPROVED"
 
 
 class TestGetCiMetadataV2Params:
@@ -58,6 +59,7 @@ class TestPostCiMetadataV1PostData:
         "survey_id": mock_survey_id,
         "title": "test",
         "schema_version": "1",
+        "description": mock_description,
     }
 
     def test_data_model_instantiates_with_valid_post_data(self):

@@ -104,6 +104,7 @@ def post_ci_metadata(post_data: PostCiMetadataV1PostData) -> CiMetadata:
         status=CiStatus.DRAFT.value,
         survey_id=post_data.survey_id,
         title=post_data.title,
+        description=post_data.description,
     )
 
     # Add new version

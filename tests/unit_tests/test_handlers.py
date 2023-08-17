@@ -34,6 +34,7 @@ mock_sds_schema = ""
 mock_status = "DRAFT"
 mock_survey_id = "12124141"
 mock_title = "test"
+mock_description = "Version of CI is for March 2023 - APPROVED"
 
 mock_ci_metadata = CiMetadata(
     ci_version=1,
@@ -47,6 +48,7 @@ mock_ci_metadata = CiMetadata(
     status=CiStatus.DRAFT.value,
     survey_id=mock_survey_id,
     title=mock_title,
+    description=mock_description,
 )
 
 mock_ci_schema = {
@@ -56,6 +58,7 @@ mock_ci_schema = {
     "schema_version": mock_schema_version,
     "survey_id": mock_survey_id,
     "title": mock_title,
+    "description": mock_description,
 }
 
 
@@ -177,6 +180,15 @@ class TestGetCiMetadataV1:
         response = get_ci_metadata_v1(self.query_params)
 
         assert response == mock_ci_metadata
+
+    def test_handler_checks_for_new_key_description_in_output_of_query_ci_metadata(self, mocked_query_ci_metadata):
+        """
+        `get_ci_metadata_v1` should have new key description in the output of `query_ci_metadata`
+        """
+        mocked_query_ci_metadata.return_value = mock_ci_metadata
+        response = get_ci_metadata_v1(self.query_params)
+        print(response.json())
+        assert response != mock_ci_metadata
 
 
 class TestGetCiMetadataV2:
@@ -396,6 +408,7 @@ class TestPostCiMetadataV1:
         title=mock_title,
         schema_version=mock_schema_version,
         data_version=mock_data_version,
+        description=mock_description,
     )
 
     def test_handler_calls_post_ci_metadata(
@@ -473,6 +486,7 @@ class TestPostCiMetadataV1:
             survey_id=mock_ci_metadata.survey_id,
             title=mock_ci_metadata.title,
             sds_schema=mock_ci_metadata.sds_schema,
+            description=mock_description,
         )
 
         post_ci_metadata_v1(self.post_data)
