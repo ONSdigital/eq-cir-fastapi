@@ -26,7 +26,7 @@ def setup_publish_ci_return_payload():
         "title": "NotDune",
         "schema_version": "1",
         "data_version": "1",
-        "description": "Version of CI is for March 2023 - APPROVED",
+        "description": "Version of CI is for March 2023",
     }
     post_ci_v1(payload)
     return payload
@@ -46,6 +46,6 @@ def setup_payload():
         "schema_version": "1",
         "data_version": "1",
         "status": "DRAFT",
-        "description": "Version of CI is for March 2023 - APPROVED",
+        "description": "Version of CI is for March 2023",
     }
     return payload

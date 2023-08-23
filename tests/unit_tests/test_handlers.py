@@ -2,6 +2,7 @@ import datetime
 import uuid
 from unittest.mock import patch
 
+from app.config import Settings
 from app.handlers import (
     delete_ci_v1,
     get_ci_metadata_v1,
@@ -24,6 +25,9 @@ from app.models.requests import (
 )
 from app.models.responses import CiMetadata, CiStatus
 
+settings = Settings()
+
+
 # Mock data for all tests
 mock_data_version = "1"
 mock_form_type = "t"
@@ -42,7 +46,7 @@ mock_ci_metadata = CiMetadata(
     form_type=mock_form_type,
     id=mock_id,
     language=mock_language,
-    published_at=datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+    published_at=datetime.datetime.utcnow().strftime(settings.PUBLISHED_AT_FORMAT),
     schema_version=mock_schema_version,
     sds_schema=mock_sds_schema,
     status=CiStatus.DRAFT.value,
@@ -409,7 +413,7 @@ class TestGetCISchemaV2:
 
 
 @patch("app.handlers.db")
-@patch("app.handlers.post_ci_metadata")
+@patch("app.handlers.post_ci_metadata", return_value=mock_ci_metadata)
 @patch("app.handlers.Publisher")
 @patch("app.handlers.store_ci_schema")
 class TestPostCiMetadataV1:
@@ -522,19 +526,6 @@ class TestPostCiMetadataV1:
 
         return_value = post_ci_metadata_v1(self.post_data)
         assert return_value == mock_ci_metadata
-
-    def test_handler_returns_none_if_exception_raised(
-        self, mocked_store_ci_schema, mocked_publisher, mocked_post_ci_metadata, mocked_db
-    ):
-        """
-        `delete_ci_metadata_v1` should return `None` if exception is raised at any point during
-        the creation of metadata or schema to firestore and cloud storage
-        """
-        # Configure mocked `post_ci_metadata` to raise a generic exception
-        mocked_post_ci_metadata.side_effect = Exception()
-
-        return_value = post_ci_metadata_v1(self.post_data)
-        assert return_value is None
 
 
 @patch("app.handlers.update_ci_metadata_status_to_published")

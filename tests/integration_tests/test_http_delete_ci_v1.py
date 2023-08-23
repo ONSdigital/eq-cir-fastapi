@@ -27,7 +27,7 @@ class TestDeleteCiV1:
 
         self.subscriber.pull_messages_and_acknowledge()
         response = make_iap_request("DELETE", f"{self.base_url}?{querystring}")
-        assert response.text == json.dumps(f"{survey_id} deleted")
+        assert response.text == f"{survey_id} deleted"
         assert response.status_code == status.HTTP_200_OK
 
     def test_can_delete_ci_returns_400(self):

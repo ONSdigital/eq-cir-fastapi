@@ -81,14 +81,14 @@ def query_latest_ci_version_id(survey_id, form_type, language):
 def post_ci_metadata(post_data: PostCiMetadataV1PostData) -> CiMetadata:
     """Creates new ci version"""
 
-    logger.info("stepping into create_new_ci_version")
+    logger.info("stepping into post_ci_metadata")
     logger.debug(f"post_ci_metadata data received: {post_data.__dict__}")
 
     # get latest ci version for combination of survey_id, form_type, language
     latest_ci_version = query_latest_ci_version(post_data.survey_id, post_data.form_type, post_data.language)
     new_ci_version = latest_ci_version + 1
     # Set published at to now
-    published_at = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+    published_at = datetime.datetime.utcnow().strftime(settings.PUBLISHED_AT_FORMAT)
     # Generate new uid
     uid = str(uuid.uuid4())
 
@@ -107,10 +107,11 @@ def post_ci_metadata(post_data: PostCiMetadataV1PostData) -> CiMetadata:
         description=post_data.description,
     )
 
-    # Add new version
-    ci_collection.document(uid).set(ci_metadata.__dict__)
-    logger.debug(f"create_new_ci_version output: {ci_metadata.__dict__}")
-    logger.info("create_new_ci_version success")
+    # Add new version using `model_dump` method to generate dictionary of metadata. This
+    # removes `sds_schema` key if not filled
+    ci_collection.document(uid).set(ci_metadata.model_dump())
+    logger.debug(f"post_ci_metadata output: {ci_metadata.model_dump()}")
+    logger.info("post_ci_metadata success")
     return ci_metadata
 
 

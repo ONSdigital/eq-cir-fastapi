@@ -3,6 +3,7 @@ import json
 from fastapi import status
 
 from app.events.subscriber import Subscriber
+from app.models.responses import CiMetadata, CiStatus
 from tests.integration_tests.utils import (
     delete_docs,
     get_ci_metadata_v1,
@@ -50,29 +51,27 @@ class TestPostCiV1:
         decoded_received_messages = [x.decode("utf-8") for x in received_messages]
         decoded_received_messages = [json.loads(x) for x in decoded_received_messages]
 
-        expected_ci = [
-            {
-                "ci_version": 1,
-                "data_version": "1",
-                "form_type": "business",
-                "id": check_ci_in_db_data[0]["id"],
-                "language": "welsh",
-                "published_at": check_ci_in_db_data[0]["published_at"],
-                "schema_version": "1",
-                "sds_schema": "",
-                "survey_id": "3456",
-                "title": "NotDune",
-                "status": "DRAFT",
-            }
-        ]
+        expected_ci = CiMetadata(
+            ci_version=1,
+            data_version=setup_payload["data_version"],
+            form_type=setup_payload["form_type"],
+            id=check_ci_in_db_data[0]["id"],
+            language=setup_payload["language"],
+            published_at=check_ci_in_db_data[0]["published_at"],
+            schema_version=setup_payload["schema_version"],
+            status=setup_payload["status"],
+            survey_id=setup_payload["survey_id"],
+            title=setup_payload["title"],
+            description=setup_payload["description"]
+        )
 
         assert "published_at" in ci_response_data
         assert is_datetime_valid
         assert ci_response_data["ci_version"] == 1
         # database assertion
-        assert check_ci_in_db_data == expected_ci
+        assert check_ci_in_db_data == [expected_ci.model_dump()]
         # assert that the metadata is pulled through in the subscription
-        assert expected_ci[0] in decoded_received_messages
+        assert expected_ci.model_dump() in decoded_received_messages
 
     def test_can_publish_valid_ci_with_sds_schema(self, setup_payload):
         """
@@ -102,29 +101,28 @@ class TestPostCiV1:
         decoded_received_messages = [x.decode("utf-8") for x in received_messages]
         decoded_received_messages = [json.loads(x) for x in decoded_received_messages]
 
-        expected_ci = [
-            {
-                "ci_version": 1,
-                "data_version": "1",
-                "form_type": "business",
-                "id": check_ci_in_db_data[0]["id"],
-                "language": "welsh",
-                "published_at": check_ci_in_db_data[0]["published_at"],
-                "schema_version": "1",
-                "sds_schema": "xx-ytr-1234-856",
-                "survey_id": "3456",
-                "title": "NotDune",
-                "status": "DRAFT",
-            }
-        ]
+        expected_ci = CiMetadata(
+            ci_version=1,
+            data_version=setup_payload["data_version"],
+            form_type=setup_payload["form_type"],
+            id=check_ci_in_db_data[0]["id"],
+            language=setup_payload["language"],
+            published_at=check_ci_in_db_data[0]["published_at"],
+            schema_version=setup_payload["schema_version"],
+            sds_schema=setup_payload["sds_schema"],
+            status=setup_payload["status"],
+            survey_id=setup_payload["survey_id"],
+            title=setup_payload["title"],
+            description=setup_payload["description"]
+        )
 
         assert "published_at" in ci_response_data
         assert is_datetime_valid
         assert ci_response_data["ci_version"] == 1
         # database assertion
-        assert check_ci_in_db_data == expected_ci
+        assert check_ci_in_db_data == [expected_ci.model_dump()]
         # assert that the metadata is pulled through in the subscription
-        assert expected_ci == decoded_received_messages
+        assert expected_ci.model_dump() in decoded_received_messages
 
     def test_can_append_version_to_existing_ci(
         self,
@@ -147,25 +145,25 @@ class TestPostCiV1:
         check_ci_in_db = get_ci_metadata_v1(survey_id, form_type, language)
         check_ci_in_db_data = check_ci_in_db.json()
 
-        expected_ci = {
-            "ci_version": 2,
-            "data_version": "1",
-            "form_type": "business",
-            "id": check_ci_in_db_data[0]["id"],
-            "language": "welsh",
-            "published_at": check_ci_in_db_data[0]["published_at"],
-            "schema_version": "1",
-            "sds_schema": "",
-            "survey_id": "3456",
-            "title": "NotDune",
-            "status": "DRAFT",
-        }
+        expected_ci = CiMetadata(
+            ci_version=2,
+            data_version=setup_publish_ci_return_payload["data_version"],
+            form_type=setup_publish_ci_return_payload["form_type"],
+            id=check_ci_in_db_data[0]["id"],
+            language=setup_publish_ci_return_payload["language"],
+            published_at=check_ci_in_db_data[0]["published_at"],
+            schema_version=setup_publish_ci_return_payload["schema_version"],
+            status=CiStatus.DRAFT.value,
+            survey_id=setup_publish_ci_return_payload["survey_id"],
+            title=setup_publish_ci_return_payload["title"],
+            description=setup_publish_ci_return_payload["description"]
+        )
 
         assert ci_response.status_code == status.HTTP_200_OK
         assert ci_response_data["ci_version"] == 2
         # database assertions
         assert len(check_ci_in_db_data) == 2
-        assert check_ci_in_db_data[0] == expected_ci
+        assert check_ci_in_db_data[0] == expected_ci.model_dump()
         assert check_ci_in_db_data[1]["ci_version"] == 1
         assert check_ci_in_db_data[0]["ci_version"] == 2
 

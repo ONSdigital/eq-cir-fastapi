@@ -248,7 +248,7 @@ async def http_post_ci_metadata_v1(post_data: PostCiMetadataV1PostData):
     """
     ci_metadata = post_ci_metadata_v1(post_data)
     logger.info("post_ci_metadata_v1 success")
-    return JSONResponse(status_code=status.HTTP_200_OK, content=ci_metadata.__dict__)
+    return JSONResponse(status_code=status.HTTP_200_OK, content=ci_metadata.model_dump())
 
 
 @app.put(
