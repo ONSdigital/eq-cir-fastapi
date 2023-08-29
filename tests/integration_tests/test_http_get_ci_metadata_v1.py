@@ -68,7 +68,7 @@ class TestGetCiMetadataV1:
         print(setup_payload)
         post_ci_v1(setup_payload)
         self.subscriber.pull_messages_and_acknowledge()
-      
+
         survey_id = setup_payload["survey_id"]
         form_type = setup_payload["form_type"]
         language = setup_payload["language"]
@@ -76,5 +76,5 @@ class TestGetCiMetadataV1:
         query_ci_response = get_ci_metadata_v1(survey_id, form_type, language)
         print(query_ci_response.content)
         query_ci_response_json = query_ci_response.json()
-        assert "description" in query_ci_response[0]
-        assert query_ci_response_json[0]["description"] == "Version of CI is for March 2023 - APPROVED"
+        assert "description" in query_ci_response_json[0]
+        assert query_ci_response_json[0]["description"] == setup_payload["description"]

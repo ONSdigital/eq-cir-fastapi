@@ -128,5 +128,5 @@ class TestGetCiMetadataV2:
         # sends request to http_query_ci endpoint for data
         query_ci_response = get_ci_metadata_v2(get_ci_metadata_v2_payload)
         query_ci_response_json = query_ci_response.json()
-        assert "description" in query_ci_response[0]
-        assert query_ci_response_json[0]["description"] == "Version of CI is for March 2023 - APPROVED"
+        assert "description" in query_ci_response_json[0]
+        assert query_ci_response_json[0]["description"] == setup_payload["description"]

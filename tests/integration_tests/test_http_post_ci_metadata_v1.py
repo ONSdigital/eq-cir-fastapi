@@ -62,7 +62,7 @@ class TestPostCiV1:
             status=setup_payload["status"],
             survey_id=setup_payload["survey_id"],
             title=setup_payload["title"],
-            description=setup_payload["description"]
+            description=setup_payload["description"],
         )
 
         assert "published_at" in ci_response_data
@@ -113,7 +113,7 @@ class TestPostCiV1:
             status=setup_payload["status"],
             survey_id=setup_payload["survey_id"],
             title=setup_payload["title"],
-            description=setup_payload["description"]
+            description=setup_payload["description"],
         )
 
         assert "published_at" in ci_response_data
@@ -156,7 +156,7 @@ class TestPostCiV1:
             status=CiStatus.DRAFT.value,
             survey_id=setup_publish_ci_return_payload["survey_id"],
             title=setup_publish_ci_return_payload["title"],
-            description=setup_publish_ci_return_payload["description"]
+            description=setup_publish_ci_return_payload["description"],
         )
 
         assert ci_response.status_code == status.HTTP_200_OK

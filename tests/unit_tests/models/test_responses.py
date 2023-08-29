@@ -21,6 +21,7 @@ mock_survey_id = "123"
 mock_title = "My test survey"
 mock_description = "description"
 
+
 class TestCiMetadata:
     """Testsfor the `CiMetadata` response model"""
 
@@ -41,8 +42,7 @@ class TestCiMetadata:
             status=mock_status,
             survey_id=mock_survey_id,
             title=mock_title,
-            description=mock_description
-
+            description=mock_description,
         )
 
         model_dict = ci_metadata.model_dump()
@@ -66,8 +66,7 @@ class TestCiMetadata:
             status=mock_status,
             survey_id=mock_survey_id,
             title=mock_title,
-            description=mock_description
-
+            description=mock_description,
         )
 
         model_dict = ci_metadata.model_dump()
@@ -91,8 +90,7 @@ class TestCiMetadata:
             status=mock_status,
             survey_id=mock_survey_id,
             title=mock_title,
-            description=mock_description
-
+            description=mock_description,
         )
         # Include additional `published_at` exclude field
         model_dict = ci_metadata.model_dump(exclude={"published_at"})
