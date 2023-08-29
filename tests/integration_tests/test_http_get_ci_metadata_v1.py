@@ -74,7 +74,6 @@ class TestGetCiMetadataV1:
         language = setup_payload["language"]
         # sends request to http_query_ci endpoint for data
         query_ci_response = get_ci_metadata_v1(survey_id, form_type, language)
-        print(query_ci_response.content)
         query_ci_response_json = query_ci_response.json()
         assert "description" in query_ci_response_json[0]
         assert query_ci_response_json[0]["description"] == setup_payload["description"]
