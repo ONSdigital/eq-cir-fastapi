@@ -65,7 +65,6 @@ class TestGetCiMetadataV1:
 
     def test_post_ci_with_same_metadata_query_ci_returns_with_description(self, setup_payload):
         # post 3 ci with the same data
-        print(setup_payload)
         post_ci_v1(setup_payload)
         self.subscriber.pull_messages_and_acknowledge()
 
