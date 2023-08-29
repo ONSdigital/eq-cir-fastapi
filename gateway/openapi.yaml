@@ -14,12 +14,16 @@ components:
       title: BadRequest
       type: object
     CiMetadata:
+      description: Model for collection instrument metadata
       properties:
         ci_version:
           title: Ci Version
           type: integer
         data_version:
           title: Data Version
+          type: string
+        description:
+          title: Description
           type: string
         form_type:
           title: Form Type
@@ -62,6 +66,7 @@ components:
       - status
       - survey_id
       - title
+      - description
       title: CiMetadata
       type: object
     HTTPValidationError:
@@ -74,9 +79,16 @@ components:
       title: HTTPValidationError
       type: object
     PostCiMetadataV1PostData:
+      description: "\n    Model for `post_ci_metadata_v1` request post data\n\n  \
+        \  This is the entire CI JSON object that you would like to publish. The example\
+        \ below illustrates\n    the required attributes to put into the request body.\
+        \ The POST will fail if these are not\n    included.\n    "
       properties:
         data_version:
           title: Data Version
+          type: string
+        description:
+          title: Description
           type: string
         form_type:
           title: Form Type
@@ -156,6 +168,7 @@ components:
       - survey_id
       - title
       - schema_version
+      - description
       title: PostCiMetadataV1PostData
       type: object
     ValidationError:
