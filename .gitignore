@@ -11,7 +11,6 @@ devtools/gcp-storage-emulator/data/*
 !devtools/gcp-storage-emulator/data/.placeholder
 devtools/firebase-emulator/*.log
 env/*
-.gitignore
 .vscode
 *.pyc
 .coverage
