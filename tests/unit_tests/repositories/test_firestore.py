@@ -16,6 +16,8 @@ mock_language = "en-US"
 mock_schema_version = "1"
 mock_survey_id = "123"
 mock_title = "My test survey"
+mock_description = "Version of CI is for March 2023 - APPROVED"
+
 
 mock_survey_1 = {
     "survey_id": mock_survey_id,
@@ -23,6 +25,7 @@ mock_survey_1 = {
     "language": mock_language,
     "ci_version": 1,
     "status": "DRAFT",
+    "description": mock_description,
 }
 
 mock_survey_2 = {
@@ -31,6 +34,7 @@ mock_survey_2 = {
     "language": mock_language,
     "ci_version": 2,
     "status": "DRAFT",
+    "description": mock_description,
 }
 
 
@@ -133,6 +137,7 @@ class TestPostCiMetadata:
         title=mock_title,
         schema_version=mock_schema_version,
         survey_id=mock_survey_id,
+        description=mock_description,
     )
 
     @patch("app.repositories.firestore.query_latest_ci_version")

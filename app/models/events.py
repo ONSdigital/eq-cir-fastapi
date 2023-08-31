@@ -16,6 +16,7 @@ class PostCIEvent(BaseModel):
     status: str
     survey_id: str
     title: str
+    description: str
     sds_schema: str | None = ""
 
     def model_dump(self, *args, **kwargs) -> dict[str, Any]:

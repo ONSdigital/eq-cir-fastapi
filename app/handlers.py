@@ -188,6 +188,7 @@ def post_ci_metadata_v1(post_data: PostCiMetadataV1PostData) -> CiMetadata:
             sds_schema=ci_metadata_with_new_version.sds_schema,
             survey_id=ci_metadata_with_new_version.survey_id,
             title=ci_metadata_with_new_version.title,
+            description=ci_metadata_with_new_version.description,
         )
         publisher.publish_message(event_message)
 

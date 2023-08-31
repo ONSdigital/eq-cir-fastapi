@@ -114,3 +114,19 @@ class TestGetCiMetadataV2:
         query_ci_response = get_ci_metadata_v2(get_ci_metadata_v2_payload)
         query_ci_response_json = query_ci_response.json()
         assert query_ci_response_json[0]["sds_schema"] == "xx-ytr-1234-856"
+
+    def test_post_ci_with_same_metadata_query_ci_returns_with_description(self, setup_payload):
+        # post 3 ci with the same data
+        post_ci_v1(setup_payload)
+        self.subscriber.pull_messages_and_acknowledge()
+        get_ci_metadata_v2_payload = {
+            "form_type": setup_payload["form_type"],
+            "language": setup_payload["language"],
+            "status": setup_payload["status"],
+            "survey_id": setup_payload["survey_id"],
+        }
+        # sends request to http_query_ci endpoint for data
+        query_ci_response = get_ci_metadata_v2(get_ci_metadata_v2_payload)
+        query_ci_response_json = query_ci_response.json()
+        assert "description" in query_ci_response_json[0]
+        assert query_ci_response_json[0]["description"] == setup_payload["description"]

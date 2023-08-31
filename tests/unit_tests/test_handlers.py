@@ -38,6 +38,7 @@ mock_sds_schema = ""
 mock_status = "DRAFT"
 mock_survey_id = "12124141"
 mock_title = "test"
+mock_description = "Version of CI is for March 2023 - APPROVED"
 
 mock_ci_metadata = CiMetadata(
     ci_version=1,
@@ -51,6 +52,7 @@ mock_ci_metadata = CiMetadata(
     status=CiStatus.DRAFT.value,
     survey_id=mock_survey_id,
     title=mock_title,
+    description=mock_description,
 )
 
 mock_ci_schema = {
@@ -60,6 +62,7 @@ mock_ci_schema = {
     "schema_version": mock_schema_version,
     "survey_id": mock_survey_id,
     "title": mock_title,
+    "description": mock_description,
 }
 
 
@@ -182,6 +185,14 @@ class TestGetCiMetadataV1:
 
         assert response == mock_ci_metadata
 
+    def test_handler_checks_for_new_key_description_in_output_of_query_ci_metadata(self, mocked_query_ci_metadata):
+        """
+        `get_ci_metadata_v1` should have new key description in the output of `query_ci_metadata`
+        """
+        mocked_query_ci_metadata.return_value = mock_ci_metadata
+        response = get_ci_metadata_v1(self.query_params)
+        assert "description" in response.__dict__
+
 
 class TestGetCiMetadataV2:
     """Tests for the `get_ci_metadata_v2` handler"""
@@ -193,6 +204,7 @@ class TestGetCiMetadataV2:
             "language": mock_language,
             "title": "test1",
             "ci_version": 1,
+            "description": mock_description,
         },
         {
             "survey_id": mock_survey_id,
@@ -200,6 +212,7 @@ class TestGetCiMetadataV2:
             "language": mock_language,
             "title": "test2",
             "ci_version": 2,
+            "description": mock_description,
         },
     ]
 
@@ -293,6 +306,23 @@ class TestGetCiMetadataV2:
 
         items = get_ci_metadata_v2(self.query_params)
         assert items == self.mock_ci_list
+
+    @patch("app.handlers.query_ci_metadata")
+    def test_handler_checks_for_new_key_description_in_output_of_query_ci_metadata(self, mocked_query_ci_metadata):
+        """
+        `get_ci_metadata_v1` should have new key description in the output of `query_ci_metadata`
+        """
+        # Update mocked `query_ci_metadata` call to return list of valid ci
+        mocked_query_ci_metadata.return_value = self.mock_ci_list
+
+        # Update `query_params` to include survey_id, language, form_type params
+        self.query_params.form_type = mock_form_type
+        self.query_params.language = mock_language
+        self.query_params.survey_id = mock_survey_id
+
+        items = get_ci_metadata_v2(self.query_params)
+        assert "description" in items[0]
+        assert "description" in items[1]
 
 
 @patch("app.handlers.retrieve_ci_schema")
@@ -400,6 +430,7 @@ class TestPostCiMetadataV1:
         title=mock_title,
         schema_version=mock_schema_version,
         data_version=mock_data_version,
+        description=mock_description,
     )
 
     def test_handler_calls_post_ci_metadata(
@@ -477,6 +508,7 @@ class TestPostCiMetadataV1:
             survey_id=mock_ci_metadata.survey_id,
             title=mock_ci_metadata.title,
             sds_schema=mock_ci_metadata.sds_schema,
+            description=mock_description,
         )
 
         post_ci_metadata_v1(self.post_data)

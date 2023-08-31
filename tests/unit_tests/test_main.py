@@ -34,6 +34,7 @@ mock_sds_schema = ""
 mock_status = "DRAFT"
 mock_survey_id = "12124141"
 mock_title = "test"
+mock_description = "Version of CI is for March 2023 - APPROVED"
 
 mock_ci_metadata = CiMetadata(
     ci_version=1,
@@ -47,6 +48,7 @@ mock_ci_metadata = CiMetadata(
     status=CiStatus.DRAFT.value,
     survey_id=mock_survey_id,
     title=mock_title,
+    description=mock_description,
 )
 
 
@@ -399,6 +401,7 @@ class TestHttpPostCiV1:
         schema_version=mock_schema_version,
         data_version=mock_data_version,
         sds_schema=mock_sds_schema,
+        description=mock_description,
     )
     url = "/v1/publish_collection_instrument"
 

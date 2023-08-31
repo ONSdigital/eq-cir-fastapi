@@ -20,6 +20,7 @@ mock_sds_schema = "my test schema"
 mock_status = CiStatus.DRAFT.value
 mock_survey_id = "12124141"
 mock_title = "test"
+mock_description = "description"
 
 
 class TestPostCIEvent:
@@ -42,6 +43,7 @@ class TestPostCIEvent:
             status=mock_status,
             survey_id=mock_survey_id,
             title=mock_title,
+            description=mock_description,
         )
 
         model_dict = ci_event.model_dump()
@@ -65,6 +67,7 @@ class TestPostCIEvent:
             status=mock_status,
             survey_id=mock_survey_id,
             title=mock_title,
+            description=mock_description,
         )
 
         model_dict = ci_event.model_dump()
@@ -88,6 +91,7 @@ class TestPostCIEvent:
             status=mock_status,
             survey_id=mock_survey_id,
             title=mock_title,
+            description=mock_description,
         )
         # Include additional `published_at` exclude field
         model_dict = ci_event.model_dump(exclude={"published_at"})

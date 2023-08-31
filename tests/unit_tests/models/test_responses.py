@@ -19,6 +19,7 @@ mock_sds_schema = "my test schema"
 mock_status = CiStatus.DRAFT.value
 mock_survey_id = "123"
 mock_title = "My test survey"
+mock_description = "description"
 
 
 class TestCiMetadata:
@@ -41,6 +42,7 @@ class TestCiMetadata:
             status=mock_status,
             survey_id=mock_survey_id,
             title=mock_title,
+            description=mock_description,
         )
 
         model_dict = ci_metadata.model_dump()
@@ -64,6 +66,7 @@ class TestCiMetadata:
             status=mock_status,
             survey_id=mock_survey_id,
             title=mock_title,
+            description=mock_description,
         )
 
         model_dict = ci_metadata.model_dump()
@@ -87,6 +90,7 @@ class TestCiMetadata:
             status=mock_status,
             survey_id=mock_survey_id,
             title=mock_title,
+            description=mock_description,
         )
         # Include additional `published_at` exclude field
         model_dict = ci_metadata.model_dump(exclude={"published_at"})

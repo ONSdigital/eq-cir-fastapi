@@ -84,6 +84,7 @@ class PostCiMetadataV1PostData(BaseModel):
     survey_id: str
     title: str
     schema_version: str
+    description: str
     # Optional fields
     legal_basis: str | None = ""
     metadata: list | None = None
