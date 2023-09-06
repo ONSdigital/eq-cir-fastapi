@@ -23,9 +23,7 @@ jobs:
           make audit
       - name: Lint
         run: |
-          black src devtools --check
-          isort src devtools --check-only --profile black
-          flake8 src devtools --max-line-length=127
+          make lint-check
       - name: Test with pytest
         run: |
-          make unit-test
+          make unit-tests
