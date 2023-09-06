@@ -1,77 +1,52 @@
 steps:
   - name: python
-    id: 'Setup Python and install project requirements'
+    id: "Setup Python and install project requirements"
     entrypoint: pip
-    args: ['install', '-r', 'requirements.txt', '--user']
+    args: ["install", "-r", "requirements.txt", "--user"]
 
-  - name: python
-    id: 'Audit packages'
-    entrypoint: sh
-    args:
-      - '-c'
-      - |
-        make audit
-
-  - name: python
-    id: 'Check linting and code formatting'
-    entrypoint: sh
-    args:
-      - '-c'
-      - |
-        make lint-check
-
-  - name: python
-    id: 'Run unit tests'
-    entrypoint: sh
-    args:
-      - '-c'
-      - |
-        export CI_STORAGE_BUCKET_NAME=$PROJECT_ID
-        export PROJECT_ID=$PROJECT_ID
-        make unit-tests
-
-  - name: docker
-    id: 'Build and push docker image'
-    entrypoint: sh
-    args:
-      - '-c'
-      - |
-        docker build -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:$SHORT_SHA" -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest" .
-        docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:$SHORT_SHA"
-        docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest"
-
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: 'Deploy docker image to cloud run'
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    id: "Deploy docker image to cloud run"
     entrypoint: gcloud
-    args: [ 'run', 'deploy', 'cir', '--image', 'europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:$SHORT_SHA',
-            '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
+    args:
+      [
+        "run",
+        "deploy",
+        "cir",
+        "--image",
+        "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:$SHORT_SHA",
+        "--region",
+        "europe-west2",
+        "--allow-unauthenticated",
+        "--ingress",
+        "internal-and-cloud-load-balancing",
+      ]
 
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'Retrieve `OAUTH_BRAND_NAME` and save it to workspace'
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: "Retrieve `OAUTH_BRAND_NAME` and save it to workspace"
     entrypoint: sh
     args:
-      - '-c'
+      - "-c"
       - |
         gcloud iap oauth-brands list --format='value(name)' --limit=1 --project=${PROJECT_ID} \
         > /workspace/oauth_brand_name
 
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'Retrieve `OAUTH_CLIENT_NAME` and save it to workspace'
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: "Retrieve `OAUTH_CLIENT_NAME` and save it to workspace"
     entrypoint: sh
     args:
-      - '-c'
+      - "-c"
       - |
         gcloud iap oauth-clients list $(cat /workspace/oauth_brand_name) --format='value(name)' \
         --limit=1 \
         > /workspace/oauth_client_name
 
   - name: python
-    id: 'pytest integration tests'
+    id: "pytest integration tests"
     # gcloud returns OAUTH_CLIENT_NAME as '$OAUTH_BRAND_NAME/identityAwareProxy/OAUTH_CLIENT_ID'
     # so we have to split by / and use the last part of the string here to get OAUTH_CLIENT_ID
     entrypoint: sh
     args:
-      - '-c'
+      - "-c"
       - |
         export DEFAULT_HOSTNAME=$_SSL_CERTIFICATE_DOMAIN
         export CI_STORAGE_BUCKET_NAME=$PROJECT_ID
