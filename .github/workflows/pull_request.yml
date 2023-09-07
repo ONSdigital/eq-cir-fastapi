@@ -11,6 +11,7 @@ on:
       - "feature-*"
 
 jobs:
+  continue-on-error: false
   docker-push:
     runs-on: ubuntu-22.04
     steps:
