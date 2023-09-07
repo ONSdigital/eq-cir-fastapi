@@ -30,16 +30,6 @@ steps:
         export PROJECT_ID=$PROJECT_ID
         make unit-tests
 
-  - name: docker
-    id: "Build and push docker image"
-    entrypoint: sh
-    args:
-      - "-c"
-      - |
-        docker build -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:$SHORT_SHA" -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest" .
-        docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:$SHORT_SHA"
-        docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest"
-
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     id: "Deploy docker image to cloud run"
     entrypoint: gcloud
