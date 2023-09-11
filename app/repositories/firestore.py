@@ -12,10 +12,13 @@ settings = Settings()
 
 
 class FirestoreClient:
-    """ """
+    """Provides methods to perform actions on firestore using the google firestore client"""
 
     def __init__(self):
-        """ """
+        """
+        Initialises the google firestore client and sets the target collection based on
+        `settings.PROJECT_ID` and `settings.CI_FIRESTORE_COLLECTION_NAME`
+        """
         self.db = Client(project=settings.PROJECT_ID)
         self.ci_collection = self.db.collection(settings.CI_FIRESTORE_COLLECTION_NAME)
 
