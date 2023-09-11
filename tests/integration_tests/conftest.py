@@ -1,7 +1,9 @@
 import pytest
 
-from app.repositories.firestore import query_latest_ci_version
+from app.repositories.firestore import FirestoreClient
 from tests.integration_tests.utils import delete_docs, post_ci_v1
+
+firestore_client = FirestoreClient()
 
 
 @pytest.fixture
@@ -15,7 +17,7 @@ def setup_publish_ci_return_payload():
         response: post ci response object
 
     """
-    ci_exists = query_latest_ci_version("3456", "business", "welsh")
+    ci_exists = firestore_client.query_latest_ci_version("3456", "business", "welsh")
     if ci_exists:
         delete_docs("3456")
 
@@ -34,7 +36,7 @@ def setup_publish_ci_return_payload():
 
 @pytest.fixture
 def setup_payload():
-    ci_exists = query_latest_ci_version("3456", "business", "welsh")
+    ci_exists = firestore_client.query_latest_ci_version("3456", "business", "welsh")
     if ci_exists:
         delete_docs("3456")
 
