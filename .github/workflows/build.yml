@@ -55,4 +55,4 @@ jobs:
           make lint-check
       - name: Test with pytest
         run: |
-          make unit-test
+          make unit-tests
