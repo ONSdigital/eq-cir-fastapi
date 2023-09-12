@@ -1,13 +1,7 @@
 from unittest.mock import patch
 
 from app.models.requests import PostCiMetadataV1PostData
-from app.repositories.firestore import (
-    post_ci_metadata,
-    query_ci_by_survey_id,
-    query_ci_metadata_with_guid,
-    query_latest_ci_version,
-    query_latest_ci_version_id,
-)
+from app.repositories.firestore import FirestoreClient, post_ci_metadata
 
 # Mock data for all tests
 mock_data_version = "1"
@@ -38,92 +32,104 @@ mock_survey_2 = {
 }
 
 
-class TestQueryCiBySurveyId:
-    """Tests for the `query_ci_by_survey_id` firestore method"""
+class TestFirestoreClient:
+    """
+    Tests for the `FirestoreClient` class.
+    `ci_collection` is mocked out and replaced with `MockFirestore.collection` for all tests.
+    """
 
-    def test_method_returns_single_ci_if_found(self, mock_firestore_collection):
+    def test_query_ci_by_survey_id_returns_single_ci_if_found(self, mock_firestore_collection):
         """
         `query_ci_by_survey_id` should return a list of a single ci if ci with input `survey_id` is
         found in the firestore db
         """
+        firestore_client = FirestoreClient()
         # Create a single ci in the db
         mock_firestore_collection.document().set(mock_survey_1)
-        found_ci = query_ci_by_survey_id(mock_survey_id)
-
+        found_ci = firestore_client.query_ci_by_survey_id(mock_survey_id)
         assert found_ci == [mock_survey_1]
 
-    def test_method_returns_multiple_ci_if_found(self, mock_firestore_collection):
+    def test_query_ci_by_survey_id_returns_multiple_ci_if_found(self, mock_firestore_collection):
         """
         `query_ci_by_survey_id` should return a list of multiple ci if ci with input `survey_id`
         are found in the firestore db. Ci should be ordered in descending `ci_version` order
         """
+        firestore_client = FirestoreClient()
         # Create multiple ci in the db
         mock_firestore_collection.document().set(mock_survey_1)
         mock_firestore_collection.document().set(mock_survey_2)
-        found_ci = query_ci_by_survey_id(mock_survey_id)
+        found_ci = firestore_client.query_ci_by_survey_id(mock_survey_id)
 
         assert found_ci == [mock_survey_2, mock_survey_1]
 
-    def test_method_returns_empty_list_if_ci_not_found(self, mock_firestore_collection):
+    def test_query_ci_by_survey_id_returns_empty_list_if_ci_not_found(self, mock_firestore_collection):
         """
         `query_ci_by_survey_id` should return an empty list if ci with input `survey_id`
         are not found in the firestore db
         """
-        found_ci = query_ci_by_survey_id(mock_survey_id)
+        firestore_client = FirestoreClient()
+
+        found_ci = firestore_client.query_ci_by_survey_id(mock_survey_id)
 
         assert found_ci == []
 
+    def test_query_latest_ci_version_returns_latest_ci_version(self, mock_firestore_collection):
+        """ """
+        firestore_client = FirestoreClient()
 
-class TestQueryLatestCiVersion:
-    """Tests for the `query_latest_ci_version` firestore method"""
-
-    def test_get_latest_ci_version_id_returns_latest_ci_version(self, mock_firestore_collection):
         mock_firestore_collection.document().set(mock_survey_1)
         mock_firestore_collection.document().set(mock_survey_2)
-        ci_version = query_latest_ci_version(
+        ci_version = firestore_client.query_latest_ci_version(
             mock_survey_id,
             mock_form_type,
             mock_language,
         )
         assert ci_version == 2
 
-    def test_get_latest_ci_version_id_returns_0(self, mock_firestore_collection):
-        ci_version = query_latest_ci_version(
+    def test_query_latest_ci_version_returns_0(self, mock_firestore_collection):
+        """ """
+        firestore_client = FirestoreClient()
+
+        ci_version = firestore_client.query_latest_ci_version(
             mock_survey_id,
             mock_form_type,
             mock_language,
         )
         assert ci_version == 0
 
+    def test_query_latest_ci_version_id_returns_latest_id(self, mock_firestore_collection):
+        """ """
+        firestore_client = FirestoreClient()
 
-class TestQueryLatestCiVersionId:
-    """Tests for the `query_latest_ci_version_id` firestore method"""
-
-    def test_get_latest_ci_version_id_returns_latest_id(self, mock_firestore_collection):
         mock_firestore_collection.document("1").set(mock_survey_1)
         mock_firestore_collection.document("2").set(mock_survey_2)
-        ci_id = query_latest_ci_version_id(mock_survey_id, mock_form_type, mock_language)
+        ci_id = firestore_client.query_latest_ci_version_id(mock_survey_id, mock_form_type, mock_language)
         assert ci_id == "2"
 
-    def test_get_latest_ci_version_id_returns_none(self, mock_firestore_collection):
+    def test_query_latest_ci_version_id_returns_none(self, mock_firestore_collection):
+        """ """
+        firestore_client = FirestoreClient()
+
         mock_firestore_collection.document("123").set(mock_survey_1)
         mock_firestore_collection.document("456").set(mock_survey_2)
-        ci_id = query_latest_ci_version_id("124", mock_form_type, mock_language)
+        ci_id = firestore_client.query_latest_ci_version_id("124", mock_form_type, mock_language)
         assert not ci_id
 
-
-class TestQueryCiMetadataWithGuid:
-    """Tests for the `query_ci_metadata_with_guid` firestore method"""
-
     def test_get_query_ci_metadata_with_guid_returns_ci(self, mock_firestore_collection):
+        """ """
+        firestore_client = FirestoreClient()
+
         mock_firestore_collection.document("123").set(mock_survey_1)
         mock_firestore_collection.document("456").set(mock_survey_2)
-        ci = query_ci_metadata_with_guid("123")
+        ci = firestore_client.query_ci_metadata_with_guid("123")
         assert ci == mock_survey_1
 
     def test_get_query_ci_metadata_with_guid_returns_none(self, mock_firestore_collection):
+        """ """
+        firestore_client = FirestoreClient()
+
         mock_firestore_collection.document("123").set(mock_survey_1)
-        ci = query_ci_metadata_with_guid("124")
+        ci = firestore_client.query_ci_metadata_with_guid("124")
         assert not ci
 
 
@@ -140,7 +146,7 @@ class TestPostCiMetadata:
         description=mock_description,
     )
 
-    @patch("app.repositories.firestore.query_latest_ci_version")
+    @patch("app.repositories.firestore.FirestoreClient.query_latest_ci_version")
     def test_creates_new_ci_metadata_on_firestore(self, mocked_query_latest_ci_version, mock_firestore_collection):
         """
         `post_ci_metadata` should create a new ci metadata record on firestore if provided with valid data
@@ -160,7 +166,7 @@ class TestPostCiMetadata:
         # Confirm the where query returns a valid object
         assert ci_metadata_query.__next__ is not None
 
-    @patch("app.repositories.firestore.query_latest_ci_version")
+    @patch("app.repositories.firestore.FirestoreClient.query_latest_ci_version")
     def test_creates_new_ci_metadata_omits_optional_sds_schema_if_not_present(
         self, mocked_query_latest_ci_version, mock_firestore_collection
     ):
@@ -187,7 +193,7 @@ class TestPostCiMetadata:
             # `sds_schema` should not be present in created document keys
             assert "sds_schema" not in ci._doc.keys()
 
-    @patch("app.repositories.firestore.query_latest_ci_version")
+    @patch("app.repositories.firestore.FirestoreClient.query_latest_ci_version")
     def test_creates_new_ci_metadata_includes_optional_sds_schema_if_present(
         self, mocked_query_latest_ci_version, mock_firestore_collection
     ):

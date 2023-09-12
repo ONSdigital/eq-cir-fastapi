@@ -17,18 +17,7 @@ from app.repositories.cloud_storage import (
     retrieve_ci_schema,
     store_ci_schema,
 )
-from app.repositories.firestore import (
-    db,
-    delete_ci_metadata,
-    get_all_ci_metadata,
-    post_ci_metadata,
-    query_ci_by_status,
-    query_ci_by_survey_id,
-    query_ci_metadata,
-    query_ci_metadata_with_guid,
-    query_latest_ci_version_id,
-    update_ci_metadata_status_to_published,
-)
+from app.repositories.firestore import FirestoreClient, post_ci_metadata
 
 logger = logging.getLogger(__name__)
 
@@ -41,12 +30,15 @@ def delete_ci_v1(query_params: DeleteCiV1Params) -> str | None:
     If ci with `survey_id` not found, returns `None`
     """
     logger.info("Stepping into delete_ci")
-    ci_schemas = query_ci_by_survey_id(query_params.survey_id)
+
+    firestore_client = FirestoreClient()
+
+    ci_schemas = firestore_client.query_ci_by_survey_id(query_params.survey_id)
 
     if ci_schemas:
-        with db.transaction() as transaction:
+        with firestore_client.db.transaction() as transaction:
             # Deleting the metadata from firestore
-            delete_ci_metadata(query_params.survey_id)
+            firestore_client.delete_ci_metadata(query_params.survey_id)
             logger.info("Delete Metadata Success")
             # Deleting the schema from bucket
             delete_ci_schema(ci_schemas)
@@ -68,7 +60,10 @@ def get_ci_metadata_v1(query_params: GetCiMetadataV1Params):
     """
     logger.info("Stepping into get_ci_metadata")
     logger.debug(f"get_ci_metadata_v1 data received: {query_params.__dict__}")
-    ci_metadata = query_ci_metadata(query_params.survey_id, query_params.form_type, query_params.language)
+
+    firestore_client = FirestoreClient()
+
+    ci_metadata = firestore_client.query_ci_metadata(query_params.survey_id, query_params.form_type, query_params.language)
     logger.debug(f"get_ci_metadata_v1 output: {ci_metadata}")
     return ci_metadata
 
@@ -82,9 +77,11 @@ def get_ci_metadata_v2(query_params: GetCiMetadataV2Params):
     logger.info("Stepping into get_ci_metadata_v2")
     logger.debug(f"Data received: {query_params}")
 
+    firestore_client = FirestoreClient()
+
     # Condition where author is requesting CIs by status with survey_id, form_type and language
     if query_params.params_not_none("form_type", "language", "status", "survey_id"):
-        search_result = query_ci_metadata(
+        search_result = firestore_client.query_ci_metadata(
             query_params.survey_id,
             query_params.form_type,
             query_params.language,
@@ -96,7 +93,7 @@ def get_ci_metadata_v2(query_params: GetCiMetadataV2Params):
 
     # Condition where author is requesting CIs with survey_id, form_type and language
     elif query_params.params_not_none("form_type", "language", "survey_id"):
-        search_result = query_ci_metadata(
+        search_result = firestore_client.query_ci_metadata(
             query_params.survey_id,
             query_params.form_type,
             query_params.language,
@@ -107,7 +104,7 @@ def get_ci_metadata_v2(query_params: GetCiMetadataV2Params):
 
     # Condition where author is requesting CIs by status ONLY
     elif query_params.params_not_none("status"):
-        search_result = query_ci_by_status(
+        search_result = firestore_client.query_ci_by_status(
             query_params.status,
         )
         logger.debug(
@@ -116,7 +113,7 @@ def get_ci_metadata_v2(query_params: GetCiMetadataV2Params):
 
     # Condition where user is requesting all CIs by no parameters
     else:
-        search_result = get_all_ci_metadata()
+        search_result = firestore_client.get_all_ci_metadata()
         logger.debug(
             f"get_all_ci output: {search_result}",
         )
@@ -130,10 +127,15 @@ def get_ci_schema_v1(query_params: GetCiSchemaV1Params):
     :param query_params: GetCiSchemaV1Params
     :return: ci_metadata_id, ci_schema, || None, None
     """
-    ci_metadata_id, ci_schema = None, None
     logger.info("Stepping into get_ci_schema_v1")
     logger.debug(f"get_ci_schema_v1 data received: {query_params.__dict__}")
-    ci_metadata_id = query_latest_ci_version_id(query_params.survey_id, query_params.form_type, query_params.language)
+
+    ci_metadata_id, ci_schema = None, None
+    firestore_client = FirestoreClient()
+
+    ci_metadata_id = firestore_client.query_latest_ci_version_id(
+        query_params.survey_id, query_params.form_type, query_params.language
+    )
     if ci_metadata_id:
         ci_schema = retrieve_ci_schema(ci_metadata_id)
         logger.debug(f"get_ci_schema_v1 output: {ci_schema}")
@@ -146,10 +148,13 @@ def get_ci_schema_v2(query_params: GetCiSchemaV2Params):
     :param query_params: GetCiSchemaV2Params
     :return: ci_metadata_id, ci_schema, || None, None
     """
-    ci_metadata, ci_schema = None, None
     logger.info("Stepping into get_ci_schema_v2")
     logger.debug(f"get_ci_schema_v2 data received: {query_params.__dict__}")
-    ci_metadata = query_ci_metadata_with_guid(query_params.guid)
+
+    ci_metadata, ci_schema = None, None
+    firestore_client = FirestoreClient()
+
+    ci_metadata = firestore_client.query_ci_metadata_with_guid(query_params.guid)
     if ci_metadata:
         ci_schema = retrieve_ci_schema(query_params.guid)
         logger.debug(f"get_ci_schema_v1 output: {ci_schema}")
@@ -162,11 +167,13 @@ def post_ci_metadata_v1(post_data: PostCiMetadataV1PostData) -> CiMetadata:
     """
 
     logger.debug(f"post_ci_v1 data received: {post_data.__dict__}")
+
+    firestore_client = FirestoreClient()
     publisher = Publisher()
 
     # Unable to test the transaction rollback in tests
     # start transaction
-    with db.transaction() as transaction:
+    with firestore_client.db.transaction() as transaction:
         # post metadata to firestore
         ci_metadata_with_new_version = post_ci_metadata(post_data)
         logger.debug(f"New CI created: {ci_metadata_with_new_version.model_dump()}")
@@ -208,11 +215,14 @@ def put_status_v1(query_params: PutStatusV1Params):
     """
     logger.info("Stepping into put_status_v1")
     logger.debug(f"put_status_v1 GUID received: {query_params.__dict__}")
-    ci_metadata = query_ci_metadata_with_guid(query_params.guid)
+
+    firestore_client = FirestoreClient()
+
+    ci_metadata = firestore_client.query_ci_metadata_with_guid(query_params.guid)
     if not ci_metadata:
         return None, False
     if ci_metadata["status"] == Status.PUBLISHED.value:
         return ci_metadata, False
     if ci_metadata["status"] == Status.DRAFT.value:
-        update_ci_metadata_status_to_published(query_params.guid, {"status": Status.PUBLISHED.value})
+        firestore_client.update_ci_metadata_status_to_published(query_params.guid, {"status": Status.PUBLISHED.value})
         return ci_metadata, True
