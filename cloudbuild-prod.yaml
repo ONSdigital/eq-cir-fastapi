@@ -11,7 +11,7 @@ name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/${PROJECT_ID}/cir/cir:${SHORT_SHA}']
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'Deploy the container to cloudrun'
-    args: [ 'run', 'deploy', 'sds', '--image', 'gcr.io/${PROJECT_ID}/sds/sds:${SHORT_SHA}',
+    args: [ 'run', 'deploy', 'cir', '--image', 'gcr.io/${PROJECT_ID}/cir/cir:${SHORT_SHA}',
             '--region', $LOCATION, '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
 options:
   logging: CLOUD_LOGGING_ONLY
