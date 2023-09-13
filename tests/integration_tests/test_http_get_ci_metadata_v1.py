@@ -1,3 +1,8 @@
+from fastapi import status
+from urllib.parse import urlencode
+from tests.integration_tests.utils import make_iap_request
+
+
 from app.events.subscriber import Subscriber
 from tests.integration_tests.utils import delete_docs, get_ci_metadata_v1, post_ci_v1
 
@@ -76,3 +81,27 @@ class TestGetCiMetadataV1:
         query_ci_response_json = query_ci_response.json()
         assert "description" in query_ci_response_json[0]
         assert query_ci_response_json[0]["description"] == setup_payload["description"]
+
+    def test_metadata_query_ci_returns_404(self, setup_payload):
+        delete_docs("3456")
+        survey_id = setup_payload["survey_id"]
+        form_type = setup_payload["form_type"]
+        language = setup_payload["language"]
+        # sends request to http_query_ci endpoint for data
+        query_ci_response = get_ci_metadata_v1(survey_id, form_type, language)
+        query_ci_response.status_code == status.HTTP_404_NOT_FOUND
+        query_ci_response = query_ci_response.json()
+        assert (
+            query_ci_response["message"]
+            == f"No CI metadata found for: {{'survey_id': '{survey_id}', 'form_type: '{form_type}', 'language': '{language}'}}"
+        )
+        assert query_ci_response["status"] == "error"
+
+    def test_metadata_query_ci_returns_400(self, setup_payload):
+        survey_id = setup_payload["survey_id"]
+        form_type = setup_payload["form_type"]
+        querystring = urlencode({"survey_id": survey_id,"form_type":form_type})
+
+        response = make_iap_request("GET", f"{self.base_url}?{querystring}")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
