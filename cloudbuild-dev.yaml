@@ -100,7 +100,7 @@ options:
   logging: CLOUD_LOGGING_ONLY
 availableSecrets:
    secretManager:
-   - versionName: projects/${PROJECT_ID}/secrets/DOCKERHUB_PASSWORD/versions/1
+   - versionName: projects/ons-cir-sandbox-dns/secrets/dockerhub-password/versions/1
      env: 'DOCKERHUB_PASSWORD'
-   - versionName: projects/${PROJECT_ID}/secrets/DOCKERHUB_USERNAME/versions/1
+   - versionName: projects/ons-cir-sandbox-dns/secrets/dockerhub-username/versions/1
      env: 'DOCKERHUB_USERNAME'
