@@ -37,7 +37,6 @@ steps:
       - '-c'
       - |
         docker login --username=$$DOCKERHUB_USERNAME --password=$$DOCKERHUB_PASSWORD
-        -t onsdigital/eq-cir-fastapi:$TAG .
         docker build -t '$$DOCKERHUB_USERNAME/onsdigital/eq-cir-fastapi:${BRANCH_NAME}' .
         docker push '$$DOCKERHUB_USERNAME/onsdigital/eq-cir-fastapi:${BRANCH_NAME}'
     secretEnv: ['DOCKERHUB_USERNAME', 'DOCKERHUB_PASSWORD']
