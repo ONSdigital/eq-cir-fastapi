@@ -1,10 +1,14 @@
-from fastapi import status
 from urllib.parse import urlencode
-from tests.integration_tests.utils import make_iap_request
 
+from fastapi import status
 
 from app.events.subscriber import Subscriber
-from tests.integration_tests.utils import delete_docs, get_ci_metadata_v1, post_ci_v1
+from tests.integration_tests.utils import (
+    delete_docs,
+    get_ci_metadata_v1,
+    make_iap_request,
+    post_ci_v1,
+)
 
 
 class TestGetCiMetadataV1:
@@ -100,8 +104,7 @@ class TestGetCiMetadataV1:
     def test_metadata_query_ci_returns_400(self, setup_payload):
         survey_id = setup_payload["survey_id"]
         form_type = setup_payload["form_type"]
-        querystring = urlencode({"survey_id": survey_id,"form_type":form_type})
+        querystring = urlencode({"survey_id": survey_id, "form_type": form_type})
 
         response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-
