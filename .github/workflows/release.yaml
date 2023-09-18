@@ -2,6 +2,8 @@ name: release
 run-name: Push published app to dockerhub
 on:
   release:
+    branches:
+      - main
     types: [published]
 jobs:
   push-published-app-to-dockerhub:
