@@ -36,28 +36,15 @@ steps:
     args:
       - '-c'
       - |
-        docker login --username=$$DOCKERHUB_USERNAME --password=$$DOCKERHUB_PASSWORD
-        docker build -t '$$DOCKERHUB_USERNAME/onsdigital/eq-cir-fastapi:${BRANCH_NAME}' .
-        docker push '$$DOCKERHUB_USERNAME/onsdigital/eq-cir-fastapi:${BRANCH_NAME}'
-    secretEnv: ['DOCKERHUB_USERNAME', 'DOCKERHUB_PASSWORD']
+        docker build -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:${SHORT_SHA}" -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest" .
+        docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:${SHORT_SHA}"
+        docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest"
 
-  - name: 'gcr.io/cloud-builders/docker'
-    # ONS dockerhub is public so no login required here
-    id: 'Pull image from dockerhub'
-    args: ['pull', 'onsdigital/cir:${BRANCH_NAME}']
-
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'Tag the image with SHA'
-    args: ['tag', 'onsdigital/cir:${BRANCH_NAME}', 'gcr.io/${PROJECT_ID}/cir/cir:${SHORT_SHA}']
-
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'Push SHA tagged image to GCR'
-    args: ['push', 'gcr.io/${PROJECT_ID}/cir/cir:${SHORT_SHA}']
-
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'Deploy the image to cloudrun'
-    args: [ 'run', 'deploy', 'cir', '--image', 'gcr.io/${PROJECT_ID}/cir/cir:${SHORT_SHA}',
-            '--region', $LOCATION, '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'Deploy docker image to cloud run'
+    entrypoint: gcloud
+    args: [ 'run', 'deploy', 'cir', '--image', 'europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:${SHORT_SHA}',
+            '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
 
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'Retrieve `OAUTH_BRAND_NAME` and save it to workspace'
@@ -97,9 +84,3 @@ steps:
 
 options:
   logging: CLOUD_LOGGING_ONLY
-availableSecrets:
-   secretManager:
-   - versionName: projects/ons-cir-sandbox-dns/secrets/dockerhub-password/versions/1
-     env: 'DOCKERHUB_PASSWORD'
-   - versionName: projects/ons-cir-sandbox-dns/secrets/dockerhub-username/versions/1
-     env: 'DOCKERHUB_USERNAME'

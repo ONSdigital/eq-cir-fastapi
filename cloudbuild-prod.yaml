@@ -1,17 +1,19 @@
 steps:
-name: 'gcr.io/cloud-builders/docker'
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'Pull container from dockerhub'
-    args: ['pull', 'onsdigital/cir:${BRANCH_NAME}']
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'Tag the container with SHA'
-    args: ['tag', 'onsdigital/cir:${BRANCH_NAME}', 'gcr.io/${PROJECT_ID}/cir/cir:${SHORT_SHA}']
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'Push SHA tagged container to GCR'
-    args: ['push', 'gcr.io/${PROJECT_ID}/cir/cir:${SHORT_SHA}']
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'Deploy the container to cloudrun'
-    args: [ 'run', 'deploy', 'cir', '--image', 'gcr.io/${PROJECT_ID}/cir/cir:${SHORT_SHA}',
-            '--region', $LOCATION, '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
+  - name: docker
+    id: 'Build and push docker image'
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        docker build -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:${SHORT_SHA}" -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest" .
+        docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:${SHORT_SHA}"
+        docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest"
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'Deploy docker image to cloud run'
+    entrypoint: gcloud
+    args: [ 'run', 'deploy', 'cir', '--image', 'europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:${SHORT_SHA}',
+            '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
+
 options:
   logging: CLOUD_LOGGING_ONLY
