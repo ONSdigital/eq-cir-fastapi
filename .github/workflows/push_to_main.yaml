@@ -1,11 +1,11 @@
 name: push-to-main
-run-name: Publish built app to dockerhub
+run-name: Push latest app to dockerhub
 on:
   push:
     branches:
       - main
 jobs:
-  publish-built-app-to-dockerhub:
+  push-latest-app-to-dockerhub:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
