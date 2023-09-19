@@ -96,13 +96,9 @@ class TestGetCiMetadataV1:
         query_ci_response.status_code == status.HTTP_404_NOT_FOUND
         query_ci_response = query_ci_response.json()
         expected_response = (
-            f"No CI metadata found for: {{'form_type': '{form_type}'language': '{language}', 'survey_id': '{survey_id}'}}"
+            f"No CI metadata found for: {{'form_type': '{form_type}', 'language': '{language}', 'survey_id': '{survey_id}'}}"
         )
         assert query_ci_response["message"] == expected_response
-
-        print(query_ci_response)
-        print(expected_response)
-
         assert query_ci_response["status"] == "error"
 
     def test_metadata_query_ci_returns_400(self, setup_payload):
