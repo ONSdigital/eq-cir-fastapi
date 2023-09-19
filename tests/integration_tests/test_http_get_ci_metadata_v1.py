@@ -87,13 +87,12 @@ class TestGetCiMetadataV1:
         assert query_ci_response_json[0]["description"] == setup_payload["description"]
 
     def test_metadata_query_ci_returns_404(self, setup_payload):
-        delete_docs("3456")
         survey_id = setup_payload["survey_id"]
         form_type = setup_payload["form_type"]
         language = setup_payload["language"]
         # sends request to http_query_ci endpoint for data
         query_ci_response = get_ci_metadata_v1(survey_id, form_type, language)
-        query_ci_response.status_code == status.HTTP_404_NOT_FOUND
+        assert query_ci_response.status_code == status.HTTP_404_NOT_FOUND
         query_ci_response = query_ci_response.json()
         expected_response = (
             f"No CI metadata found for: {{'form_type': '{form_type}', 'language': '{language}', 'survey_id': '{survey_id}'}}"
@@ -102,6 +101,12 @@ class TestGetCiMetadataV1:
         assert query_ci_response["status"] == "error"
 
     def test_metadata_query_ci_returns_400(self, setup_payload):
+        """
+        A 400 error can be thrown if arguments/syntactic rules are against the defined endpoint.
+        In this test only two endpoints are passed instead of three.
+        make_iap_request is used instead of get_ci_metadata_v1 here as this function defined in utils.py takes in the
+        three required parameters. Using make_iap_request can enable us to throw 400 error.
+        """
         survey_id = setup_payload["survey_id"]
         form_type = setup_payload["form_type"]
         querystring = urlencode({"survey_id": survey_id, "form_type": form_type})

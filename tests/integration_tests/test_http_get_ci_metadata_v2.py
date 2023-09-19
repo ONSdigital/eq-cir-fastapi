@@ -140,7 +140,7 @@ class TestGetCiMetadataV2:
         }
         # sends request to http_query_ci endpoint for data
         query_ci_response = get_ci_metadata_v2(get_ci_metadata_v2_payload)
-        query_ci_response.status_code == status.HTTP_404_NOT_FOUND
+        assert query_ci_response.status_code == status.HTTP_404_NOT_FOUND
         query_ci_response = query_ci_response.json()
         expected_response = f"No CI metadata found for: {get_ci_metadata_v2_payload}"
         assert query_ci_response["message"] == expected_response
