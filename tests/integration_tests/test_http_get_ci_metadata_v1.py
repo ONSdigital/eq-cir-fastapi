@@ -95,10 +95,14 @@ class TestGetCiMetadataV1:
         query_ci_response = get_ci_metadata_v1(survey_id, form_type, language)
         query_ci_response.status_code == status.HTTP_404_NOT_FOUND
         query_ci_response = query_ci_response.json()
-        assert (
-            query_ci_response["message"]
-            == f"No CI metadata found for: {{'survey_id': '{survey_id}', 'form_type: '{form_type}', 'language': '{language}'}}"
+        expected_response = (
+            f"No CI metadata found for: {{'form_type': '{form_type}'language': '{language}', 'survey_id': '{survey_id}'}}"
         )
+        assert query_ci_response["message"] == expected_response
+
+        print(query_ci_response)
+        print(expected_response)
+
         assert query_ci_response["status"] == "error"
 
     def test_metadata_query_ci_returns_400(self, setup_payload):
@@ -106,5 +110,5 @@ class TestGetCiMetadataV1:
         form_type = setup_payload["form_type"]
         querystring = urlencode({"survey_id": survey_id, "form_type": form_type})
 
-        response = make_iap_request("GET", f"{self.base_url}?{querystring}")
+        response = make_iap_request("GET", f"/v1/ci_metadata?{querystring}")
         assert response.status_code == status.HTTP_400_BAD_REQUEST
