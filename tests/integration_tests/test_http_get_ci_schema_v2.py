@@ -1,43 +1,63 @@
+from dataclasses import asdict
+from urllib.parse import urlencode
+
 from fastapi import status
 
 from app.events.subscriber import Subscriber
-from tests.integration_tests.utils import (
-    delete_docs,
-    get_ci_metadata_v1,
-    get_ci_schema_v2,
-    post_ci_v1,
-)
+from app.models.requests import GetCiSchemaV2Params
+from tests.integration_tests.utils import delete_docs, make_iap_request, post_ci_v1
 
 
-class TestGetCiSchemaV2:
+class TestHttpGetCiSchemaV2:
+    """Tests for the `http_get_ci_schema_v2` endpoint"""
+
+    # Initialise the subscriber client
     subscriber = Subscriber()
+    url = "/v2/retrieve_collection_instrument"
 
     def teardown_method(self):
-        print(": tearing down")
+        """Tidy up carried out at the end of each test"""
+        # Need to pull and acknowledge messages in any test where post_ci_v1 is called so the
+        # subscription doesn't get clogged
+        self.subscriber.pull_messages_and_acknowledge()
         delete_docs("3456")
 
-    def test_get_ci_schema_v2_returns_400(self):
-        guid = "30134e70-c28c-4dcc-b0b0-e403b2df0b24"
-        get_ci_schema_v2_response = get_ci_schema_v2(guid)
-        get_ci_schema_v2_response = get_ci_schema_v2_response.json()
-        get_ci_schema_v2_response["status"] == "error"
-        get_ci_schema_v2_response["message"] == "No CI found for " + guid
+    def test_endpoint_returns_400_bad_request_if_bad_query(self):
+        """
+        `http_get_ci_schema_v2` should return `HTTP_400_BAD_REQUEST` status if a bad query is made
+        via a GET request
+        """
+        # Create a bad querystring
+        querystring = urlencode({"my_bad": "querystring"})
 
-    def test_publish_1_ci_get_ci_schema_v2_returns_1(self, setup_payload):
-        # post ci
-        post_ci_v1(setup_payload)
-        self.subscriber.pull_messages_and_acknowledge()
-        # Getting the ID of the CI
-        survey_id = setup_payload["survey_id"]
-        form_type = setup_payload["form_type"]
-        language = setup_payload["language"]
-        # sends request to http_query_ci endpoint for data
-        get_ci_metadata_v1_response = get_ci_metadata_v1(survey_id, form_type, language)
-        get_ci_metadata_v1_response = get_ci_metadata_v1_response.json()
-        # sends request to http_get_ci_schema_v2 endpoint for data
-        get_ci_schema_v2_response = get_ci_schema_v2(get_ci_metadata_v1_response[0]["id"])
-        get_ci_schema_v2_response_data = get_ci_schema_v2_response.json()
-        assert get_ci_schema_v2_response.status_code == status.HTTP_200_OK
-        assert get_ci_schema_v2_response_data["survey_id"] == get_ci_metadata_v1_response[0]["survey_id"]
-        assert get_ci_schema_v2_response_data["form_type"] == get_ci_metadata_v1_response[0]["form_type"]
-        assert get_ci_schema_v2_response_data["language"] == get_ci_metadata_v1_response[0]["language"]
+        response = make_iap_request("GET", f"{self.url}?{querystring}")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_endpoint_returns_404_not_found_if_ci_not_found(self):
+        """
+        `http_get_ci_schema_v2` should return `HTTP_404_NOT_FOUND` status if a valid query is
+        made via a GET request but a corresponding ci schema is not found on the db
+        """
+        # Create a valid query
+        query_params = GetCiSchemaV2Params(guid="30134e70-c28c-4dcc-b0b0-e403b2df0b24")
+        querystring = urlencode(asdict(query_params))
+
+        # Endpoint should return `HTTP_404_NOT_FOUND` as no ci exist in the db
+        response = make_iap_request("GET", f"{self.url}?{querystring}")
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_endpoint_returns_200_success_if_ci_schema_found(self, setup_payload):
+        """
+        `http_get_ci_schema_v2` should return `HTTP_200_OK` status if valid ci metadata and schema
+        exist and a valid query to return the schema is made via a GET request
+        """
+        # Use `post_ci_v1` to create ci metadata and schema on the db
+        response = post_ci_v1(setup_payload)
+        created_ci = response.json()
+
+        # Create a valid querystring using the `id` returned when ci created
+        query_params = GetCiSchemaV2Params(guid=created_ci["id"])
+        querystring = urlencode(asdict(query_params))
+
+        response = make_iap_request("GET", f"{self.url}?{querystring}")
+        assert response.status_code == status.HTTP_200_OK

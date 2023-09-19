@@ -33,6 +33,21 @@ class TestHttpGetCiSchemaV1:
         response = make_iap_request("GET", f"{self.url}?{querystring}")
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
+    def test_endpoint_returns_404_not_found_if_ci_not_found(self, setup_payload):
+        """
+        `http_get_ci_schema_v1` should return `HTTP_404_NOT_FOUND` status if a valid query is
+        made via a GET request but a corresponding ci schema is not found on the db
+        """
+        # Construct a valid querystring using `setup_payload` data
+        query_params = GetCiSchemaV1Params(
+            form_type=setup_payload["form_type"], language=setup_payload["language"], survey_id=setup_payload["survey_id"]
+        )
+        querystring = urlencode(asdict(query_params))
+
+        # Endpoint should return `HTTP_404_NOT_FOUND` as no ci exist in the db
+        response = make_iap_request("GET", f"{self.url}?{querystring}")
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
     def test_endpoint_returns_200_success_if_ci_schema_found(self, setup_payload):
         """
         `http_get_ci_schema_v1` should return `HTTP_200_OK` status if valid ci metadata and schema
