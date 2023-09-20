@@ -1,15 +1,18 @@
+from urllib.parse import urlencode
+
 from fastapi import status
 
 from app.events.subscriber import Subscriber
 from tests.integration_tests.utils import (
     delete_docs,
     get_ci_metadata_v1,
+    make_iap_request,
     post_ci_v1,
-    put_status_v1,
 )
 
 
 class TestPutStatusV1:
+    base_url = "/v1/update_status"
     subscriber = Subscriber()
 
     def teardown_method(self):
@@ -29,14 +32,16 @@ class TestPutStatusV1:
         survey_id = setup_payload["survey_id"]
         form_type = setup_payload["form_type"]
         language = setup_payload["language"]
+        querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
         # sends request to http_query_ci endpoint for data
-        query_ci_pre_response = get_ci_metadata_v1(survey_id, form_type, language)
+        query_ci_pre_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         query_ci_pre_response_data = query_ci_pre_response.json()
 
         ci_id = query_ci_pre_response_data[0]["id"]
         assert query_ci_pre_response_data[0]["status"] == "DRAFT"
 
-        ci_update = put_status_v1(ci_id)
+        querystring = urlencode({"guid": ci_id})
+        ci_update = make_iap_request("PUT", f"{self.base_url}?{querystring}")
         assert ci_update.status_code == status.HTTP_200_OK
 
         # returning text as opposed to json as its a string
@@ -44,7 +49,7 @@ class TestPutStatusV1:
         assert ci_update_data == f"CI status has been changed to Published for {ci_id}."
 
         # sends request to http_query_ci endpoint for data
-        query_ci_post_response = get_ci_metadata_v1(survey_id, form_type, language)
+        query_ci_post_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         query_ci_post_response_data = query_ci_post_response.json()
 
         assert query_ci_post_response_data[0]["id"] == ci_id
@@ -57,7 +62,8 @@ class TestPutStatusV1:
         been changed to Published for <GUID>."  }
         """
 
-        ci_update = put_status_v1(ci_id)
+        querystring = urlencode({"guid": ci_id})
+        ci_update = make_iap_request("PUT", f"{self.base_url}?{querystring}")
         assert ci_update.status_code == status.HTTP_200_OK
 
         # returning text as opposed to json as its a string
@@ -77,7 +83,8 @@ class TestPutStatusV1:
         return the error payload { "status":"success", "message": "No CI found for <GUID>."}
         """
         ci_id = "404"
-        ci_update = put_status_v1(ci_id)
+        querystring = urlencode({"guid": ci_id})
+        ci_update = make_iap_request("PUT", f"{self.base_url}?{querystring}")
         assert ci_update.status_code == status.HTTP_404_NOT_FOUND
 
         ci_update_data = ci_update.json()
