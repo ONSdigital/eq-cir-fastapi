@@ -7,7 +7,7 @@ from tests.integration_tests.utils import make_iap_request, post_ci_v1
 
 
 class TestGetCiMetadataV1:
-    base_url = "/v1/dev/teardown"
+    base_url = "/v1/ci_metadata"
     subscriber = Subscriber()
 
     def teardown_method(self):
