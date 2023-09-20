@@ -115,20 +115,6 @@ def is_valid_datetime(dt_str: str):
     return re.match(datetime_regex, dt_str)
 
 
-def get_ci_schema_v2(guid: str):
-    """
-    Gets CI schema using input `guid`
-    Args:
-        guid: to be passed as part of a querystring to URL making DELETE request
-    Returns:
-        obj: `requests.response` object
-    """
-
-    querystring = urlencode({"guid": guid})
-
-    return make_iap_request("GET", f"/v2/retrieve_collection_instrument?{querystring}")
-
-
 def get_ci_metadata_v2(payload=None):
     """
     Makes `get` request to the `/v2/ci_metadata` endpoint and return the response.
