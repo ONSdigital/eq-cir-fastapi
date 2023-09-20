@@ -130,3 +130,18 @@ class TestGetCiMetadataV2:
         query_ci_response_json = query_ci_response.json()
         assert "description" in query_ci_response_json[0]
         assert query_ci_response_json[0]["description"] == setup_payload["description"]
+
+    def test_metadata_query_returns_404(self, setup_payload):
+        get_ci_metadata_v2_payload = {
+            "form_type": setup_payload["form_type"],
+            "language": setup_payload["language"],
+            "status": setup_payload["status"],
+            "survey_id": setup_payload["survey_id"],
+        }
+        # sends request to http_query_ci endpoint for data
+        query_ci_response = get_ci_metadata_v2(get_ci_metadata_v2_payload)
+        assert query_ci_response.status_code == status.HTTP_404_NOT_FOUND
+        query_ci_response = query_ci_response.json()
+        expected_response = f"No CI metadata found for: {get_ci_metadata_v2_payload}"
+        assert query_ci_response["message"] == expected_response
+        assert query_ci_response["status"] == "error"
