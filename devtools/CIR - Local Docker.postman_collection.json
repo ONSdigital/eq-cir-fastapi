@@ -7,7 +7,7 @@
 	},
 	"item": [
 		{
-			"name": "DELETE CI",
+			"name": "DELETE CI V1",
 			"request": {
 				"method": "DELETE",
 				"header": [],
@@ -195,7 +195,7 @@
 			"response": []
 		},
 		{
-			"name": "POST CI",
+			"name": "POST CI V1",
 			"request": {
 				"method": "POST",
 				"header": [],
