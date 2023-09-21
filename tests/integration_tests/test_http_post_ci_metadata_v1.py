@@ -1,15 +1,11 @@
 import json
+from urllib.parse import urlencode
 
 from fastapi import status
 
 from app.events.subscriber import Subscriber
 from app.models.responses import CiMetadata, CiStatus
-from tests.integration_tests.utils import (
-    delete_docs,
-    get_ci_metadata_v1,
-    is_valid_datetime,
-    post_ci_v1,
-)
+from tests.integration_tests.utils import is_valid_datetime, make_iap_request
 
 
 class TestPostCiV1:
@@ -22,7 +18,8 @@ class TestPostCiV1:
 
     def teardown_method(self):
         """Tidy up carried out at the end of each test"""
-        delete_docs("3456")
+        querystring = urlencode({"survey_id": 3456})
+        make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
 
     def test_can_publish_valid_ci(self, setup_payload):
         """
@@ -33,7 +30,7 @@ class TestPostCiV1:
         field is present with an ISO8601 value. (2023-01-24T13:56:38Z)
         """
         # Creates a CI in the database, essentially running post_ci_v1 from handler folder
-        ci_response = post_ci_v1(setup_payload)
+        ci_response = make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
         ci_response_data = ci_response.json()
         is_datetime_valid = is_valid_datetime(
             ci_response_data["published_at"],
@@ -43,7 +40,8 @@ class TestPostCiV1:
         form_type = setup_payload["form_type"]
         language = setup_payload["language"]
 
-        check_ci_in_db = get_ci_metadata_v1(survey_id, form_type, language)
+        querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
+        check_ci_in_db = make_iap_request("GET", f"/v1/ci_metadata?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
 
         received_messages = self.subscriber.pull_messages_and_acknowledge()
@@ -84,7 +82,7 @@ class TestPostCiV1:
         """
         # Creates a CI in the database, essentially running post_ci_v1 from handler folder
         setup_payload["sds_schema"] = "xx-ytr-1234-856"
-        ci_response = post_ci_v1(setup_payload)
+        ci_response = make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
         ci_response_data = ci_response.json()
         is_datetime_valid = is_valid_datetime(
             ci_response_data["published_at"],
@@ -94,7 +92,8 @@ class TestPostCiV1:
         form_type = setup_payload["form_type"]
         language = setup_payload["language"]
 
-        check_ci_in_db = get_ci_metadata_v1(survey_id, form_type, language)
+        querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
+        check_ci_in_db = make_iap_request("GET", f"/v1/ci_metadata?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
         received_messages = self.subscriber.pull_messages_and_acknowledge()
 
@@ -133,7 +132,7 @@ class TestPostCiV1:
         Where the same CI is submitted(survey_id),
         then a new version is returned based on the survey_id
         """
-        ci_response = post_ci_v1(setup_publish_ci_return_payload)
+        ci_response = make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_publish_ci_return_payload)
         ci_response_data = ci_response.json()
 
         # Need to pull and acknowledge messages in any test where post_ci_v1 is called so the subscription doesn't get clogged
@@ -142,7 +141,8 @@ class TestPostCiV1:
         survey_id = setup_publish_ci_return_payload["survey_id"]
         form_type = setup_publish_ci_return_payload["form_type"]
         language = setup_publish_ci_return_payload["language"]
-        check_ci_in_db = get_ci_metadata_v1(survey_id, form_type, language)
+        querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
+        check_ci_in_db = make_iap_request("GET", f"/v1/ci_metadata?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
 
         expected_ci = CiMetadata(
@@ -177,7 +177,7 @@ class TestPostCiV1:
         """
         payload = setup_payload
         payload["survey_id"] = " "
-        ci_response = post_ci_v1(payload)
+        ci_response = make_iap_request("POST", "/v1/publish_collection_instrument", json=payload)
         self.subscriber.pull_messages_and_acknowledge()
 
         assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
@@ -195,7 +195,7 @@ class TestPostCiV1:
         """
         payload = setup_payload
         payload["language"] = " "
-        ci_response = post_ci_v1(payload)
+        ci_response = make_iap_request("POST", "/v1/publish_collection_instrument", json=payload)
         self.subscriber.pull_messages_and_acknowledge()
 
         assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
@@ -213,7 +213,7 @@ class TestPostCiV1:
         """
         payload = setup_payload
         payload["form_type"] = " "
-        ci_response = post_ci_v1(payload)
+        ci_response = make_iap_request("POST", "/v1/publish_collection_instrument", json=payload)
         self.subscriber.pull_messages_and_acknowledge()
 
         assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
@@ -231,7 +231,7 @@ class TestPostCiV1:
         """
         payload = setup_payload
         payload["title"] = " "
-        ci_response = post_ci_v1(payload)
+        ci_response = make_iap_request("POST", "/v1/publish_collection_instrument", json=payload)
         self.subscriber.pull_messages_and_acknowledge()
 
         assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
@@ -249,7 +249,7 @@ class TestPostCiV1:
         """
         payload = setup_payload
         payload["schema_version"] = " "
-        ci_response = post_ci_v1(payload)
+        ci_response = make_iap_request("POST", "/v1/publish_collection_instrument", json=payload)
         self.subscriber.pull_messages_and_acknowledge()
 
         assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
@@ -267,7 +267,7 @@ class TestPostCiV1:
         """
         payload = setup_payload
         payload["data_version"] = " "
-        ci_response = post_ci_v1(payload)
+        ci_response = make_iap_request("POST", "/v1/publish_collection_instrument", json=payload)
         self.subscriber.pull_messages_and_acknowledge()
 
         assert ci_response.status_code == status.HTTP_400_BAD_REQUEST

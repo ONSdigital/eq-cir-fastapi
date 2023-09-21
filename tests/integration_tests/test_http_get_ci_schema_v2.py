@@ -5,7 +5,7 @@ from fastapi import status
 
 from app.events.subscriber import Subscriber
 from app.models.requests import GetCiSchemaV2Params
-from tests.integration_tests.utils import delete_docs, make_iap_request, post_ci_v1
+from tests.integration_tests.utils import make_iap_request
 
 
 class TestHttpGetCiSchemaV2:
@@ -19,8 +19,10 @@ class TestHttpGetCiSchemaV2:
         """Tidy up carried out at the end of each test"""
         # Need to pull and acknowledge messages in any test where post_ci_v1 is called so the
         # subscription doesn't get clogged
+        print(": tearing down")
         self.subscriber.pull_messages_and_acknowledge()
-        delete_docs("3456")
+        querystring = urlencode({"survey_id": 3456})
+        make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
 
     def test_endpoint_returns_400_bad_request_if_bad_query(self):
         """
@@ -52,7 +54,7 @@ class TestHttpGetCiSchemaV2:
         exist and a valid query to return the schema is made via a GET request
         """
         # Use `post_ci_v1` to create ci metadata and schema on the db
-        response = post_ci_v1(setup_payload)
+        response = make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
         created_ci = response.json()
 
         # Create a valid querystring using the `id` returned when ci created

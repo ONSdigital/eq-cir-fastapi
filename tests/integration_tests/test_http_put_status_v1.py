@@ -3,12 +3,7 @@ from urllib.parse import urlencode
 from fastapi import status
 
 from app.events.subscriber import Subscriber
-from tests.integration_tests.utils import (
-    delete_docs,
-    get_ci_metadata_v1,
-    make_iap_request,
-    post_ci_v1,
-)
+from tests.integration_tests.utils import make_iap_request
 
 
 class TestPutStatusV1:
@@ -17,7 +12,8 @@ class TestPutStatusV1:
 
     def teardown_method(self):
         print(": tearing down")
-        delete_docs("3456")
+        querystring = urlencode({"survey_id": 3456})
+        make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
 
     def test_update_status(self, setup_payload):
         """
@@ -26,7 +22,7 @@ class TestPutStatusV1:
         the success payload {  "status":"success",
         "message": "CI status has already been changed to Published for <GUID>."  }
         """
-        post_ci_v1(setup_payload)
+        make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
         self.subscriber.pull_messages_and_acknowledge()
 
         survey_id = setup_payload["survey_id"]
@@ -34,7 +30,7 @@ class TestPutStatusV1:
         language = setup_payload["language"]
         querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
         # sends request to http_query_ci endpoint for data
-        query_ci_pre_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
+        query_ci_pre_response = make_iap_request("GET", f"/v1/ci_metadata?{querystring}")
         query_ci_pre_response_data = query_ci_pre_response.json()
 
         ci_id = query_ci_pre_response_data[0]["id"]
@@ -49,7 +45,8 @@ class TestPutStatusV1:
         assert ci_update_data == f"CI status has been changed to Published for {ci_id}."
 
         # sends request to http_query_ci endpoint for data
-        query_ci_post_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
+        querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
+        query_ci_post_response = make_iap_request("GET", f"/v1/ci_metadata?{querystring}")
         query_ci_post_response_data = query_ci_post_response.json()
 
         assert query_ci_post_response_data[0]["id"] == ci_id
@@ -70,8 +67,8 @@ class TestPutStatusV1:
         ci_update_data = ci_update.json()
         assert ci_update_data == f"CI status has already been changed to Published for {ci_id}."
 
-        # sends request to http_query_ci endpoint for data
-        query_ci_post_response = get_ci_metadata_v1(survey_id, form_type, language)
+        querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
+        query_ci_post_response = make_iap_request("GET", f"/v1/ci_metadata?{querystring}")
         query_ci_post_response_data = query_ci_post_response.json()
 
         assert query_ci_post_response_data[0]["id"] == ci_id

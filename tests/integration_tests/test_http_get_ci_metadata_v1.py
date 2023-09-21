@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 from fastapi import status
 
 from app.events.subscriber import Subscriber
-from tests.integration_tests.utils import make_iap_request, post_ci_v1
+from tests.integration_tests.utils import make_iap_request
 
 
 class TestGetCiMetadataV1:
@@ -18,7 +18,7 @@ class TestGetCiMetadataV1:
     def test_post_3_ci_with_same_metadata_query_ci_returns_3(self, setup_payload):
         # post 3 ci with the same data
         for _ in range(3):
-            post_ci_v1(setup_payload)
+            make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
             self.subscriber.pull_messages_and_acknowledge()
 
         survey_id = setup_payload["survey_id"]
@@ -37,7 +37,7 @@ class TestGetCiMetadataV1:
     def test_post_ci_with_different_language_only_returns_1(self, setup_payload):
         # post 3 ci with the same data
         for _ in range(3):
-            post_ci_v1(setup_payload)
+            make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
             self.subscriber.pull_messages_and_acknowledge()
 
         survey_id = setup_payload["survey_id"]
@@ -49,7 +49,7 @@ class TestGetCiMetadataV1:
         query_ci_response_data = query_ci_response.json()
 
         setup_payload["language"] = "English"
-        post_ci_v1(setup_payload)
+        make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
         querystring = urlencode({"form_type": form_type, "language": "English", "survey_id": survey_id})
         # sends request to http_query_ci endpoint for data
         new_language_query_ci_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
@@ -62,7 +62,7 @@ class TestGetCiMetadataV1:
     def test_post_ci_with_same_metadata_query_ci_returns_with_sds_schema(self, setup_payload):
         # post 3 ci with the same data
         setup_payload["sds_schema"] = "xx-ytr-1234-856"
-        post_ci_v1(setup_payload)
+        make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
         self.subscriber.pull_messages_and_acknowledge()
 
         survey_id = setup_payload["survey_id"]
@@ -76,7 +76,7 @@ class TestGetCiMetadataV1:
 
     def test_post_ci_with_same_metadata_query_ci_returns_with_description(self, setup_payload):
         # post 3 ci with the same data
-        post_ci_v1(setup_payload)
+        make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
         self.subscriber.pull_messages_and_acknowledge()
 
         survey_id = setup_payload["survey_id"]

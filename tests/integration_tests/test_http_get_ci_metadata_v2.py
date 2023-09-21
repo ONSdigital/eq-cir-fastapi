@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 from fastapi import status
 
 from app.events.subscriber import Subscriber
-from tests.integration_tests.utils import make_iap_request, post_ci_v1
+from tests.integration_tests.utils import make_iap_request
 
 
 class TestGetCiMetadataV2:
@@ -17,7 +17,7 @@ class TestGetCiMetadataV2:
 
     def test_post_3_ci_with_same_metadata_get_ci_metadata_v2_returns_3(self, setup_payload):
         for _ in range(3):
-            post_ci_v1(setup_payload)
+            make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
             self.subscriber.pull_messages_and_acknowledge()
 
         get_ci_metadata_v2_payload = {
@@ -36,78 +36,6 @@ class TestGetCiMetadataV2:
         assert get_ci_metadata_v2_response_data[1]["ci_version"] == 2
         assert get_ci_metadata_v2_response_data[0]["ci_version"] == 3
 
-    def test_post_ci_v1_returns_draft_and_put_status_v1_returns_published(self, setup_payload):
-        for _ in range(3):
-            post_ci_v1(setup_payload)
-            self.subscriber.pull_messages_and_acknowledge()
-
-        get_ci_metadata_v2_payload = {
-            "form_type": setup_payload["form_type"],
-            "language": setup_payload["language"],
-            "status": setup_payload["status"],
-            "survey_id": setup_payload["survey_id"],
-        }
-
-        querystring = urlencode(get_ci_metadata_v2_payload)
-
-        # sends request to http_get_ci_metadata_v2 endpoint for data
-        get_ci_metadata_v2_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
-        get_ci_metadata_v2_response_data = get_ci_metadata_v2_response.json()
-        ci_id = get_ci_metadata_v2_response_data[0]["id"]
-        assert get_ci_metadata_v2_response_data[0]["status"] == "DRAFT"
-        querystring = urlencode({"guid": ci_id})
-        ci_update = make_iap_request("PUT", f"/v1/update_status?{querystring}")
-        assert ci_update.status_code == status.HTTP_200_OK
-        # sends request to http_get_ci_metadata_v2 endpoint for data
-        get_ci_metadata_v2_payload = {
-            "form_type": setup_payload["form_type"],
-            "language": setup_payload["language"],
-            "status": "PUBLISHED",
-            "survey_id": setup_payload["survey_id"],
-        }
-        querystring = urlencode(get_ci_metadata_v2_payload)
-
-        # sends request to http_get_ci_metadata_v2 endpoint for data
-        get_ci_metadata_v2_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
-        get_ci_metadata_v2_post_response_data = get_ci_metadata_v2_response.json()
-        assert get_ci_metadata_v2_post_response_data[0]["status"] == "PUBLISHED"
-
-    def test_get_ci_metadata_v2_returns_draft_and_put_ci_v1_returns_published(self, setup_payload):
-        for _ in range(3):
-            post_ci_v1(setup_payload)
-            self.subscriber.pull_messages_and_acknowledge()
-        get_ci_metadata_v2_payload = {"status": setup_payload["status"]}
-        querystring = urlencode(get_ci_metadata_v2_payload)
-
-        # sends request to http_get_ci_metadata_v2 endpoint for data
-        get_ci_metadata_v2_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
-        get_ci_metadata_v2_response_data = get_ci_metadata_v2_response.json()
-        assert get_ci_metadata_v2_response_data[0]["status"] == "DRAFT"
-        # Making sure only the test data status is changed to published
-        # sends request to http_get_ci_metadata_v2 endpoint for data
-        get_ci_metadata_v2_payload = {
-            "form_type": setup_payload["form_type"],
-            "language": setup_payload["language"],
-            "status": setup_payload["status"],
-            "survey_id": setup_payload["survey_id"],
-        }
-        querystring = urlencode(get_ci_metadata_v2_payload)
-
-        # sends request to http_get_ci_metadata_v2 endpoint for data
-        get_ci_metadata_v2_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
-        get_ci_metadata_v2_response_data = get_ci_metadata_v2_response.json()
-        ci_id = get_ci_metadata_v2_response_data[0]["id"]
-        querystring = urlencode({"guid": ci_id})
-        ci_update = make_iap_request("PUT", f"/v1/update_status?{querystring}")
-        assert ci_update.status_code == status.HTTP_200_OK
-        get_ci_metadata_v2_payload = {"status": setup_payload["status"]}
-        querystring = urlencode(get_ci_metadata_v2_payload)
-
-        # sends request to http_get_ci_metadata_v2 endpoint for data
-        get_ci_metadata_v2_post_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
-        get_ci_metadata_v2_response_data = get_ci_metadata_v2_post_response.json()
-        assert get_ci_metadata_v2_response_data[0]["status"] == "PUBLISHED"
-
     def test_get_ci_metadata_v2_returns_all_metadata(self):
         # Passing an empty list to the get_ci_metadata_v2
         get_ci_metadata_v2_response = make_iap_request("GET", f"{self.base_url}")
@@ -117,7 +45,7 @@ class TestGetCiMetadataV2:
     def test_post_ci_with_same_metadata_query_ci_returns_with_sds_schema(self, setup_payload):
         # post 3 ci with the same data
         setup_payload["sds_schema"] = "xx-ytr-1234-856"
-        post_ci_v1(setup_payload)
+        make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
         self.subscriber.pull_messages_and_acknowledge()
         get_ci_metadata_v2_payload = {
             "form_type": setup_payload["form_type"],
@@ -134,7 +62,7 @@ class TestGetCiMetadataV2:
 
     def test_post_ci_with_same_metadata_query_ci_returns_with_description(self, setup_payload):
         # post 3 ci with the same data
-        post_ci_v1(setup_payload)
+        make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
         self.subscriber.pull_messages_and_acknowledge()
         get_ci_metadata_v2_payload = {
             "form_type": setup_payload["form_type"],
