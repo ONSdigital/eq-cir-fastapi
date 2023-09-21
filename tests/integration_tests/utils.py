@@ -1,5 +1,4 @@
 import re
-from urllib.parse import urlencode
 
 import requests
 from google.auth.transport.requests import Request
@@ -43,59 +42,6 @@ def make_iap_request(method, path, **kwargs):
     return requests.request(method, url, headers=headers, **kwargs)
 
 
-def post_ci_v1(payload):
-    """Creates schema for testing purposes
-
-    Args:
-        payload (json): json to be sent to API
-
-    Returns:
-        obj: response object
-    """
-    return make_iap_request("POST", "/v1/publish_collection_instrument", json=payload)
-
-
-def put_status_v1(guid: str):
-    """
-    Updates schema for testing purposes
-    Args:
-        guid: to be passed as part of a querystring to URL making PUT request
-    Returns:
-        obj: `requests.response` object
-    """
-    querystring = urlencode({"guid": guid})
-
-    return make_iap_request("PUT", f"/v1/update_status?{querystring}")
-
-
-def get_ci_metadata_v1(survey_id: str, form_type: str, language: str):
-    """
-    Gets schema for testing purposes
-    Args:
-        form_type: to be passed as part of a querystring to URL making GET request
-        language: to be passed as part of a querystring to URL making GET request
-        survey_id: to be passed as part of a querystring to URL making GET request
-    Returns:
-        obj: `requests.response` object
-    """
-    querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
-
-    return make_iap_request("GET", f"/v1/ci_metadata?{querystring}")
-
-
-def delete_docs(survey_id: str):
-    """
-    Deletes firestore documents
-    Args:
-        survey_id: to be passed as part of a querystring to URL making DELETE request
-    Returns:
-        obj: `requests.response` object
-    """
-    querystring = urlencode({"survey_id": survey_id})
-
-    return make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
-
-
 def is_valid_datetime(dt_str: str):
     """
     Validates iso8601 string - ISO 8601 represents date and time by starting with the year,
@@ -113,20 +59,3 @@ def is_valid_datetime(dt_str: str):
         r"|[01][0-9]):[0-5][0-9])?$"
     )
     return re.match(datetime_regex, dt_str)
-
-
-def get_ci_metadata_v2(payload=None):
-    """
-    Makes `get` request to the `/v2/ci_metadata` endpoint and return the response.
-    If input `payload` is not `None`, make request with the input `payload`
-    dictionary encoded as querystring parameters.
-    """
-
-    request_path = "/v2/ci_metadata"
-
-    # If valid payload, append querystring to `request_path` before making request
-    if payload:
-        querystring = urlencode(payload)
-        request_path += f"?{querystring}"
-
-    return make_iap_request("GET", request_path)
