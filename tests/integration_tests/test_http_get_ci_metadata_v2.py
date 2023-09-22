@@ -16,7 +16,12 @@ class TestGetCiMetadataV2:
         make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
 
     def test_post_3_ci_with_same_metadata_get_ci_metadata_v2_returns_3(self, setup_payload):
+        """
+        What am I testing:
+        http_get_ci_metadata_v2 should return three ci_versions if the same ci is posted thrice.
+        """
         for _ in range(3):
+            # Posts the ci using http_post_ci endpoint
             make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
             self.subscriber.pull_messages_and_acknowledge()
 
@@ -37,14 +42,23 @@ class TestGetCiMetadataV2:
         assert get_ci_metadata_v2_response_data[0]["ci_version"] == 3
 
     def test_get_ci_metadata_v2_returns_all_metadata(self):
+        """
+        What am I testing:
+        http_get_ci_metadata_v2 should return all metadata if no args are provided for the query.
+        """
         # Passing an empty list to the get_ci_metadata_v2
         get_ci_metadata_v2_response = make_iap_request("GET", f"{self.base_url}")
         get_ci_metadata_v2_response_data = get_ci_metadata_v2_response.json()
         assert len(get_ci_metadata_v2_response_data) > 0
 
-    def test_post_ci_with_same_metadata_query_ci_returns_with_sds_schema(self, setup_payload):
+    def test_post_ci_with_same_metadata_query_ci_returns_with_new_keys_sds_schema_description(self, setup_payload):
+        """
+        What am I testing:
+        http_get_ci_metadata_v2 should return ci with new keys sds_schema and description when queried.
+        """
         # post 3 ci with the same data
         setup_payload["sds_schema"] = "xx-ytr-1234-856"
+        # Posts the ci using http_post_ci endpoint
         make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
         self.subscriber.pull_messages_and_acknowledge()
         get_ci_metadata_v2_payload = {
@@ -59,26 +73,13 @@ class TestGetCiMetadataV2:
         get_ci_metadata_v2_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         query_ci_response_json = get_ci_metadata_v2_response.json()
         assert query_ci_response_json[0]["sds_schema"] == "xx-ytr-1234-856"
-
-    def test_post_ci_with_same_metadata_query_ci_returns_with_description(self, setup_payload):
-        # post 3 ci with the same data
-        make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
-        self.subscriber.pull_messages_and_acknowledge()
-        get_ci_metadata_v2_payload = {
-            "form_type": setup_payload["form_type"],
-            "language": setup_payload["language"],
-            "status": setup_payload["status"],
-            "survey_id": setup_payload["survey_id"],
-        }
-        querystring = urlencode(get_ci_metadata_v2_payload)
-
-        # sends request to http_get_ci_metadata_v2 endpoint for data
-        get_ci_metadata_v2_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
-        query_ci_response_json = get_ci_metadata_v2_response.json()
-        assert "description" in query_ci_response_json[0]
         assert query_ci_response_json[0]["description"] == setup_payload["description"]
 
     def test_metadata_query_returns_404(self, setup_payload):
+        """
+        What am I testing:
+        http_get_ci metadata_v2 should return 404 status code if ci is not found.
+        """
         get_ci_metadata_v2_payload = {
             "form_type": setup_payload["form_type"],
             "language": setup_payload["language"],

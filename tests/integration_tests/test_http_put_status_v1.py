@@ -16,6 +16,10 @@ class TestPutStatusV1:
         make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
 
     def return_query_ci(self, setup_payload):
+        """
+        This function, written to avoid duplication, sends request to http_query_ci endpoint and returns
+        the response in JSON
+        """
         survey_id = setup_payload["survey_id"]
         form_type = setup_payload["form_type"]
         language = setup_payload["language"]
@@ -25,6 +29,11 @@ class TestPutStatusV1:
         return query_ci_pre_response.json()
 
     def test_post_ci_v1_returns_draft_and_put_status_v1_returns_published(self, setup_payload):
+        """
+        What am I testing:
+        http_post_ci_v1 should return a HTTP_200_OK and have the payload's status to published
+        """
+        # Posts the ci using http_post_ci endpoint
         make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
         self.subscriber.pull_messages_and_acknowledge()
         query_ci_pre_response_data = self.return_query_ci(setup_payload)
@@ -32,6 +41,7 @@ class TestPutStatusV1:
         assert query_ci_pre_response_data[0]["status"] == "DRAFT"
 
         querystring = urlencode({"guid": ci_id})
+        # sends request to http_put_status for updating status
         ci_update = make_iap_request("PUT", f"{self.base_url}?{querystring}")
         assert ci_update.status_code == status.HTTP_200_OK
 
@@ -45,6 +55,11 @@ class TestPutStatusV1:
         assert query_ci_post_response_data[0]["status"] == "PUBLISHED"
 
     def test_post_ci_v1_returns_draft_and_put_status_v1_returns_already_published(self, setup_payload):
+        """
+        What am I testing:
+        http_post_ci_v1 should return a HTTP_200_OK and throw a message status is already changed to published.
+        """
+        # Posts the ci using http_post_ci endpoint
         make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
         self.subscriber.pull_messages_and_acknowledge()
         query_ci_pre_response_data = self.return_query_ci(setup_payload)
@@ -66,8 +81,13 @@ class TestPutStatusV1:
         assert query_ci_post_response_data[0]["status"] == "PUBLISHED"
 
     def test_guid_not_found(self):
+        """
+        What am I testing:
+        http_post_ci_v1 should return a HTTP_404_NOT_FOUND if the guid is not found.
+        """
         ci_id = "404"
         querystring = urlencode({"guid": ci_id})
+        # sends request to http_put_status
         ci_update = make_iap_request("PUT", f"{self.base_url}?{querystring}")
         assert ci_update.status_code == status.HTTP_404_NOT_FOUND
 

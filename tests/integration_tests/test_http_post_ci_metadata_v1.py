@@ -41,6 +41,7 @@ class TestPostCiV1:
         language = setup_payload["language"]
 
         querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
+        # sends request to http_query_ci endpoint for data
         check_ci_in_db = make_iap_request("GET", f"/v1/ci_metadata?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
 
@@ -93,6 +94,7 @@ class TestPostCiV1:
         language = setup_payload["language"]
 
         querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
+        # sends request to http_query_ci endpoint for data
         check_ci_in_db = make_iap_request("GET", f"/v1/ci_metadata?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
         received_messages = self.subscriber.pull_messages_and_acknowledge()
@@ -142,6 +144,7 @@ class TestPostCiV1:
         form_type = setup_publish_ci_return_payload["form_type"]
         language = setup_publish_ci_return_payload["language"]
         querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
+        # sends request to http_query_ci endpoint for data
         check_ci_in_db = make_iap_request("GET", f"/v1/ci_metadata?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
 
