@@ -45,6 +45,7 @@ class TestGetCiMetadataV1:
         """
         # post 3 ci with the same data
         for _ in range(3):
+            # Posts the ci using http_post_ci endpoint
             make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
             self.subscriber.pull_messages_and_acknowledge()
 
@@ -74,6 +75,7 @@ class TestGetCiMetadataV1:
         """
         # post 3 ci with the same data
         setup_payload["sds_schema"] = "xx-ytr-1234-856"
+        # Posts the ci using http_post_ci endpoint
         make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
         self.subscriber.pull_messages_and_acknowledge()
 
