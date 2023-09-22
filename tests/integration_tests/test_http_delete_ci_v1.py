@@ -26,6 +26,7 @@ class TestDeleteCiV1:
         assert response.status_code == status.HTTP_200_OK
 
         self.subscriber.pull_messages_and_acknowledge()
+        # Send request to http_delete_ci endpoint
         response = make_iap_request("DELETE", f"{self.base_url}?{querystring}")
         assert response.text == json.dumps(f"{survey_id} deleted")
         assert response.status_code == status.HTTP_200_OK
@@ -37,7 +38,7 @@ class TestDeleteCiV1:
             parameter is malformed or missing.
         """
         querystring = urlencode({"my_bad": "param"})
-
+        # Send request to http_delete_ci endpoint
         response = make_iap_request("DELETE", f"{self.base_url}?{querystring}")
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -48,7 +49,7 @@ class TestDeleteCiV1:
         """
         survey_id = "abcd"
         querystring = urlencode({"survey_id": survey_id})
-
+        # Send request to http_delete_ci endpoint
         response = make_iap_request("DELETE", f"{self.base_url}?{querystring}")
         assert response.status_code == status.HTTP_404_NOT_FOUND
         response = response.json()
