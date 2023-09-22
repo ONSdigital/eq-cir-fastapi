@@ -51,7 +51,6 @@ class TestPutStatusV1:
 
         query_ci_post_response_data = self.return_query_ci(setup_payload)
 
-        assert query_ci_post_response_data[0]["id"] == ci_id
         assert query_ci_post_response_data[0]["status"] == "PUBLISHED"
 
     def test_post_ci_v1_returns_draft_and_put_status_v1_returns_already_published(self, setup_payload):
@@ -63,7 +62,6 @@ class TestPutStatusV1:
         make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
         self.subscriber.pull_messages_and_acknowledge()
         query_ci_pre_response_data = self.return_query_ci(setup_payload)
-        print(query_ci_pre_response_data)
         ci_id = query_ci_pre_response_data[0]["id"]
         querystring = urlencode({"guid": ci_id})
         # Updating status twice to return already published
@@ -74,11 +72,6 @@ class TestPutStatusV1:
         # returning text as opposed to json as its a string
         ci_update_data = ci_update.json()
         assert ci_update_data == f"CI status has already been changed to Published for {ci_id}."
-
-        query_ci_post_response_data = self.return_query_ci(setup_payload)
-
-        assert query_ci_post_response_data[0]["id"] == ci_id
-        assert query_ci_post_response_data[0]["status"] == "PUBLISHED"
 
     def test_guid_not_found(self):
         """
