@@ -7,11 +7,20 @@ from tests.integration_tests.utils import make_iap_request
 
 
 class TestPutStatusV1:
+    """Tests for the `http_put_status_v1` endpoint."""
+
     base_url = "/v1/update_status"
+    post_url = "/v1/publish_collection_instrument"
+    get_metadata_url = "/v1/ci_metadata"
     subscriber = Subscriber()
 
     def teardown_method(self):
-        print(": tearing down")
+        """
+        This function deletes the test CI with survey_id:3456 at the end of each integration test to ensure it
+        is not reflected in the firestore and schemas.
+        """
+        # Need to pull and acknowledge messages in any test where post_ci_v1 is called so the subscription doesn't get clogged
+        self.subscriber.pull_messages_and_acknowledge()
         querystring = urlencode({"survey_id": 3456})
         make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
 
@@ -25,7 +34,7 @@ class TestPutStatusV1:
         language = setup_payload["language"]
         querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
         # sends request to http_query_ci endpoint for data
-        query_ci_pre_response = make_iap_request("GET", f"/v1/ci_metadata?{querystring}")
+        query_ci_pre_response = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
         return query_ci_pre_response.json()
 
     def test_post_ci_v1_returns_draft_and_put_status_v1_returns_published(self, setup_payload):
@@ -34,8 +43,7 @@ class TestPutStatusV1:
         http_post_ci_v1 should return a HTTP_200_OK and have the payload's status to published
         """
         # Posts the ci using http_post_ci endpoint
-        make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
-        self.subscriber.pull_messages_and_acknowledge()
+        make_iap_request("POST", f"{self.post_url}", json=setup_payload)
         query_ci_pre_response_data = self.return_query_ci(setup_payload)
         ci_id = query_ci_pre_response_data[0]["id"]
         assert query_ci_pre_response_data[0]["status"] == "DRAFT"
@@ -59,8 +67,7 @@ class TestPutStatusV1:
         http_post_ci_v1 should return a HTTP_200_OK and throw a message status is already changed to published.
         """
         # Posts the ci using http_post_ci endpoint
-        make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
-        self.subscriber.pull_messages_and_acknowledge()
+        make_iap_request("POST", f"{self.post_url}", json=setup_payload)
         query_ci_pre_response_data = self.return_query_ci(setup_payload)
         ci_id = query_ci_pre_response_data[0]["id"]
         querystring = urlencode({"guid": ci_id})

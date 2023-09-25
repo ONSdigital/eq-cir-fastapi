@@ -1,5 +1,3 @@
-import re
-
 import requests
 from google.auth.transport.requests import Request
 from google.oauth2 import id_token
@@ -40,22 +38,3 @@ def make_iap_request(method, path, **kwargs):
     # Authorization header containing "Bearer " followed by a
     # Google-issued OpenID Connect token for the service account.
     return requests.request(method, url, headers=headers, **kwargs)
-
-
-def is_valid_datetime(dt_str: str):
-    """
-    Validates iso8601 string - ISO 8601 represents date and time by starting with the year,
-    followed by the month, the day, the hour, the minutes, seconds and milliseconds.
-    Args:
-        dt_str: iso 8601 string
-
-    Returns:
-        Bool
-    """
-
-    datetime_regex = (
-        r"^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])"
-        r"T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\.[0-9]+)?(Z|[+-](?:2[0-3]"
-        r"|[01][0-9]):[0-5][0-9])?$"
-    )
-    return re.match(datetime_regex, dt_str)

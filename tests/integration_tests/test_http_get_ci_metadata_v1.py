@@ -7,11 +7,19 @@ from tests.integration_tests.utils import make_iap_request
 
 
 class TestGetCiMetadataV1:
+    """Tests for the `http_get_ci_metadata_v1` endpoint"""
+
     base_url = "/v1/ci_metadata"
+    post_url = "/v1/publish_collection_instrument"
     subscriber = Subscriber()
 
     def teardown_method(self):
-        print(": tearing down")
+        """
+        This function deletes the test CI with survey_id:3456 at the end of each integration test to ensure it
+        is not reflected in the firestore and schemas.
+        """
+        # Need to pull and acknowledge messages in any test where post_ci_v1 is called so the subscription doesn't get clogged
+        self.subscriber.pull_messages_and_acknowledge()
         querystring = urlencode({"survey_id": 3456})
         make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
 
@@ -22,8 +30,7 @@ class TestGetCiMetadataV1:
         """
         # post 3 ci with the same data
         for _ in range(3):
-            make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
-            self.subscriber.pull_messages_and_acknowledge()
+            make_iap_request("POST", f"{self.post_url}", json=setup_payload)
 
         survey_id = setup_payload["survey_id"]
         form_type = setup_payload["form_type"]
@@ -46,8 +53,7 @@ class TestGetCiMetadataV1:
         # post 3 ci with the same data
         for _ in range(3):
             # Posts the ci using http_post_ci endpoint
-            make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
-            self.subscriber.pull_messages_and_acknowledge()
+            make_iap_request("POST", f"{self.post_url}", json=setup_payload)
 
         survey_id = setup_payload["survey_id"]
         form_type = setup_payload["form_type"]
@@ -58,7 +64,7 @@ class TestGetCiMetadataV1:
         query_ci_response_data = query_ci_response.json()
 
         setup_payload["language"] = "English"
-        make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
+        make_iap_request("POST", f"{self.post_url}", json=setup_payload)
         querystring = urlencode({"form_type": form_type, "language": "English", "survey_id": survey_id})
         # sends request to http_query_ci endpoint for data
         new_language_query_ci_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
@@ -76,9 +82,7 @@ class TestGetCiMetadataV1:
         # post 3 ci with the same data
         setup_payload["sds_schema"] = "xx-ytr-1234-856"
         # Posts the ci using http_post_ci endpoint
-        make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
-        self.subscriber.pull_messages_and_acknowledge()
-
+        make_iap_request("POST", f"{self.post_url}", json=setup_payload)
         survey_id = setup_payload["survey_id"]
         form_type = setup_payload["form_type"]
         language = setup_payload["language"]
@@ -117,5 +121,5 @@ class TestGetCiMetadataV1:
         survey_id = setup_payload["survey_id"]
         form_type = setup_payload["form_type"]
         querystring = urlencode({"survey_id": survey_id, "form_type": form_type})
-        response = make_iap_request("GET", f"/v1/ci_metadata?{querystring}")
+        response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         assert response.status_code == status.HTTP_400_BAD_REQUEST

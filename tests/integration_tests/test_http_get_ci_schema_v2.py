@@ -14,12 +14,15 @@ class TestHttpGetCiSchemaV2:
     # Initialise the subscriber client
     subscriber = Subscriber()
     url = "/v2/retrieve_collection_instrument"
+    post_url = "/v1/publish_collection_instrument"
 
     def teardown_method(self):
-        """Tidy up carried out at the end of each test"""
+        """
+        This function deletes the test CI with survey_id:3456 at the end of each integration test to ensure it
+        is not reflected in the firestore and schemas.
+        """
         # Need to pull and acknowledge messages in any test where post_ci_v1 is called so the
         # subscription doesn't get clogged
-        print(": tearing down")
         self.subscriber.pull_messages_and_acknowledge()
         querystring = urlencode({"survey_id": 3456})
         make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
@@ -57,7 +60,7 @@ class TestHttpGetCiSchemaV2:
         exist and a valid query to return the schema is made via a GET request
         """
         # Use `post_ci_v1` to create ci metadata and schema on the db
-        response = make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
+        response = make_iap_request("POST", f"{self.post_url}", json=setup_payload)
         created_ci = response.json()
 
         # Create a valid querystring using the `id` returned when ci created

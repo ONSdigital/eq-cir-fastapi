@@ -11,6 +11,7 @@ class TestDeleteCiV1:
     """Tests for the `http_delete_ci_v1` endpoint"""
 
     base_url = "/v1/dev/teardown"
+    post_url = "/v1/publish_collection_instrument"
     subscriber = Subscriber()
 
     def test_can_delete_ci_returns_200(self, setup_payload):
@@ -22,9 +23,9 @@ class TestDeleteCiV1:
         querystring = urlencode({"survey_id": survey_id})
 
         # Create a CI to delete later and confirm it worked
-        response = make_iap_request("POST", "/v1/publish_collection_instrument", json=setup_payload)
+        response = make_iap_request("POST", f"{self.post_url}", json=setup_payload)
         assert response.status_code == status.HTTP_200_OK
-
+        # Need to pull and acknowledge messages in any test where post_ci_v1 is called so the subscription doesn't get clogged
         self.subscriber.pull_messages_and_acknowledge()
         # Send request to http_delete_ci endpoint
         response = make_iap_request("DELETE", f"{self.base_url}?{querystring}")
