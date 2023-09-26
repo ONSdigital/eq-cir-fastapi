@@ -4,7 +4,10 @@ from urllib.parse import urlencode
 from fastapi import status
 
 from app.events.subscriber import Subscriber
-from tests.integration_tests.utils import make_iap_request
+from tests.integration_tests.utils import (
+    make_iap_request,
+    make_iap_request_with_unauthoried_id,
+)
 
 
 class TestDeleteCiV1:
@@ -56,3 +59,9 @@ class TestDeleteCiV1:
         response = response.json()
         assert response["message"] == f"No CI found for: {{'survey_id': '{survey_id}'}}"
         assert response["status"] == "error"
+
+    def test_delete_ci_returns_unauthorized_request(self, setup_payload):
+        survey_id = setup_payload["survey_id"]
+        querystring = urlencode({"survey_id": survey_id})
+        response = make_iap_request_with_unauthoried_id("DELETE", f"{self.base_url}?{querystring}")
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED

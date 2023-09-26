@@ -5,7 +5,10 @@ from fastapi import status
 
 from app.events.subscriber import Subscriber
 from app.models.responses import CiMetadata, CiStatus
-from tests.integration_tests.utils import make_iap_request
+from tests.integration_tests.utils import (
+    make_iap_request,
+    make_iap_request_with_unauthoried_id,
+)
 
 
 class TestPostCiV1:
@@ -277,3 +280,13 @@ class TestPostCiV1:
             "message": "Value error, data_version can't be empty or null",
             "status": "error",
         }
+
+    def test_publish_ci_returns_unauthorized_request(self, setup_payload):
+        """
+        What am I testing:
+        AC-3.6	If a metadata field is missing <data_version>, then the correct response is returned.
+        """
+        payload = setup_payload
+        ci_response = make_iap_request_with_unauthoried_id("POST", f"{self.post_url}", json=payload)
+
+        assert ci_response.status_code == status.HTTP_401_UNAUTHORIZED

@@ -3,7 +3,10 @@ from urllib.parse import urlencode
 from fastapi import status
 
 from app.events.subscriber import Subscriber
-from tests.integration_tests.utils import make_iap_request
+from tests.integration_tests.utils import (
+    make_iap_request,
+    make_iap_request_with_unauthoried_id,
+)
 
 
 class TestGetCiMetadataV1:
@@ -123,3 +126,11 @@ class TestGetCiMetadataV1:
         querystring = urlencode({"survey_id": survey_id, "form_type": form_type})
         response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_metadata_query_ci_returns_unauthorized_request(self, setup_payload):
+        survey_id = setup_payload["survey_id"]
+        form_type = setup_payload["form_type"]
+        language = setup_payload["language"]
+        querystring = urlencode({"survey_id": survey_id, "form_type": form_type, language: "language"})
+        response = make_iap_request_with_unauthoried_id("GET", f"{self.base_url}?{querystring}")
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED

@@ -3,7 +3,10 @@ from urllib.parse import urlencode
 from fastapi import status
 
 from app.events.subscriber import Subscriber
-from tests.integration_tests.utils import make_iap_request
+from tests.integration_tests.utils import (
+    make_iap_request,
+    make_iap_request_with_unauthoried_id,
+)
 
 
 class TestPutStatusV1:
@@ -96,3 +99,14 @@ class TestPutStatusV1:
             "message": f"No CI metadata found for: {ci_id}",
             "status": "error",
         }
+
+    def test_put_status_returns_unauthorized_request(self):
+        """
+        What am I testing:
+        http_post_ci_v1 should return a HTTP_404_NOT_FOUND if the guid is not found.
+        """
+        ci_id = "401"
+        querystring = urlencode({"guid": ci_id})
+        # sends request to http_put_status
+        ci_update = make_iap_request_with_unauthoried_id("PUT", f"{self.base_url}?{querystring}")
+        assert ci_update.status_code == status.HTTP_401_UNAUTHORIZED
