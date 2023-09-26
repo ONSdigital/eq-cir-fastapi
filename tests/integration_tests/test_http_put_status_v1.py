@@ -1,83 +1,94 @@
+from urllib.parse import urlencode
+
 from fastapi import status
 
 from app.events.subscriber import Subscriber
-from tests.integration_tests.utils import (
-    delete_docs,
-    get_ci_metadata_v1,
-    post_ci_v1,
-    put_status_v1,
-)
+from tests.integration_tests.utils import make_iap_request
 
 
 class TestPutStatusV1:
+    """Tests for the `http_put_status_v1` endpoint."""
+
+    base_url = "/v1/update_status"
+    post_url = "/v1/publish_collection_instrument"
+    get_metadata_url = "/v1/ci_metadata"
     subscriber = Subscriber()
 
     def teardown_method(self):
-        print(": tearing down")
-        delete_docs("3456")
-
-    def test_update_status(self, setup_payload):
         """
-        Test AC-1: When I call the endpoint with a valid GUID where the status is Draft,
-        the endpoint will update the status to Published and the endpoint returns
-        the success payload {  "status":"success",
-        "message": "CI status has already been changed to Published for <GUID>."  }
+        This function deletes the test CI with survey_id:3456 at the end of each integration test to ensure it
+        is not reflected in the firestore and schemas.
         """
-        post_ci_v1(setup_payload)
+        # Need to pull and acknowledge messages in any test where post_ci_v1 is called so the subscription doesn't get clogged
         self.subscriber.pull_messages_and_acknowledge()
+        querystring = urlencode({"survey_id": 3456})
+        make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
 
+    def return_query_ci(self, setup_payload):
+        """
+        This function, written to avoid duplication, sends request to http_query_ci endpoint and returns
+        the response in JSON
+        """
         survey_id = setup_payload["survey_id"]
         form_type = setup_payload["form_type"]
         language = setup_payload["language"]
+        querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
         # sends request to http_query_ci endpoint for data
-        query_ci_pre_response = get_ci_metadata_v1(survey_id, form_type, language)
-        query_ci_pre_response_data = query_ci_pre_response.json()
+        query_ci_pre_response = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
+        return query_ci_pre_response.json()
 
+    def test_post_ci_v1_returns_draft_and_put_status_v1_returns_published(self, setup_payload):
+        """
+        What am I testing:
+        http_post_ci_v1 should return a HTTP_200_OK and have the payload's status to published
+        """
+        # Posts the ci using http_post_ci endpoint
+        make_iap_request("POST", f"{self.post_url}", json=setup_payload)
+        query_ci_pre_response_data = self.return_query_ci(setup_payload)
         ci_id = query_ci_pre_response_data[0]["id"]
         assert query_ci_pre_response_data[0]["status"] == "DRAFT"
 
-        ci_update = put_status_v1(ci_id)
+        querystring = urlencode({"guid": ci_id})
+        # sends request to http_put_status for updating status
+        ci_update = make_iap_request("PUT", f"{self.base_url}?{querystring}")
         assert ci_update.status_code == status.HTTP_200_OK
 
         # returning text as opposed to json as its a string
         ci_update_data = ci_update.json()
         assert ci_update_data == f"CI status has been changed to Published for {ci_id}."
 
-        # sends request to http_query_ci endpoint for data
-        query_ci_post_response = get_ci_metadata_v1(survey_id, form_type, language)
-        query_ci_post_response_data = query_ci_post_response.json()
+        query_ci_post_response_data = self.return_query_ci(setup_payload)
 
-        assert query_ci_post_response_data[0]["id"] == ci_id
         assert query_ci_post_response_data[0]["status"] == "PUBLISHED"
 
+    def test_post_ci_v1_returns_draft_and_put_status_v1_returns_already_published(self, setup_payload):
         """
-        Test AC-2: When I call the endpoint with a valid GUID where the status
-        is already Published, the endpoint will return the correct status payload
-        {  "status":"success", "message": "CI status has already
-        been changed to Published for <GUID>."  }
+        What am I testing:
+        http_post_ci_v1 should return a HTTP_200_OK and throw a message status is already changed to published.
         """
-
-        ci_update = put_status_v1(ci_id)
+        # Posts the ci using http_post_ci endpoint
+        make_iap_request("POST", f"{self.post_url}", json=setup_payload)
+        query_ci_pre_response_data = self.return_query_ci(setup_payload)
+        ci_id = query_ci_pre_response_data[0]["id"]
+        querystring = urlencode({"guid": ci_id})
+        # Updating status twice to return already published
+        ci_update = make_iap_request("PUT", f"{self.base_url}?{querystring}")
+        ci_update = make_iap_request("PUT", f"{self.base_url}?{querystring}")
         assert ci_update.status_code == status.HTTP_200_OK
 
         # returning text as opposed to json as its a string
         ci_update_data = ci_update.json()
         assert ci_update_data == f"CI status has already been changed to Published for {ci_id}."
 
-        # sends request to http_query_ci endpoint for data
-        query_ci_post_response = get_ci_metadata_v1(survey_id, form_type, language)
-        query_ci_post_response_data = query_ci_post_response.json()
-
-        assert query_ci_post_response_data[0]["id"] == ci_id
-        assert query_ci_post_response_data[0]["status"] == "PUBLISHED"
-
     def test_guid_not_found(self):
         """
-        Test AC-3: When I call the endpoint with an invalid GUID, the endpoint will
-        return the error payload { "status":"success", "message": "No CI found for <GUID>."}
+        What am I testing:
+        http_post_ci_v1 should return a HTTP_404_NOT_FOUND if the guid is not found.
         """
         ci_id = "404"
-        ci_update = put_status_v1(ci_id)
+        querystring = urlencode({"guid": ci_id})
+        # sends request to http_put_status
+        ci_update = make_iap_request("PUT", f"{self.base_url}?{querystring}")
         assert ci_update.status_code == status.HTTP_404_NOT_FOUND
 
         ci_update_data = ci_update.json()

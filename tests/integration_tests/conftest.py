@@ -1,7 +1,9 @@
+from urllib.parse import urlencode
+
 import pytest
 
 from app.repositories.firestore import FirestoreClient
-from tests.integration_tests.utils import delete_docs, post_ci_v1
+from tests.integration_tests.utils import make_iap_request
 
 firestore_client = FirestoreClient()
 
@@ -19,7 +21,8 @@ def setup_publish_ci_return_payload():
     """
     ci_exists = firestore_client.query_latest_ci_version("3456", "business", "welsh")
     if ci_exists:
-        delete_docs("3456")
+        querystring = urlencode({"survey_id": 3456})
+        make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
 
     payload = {
         "survey_id": "3456",
@@ -30,7 +33,7 @@ def setup_publish_ci_return_payload():
         "data_version": "1",
         "description": "Version of CI is for March 2023",
     }
-    post_ci_v1(payload)
+    make_iap_request("POST", "/v1/publish_collection_instrument", json=payload)
     return payload
 
 
@@ -38,8 +41,8 @@ def setup_publish_ci_return_payload():
 def setup_payload():
     ci_exists = firestore_client.query_latest_ci_version("3456", "business", "welsh")
     if ci_exists:
-        delete_docs("3456")
-
+        querystring = urlencode({"survey_id": 3456})
+        make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
     payload = {
         "survey_id": "3456",
         "language": "welsh",
