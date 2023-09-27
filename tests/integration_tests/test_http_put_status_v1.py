@@ -43,7 +43,7 @@ class TestPutStatusV1:
     def test_post_ci_v1_returns_draft_and_put_status_v1_returns_published(self, setup_payload):
         """
         What am I testing:
-        http_post_ci_v1 should return a HTTP_200_OK and have the payload's status to published
+        http_put_status_v1 should return a HTTP_200_OK and have the payload's status to published
         """
         # Posts the ci using http_post_ci endpoint
         make_iap_request("POST", f"{self.post_url}", json=setup_payload)
@@ -67,7 +67,7 @@ class TestPutStatusV1:
     def test_post_ci_v1_returns_draft_and_put_status_v1_returns_already_published(self, setup_payload):
         """
         What am I testing:
-        http_post_ci_v1 should return a HTTP_200_OK and throw a message status is already changed to published.
+        http_put_status_v1 should return a HTTP_200_OK and throw a message status is already changed to published.
         """
         # Posts the ci using http_post_ci endpoint
         make_iap_request("POST", f"{self.post_url}", json=setup_payload)
@@ -86,7 +86,7 @@ class TestPutStatusV1:
     def test_guid_not_found(self):
         """
         What am I testing:
-        http_post_ci_v1 should return a HTTP_404_NOT_FOUND if the guid is not found.
+        http_put_status_v1 should return a HTTP_404_NOT_FOUND if the guid is not found.
         """
         ci_id = "404"
         querystring = urlencode({"guid": ci_id})
@@ -103,7 +103,7 @@ class TestPutStatusV1:
     def test_put_status_returns_unauthorized_request(self):
         """
         What am I testing:
-        http_post_ci_v1 should return a HTTP_404_NOT_FOUND if the guid is not found.
+        http_put_status_v1 should return a 401 unauthorized error if the endpoint is requested with an unauthorized token.
         """
         ci_id = "401"
         querystring = urlencode({"guid": ci_id})

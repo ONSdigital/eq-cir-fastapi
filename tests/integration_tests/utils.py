@@ -41,19 +41,20 @@ def make_iap_request(method, path, **kwargs):
 
 
 def make_iap_request_with_unauthoried_id(method, path, **kwargs):
-    # Set the default timeout, if missing
+    """
+    This function makes a request using unauthorized `OAUTH_CLIENT_ID` to show an unauthenticated error.
+    """
+    # Set the default value to 5 for immediate timeout ,
     if "timeout" not in kwargs:
-        kwargs["timeout"] = 1
+        kwargs["timeout"] = 5
 
+    # Setting the test_oauth_cliend_id to test_id
     test_ouath_client_id = "test_id"
-    # Set Headers using fetched id token. Requires valid credentials file at path specified by the
-    # `GOOGLE_APPLICATION_CREDENTIALS` env var. See README.md for more details
     auth_token = id_token.fetch_id_token(Request(), audience=test_ouath_client_id)
-
     headers = {"Authorization": f"Bearer {auth_token}", "Content-Type": "application/json"}
     url = f"{settings.URL_SCHEME}://{settings.DEFAULT_HOSTNAME}{path}"
 
     # Fetch the Identity-Aware Proxy-protected URL, including an
     # Authorization header containing "Bearer " followed by a
-    # Google-issued OpenID Connect token for the service account.
+    # unauthorized token which results in Unauthenicated error
     return requests.request(method, url, headers=headers, **kwargs)

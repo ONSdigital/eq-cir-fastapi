@@ -128,6 +128,10 @@ class TestGetCiMetadataV1:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_metadata_query_ci_returns_unauthorized_request(self, setup_payload):
+        """
+        What am I testing:
+        http_get_ci metadata_v1 should return a 401 unauthorized error if the endpoint is requested with an unauthorized token.
+        """
         survey_id = setup_payload["survey_id"]
         form_type = setup_payload["form_type"]
         language = setup_payload["language"]

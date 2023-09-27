@@ -284,7 +284,8 @@ class TestPostCiV1:
     def test_publish_ci_returns_unauthorized_request(self, setup_payload):
         """
         What am I testing:
-        AC-3.6	If a metadata field is missing <data_version>, then the correct response is returned.
+        http_post_ci_metadata_v1 should return a 401 unauthorized error if the endpoint is
+        requested with an unauthorized token.
         """
         payload = setup_payload
         ci_response = make_iap_request_with_unauthoried_id("POST", f"{self.post_url}", json=payload)
