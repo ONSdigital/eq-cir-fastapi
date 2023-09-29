@@ -3,10 +3,7 @@ from urllib.parse import urlencode
 from fastapi import status
 
 from app.events.subscriber import Subscriber
-from tests.integration_tests.utils import (
-    make_iap_request,
-    make_iap_request_with_unauthoried_id,
-)
+from tests.integration_tests.utils import make_iap_request
 
 
 class TestPutStatusV1:
@@ -108,5 +105,5 @@ class TestPutStatusV1:
         ci_id = "401"
         querystring = urlencode({"guid": ci_id})
         # sends request to http_put_status
-        ci_update = make_iap_request_with_unauthoried_id("PUT", f"{self.base_url}?{querystring}")
+        ci_update = make_iap_request("PUT", f"{self.base_url}?{querystring}", unauthenticated=True)
         assert ci_update.status_code == status.HTTP_401_UNAUTHORIZED

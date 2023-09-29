@@ -5,10 +5,7 @@ from fastapi import status
 
 from app.events.subscriber import Subscriber
 from app.models.requests import GetCiSchemaV2Params
-from tests.integration_tests.utils import (
-    make_iap_request,
-    make_iap_request_with_unauthoried_id,
-)
+from tests.integration_tests.utils import make_iap_request
 
 
 class TestHttpGetCiSchemaV2:
@@ -81,5 +78,6 @@ class TestHttpGetCiSchemaV2:
         query_params = GetCiSchemaV2Params(guid="30134e70-c28c-4dcc-b0b0-e403b2df0b24")
         querystring = urlencode(asdict(query_params))
 
-        response = make_iap_request_with_unauthoried_id("GET", f"{self.url}?{querystring}")
+        response = make_iap_request("GET", f"{self.url}?{querystring}", unauthenticated=True)
+        print(response)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED

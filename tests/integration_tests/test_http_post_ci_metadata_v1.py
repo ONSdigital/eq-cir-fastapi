@@ -5,10 +5,7 @@ from fastapi import status
 
 from app.events.subscriber import Subscriber
 from app.models.responses import CiMetadata, CiStatus
-from tests.integration_tests.utils import (
-    make_iap_request,
-    make_iap_request_with_unauthoried_id,
-)
+from tests.integration_tests.utils import make_iap_request
 
 
 class TestPostCiV1:
@@ -288,6 +285,6 @@ class TestPostCiV1:
         requested with an unauthorized token.
         """
         payload = setup_payload
-        ci_response = make_iap_request_with_unauthoried_id("POST", f"{self.post_url}", json=payload)
+        ci_response = make_iap_request("POST", f"{self.post_url}", json=payload, unauthenticated=True)
 
         assert ci_response.status_code == status.HTTP_401_UNAUTHORIZED

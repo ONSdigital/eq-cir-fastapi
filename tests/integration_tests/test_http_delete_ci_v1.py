@@ -4,10 +4,7 @@ from urllib.parse import urlencode
 from fastapi import status
 
 from app.events.subscriber import Subscriber
-from tests.integration_tests.utils import (
-    make_iap_request,
-    make_iap_request_with_unauthoried_id,
-)
+from tests.integration_tests.utils import make_iap_request
 
 
 class TestDeleteCiV1:
@@ -67,5 +64,5 @@ class TestDeleteCiV1:
         """
         survey_id = setup_payload["survey_id"]
         querystring = urlencode({"survey_id": survey_id})
-        response = make_iap_request_with_unauthoried_id("DELETE", f"{self.base_url}?{querystring}")
+        response = make_iap_request("DELETE", f"{self.base_url}?{querystring}", unauthenticated=True)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
