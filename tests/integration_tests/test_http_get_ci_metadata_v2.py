@@ -83,7 +83,7 @@ class TestGetCiMetadataV2:
         assert query_ci_response_json[0]["sds_schema"] == "xx-ytr-1234-856"
         assert query_ci_response_json[0]["description"] == setup_payload["description"]
 
-    def test_metadata_query_returns_404(self, setup_payload):
+    def test_metadata_query_v2_returns_404(self, setup_payload):
         """
         What am I testing:
         http_get_ci metadata_v2 should return 404 status code if ci is not found.
@@ -103,3 +103,17 @@ class TestGetCiMetadataV2:
         expected_response = f"No CI metadata found for: {get_ci_metadata_v2_payload}"
         assert query_ci_response["message"] == expected_response
         assert query_ci_response["status"] == "error"
+
+    def test_metadata_query_ci_v2_returns_unauthorized_request(self, setup_payload):
+        """
+        What am I testing:
+        http_get_ci metadata_v2 should return a 401 unauthorized error if the endpoint is requested with an unauthorized token.
+        """
+        get_ci_metadata_v2_payload = {
+            "form_type": setup_payload["form_type"],
+            "language": setup_payload["language"],
+            "survey_id": setup_payload["survey_id"],
+        }
+        querystring = urlencode(get_ci_metadata_v2_payload)
+        response = make_iap_request("GET", f"{self.base_url}?{querystring}", unauthenticated=True)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED

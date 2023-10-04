@@ -56,3 +56,13 @@ class TestDeleteCiV1:
         response = response.json()
         assert response["message"] == f"No CI found for: {{'survey_id': '{survey_id}'}}"
         assert response["status"] == "error"
+
+    def test_delete_ci_returns_unauthorized_request(self, setup_payload):
+        """
+        What am I testing:
+        http_delete_ci should return a 401 unauthorized error if the endpoint is requested with an unauthorized token.
+        """
+        survey_id = setup_payload["survey_id"]
+        querystring = urlencode({"survey_id": survey_id})
+        response = make_iap_request("DELETE", f"{self.base_url}?{querystring}", unauthenticated=True)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED

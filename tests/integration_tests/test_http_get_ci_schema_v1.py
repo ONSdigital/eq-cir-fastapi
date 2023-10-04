@@ -71,3 +71,17 @@ class TestHttpGetCiSchemaV1:
         # sends request to http_get_ci_schema_v1 endpoint for data
         response = make_iap_request("GET", f"{self.url}?{querystring}")
         assert response.status_code == status.HTTP_200_OK
+
+    def test_endpoint_returns_unauthorized_request(self, setup_payload):
+        """
+        What am I testing:
+        http_get_ci_schema_v1 should return a 401 unauthorized error if the endpoint is requested with an unauthorized token.
+        """
+        query_params = GetCiSchemaV1Params(
+            form_type=setup_payload["form_type"], language=setup_payload["language"], survey_id=setup_payload["survey_id"]
+        )
+
+        querystring = urlencode(asdict(query_params))
+
+        response = make_iap_request("GET", f"{self.url}?{querystring}", unauthenticated=True)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED

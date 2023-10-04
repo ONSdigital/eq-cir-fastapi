@@ -277,3 +277,14 @@ class TestPostCiV1:
             "message": "Value error, data_version can't be empty or null",
             "status": "error",
         }
+
+    def test_publish_ci_returns_unauthorized_request(self, setup_payload):
+        """
+        What am I testing:
+        http_post_ci_metadata_v1 should return a 401 unauthorized error if the endpoint is
+        requested with an unauthorized token.
+        """
+        payload = setup_payload
+        ci_response = make_iap_request("POST", f"{self.post_url}", json=payload, unauthenticated=True)
+
+        assert ci_response.status_code == status.HTTP_401_UNAUTHORIZED
