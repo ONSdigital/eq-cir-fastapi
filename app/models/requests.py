@@ -3,6 +3,7 @@ from enum import Enum
 
 from fastapi import Query
 from pydantic import BaseModel, FieldValidationInfo, field_validator
+from pydantic.json_schema import SkipJsonSchema
 
 
 class Status(Enum):
@@ -14,16 +15,16 @@ class Status(Enum):
 class DeleteCiV1Params:
     """Model for `delete_ci_metadata_v1` request query params"""
 
-    survey_id: str = Query(description="The survey ID of the CI to be deleted.", examples=["123"])
+    survey_id: str = Query(description="The survey ID of the CI to be deleted.")
 
 
 @dataclass
 class GetCiMetadataV1Params:
     """Model for `get_ci_metadata_v1` request query params"""
 
-    form_type: str = Query(description="The form type of the CI", examples=["0005"])
-    language: str = Query(description="The language of the CI", examples=["en"])
-    survey_id: str = Query(description="The survey ID of the CI", examples=["123"])
+    form_type: str = Query(description="The form type of the CI")
+    language: str = Query(description="The language of the CI")
+    survey_id: str = Query(description="The survey ID of the CI")
 
 
 @dataclass
@@ -33,10 +34,10 @@ class GetCiMetadataV2Params:
     All parameters are optional
     """
 
-    form_type: str = Query(default=None, description="form type to get", examples=["0005"])
-    language: str = Query(default=None, description="language to get", examples=["en"])
-    status: str = Query(default=None, description="status to get", examples=["draft"])
-    survey_id: str = Query(default=None, description="survey id to get", examples=["123"])
+    form_type: str = Query(default=None, description="form type to get")
+    language: str = Query(default=None, description="language to get")
+    status: str = Query(default=None, description="status to get")
+    survey_id: str = Query(default=None, description="survey id to get")
 
     def params_not_none(self, *args):
         """
@@ -56,16 +57,16 @@ class GetCiMetadataV2Params:
 class GetCiSchemaV1Params:
     """Model for `get_ci_schema_v1` request query params"""
 
-    form_type: str = Query(description="The form type of the CI", examples=["0005"])
-    language: str = Query(description="The language of the CI", examples=["en"])
-    survey_id: str = Query(description="The survey ID of the CI", examples=["123"])
+    form_type: str = Query(description="The form type of the CI")
+    language: str = Query(description="The language of the CI")
+    survey_id: str = Query(description="The survey ID of the CI")
 
 
 @dataclass
 class GetCiSchemaV2Params:
     """Model for `get_ci_schema_v2` request query params"""
 
-    guid: str = Query(description="The form type of the CI", examples=["123578"])
+    guid: str = Query(description="The form type of the CI")
 
 
 class PostCiMetadataV1PostData(BaseModel):
@@ -86,16 +87,16 @@ class PostCiMetadataV1PostData(BaseModel):
     schema_version: str
     description: str
     # Optional fields
-    legal_basis: str | None = ""
-    metadata: list | None = None
-    mime_type: str | None = ""
-    navigation: dict | None = None
-    questionnaire_flow: dict | None = None
-    post_submission: dict | None = None
-    sds_schema: str | None = ""
-    sections: list | None = None
-    submission: dict | None = None
-    theme: str | None = ""
+    legal_basis: str | SkipJsonSchema[None] = ""
+    metadata: list | SkipJsonSchema[None] = None
+    mime_type: str | SkipJsonSchema[None] = ""
+    navigation: dict | SkipJsonSchema[None] = None
+    questionnaire_flow: dict | SkipJsonSchema[None] = None
+    post_submission: dict | SkipJsonSchema[None] = None
+    sds_schema: str | SkipJsonSchema[None] = ""
+    sections: list | SkipJsonSchema[None] = None
+    submission: dict | SkipJsonSchema[None] = None
+    theme: str | SkipJsonSchema[None] = ""
 
     @field_validator("data_version", "form_type", "language", "survey_id", "title", "schema_version")
     @classmethod
@@ -114,5 +115,4 @@ class PutStatusV1Params:
 
     guid: str = Query(
         description="The global unique ID of the CI Metadata to be updated to 'PUBLISH'.",
-        examples=["428ae4d1-8e7f-4a9d-8bef-05a266bf81e7"],
     )

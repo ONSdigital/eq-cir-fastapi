@@ -1,6 +1,7 @@
 from typing import Any
 
 from pydantic import BaseModel
+from pydantic.json_schema import SkipJsonSchema
 
 
 class PostCIEvent(BaseModel):
@@ -17,7 +18,7 @@ class PostCIEvent(BaseModel):
     survey_id: str
     title: str
     description: str
-    sds_schema: str | None = ""
+    sds_schema: str | SkipJsonSchema[None] = ""
 
     def model_dump(self, *args, **kwargs) -> dict[str, Any]:
         """
