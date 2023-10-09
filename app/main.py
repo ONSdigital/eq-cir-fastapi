@@ -29,7 +29,7 @@ settings = Settings()
 
 
 app.description = "Open api schema for CIR"
-# app.openapi_version = "2.0.0"
+app.openapi_version = "3.0.1"
 app.title = "Collection Instrumentation Register"
 app.version = "1.0.0"
 
