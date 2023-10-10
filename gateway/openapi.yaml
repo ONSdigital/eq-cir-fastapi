@@ -185,6 +185,7 @@ paths:
       operationId: http_get_ci_metadata_v1_v1_ci_metadata_get
       parameters:
         - description: The form type of the CI
+          example: "0005"
           in: query
           name: form_type
           required: true
@@ -193,6 +194,7 @@ paths:
             title: Form Type
             type: string
         - description: The language of the CI
+          example: en
           in: query
           name: language
           required: true
@@ -201,6 +203,7 @@ paths:
             title: Language
             type: string
         - description: The survey ID of the CI
+          example: "123"
           in: query
           name: survey_id
           required: true
@@ -253,6 +256,7 @@ paths:
       operationId: http_delete_ci_v1_v1_dev_teardown_delete
       parameters:
         - description: The survey ID of the CI to be deleted.
+          example: "123"
           in: query
           name: survey_id
           required: true
@@ -347,6 +351,7 @@ paths:
       operationId: http_get_ci_schema_v1_v1_retrieve_collection_instrument_get
       parameters:
         - description: The form type of the CI
+          example: "0005"
           in: query
           name: form_type
           required: true
@@ -355,6 +360,7 @@ paths:
             title: Form Type
             type: string
         - description: The language of the CI
+          example: en
           in: query
           name: language
           required: true
@@ -363,6 +369,7 @@ paths:
             title: Language
             type: string
         - description: The survey ID of the CI
+          example: "123"
           in: query
           name: survey_id
           required: true
@@ -415,6 +422,7 @@ paths:
       operationId: http_put_status_v1_v1_update_status_put
       parameters:
         - description: The global unique ID of the CI Metadata to be updated to 'PUBLISH'.
+          example: 428ae4d1-8e7f-4a9d-8bef-05a266bf81e7
           in: query
           name: guid
           required: true
@@ -477,6 +485,7 @@ paths:
       operationId: http_get_ci_metadata_v2_v2_ci_metadata_get
       parameters:
         - description: form type to get
+          example: "0005"
           in: query
           name: form_type
           required: false
@@ -485,6 +494,7 @@ paths:
             title: Form Type
             type: string
         - description: language to get
+          example: en
           in: query
           name: language
           required: false
@@ -493,6 +503,7 @@ paths:
             title: Language
             type: string
         - description: status to get
+          example: draft
           in: query
           name: status
           required: false
@@ -501,6 +512,7 @@ paths:
             title: Status
             type: string
         - description: survey id to get
+          example: "123"
           in: query
           name: survey_id
           required: false
@@ -548,12 +560,13 @@ paths:
       description: GET method that fetches a CI schema by it's GUID.
       operationId: http_get_ci_schema_v2_v2_retrieve_collection_instrument_get
       parameters:
-        - description: The form type of the CI
+        - description: The global unique ID of the CI
+          example: 428ae4d1-8e7f-4a9d-8bef-05a266bf81e7
           in: query
           name: guid
           required: true
           schema:
-            description: The form type of the CI
+            description: The global unique ID of the CI
             title: Guid
             type: string
       responses:
