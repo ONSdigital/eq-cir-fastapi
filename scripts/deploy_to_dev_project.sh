@@ -51,13 +51,12 @@ export BUILD_ID=$BUILD_ID
 echo "BUILD_ID: ${BUILD_ID}"
 export CI_STORAGE_BUCKET_NAME=$CI_STORAGE_BUCKET_NAME
 echo "CI_STORAGE_BUCKET_NAME: ${CI_STORAGE_BUCKET_NAME}"
-export DEFAULT_HOSTNAME=$(gcloud compute ssl-certificates describe $SSL_CERT_NAME \
-    --format='value(subjectAlternativeNames)')
+export DEFAULT_HOSTNAME="34.36.133.157.nip.io"
 echo "DEFAULT_HOSTNAME: ${DEFAULT_HOSTNAME}"
 echo "GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS}"
 # gcloud returns client name as '$OAUTH_BRAND_NAME/identityAwareProxy/OAUTH_CLIENT_ID' so we have to
 # split by / and use the last part of the string here to get client id
-export OAUTH_CLIENT_ID=${${OAUTH_CLIENT_NAME}##*/}
+export OAUTH_CLIENT_ID="165363307196-at5ltlnva60g80brmkuvg9ekoboe53p4.apps.googleusercontent.com"
 echo "OAUTH_CLIENT_ID: ${OAUTH_CLIENT_ID}"
 export PROJECT_ID=$PROJECT_ID
 echo "PROJECT_ID: ${PROJECT_ID}"
