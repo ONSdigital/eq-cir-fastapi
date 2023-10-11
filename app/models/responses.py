@@ -3,6 +3,7 @@ from enum import Enum
 from typing import Any
 
 from pydantic import BaseModel
+from pydantic.json_schema import SkipJsonSchema
 
 from app.config import logging
 
@@ -33,7 +34,7 @@ class CiMetadata(BaseModel):
     title: str
     description: str
     # Optional fields
-    sds_schema: str | None = ""
+    sds_schema: str | SkipJsonSchema[None] = ""
 
     def model_dump(self, *args, **kwargs) -> dict[str, Any]:
         """
