@@ -3,17 +3,18 @@ services:
   storage:
     image: oittaa/gcp-storage-emulator
     environment:
-      - PORT=8049
+      - PORT=9023
     ports:
-      - 8050:8049
+      - 9026:9023
     volumes:
       - ./devtools/gcp-storage-emulator/data:/storage
     container_name: storage-cir
   firestore:
     image: spine3/firebase-emulator
     ports:
-      - 8100:8020
-      - 5050:4050
+      - 8200:8080
+      - 5050:4000
+      - 8086:8085
     environment:
       - PROJECT_NAME=mock-project-id
       - ENABLE_UI=true
@@ -29,13 +30,13 @@ services:
     environment:
       - CI_FIRESTORE_COLLECTION_NAME=ons-firestore-collection
       - CI_STORAGE_BUCKET_NAME=ci-bucket
-      - FIRESTORE_EMULATOR_HOST=firestore:8070
+      - FIRESTORE_EMULATOR_HOST=firestore:8080
       - LOG_LEVEL=DEBUG
       - PORT=3030
       - PROJECT_ID=mock-project-id
-      - PUBSUB_EMULATOR_HOST=firestore:8175
+      - PUBSUB_EMULATOR_HOST=firestore:8085
       - SERVICE_ACCOUNT_JSON_FILE=test
-      - STORAGE_EMULATOR_HOST=http://storage:8049
+      - STORAGE_EMULATOR_HOST=http://storage:9023
     volumes:
       - ./app:/code/app
       - ./devtools:/devtools

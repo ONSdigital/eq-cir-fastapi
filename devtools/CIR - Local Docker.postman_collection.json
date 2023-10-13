@@ -12,7 +12,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://0.0.0.0:3000/v1/dev/teardown?survey_id=134",
+					"raw": "http://0.0.0.0:3030/v1/dev/teardown?survey_id=134",
 					"protocol": "http",
 					"host": [
 						"0",
@@ -42,7 +42,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://0.0.0.0:3000/v1/ci_metadata?form_type=0005&language=en&survey_id=123",
+					"raw": "http://0.0.0.0:3030/v1/ci_metadata?form_type=0005&language=en&survey_id=123",
 					"protocol": "http",
 					"host": [
 						"0",
@@ -82,7 +82,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://0.0.0.0:3000/v2/ci_metadata",
+					"raw": "http://0.0.0.0:3030/v2/ci_metadata",
 					"protocol": "http",
 					"host": [
 						"0",
@@ -131,7 +131,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://0.0.0.0:3000/v1/retrieve_collection_instrument?form_type=0005&language=en&survey_id=123",
+					"raw": "http://0.0.0.0:3030/v1/retrieve_collection_instrument?form_type=0005&language=en&survey_id=123",
 					"protocol": "http",
 					"host": [
 						"0",
@@ -171,7 +171,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://0.0.0.0:3000/v2/retrieve_collection_instrument?guid=a821234d-6aee-48ac-bdd9-d4a6e113705d",
+					"raw": "http://0.0.0.0:3030/v2/retrieve_collection_instrument?guid=a821234d-6aee-48ac-bdd9-d4a6e113705d",
 					"protocol": "http",
 					"host": [
 						"0",
@@ -241,7 +241,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://0.0.0.0:3000/v1/update_status?guid=a821234d-6aee-48ac-bdd9-d4a6e113705d",
+					"raw": "http://0.0.0.0:3030/v1/update_status?guid=a821234d-6aee-48ac-bdd9-d4a6e113705d",
 					"protocol": "http",
 					"host": [
 						"0",
