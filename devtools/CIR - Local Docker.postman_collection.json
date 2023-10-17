@@ -20,7 +20,7 @@
 						"0",
 						"0"
 					],
-					"port": "3000",
+					"port": "3030",
 					"path": [
 						"v1",
 						"dev",
@@ -50,7 +50,7 @@
 						"0",
 						"0"
 					],
-					"port": "3000",
+					"port": "3030",
 					"path": [
 						"v1",
 						"ci_metadata"
@@ -90,7 +90,7 @@
 						"0",
 						"0"
 					],
-					"port": "3000",
+					"port": "3030",
 					"path": [
 						"v2",
 						"ci_metadata"
@@ -139,7 +139,7 @@
 						"0",
 						"0"
 					],
-					"port": "3000",
+					"port": "3030",
 					"path": [
 						"v1",
 						"retrieve_collection_instrument"
@@ -179,7 +179,7 @@
 						"0",
 						"0"
 					],
-					"port": "3000",
+					"port": "3030",
 					"path": [
 						"v2",
 						"retrieve_collection_instrument"
@@ -209,7 +209,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://0.0.0.0:3000/v1/publish_collection_instrument",
+					"raw": "http://0.0.0.0:3030/v1/publish_collection_instrument",
 					"protocol": "http",
 					"host": [
 						"0",
@@ -217,7 +217,7 @@
 						"0",
 						"0"
 					],
-					"port": "3000",
+					"port": "3030",
 					"path": [
 						"v1",
 						"publish_collection_instrument"
@@ -249,7 +249,7 @@
 						"0",
 						"0"
 					],
-					"port": "3000",
+					"port": "3030",
 					"path": [
 						"v1",
 						"update_status"
