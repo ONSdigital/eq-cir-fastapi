@@ -4,6 +4,9 @@ audit:
 generate-spec:
 	python -m scripts.generate_openapi
 
+publish-multiple-ci:
+	python -m scripts.publish_multiple_ci
+
 integration-tests:
 	python -m pytest tests/integration_tests -W ignore::DeprecationWarning
 
