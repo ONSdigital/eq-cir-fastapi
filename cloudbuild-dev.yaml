@@ -3,6 +3,7 @@ steps:
     id: "Setup Python and install project requirements"
     entrypoint: pip
     args: ["install", "-r", "requirements.txt", "--user"]
+
   - name: python:3.11
     id: "Audit packages"
     entrypoint: sh
