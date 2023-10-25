@@ -119,5 +119,5 @@ The openapi spec file in `gateway/openapi.yaml` should not be edited manually as
 
 ## Publishing bulk CIs
 
-Multiple CIs can be published using `scripts/publish_multiple_ci.py`. To test the file run `publish-multiple-ci`.A Log file
-will be generated with timstamp once all the CIs are published.
+Multiple CIs can be published using `scripts/publish_multiple_ci.py`. To test the file run `make publish-multiple-ci`.A Log file
+will be generated with timstamp once all the CIs are published.Before running, make sure to clone the [eq-questionnaire-schemas](https://github.com/ONSdigital/eq-questionnaire-schemas/tree/main/schemas/business/en) repository and specify the file location in `publish_multiple_ci.py`
