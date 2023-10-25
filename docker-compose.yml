@@ -12,7 +12,7 @@ services:
   firestore:
     image: spine3/firebase-emulator
     ports:
-      - 8200:8080
+      - 8200:8200
       - 5050:5050
       - 8086:8085
     environment:
