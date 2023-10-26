@@ -27,6 +27,7 @@ steps:
       - "-c"
       - |
         export CI_STORAGE_BUCKET_NAME=${_CI_STORAGE_BUCKET_NAME}
+        export FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}
         export PROJECT_ID=${PROJECT_ID}
         make unit-tests
 
@@ -85,6 +86,7 @@ steps:
       - "-c"
       - |
         export DEFAULT_HOSTNAME=${_SSL_CERTIFICATE_DOMAIN}
+        export FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}
         export CI_STORAGE_BUCKET_NAME=${_CI_STORAGE_BUCKET_NAME}
         OAUTH_CLIENT_NAME=$(cat /workspace/oauth_client_name)
         export OAUTH_CLIENT_ID=${OAUTH_CLIENT_NAME##*/}

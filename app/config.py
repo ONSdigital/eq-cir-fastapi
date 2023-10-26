@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     CI_FIRESTORE_COLLECTION_NAME: str = "ons-collection-instruments"
     CI_STORAGE_BUCKET_NAME: str = "ons-cir-dev"
     DEFAULT_HOSTNAME: str = "only required for integration tests"
+    FIRESTORE_DB_NAME: str = "ons-cir-dev-cir"
     OAUTH_CLIENT_ID: str = "only required for integration tests"
     LOG_LEVEL: str = "INFO"
     PROJECT_ID: str = "ons-cir-dev"
