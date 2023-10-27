@@ -54,7 +54,7 @@ We can build and run the FastAPI application, including emulators for firestore 
 
    `$ docker-compose up`
 
-The FastAPI application will now be running and available at the host `0.0.0.0:3000`. You can use the interactive Swagger docs at `0.0.0.0:3000/docs`.
+The FastAPI application will now be running and available at the host `0.0.0.0:3030`. You can use the interactive Swagger docs at `0.0.0.0:3030/docs`.
 
 ## Deploying the application containers for testing
 
