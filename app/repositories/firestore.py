@@ -17,9 +17,9 @@ class FirestoreClient:
     def __init__(self):
         """
         Initialises the google firestore client and sets the target collection based on
-        `settings.PROJECT_ID` and `settings.CI_FIRESTORE_COLLECTION_NAME`
+        `settings.PROJECT_ID`, `settings.FIRESTORE_DB_NAME` and `settings.CI_FIRESTORE_COLLECTION_NAME`
         """
-        self.db = Client(project=settings.PROJECT_ID)
+        self.db = Client(project=settings.PROJECT_ID, database=settings.FIRESTORE_DB_NAME)
         self.ci_collection = self.db.collection(settings.CI_FIRESTORE_COLLECTION_NAME)
 
     def delete_ci_metadata(self, survey_id):

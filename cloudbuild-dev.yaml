@@ -3,6 +3,7 @@ steps:
     id: "Setup Python and install project requirements"
     entrypoint: pip
     args: ["install", "-r", "requirements.txt", "--user"]
+
   - name: python:3.11
     id: "Audit packages"
     entrypoint: sh
@@ -25,8 +26,9 @@ steps:
     args:
       - "-c"
       - |
-        export CI_STORAGE_BUCKET_NAME=$PROJECT_ID
-        export PROJECT_ID=$PROJECT_ID
+        export CI_STORAGE_BUCKET_NAME=${_CI_STORAGE_BUCKET_NAME}
+        export FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}
+        export PROJECT_ID=${PROJECT_ID}
         make unit-tests
 
   - name: docker
@@ -84,7 +86,8 @@ steps:
       - "-c"
       - |
         export DEFAULT_HOSTNAME=${_SSL_CERTIFICATE_DOMAIN}
-        export CI_STORAGE_BUCKET_NAME=${PROJECT_ID}
+        export FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}
+        export CI_STORAGE_BUCKET_NAME=${_CI_STORAGE_BUCKET_NAME}
         OAUTH_CLIENT_NAME=$(cat /workspace/oauth_client_name)
         export OAUTH_CLIENT_ID=${OAUTH_CLIENT_NAME##*/}
         export PROJECT_ID=${PROJECT_ID}
