@@ -4,14 +4,29 @@ import os
 
 from tests.integration_tests.utils import make_iap_request
 
-path_to_json = "Enter your folder location here"
+path_to_json = "/Users/sriparupudi/Desktop/work1/eq-questionnaire-schemas/schemas/business/en"
 json_files = [pos_json for pos_json in os.listdir(path_to_json)]
+post_url = "/v1/publish_collection_instrument"
 total_errors_found = 0
 timestamp = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+mandatory_keys = ["data_version", "form_type", "language", "survey_id", "title", "schema_version", "description"]
+optional_keys = [
+    "legal_basis",
+    "metadata",
+    "mime_type",
+    "navigation",
+    "questionnaire_flow",
+    "post_submission",
+    "sds_schema",
+    "sections",
+    "submission",
+    "theme",
+]
+
 
 if __name__ == "__main__":
     """
-    Before running this file make sure to clone the required repository and then specify the path
+    Before running this file make sure to clone the required repository and then specify the path above
     Upon publish following things will be logged for each collection instrument to be published:
     1. File name.
     2. Response recieved.
@@ -26,64 +41,13 @@ if __name__ == "__main__":
         for json_file in json_files:
             with open(f"{path_to_json}/{json_file}") as content:
                 ci = json.load(content)
-                post_url = "/v1/publish_collection_instrument"
                 ci_response = make_iap_request("POST", f"{post_url}", json=ci)
                 ci_response = ci_response.json()
                 if ci_response["message"] == "Field required" and ci_response["status"] == "error":
                     total_errors_found += 1
-                    mandatory_missing_keys = [
-                        key
-                        for key in (
-                            "data_version",
-                            "form_type",
-                            "language",
-                            "survey_id",
-                            "title",
-                            "schema_version",
-                            "description",
-                        )
-                        if key not in ci.keys()
-                    ]
-                    optional_missing_keys = [
-                        key
-                        for key in (
-                            "legal_basis",
-                            "metadata",
-                            "mime_type",
-                            "navigation",
-                            "questionnaire_flow",
-                            "post_submission",
-                            "sds_schema",
-                            "sections",
-                            "submission",
-                            "theme",
-                        )
-                        if key not in ci.keys()
-                    ]
-                    additional_keys = [
-                        key
-                        for key in ci.keys()
-                        if key
-                        not in (
-                            "data_version",
-                            "form_type",
-                            "language",
-                            "survey_id",
-                            "title",
-                            "schema_version",
-                            "description",
-                            "legal_basis",
-                            "metadata",
-                            "mime_type",
-                            "navigation",
-                            "questionnaire_flow",
-                            "post_submission",
-                            "sds_schema",
-                            "sections",
-                            "submission",
-                            "theme",
-                        )
-                    ]
+                    mandatory_missing_keys = [key for key in (mandatory_keys) if key not in ci.keys()]
+                    optional_missing_keys = [key for key in (optional_keys) if key not in ci.keys()]
+                    additional_keys = [key for key in ci.keys() if key not in (mandatory_keys + optional_keys)]
                     log_file.write(
                         f"CI File name: {json_file}\n"
                         f"CI response {ci_response}\n"
