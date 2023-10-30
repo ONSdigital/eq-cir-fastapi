@@ -4,7 +4,7 @@ import os
 
 from tests.integration_tests.utils import make_iap_request
 
-path_to_json = "/Users/sriparupudi/Desktop/work1/eq-questionnaire-schemas/schemas/business/en"
+path_to_json = "Enter you Folder location here"
 json_files = [pos_json for pos_json in os.listdir(path_to_json)]
 post_url = "/v1/publish_collection_instrument"
 total_errors_found = 0
