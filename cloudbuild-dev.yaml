@@ -1,5 +1,9 @@
 steps:
   - name: python:3.11
+    id: "Upgrade pip"
+    entrypoint: "python"
+    args: ["-m", "pip", "install", "--upgrade", "pip", "--user"]
+  - name: python:3.11
     id: "Setup Python and install project requirements"
     entrypoint: pip
     args: ["install", "-r", "requirements.txt", "--user"]
