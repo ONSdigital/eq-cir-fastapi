@@ -18,7 +18,7 @@ steps:
         "deploy",
         "cir",
         "--image",
-        "europe-west2-docker.pkg.dev/ons-sds-dns/cir/${PROJECT_ID}:${TAG_NAME}",
+        "europe-west2-docker.pkg.dev/ons-sds-dns/cir/${PROJECT_ID}:latest",
         "--region",
         "europe-west2",
         "--allow-unauthenticated",
@@ -28,3 +28,8 @@ steps:
 
 options:
   logging: CLOUD_LOGGING_ONLY
+
+# Store images in Google Artifact Registry
+images:
+  - europe-west2-docker.pkg.dev/ons-sds-dns/cir/${PROJECT_ID}:${TAG_NAME}
+  - europe-west2-docker.pkg.dev/ons-sds-dns/cir/${PROJECT_ID}:latest
