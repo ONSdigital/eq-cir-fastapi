@@ -1,8 +1,4 @@
 steps:
-  - name: python:3.11
-    id: "Upgrade pip"
-    entrypoint: "python"
-    args: ["-m", "pip", "install", "--upgrade", "pip", "--user"]
   - name: docker
     id: "Build and push docker image"
     entrypoint: sh
