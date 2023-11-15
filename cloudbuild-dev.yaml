@@ -60,7 +60,8 @@ steps:
         "--allow-unauthenticated",
         "--ingress",
         "internal-and-cloud-load-balancing",
-        "--update-env-vars CIR_APPLICATION_VERSION=development",
+        "--update-env-vars",
+        "CIR_APPLICATION_VERSION=development",
       ]
 
   - name: "gcr.io/cloud-builders/gcloud"
