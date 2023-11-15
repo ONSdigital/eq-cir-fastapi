@@ -297,6 +297,9 @@ async def http_put_status_v1(query_params: PutStatusV1Params = Depends()):
     },
 )
 async def http_get_status():
+    """
+    GET method that returns `CIR_APPLICATION_VERSION` if the deployment is successful
+    """
     application_version = settings.CIR_APPLICATION_VERSION
     if application_version:
         response_content = DeploymentStatus(version=settings.CIR_APPLICATION_VERSION)

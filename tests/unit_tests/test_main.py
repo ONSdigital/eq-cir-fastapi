@@ -548,9 +548,9 @@ class TestDeploymentStatus:
 
     def test_endpoint_returns_200_if_deployment_successful(self, mocked_settings):
         """
-        Endpoint should return `HTTP_200_OK` if status is updated to published
+        Endpoint should return `HTTP_200_OK` if the deployment is successful
         """
-        # mocked `get_ci_schema_v2` to return valid ci metadata
+        # mocked `settings` to set the CIR_APPLICATION_VERSION to development
 
         mocked_settings.CIR_APPLICATION_VERSION = "development"
         response = client.get(self.base_url)
@@ -558,10 +558,9 @@ class TestDeploymentStatus:
 
     def test_endpoint_returns_right_message_if_deployment_successful(self, mocked_settings):
         """
-        Endpoint should return `HTTP_200_OK` if status is updated to published
+        Endpoint should return the right response if the deployment is successful
         """
-        # mocked `get_ci_schema_v2` to return valid ci metadata
-
+        # mocked `settings` to set the CIR_APPLICATION_VERSION to dev-048783a4
         mocked_settings.CIR_APPLICATION_VERSION = "dev-048783a4"
         response = client.get(self.base_url)
         expected_message = '{"version":"dev-048783a4","status":"OK"}'
@@ -569,9 +568,10 @@ class TestDeploymentStatus:
 
     def test_endpoint_returns_500_if_deployment_successful(self, mocked_settings):
         """
-        Endpoint should return `HTTP_200_OK` if status is updated to published
+        Endpoint should return `HTTP_500_INTERNAL_SERVER_ERROR` if the env var is
+        None due to a unsuccesful deployment
         """
-        # mocked `get_ci_schema_v2` to return valid ci metadata
+        # mocked `settings` to set the CIR_APPLICATION_VERSION to None
 
         mocked_settings.CIR_APPLICATION_VERSION = None
         response = client.get(self.base_url)

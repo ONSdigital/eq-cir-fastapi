@@ -7,21 +7,20 @@ settings = Settings()
 
 
 class TestHttpGetDeploymentStatus:
-    """Tests for the `http_post_ci_v1` endpoint."""
+    """Tests for the `http_get_status` endpoint."""
 
     deployment_status_url = "/status"
 
     def test_endpoint_returns_200_success_if_env_var_found(self):
         """
-        This function deletes the test CI with survey_id:3456 at the end of each integration test to ensure it
-        is not reflected in the firestore and schemas.
+        Endpoint should return `HTTP_200_OK` if the deployment is successful
         """
         status_response = make_iap_request("GET", self.deployment_status_url)
         assert status_response.status_code == status.HTTP_200_OK
 
-    def test_endpoint_returns_right_message_if_deployment_successful(self):
+    def test_endpoint_returns_right_response_if_deployment_successful(self):
         """
-        Endpoint should return `HTTP_200_OK` if status is updated to published
+        Endpoint should return return the right response if the deployment is successful
         """
         # mocked `get_ci_schema_v2` to return valid ci metadata
 
