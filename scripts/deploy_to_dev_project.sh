@@ -37,7 +37,7 @@ docker push "${REGION}-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest"
 
 echo "Deploying the docker container(s)..."
 gcloud run deploy cir --image="${REGION}-docker.pkg.dev/${PROJECT_ID}/cir/cir:${BUILD_ID}" \
-    --region=$REGION --allow-unauthenticated --ingress=internal-and-cloud-load-balancing
+    --region=$REGION --allow-unauthenticated --ingress=internal-and-cloud-load-balancing --update-env-vars CIR_APPLICATION_VERSION=development
 
 echo "Fetching oauth brand and client names..."
 # Get the oauth client name (required along with key to create access tokens)

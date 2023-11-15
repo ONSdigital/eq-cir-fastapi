@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     SUBSCRIPTION_ID: str = "ons-cir-publish-events-subscription-cir"
     TOPIC_ID: str = "ons-cir-publish-ci"
     URL_SCHEME: str = "only required for integration tests"
+    CIR_APPLICATION_VERSION: str = "development"
 
 
 settings = Settings()

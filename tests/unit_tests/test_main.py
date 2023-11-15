@@ -540,3 +540,41 @@ class TestPutStatusV1:
         mocked_update_status_v1.return_value = (mock_ci_metadata.__dict__, "UNKOWN")
         response = client.put(self.base_url)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@patch("app.main.settings")
+class TestDeploymentStatus:
+    base_url = "/status"
+
+    def test_endpoint_returns_200_if_deployment_successful(self, mocked_settings):
+        """
+        Endpoint should return `HTTP_200_OK` if status is updated to published
+        """
+        # mocked `get_ci_schema_v2` to return valid ci metadata
+
+        mocked_settings.CIR_APPLICATION_VERSION = "development"
+        response = client.get(self.base_url)
+        assert response.status_code == status.HTTP_200_OK
+
+    def test_endpoint_returns_right_message_if_deployment_successful(self, mocked_settings):
+        """
+        Endpoint should return `HTTP_200_OK` if status is updated to published
+        """
+        # mocked `get_ci_schema_v2` to return valid ci metadata
+
+        mocked_settings.CIR_APPLICATION_VERSION = "dev-048783a4"
+        response = client.get(self.base_url)
+        expected_message = '{"version":"dev-048783a4","status":"OK"}'
+        assert expected_message in response.content.decode("utf-8")
+
+    def test_endpoint_returns_500_if_deployment_successful(self, mocked_settings):
+        """
+        Endpoint should return `HTTP_200_OK` if status is updated to published
+        """
+        # mocked `get_ci_schema_v2` to return valid ci metadata
+
+        mocked_settings.CIR_APPLICATION_VERSION = None
+        response = client.get(self.base_url)
+        assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+        expected_message = '{"message":"Internal server error","status":"error"}'
+        assert expected_message in response.content.decode("utf-8")

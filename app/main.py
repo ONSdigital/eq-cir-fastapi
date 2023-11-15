@@ -21,7 +21,7 @@ from app.models.requests import (
     PostCiMetadataV1PostData,
     PutStatusV1Params,
 )
-from app.models.responses import BadRequest, CiMetadata
+from app.models.responses import BadRequest, CiMetadata, DeploymentStatus
 
 app = FastAPI()
 logger = logging.getLogger(__name__)
@@ -281,3 +281,26 @@ async def http_put_status_v1(query_params: PutStatusV1Params = Depends()):
     else:
         response_content = BadRequest(message=f"No CI metadata found for: {query_params.guid}")
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)
+
+
+@app.get(
+    "/status",
+    responses={
+        status.HTTP_200_OK: {
+            "model": DeploymentStatus,
+            "description": ("Deployment done succuessfully"),
+        },
+        status.HTTP_500_INTERNAL_SERVER_ERROR: {
+            "model": BadRequest,
+            "description": "Internal error. This is triggered when something an unexpected error occurs on the server side.",
+        },
+    },
+)
+async def http_get_status():
+    application_version = settings.CIR_APPLICATION_VERSION
+    if application_version:
+        response_content = DeploymentStatus(version=settings.CIR_APPLICATION_VERSION)
+        return JSONResponse(status_code=status.HTTP_200_OK, content=response_content.__dict__)
+    else:
+        response_content = BadRequest(message="Internal server error")
+        return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content=response_content.__dict__)

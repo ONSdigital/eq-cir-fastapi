@@ -24,6 +24,7 @@ steps:
         "--allow-unauthenticated",
         "--ingress",
         "internal-and-cloud-load-balancing",
+        "--update-env-vars CIR_APPLICATION_VERSION=${TAG_NAME}",
       ]
 
 options:
