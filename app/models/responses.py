@@ -62,7 +62,7 @@ class CiStatus(Enum):
 
 @dataclass
 class DeploymentStatus:
-    """Model for a generic bad request response"""
+    """Model for Successful deployment response"""
 
     version: str
     status: str = "OK"
