@@ -551,7 +551,6 @@ class TestDeploymentStatus:
         Endpoint should return `HTTP_200_OK` if the deployment is successful
         """
         # mocked `settings` to set the CIR_APPLICATION_VERSION to development
-
         mocked_settings.CIR_APPLICATION_VERSION = "development"
         response = client.get(self.base_url)
         assert response.status_code == status.HTTP_200_OK

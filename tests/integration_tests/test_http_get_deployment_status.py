@@ -28,3 +28,10 @@ class TestHttpGetDeploymentStatus:
         status_response = status_response.json()
         status_response["version"] == settings.CIR_APPLICATION_VERSION
         status_response["status"] == "Ok"
+
+    def test_endpoint_returns_unauthorized_request(self):
+        """
+        Endpoint should return a 401 unauthorized error if the endpoint is requested with an unauthorized token.
+        """
+        status_response = make_iap_request("GET", self.deployment_status_url, unauthenticated=True)
+        assert status_response.status_code == status.HTTP_401_UNAUTHORIZED
