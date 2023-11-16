@@ -542,19 +542,17 @@ class TestPutStatusV1:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
-@patch("app.main.settings")
 class TestDeploymentStatus:
     base_url = "/status"
 
-    def test_endpoint_returns_200_if_deployment_successful(self, mocked_settings):
+    def test_endpoint_returns_200_if_deployment_successful(self):
         """
         Endpoint should return `HTTP_200_OK` if the deployment is successful
         """
-        # mocked `settings` to set the CIR_APPLICATION_VERSION to development
-        mocked_settings.CIR_APPLICATION_VERSION = "development"
         response = client.get(self.base_url)
         assert response.status_code == status.HTTP_200_OK
 
+    @patch("app.main.settings")
     def test_endpoint_returns_right_message_if_deployment_successful(self, mocked_settings):
         """
         Endpoint should return the right response if the deployment is successful
@@ -565,6 +563,7 @@ class TestDeploymentStatus:
         expected_message = '{"version":"dev-048783a4","status":"OK"}'
         assert expected_message in response.content.decode("utf-8")
 
+    @patch("app.main.settings")
     def test_endpoint_returns_500_if_deployment_successful(self, mocked_settings):
         """
         Endpoint should return `HTTP_500_INTERNAL_SERVER_ERROR` if the env var is
