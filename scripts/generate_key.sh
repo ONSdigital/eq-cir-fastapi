@@ -4,7 +4,7 @@ if [[ -z "${PROJECT_ID}" ]]; then
     read PROJECT_ID"?Enter your GCP project ID: "
 fi
 
-CLOUDBUILD_SA=ons-cir-cloudbuild-sa@${PROJECT_ID}.iam.gserviceaccount.com
+CLOUDBUILD_SA=cloudbuild-sa@${PROJECT_ID}.iam.gserviceaccount.com
 CLOUDBUILD_SA_KEY_FILETYPE="json"
 CLOUDBUILD_SA_KEY_FILENAME="$PROJECT_ID-cloudbuild-sa-key.$CLOUDBUILD_SA_KEY_FILETYPE"
 
