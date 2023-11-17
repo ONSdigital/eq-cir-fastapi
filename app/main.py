@@ -1,3 +1,5 @@
+from dataclasses import asdict
+
 from fastapi import Depends, FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -21,7 +23,7 @@ from app.models.requests import (
     PostCiMetadataV1PostData,
     PutStatusV1Params,
 )
-from app.models.responses import BadRequest, CiMetadata
+from app.models.responses import BadRequest, CiMetadata, DeploymentStatus
 
 app = FastAPI()
 logger = logging.getLogger(__name__)
@@ -65,7 +67,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     # Build the error message as a semi-colon separated string of error messages
     message = ";".join([e["msg"] for e in exc.errors()])
     response_content = BadRequest(message=message)
-    return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content=response_content.__dict__)
+    return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content=asdict(response_content))
 
 
 @app.delete(
@@ -92,8 +94,8 @@ async def http_delete_ci_v1(query_params: DeleteCiV1Params = Depends()):
         return JSONResponse(status_code=status.HTTP_200_OK, content=success_message)
     else:
         # Nothing to delete so return 404
-        response_content = BadRequest(message=f"No CI found for: {query_params.__dict__}")
-        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)
+        response_content = BadRequest(message=f"No CI found for: {asdict(query_params)}")
+        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=asdict(response_content))
 
 
 # Fetching CI Metadata from Firestore
@@ -122,10 +124,10 @@ async def http_get_ci_metadata_v1(query_params: GetCiMetadataV1Params = Depends(
         return JSONResponse(status_code=status.HTTP_200_OK, content=ci_metadata)
     else:
         logger.info(
-            f"get_ci_metadata_v1: exception raised - No CI(s) found for: {query_params.__dict__}",
+            f"get_ci_metadata_v1: exception raised - No CI(s) found for: {asdict(query_params)}",
         )
-        response_content = BadRequest(message=f"No CI metadata found for: {query_params.__dict__}")
-        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)
+        response_content = BadRequest(message=f"No CI metadata found for: {asdict(query_params)}")
+        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=asdict(response_content))
 
 
 @app.get(
@@ -155,10 +157,10 @@ async def http_get_ci_metadata_v2(query_params: GetCiMetadataV2Params = Depends(
         return JSONResponse(status_code=status.HTTP_200_OK, content=ci_metadata)
     else:
         logger.info(
-            f"get_ci_metadata_v2: exception raised - No CI(s) found for: {query_params.__dict__}",
+            f"get_ci_metadata_v2: exception raised - No CI(s) found for: {asdict(query_params)}",
         )
-        response_content = BadRequest(message=f"No CI metadata found for: {query_params.__dict__}")
-        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)
+        response_content = BadRequest(message=f"No CI metadata found for: {asdict(query_params)}")
+        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=asdict(response_content))
 
 
 # Fetching CI schema from Bucket version 1
@@ -185,14 +187,14 @@ async def http_get_ci_schema_v1(query_params: GetCiSchemaV1Params = Depends()):
         logger.info("get_ci_metadata_v1 success")
         return JSONResponse(status_code=status.HTTP_200_OK, content=ci_schema)
     if not ci_metadata_id:
-        message = f"No metadata found for: {query_params.__dict__}"
+        message = f"No metadata found for: {asdict(query_params)}"
     else:
-        message = f"No schema found for: {query_params.__dict__}"
+        message = f"No schema found for: {asdict(query_params)}"
     logger.info(
         f"get_ci_schema_v1: exception raised - {message}",
     )
     response_content = BadRequest(message=message)
-    return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)
+    return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=asdict(response_content))
 
 
 # Fetching CI schema from Bucket Version 2
@@ -226,7 +228,7 @@ async def http_get_ci_schema_v2(query_params: GetCiSchemaV2Params = Depends()):
         f"get_ci_schema_v2: exception raised - {message}",
     )
     response_content = BadRequest(message=message)
-    return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)
+    return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=asdict(response_content))
 
 
 @app.post(
@@ -280,4 +282,30 @@ async def http_put_status_v1(query_params: PutStatusV1Params = Depends()):
         return JSONResponse(status_code=status.HTTP_200_OK, content=message)
     else:
         response_content = BadRequest(message=f"No CI metadata found for: {query_params.guid}")
-        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=response_content.__dict__)
+        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=asdict(response_content))
+
+
+@app.get(
+    "/status",
+    responses={
+        status.HTTP_200_OK: {
+            "model": DeploymentStatus,
+            "description": ("Deployment done succuessfully"),
+        },
+        status.HTTP_500_INTERNAL_SERVER_ERROR: {
+            "model": BadRequest,
+            "description": "Internal error. This is triggered when something an unexpected error occurs on the server side.",
+        },
+    },
+)
+async def http_get_status():
+    """
+    GET method that returns `CIR_APPLICATION_VERSION` if the deployment is successful
+    """
+    application_version = settings.CIR_APPLICATION_VERSION
+    if application_version:
+        response_content = DeploymentStatus(version=settings.CIR_APPLICATION_VERSION)
+        return JSONResponse(status_code=status.HTTP_200_OK, content=asdict(response_content))
+    else:
+        response_content = BadRequest(message="Internal server error")
+        return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content=asdict(response_content))

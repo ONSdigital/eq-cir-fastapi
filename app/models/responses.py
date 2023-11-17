@@ -58,3 +58,11 @@ class CiMetadata(BaseModel):
 class CiStatus(Enum):
     DRAFT = "DRAFT"
     PUBLISHED = "PUBLISHED"
+
+
+@dataclass
+class DeploymentStatus:
+    """Model for Successful deployment response"""
+
+    version: str
+    status: str = "OK"

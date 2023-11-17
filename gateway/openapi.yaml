@@ -67,6 +67,19 @@ components:
         - description
       title: CiMetadata
       type: object
+    DeploymentStatus:
+      properties:
+        status:
+          default: OK
+          title: Status
+          type: string
+        version:
+          title: Version
+          type: string
+      required:
+        - version
+      title: DeploymentStatus
+      type: object
     HTTPValidationError:
       properties:
         detail:
@@ -177,6 +190,28 @@ info:
   version: 1.0.0
 openapi: 3.0.1
 paths:
+  /status:
+    get:
+      description:
+        GET method that returns `CIR_APPLICATION_VERSION` if the deployment
+        is successful
+      operationId: http_get_status_status_get
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeploymentStatus"
+          description: Deployment done succuessfully
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+          description:
+            Internal error. This is triggered when something an unexpected
+            error occurs on the server side.
+      summary: Http Get Status
   /v1/ci_metadata:
     get:
       description:
