@@ -60,6 +60,8 @@ steps:
         "--allow-unauthenticated",
         "--ingress",
         "internal-and-cloud-load-balancing",
+        "--update-env-vars",
+        "CIR_APPLICATION_VERSION=development",
       ]
 
   - name: "gcr.io/cloud-builders/gcloud"
@@ -98,6 +100,5 @@ steps:
         export TOPIC_ID=${_TOPIC_ID}
         export URL_SCHEME=https
         make integration-tests
-
 options:
   logging: CLOUD_LOGGING_ONLY
