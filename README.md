@@ -62,7 +62,7 @@ We can deploy the Collection Instrument Registry container to a project within t
 
 ### Creating a Google Cloud project
 
-If you don't already have a project, see the instructions on how to create one in the [EQ Collection Instrument Registry IAC](https://github.com/ONSdigital/eq-collection-instrument-registry-iac) repository. Make a note of the `project_id` for use later.
+If you don't already have a project, see the instructions on how to create one in the [SDS/IAC Terraform project](https://github.com/ONSdigital/sds-iac) repository. Make a note of the `project_id` for use later.
 
 ### Url routing
 
