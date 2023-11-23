@@ -4,10 +4,13 @@
 echo "Unsetting all relevant env variables..."
 unset BUILD_ID
 unset CI_STORAGE_BUCKET_NAME
+unset CLOUDBUILD_SA
 unset DEFAULT_HOSTNAME
+unset FIRESTORE_DB_NAME
 unset GOOGLE_APPLICATION_CREDENTIALS
 unset OAUTH_CLIENT_ID
 unset PROJECT_ID
+unset URL_SCHEME
 
 # Prompt the user for their GCP project ID and store it in a variable
 read PROJECT_ID"?Enter your GCP project ID: "
@@ -15,7 +18,8 @@ read PROJECT_ID"?Enter your GCP project ID: "
 REGION="europe-west2"
 
 CI_STORAGE_BUCKET_NAME=$PROJECT_ID
-SSL_CERT_NAME=${PROJECT_ID}-ssl-cert
+FIRESTORE_DB_NAME=${PROJECT_ID}-cir
+SSL_CERT_NAME=${PROJECT_ID}-cir-ssl-cert
 
 echo "Setting project to $PROJECT_ID..."
 gcloud config set project $PROJECT_ID
@@ -54,6 +58,8 @@ echo "CI_STORAGE_BUCKET_NAME: ${CI_STORAGE_BUCKET_NAME}"
 export DEFAULT_HOSTNAME=$(gcloud compute ssl-certificates describe $SSL_CERT_NAME \
     --format='value(subjectAlternativeNames)')
 echo "DEFAULT_HOSTNAME: ${DEFAULT_HOSTNAME}"
+export FIRESTORE_DB_NAME=$FIRESTORE_DB_NAME
+echo "FIRESTORE_DB_NAME: ${FIRESTORE_DB_NAME}"
 echo "GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS}"
 # gcloud returns client name as '$OAUTH_BRAND_NAME/identityAwareProxy/OAUTH_CLIENT_ID' so we have to
 # split by / and use the last part of the string here to get client id
