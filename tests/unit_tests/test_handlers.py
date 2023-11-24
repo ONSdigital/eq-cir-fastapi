@@ -495,7 +495,7 @@ class TestPostCiMetadataV1:
             ci_version=mock_ci_metadata.ci_version,
             data_version=mock_ci_metadata.data_version,
             form_type=mock_ci_metadata.form_type,
-            id=mock_ci_metadata.guid,
+            guid=mock_ci_metadata.guid,
             language=mock_ci_metadata.language,
             published_at=mock_ci_metadata.published_at,
             schema_version=mock_ci_metadata.schema_version,

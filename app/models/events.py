@@ -10,7 +10,7 @@ class PostCIEvent(BaseModel):
     ci_version: int
     data_version: str
     form_type: str
-    id: str
+    guid: str
     language: str
     published_at: str
     schema_version: str

@@ -187,7 +187,7 @@ def post_ci_metadata_v1(post_data: PostCiMetadataV1PostData) -> CiMetadata:
             ci_version=ci_metadata_with_new_version.ci_version,
             data_version=ci_metadata_with_new_version.data_version,
             form_type=ci_metadata_with_new_version.form_type,
-            id=ci_metadata_with_new_version.guid,
+            guid=ci_metadata_with_new_version.guid,
             language=ci_metadata_with_new_version.language,
             published_at=ci_metadata_with_new_version.published_at,
             schema_version=ci_metadata_with_new_version.schema_version,
