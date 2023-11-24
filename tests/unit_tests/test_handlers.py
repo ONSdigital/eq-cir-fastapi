@@ -44,7 +44,7 @@ mock_ci_metadata = CiMetadata(
     ci_version=1,
     data_version=mock_data_version,
     form_type=mock_form_type,
-    id=mock_id,
+    guid=mock_id,
     language=mock_language,
     published_at=datetime.datetime.utcnow().strftime(settings.PUBLISHED_AT_FORMAT),
     schema_version=mock_schema_version,
@@ -465,7 +465,7 @@ class TestPostCiMetadataV1:
         mocked_post_ci_metadata.return_value = mock_ci_metadata
 
         post_ci_metadata_v1(self.post_data)
-        mocked_store_ci_schema.assert_called_with(mock_ci_metadata.id, self.post_data.__dict__)
+        mocked_store_ci_schema.assert_called_with(mock_ci_metadata.guid, self.post_data.__dict__)
 
     def test_handler_calls_publish_message(
         self, mocked_store_ci_schema, mocked_publisher, mocked_post_ci_metadata, mocked_firestore_client
@@ -495,7 +495,7 @@ class TestPostCiMetadataV1:
             ci_version=mock_ci_metadata.ci_version,
             data_version=mock_ci_metadata.data_version,
             form_type=mock_ci_metadata.form_type,
-            id=mock_ci_metadata.id,
+            id=mock_ci_metadata.guid,
             language=mock_ci_metadata.language,
             published_at=mock_ci_metadata.published_at,
             schema_version=mock_ci_metadata.schema_version,
