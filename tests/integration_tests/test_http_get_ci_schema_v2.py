@@ -64,7 +64,7 @@ class TestHttpGetCiSchemaV2:
         created_ci = response.json()
 
         # Create a valid querystring using the `id` returned when ci created
-        query_params = GetCiSchemaV2Params(guid=created_ci["id"])
+        query_params = GetCiSchemaV2Params(guid=created_ci["guid"])
         querystring = urlencode(asdict(query_params))
         # sends request to http_get_ci_schema_v2 endpoint for data
         response = make_iap_request("GET", f"{self.url}?{querystring}")
