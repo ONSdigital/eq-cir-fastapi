@@ -45,7 +45,7 @@ class TestPutStatusV1:
         # Posts the ci using http_post_ci endpoint
         make_iap_request("POST", f"{self.post_url}", json=setup_payload)
         query_ci_pre_response_data = self.return_query_ci(setup_payload)
-        ci_id = query_ci_pre_response_data[0]["id"]
+        ci_id = query_ci_pre_response_data[0]["guid"]
         assert query_ci_pre_response_data[0]["status"] == "DRAFT"
 
         querystring = urlencode({"guid": ci_id})
@@ -69,7 +69,7 @@ class TestPutStatusV1:
         # Posts the ci using http_post_ci endpoint
         make_iap_request("POST", f"{self.post_url}", json=setup_payload)
         query_ci_pre_response_data = self.return_query_ci(setup_payload)
-        ci_id = query_ci_pre_response_data[0]["id"]
+        ci_id = query_ci_pre_response_data[0]["guid"]
         querystring = urlencode({"guid": ci_id})
         # Updating status twice to return already published
         ci_update = make_iap_request("PUT", f"{self.base_url}?{querystring}")

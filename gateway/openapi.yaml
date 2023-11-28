@@ -10,7 +10,7 @@ components:
           title: Status
           type: string
       required:
-        - message
+      - message
       title: BadRequest
       type: object
     CiMetadata:
@@ -28,8 +28,8 @@ components:
         form_type:
           title: Form Type
           type: string
-        id:
-          title: Id
+        guid:
+          title: Guid
           type: string
         language:
           title: Language
@@ -41,7 +41,7 @@ components:
           title: Schema Version
           type: string
         sds_schema:
-          default: ""
+          default: ''
           title: Sds Schema
           type: string
         status:
@@ -54,17 +54,17 @@ components:
           title: Title
           type: string
       required:
-        - ci_version
-        - data_version
-        - form_type
-        - id
-        - language
-        - published_at
-        - schema_version
-        - status
-        - survey_id
-        - title
-        - description
+      - ci_version
+      - data_version
+      - form_type
+      - guid
+      - language
+      - published_at
+      - schema_version
+      - status
+      - survey_id
+      - title
+      - description
       title: CiMetadata
       type: object
     DeploymentStatus:
@@ -77,21 +77,20 @@ components:
           title: Version
           type: string
       required:
-        - version
+      - version
       title: DeploymentStatus
       type: object
     HTTPValidationError:
       properties:
         detail:
           items:
-            $ref: "#/components/schemas/ValidationError"
+            $ref: '#/components/schemas/ValidationError'
           title: Detail
           type: array
       title: HTTPValidationError
       type: object
     PostCiMetadataV1PostData:
-      description:
-        "\n    Model for `post_ci_metadata_v1` request post data\n\n  \
+      description: "\n    Model for `post_ci_metadata_v1` request post data\n\n  \
         \  This is the entire CI JSON object that you would like to publish. The example\
         \ below illustrates\n    the required attributes to put into the request body.\
         \ The POST will fail if these are not\n    included.\n    "
@@ -109,7 +108,7 @@ components:
           title: Language
           type: string
         legal_basis:
-          default: ""
+          default: ''
           title: Legal Basis
           type: string
         metadata:
@@ -117,7 +116,7 @@ components:
           title: Metadata
           type: array
         mime_type:
-          default: ""
+          default: ''
           title: Mime Type
           type: string
         navigation:
@@ -133,7 +132,7 @@ components:
           title: Schema Version
           type: string
         sds_schema:
-          default: ""
+          default: ''
           title: Sds Schema
           type: string
         sections:
@@ -147,20 +146,20 @@ components:
           title: Survey Id
           type: string
         theme:
-          default: ""
+          default: ''
           title: Theme
           type: string
         title:
           title: Title
           type: string
       required:
-        - data_version
-        - form_type
-        - language
-        - survey_id
-        - title
-        - schema_version
-        - description
+      - data_version
+      - form_type
+      - language
+      - survey_id
+      - title
+      - schema_version
+      - description
       title: PostCiMetadataV1PostData
       type: object
     ValidationError:
@@ -168,8 +167,8 @@ components:
         loc:
           items:
             anyOf:
-              - type: string
-              - type: integer
+            - type: string
+            - type: integer
           title: Location
           type: array
         msg:
@@ -179,9 +178,9 @@ components:
           title: Error Type
           type: string
       required:
-        - loc
-        - msg
-        - type
+      - loc
+      - msg
+      - type
       title: ValidationError
       type: object
 info:
@@ -192,320 +191,293 @@ openapi: 3.0.1
 paths:
   /status:
     get:
-      description:
-        GET method that returns `CIR_APPLICATION_VERSION` if the deployment
+      description: GET method that returns `CIR_APPLICATION_VERSION` if the deployment
         is successful
       operationId: http_get_status_status_get
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/DeploymentStatus"
+                $ref: '#/components/schemas/DeploymentStatus'
           description: Deployment done succuessfully
-        "500":
+        '500':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadRequest"
-          description:
-            Internal error. This is triggered when something an unexpected
+                $ref: '#/components/schemas/BadRequest'
+          description: Internal error. This is triggered when something an unexpected
             error occurs on the server side.
       summary: Http Get Status
   /v1/ci_metadata:
     get:
-      description:
-        GET method that returns any metadata objects from Firestore that
+      description: GET method that returns any metadata objects from Firestore that
         match the parameters passed.
       operationId: http_get_ci_metadata_v1_v1_ci_metadata_get
       parameters:
-        - description: The form type of the CI
-          example: "0005"
-          in: query
-          name: form_type
-          required: true
-          schema:
-            description: The form type of the CI
-            title: Form Type
-            type: string
-        - description: The language of the CI
-          example: en
-          in: query
-          name: language
-          required: true
-          schema:
-            description: The language of the CI
-            title: Language
-            type: string
-        - description: The survey ID of the CI
-          example: "123"
-          in: query
-          name: survey_id
-          required: true
-          schema:
-            description: The survey ID of the CI
-            title: Survey Id
-            type: string
+      - description: The form type of the CI
+        example: '0005'
+        in: query
+        name: form_type
+        required: true
+        schema:
+          description: The form type of the CI
+          title: Form Type
+          type: string
+      - description: The language of the CI
+        example: en
+        in: query
+        name: language
+        required: true
+        schema:
+          description: The language of the CI
+          title: Language
+          type: string
+      - description: The survey ID of the CI
+        example: '123'
+        in: query
+        name: survey_id
+        required: true
+        schema:
+          description: The survey ID of the CI
+          title: Survey Id
+          type: string
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CiMetadata"
-          description:
-            Successfully fetched the metadata of a CI. This is illustrated
+                $ref: '#/components/schemas/CiMetadata'
+          description: Successfully fetched the metadata of a CI. This is illustrated
             with the returned response containing the metadata of the CI.
-        "400":
+        '400':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadRequest"
-          description:
-            Bad request. This is triggered by when a bad request body is
+                $ref: '#/components/schemas/BadRequest'
+          description: Bad request. This is triggered by when a bad request body is
             provided. The response will inform the user what required parameter they
             are missing from the request.
-        "404":
+        '404':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadRequest"
-          description:
-            Bad request. This is triggered when there is no CI data that
+                $ref: '#/components/schemas/BadRequest'
+          description: Bad request. This is triggered when there is no CI data that
             matches the request provided.
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
-        "500":
-          description:
-            Internal error. This is triggered when something an unexpected
+        '500':
+          description: Internal error. This is triggered when something an unexpected
             error occurs on the server side.
       summary: Http Get Ci Metadata V1
   /v1/dev/teardown:
     delete:
-      description:
-        DELETE method that deletes the CI schema from the bucket as well
+      description: DELETE method that deletes the CI schema from the bucket as well
         as the CI metadata from Firestore.
       operationId: http_delete_ci_v1_v1_dev_teardown_delete
       parameters:
-        - description: The survey ID of the CI to be deleted.
-          example: "123"
-          in: query
-          name: survey_id
-          required: true
-          schema:
-            description: The survey ID of the CI to be deleted.
-            title: Survey Id
-            type: string
+      - description: The survey ID of the CI to be deleted.
+        example: '123'
+        in: query
+        name: survey_id
+        required: true
+        schema:
+          description: The survey ID of the CI to be deleted.
+          title: Survey Id
+          type: string
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
-          description:
-            Successfully deleted a CI's schema and metadata. This is illustrated
+          description: Successfully deleted a CI's schema and metadata. This is illustrated
             with the response informing the user of the survey_id that has been deleted.
-        "400":
+        '400':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadRequest"
-          description:
-            Bad request. This is triggered by when a bad request body is
+                $ref: '#/components/schemas/BadRequest'
+          description: Bad request. This is triggered by when a bad request body is
             provided. The response will inform the user what required parameter they
             are missing from the request.
-        "404":
+        '404':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadRequest"
-          description:
-            Bad request. This is triggered when there is no CI data that
+                $ref: '#/components/schemas/BadRequest'
+          description: Bad request. This is triggered when there is no CI data that
             matches the request provided.
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
-        "500":
-          description:
-            Internal error. This is triggered when something an unexpected
+        '500':
+          description: Internal error. This is triggered when something an unexpected
             error occurs on the server side.
       summary: Http Delete Ci V1
   /v1/publish_collection_instrument:
     post:
-      description:
-        "POST method that creates a Collection Instrument. This will post
+      description: 'POST method that creates a Collection Instrument. This will post
         the metadata to Firestore and
 
-        the whole request body to a Google Cloud Bucket."
+        the whole request body to a Google Cloud Bucket.'
       operationId: http_post_ci_metadata_v1_v1_publish_collection_instrument_post
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PostCiMetadataV1PostData"
+              $ref: '#/components/schemas/PostCiMetadataV1PostData'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CiMetadata"
-          description:
-            Successfully created a CI. This is illustrated with the returned
+                $ref: '#/components/schemas/CiMetadata'
+          description: Successfully created a CI. This is illustrated with the returned
             response containing the metadata of the CI.
-        "400":
+        '400':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadRequest"
-          description:
-            Bad request. This is triggered by when a bad request body is
+                $ref: '#/components/schemas/BadRequest'
+          description: Bad request. This is triggered by when a bad request body is
             provided. The response will inform the user what required parameter they
             are missing from the request.
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
-        "500":
-          description:
-            Internal error. This is triggered when something an unexpected
+        '500':
+          description: Internal error. This is triggered when something an unexpected
             error occurs on the server side.
       summary: Http Post Ci Metadata V1
   /v1/retrieve_collection_instrument:
     get:
-      description:
-        GET method that fetches a CI schema by it's survey_id, form_type
+      description: GET method that fetches a CI schema by it's survey_id, form_type
         and language.
       operationId: http_get_ci_schema_v1_v1_retrieve_collection_instrument_get
       parameters:
-        - description: The form type of the CI
-          example: "0005"
-          in: query
-          name: form_type
-          required: true
-          schema:
-            description: The form type of the CI
-            title: Form Type
-            type: string
-        - description: The language of the CI
-          example: en
-          in: query
-          name: language
-          required: true
-          schema:
-            description: The language of the CI
-            title: Language
-            type: string
-        - description: The survey ID of the CI
-          example: "123"
-          in: query
-          name: survey_id
-          required: true
-          schema:
-            description: The survey ID of the CI
-            title: Survey Id
-            type: string
+      - description: The form type of the CI
+        example: '0005'
+        in: query
+        name: form_type
+        required: true
+        schema:
+          description: The form type of the CI
+          title: Form Type
+          type: string
+      - description: The language of the CI
+        example: en
+        in: query
+        name: language
+        required: true
+        schema:
+          description: The language of the CI
+          title: Language
+          type: string
+      - description: The survey ID of the CI
+        example: '123'
+        in: query
+        name: survey_id
+        required: true
+        schema:
+          description: The survey ID of the CI
+          title: Survey Id
+          type: string
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CiMetadata"
-          description:
-            Successfully retrieved the CI schema. This is illustrated by
+                $ref: '#/components/schemas/CiMetadata'
+          description: Successfully retrieved the CI schema. This is illustrated by
             returning the CI schema to the user.
-        "400":
+        '400':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadRequest"
-          description:
-            Bad request. This is triggered by when a bad request body is
+                $ref: '#/components/schemas/BadRequest'
+          description: Bad request. This is triggered by when a bad request body is
             provided. The response will inform the user what required parameter they
             are missing from the request.
-        "404":
+        '404':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadRequest"
-          description:
-            Bad request. This is triggered when there is no CI data that
+                $ref: '#/components/schemas/BadRequest'
+          description: Bad request. This is triggered when there is no CI data that
             matches the request provided.
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
-        "500":
-          description:
-            Internal error. This is triggered when something an unexpected
+        '500':
+          description: Internal error. This is triggered when something an unexpected
             error occurs on the server side.
       summary: Http Get Ci Schema V1
   /v1/update_status:
     put:
-      description:
-        PUT method that sets the status of a CI's metadata in Firestore
+      description: PUT method that sets the status of a CI's metadata in Firestore
         to 'PUBLISH'.
       operationId: http_put_status_v1_v1_update_status_put
       parameters:
-        - description: The global unique ID of the CI Metadata to be updated to 'PUBLISH'.
-          example: 428ae4d1-8e7f-4a9d-8bef-05a266bf81e7
-          in: query
-          name: guid
-          required: true
-          schema:
-            description: The global unique ID of the CI Metadata to be updated to 'PUBLISH'.
-            title: Guid
-            type: string
+      - description: The global unique ID of the CI Metadata to be updated to 'PUBLISH'.
+        example: 428ae4d1-8e7f-4a9d-8bef-05a266bf81e7
+        in: query
+        name: guid
+        required: true
+        schema:
+          description: The global unique ID of the CI Metadata to be updated to 'PUBLISH'.
+          title: Guid
+          type: string
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CiMetadata"
-          description:
-            Successfully set CI status to PUBLISHED. This is illustrated
+                $ref: '#/components/schemas/CiMetadata'
+          description: Successfully set CI status to PUBLISHED. This is illustrated
             by the response returning the GUID of the CI metadata that has been updated.
-        "400":
+        '400':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadRequest"
-          description:
-            Bad request. This is triggered by when a bad request body is
+                $ref: '#/components/schemas/BadRequest'
+          description: Bad request. This is triggered by when a bad request body is
             provided. The response will inform the user what required parameter they
             are missing from the request.
-        "404":
+        '404':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadRequest"
-          description:
-            Bad request. This is triggered when there is no CI data that
+                $ref: '#/components/schemas/BadRequest'
+          description: Bad request. This is triggered when there is no CI data that
             matches the request provided.
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
-        "500":
-          description:
-            Internal error. This is triggered when something an unexpected
+        '500':
+          description: Internal error. This is triggered when something an unexpected
             error occurs on the server side.
       summary: Http Put Status V1
   /v2/ci_metadata:
     get:
-      description:
-        "GET method that returns any metadata objects from Firestore that
+      description: 'GET method that returns any metadata objects from Firestore that
         match the parameters passed.
 
         The user has multiple ways of querying the metadata.
@@ -516,78 +488,75 @@ paths:
 
         3. Provide status.
 
-        4. Provide no parameters."
+        4. Provide no parameters.'
       operationId: http_get_ci_metadata_v2_v2_ci_metadata_get
       parameters:
-        - description: form type to get
-          example: "0005"
-          in: query
-          name: form_type
-          required: false
-          schema:
-            description: form type to get
-            title: Form Type
-            type: string
-        - description: language to get
-          example: en
-          in: query
-          name: language
-          required: false
-          schema:
-            description: language to get
-            title: Language
-            type: string
-        - description: status to get
-          example: draft
-          in: query
-          name: status
-          required: false
-          schema:
-            description: status to get
-            title: Status
-            type: string
-        - description: survey id to get
-          example: "123"
-          in: query
-          name: survey_id
-          required: false
-          schema:
-            description: survey id to get
-            title: Survey Id
-            type: string
+      - description: form type to get
+        example: '0005'
+        in: query
+        name: form_type
+        required: false
+        schema:
+          description: form type to get
+          title: Form Type
+          type: string
+      - description: language to get
+        example: en
+        in: query
+        name: language
+        required: false
+        schema:
+          description: language to get
+          title: Language
+          type: string
+      - description: status to get
+        example: draft
+        in: query
+        name: status
+        required: false
+        schema:
+          description: status to get
+          title: Status
+          type: string
+      - description: survey id to get
+        example: '123'
+        in: query
+        name: survey_id
+        required: false
+        schema:
+          description: survey id to get
+          title: Survey Id
+          type: string
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CiMetadata"
+                $ref: '#/components/schemas/CiMetadata'
           description: Successfully Queried a CI
-        "400":
+        '400':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadRequest"
-          description:
-            Bad request. This is triggered by when a bad request body is
+                $ref: '#/components/schemas/BadRequest'
+          description: Bad request. This is triggered by when a bad request body is
             provided. The response will inform the user what required parameter they
             are missing from the request.
-        "404":
+        '404':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadRequest"
-          description:
-            Bad request. This is triggered when there is no CI data that
+                $ref: '#/components/schemas/BadRequest'
+          description: Bad request. This is triggered when there is no CI data that
             matches the request provided.
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
-        "500":
-          description:
-            Internal error. This is triggered when something an unexpected
+        '500':
+          description: Internal error. This is triggered when something an unexpected
             error occurs on the server side.
       summary: Http Get Ci Metadata V2
   /v2/retrieve_collection_instrument:
@@ -595,49 +564,45 @@ paths:
       description: GET method that fetches a CI schema by it's GUID.
       operationId: http_get_ci_schema_v2_v2_retrieve_collection_instrument_get
       parameters:
-        - description: The global unique ID of the CI
-          example: 428ae4d1-8e7f-4a9d-8bef-05a266bf81e7
-          in: query
-          name: guid
-          required: true
-          schema:
-            description: The global unique ID of the CI
-            title: Guid
-            type: string
+      - description: The global unique ID of the CI
+        example: 428ae4d1-8e7f-4a9d-8bef-05a266bf81e7
+        in: query
+        name: guid
+        required: true
+        schema:
+          description: The global unique ID of the CI
+          title: Guid
+          type: string
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CiMetadata"
-          description:
-            Successfully Queried a CI. This is illustrated with the returned
+                $ref: '#/components/schemas/CiMetadata'
+          description: Successfully Queried a CI. This is illustrated with the returned
             response containing the schema of the CI.
-        "400":
+        '400':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadRequest"
-          description:
-            Bad request. This is triggered by when a bad request body is
+                $ref: '#/components/schemas/BadRequest'
+          description: Bad request. This is triggered by when a bad request body is
             provided. The response will inform the user what required parameter they
             are missing from the request.
-        "404":
+        '404':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadRequest"
-          description:
-            Bad request. This is triggered when there is no CI data that
+                $ref: '#/components/schemas/BadRequest'
+          description: Bad request. This is triggered when there is no CI data that
             matches the request provided.
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
-        "500":
-          description:
-            Internal error. This is triggered when something an unexpected
+        '500':
+          description: Internal error. This is triggered when something an unexpected
             error occurs on the server side.
       summary: Http Get Ci Schema V2

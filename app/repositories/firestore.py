@@ -239,7 +239,7 @@ def post_ci_metadata(post_data: PostCiMetadataV1PostData) -> CiMetadata:
         ci_version=new_ci_version,
         data_version=post_data.data_version,
         form_type=post_data.form_type,
-        id=uid,
+        guid=uid,
         language=post_data.language,
         published_at=published_at,
         schema_version=post_data.schema_version,

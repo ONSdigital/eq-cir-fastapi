@@ -50,7 +50,7 @@ def delete_ci_schema(ci_schemas: list[dict]):
     logger.info("attempting to delete schema")
     bucket = get_storage_bucket()
     for schema in ci_schemas:
-        blob_name = schema["id"]
+        blob_name = schema["guid"]
         logger.debug(f"delete_ci_schema: {blob_name}")
         blob = bucket.blob(blob_name)
         blob.delete()
