@@ -45,7 +45,7 @@ steps:
         docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:${SHORT_SHA}"
         docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest"
 
- - name: "gcr.io/cloud-builders/gcloud"
+  - name: "gcr.io/cloud-builders/gcloud"
     id: "Show image vulnerabilities (ons-sds-dev only)"
     entrypoint: bash
     args:
