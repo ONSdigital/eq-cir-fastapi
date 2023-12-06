@@ -47,23 +47,33 @@ steps:
 
   - name: "gcr.io/cloud-builders/gcloud"
     id: "Show image vulnerabilities (ons-sds-dev only)"
-    entrypoint: bash
+    entrypoint: sh
     args:
       - "-c"
       - |
-        gcloud alpha artifacts docker images describe europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest \
-          --show-package-vulnerability --format=json | tee /dev/fd/2 > vulnerability_report.txt
+        if [ ${PROJECT_ID} == "ons-sds-dev" ]
+        then
+          gcloud alpha artifacts docker images describe europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest \
+            --show-package-vulnerability --format=json | tee /dev/fd/2 > vulnerability_report.txt
+        else
+          echo "Step not run for ${PROJECT_ID}"
+        fi
 
   - name: "gcr.io/cloud-builders/gcloud"
     id: "Check for critical vulnerabilities (ons-sds-dev only)"
-    entrypoint: bash
+    entrypoint: sh
     args:
       - "-c"
       - |
-        apt-get -y update && apt-get install -y jq
-        if jq -e '.package_vulnerability_summary.vulnerabilities.CRITICAL[] | select(.kind == "VULNERABILITY" and .vulnerability.severity == "CRITICAL")' vulnerability_report.txt > /dev/null; then
-          echo "Error: Critical vulnerability found with image" >&2
-          exit 1
+        if [ ${PROJECT_ID} == "ons-sds-dev" ]
+        then
+          apt-get -y update && apt-get install -y jq
+          if jq -e '.package_vulnerability_summary.vulnerabilities.CRITICAL[] | select(.kind == "VULNERABILITY" and .vulnerability.severity == "CRITICAL")' vulnerability_report.txt > /dev/null; then
+            echo "Error: Critical vulnerability found with image" >&2
+            exit 1
+          fi
+        else
+          echo "Step not run for ${PROJECT_ID}"
         fi
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
