@@ -47,7 +47,7 @@ steps:
 
   - name: "gcr.io/cloud-builders/gcloud"
     id: "Show image vulnerabilities (ons-sds-dev only)"
-    entrypoint: sh
+    entrypoint: bash
     args:
       - "-c"
       - |
@@ -61,7 +61,7 @@ steps:
 
   - name: "gcr.io/cloud-builders/gcloud"
     id: "Check for critical vulnerabilities (ons-sds-dev only)"
-    entrypoint: sh
+    entrypoint: bash
     args:
       - "-c"
       - |
