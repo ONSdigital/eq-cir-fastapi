@@ -54,13 +54,13 @@ steps:
         gcloud alpha artifacts docker images describe europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest \
           --show-package-vulnerability --format=json | tee /dev/fd/2 > vulnerability_report.txt
 
-  - name: "gcr.io/cloud-builders/gcloud"
+  - name: "alpine"
     id: "Check for critical vulnerabilities (ons-sds-dev only)"
     entrypoint: bash
     args:
       - "-c"
       - |
-        apt-get install jq
+        apk add jq
         if jq -e '.package_vulnerability_summary.vulnerabilities.CRITICAL[] | select(.kind == "VULNERABILITY" and .vulnerability.severity == "CRITICAL")' vulnerability_report.txt > /dev/null; then
           echo "Error: Critical vulnerability found with image" >&2
           exit 1
