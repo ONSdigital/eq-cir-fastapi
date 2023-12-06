@@ -56,7 +56,7 @@ steps:
 
   - name: "alpine"
     id: "Check for critical vulnerabilities (ons-sds-dev only)"
-    entrypoint: bash
+    entrypoint: sh
     args:
       - "-c"
       - |
