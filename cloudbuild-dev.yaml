@@ -53,8 +53,8 @@ steps:
       - |
         if [ ${PROJECT_ID} == "ons-sds-dev" ]
         then
-          gcloud alpha artifacts docker images describe europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest \
-            --show-package-vulnerability --format=json | tee /dev/fd/2 > vulnerability_report.txt
+          gcloud artifacts vulnerabilities list europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest \
+            --format=json > /workspace/vulnerability_report
         else
           echo "Step not run for ${PROJECT_ID}"
         fi
@@ -68,8 +68,8 @@ steps:
         if [ ${PROJECT_ID} == "ons-sds-dev" ]
         then
           apt-get -y update && apt-get install -y jq
-          if jq -e '.package_vulnerability_summary.vulnerabilities.CRITICAL[] | select(.kind == "VULNERABILITY" and .vulnerability.severity == "CRITICAL")' vulnerability_report.txt > /dev/null; then
-            echo "Error: Critical vulnerability found with image" >&2
+          if jq -e '.[] | select( .vulnerability.effectiveSeverity == "CRITICAL")' /workspace/vulnerability_report > /dev/null; then
+            echo "Error: Critical vulnerability found with image"
             exit 1
           fi
         else
