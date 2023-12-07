@@ -52,7 +52,7 @@ steps:
       - "-c"
       - |
         gcloud artifacts vulnerabilities list europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:latest \
-          --format=json > /workspace/vulnerability_report
+          --format=json | tee /dev/fd/2 > /workspace/vulnerability_report
 
   - name: "gcr.io/cloud-builders/gcloud"
     id: "Check for critical vulnerabilities (ons-sds-dev only)"
@@ -60,6 +60,7 @@ steps:
     args:
       - "-c"
       - |
+        echo $(cat /workspace/vulnerability_report)
         apt-get -y update && apt-get install -y jq
         if jq -e '.[] | select( .vulnerability.effectiveSeverity == "CRITICAL")' /workspace/vulnerability_report > /dev/null; then
           echo "Error: Critical vulnerability found with image"
