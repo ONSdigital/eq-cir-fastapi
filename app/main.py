@@ -39,6 +39,9 @@ app.title = "Collection Instrumentation Register"
 app.version = "1.0.0"
 
 
+app.include_router(status_router.router)
+
+
 # Definition of default response messages that can be used across all endpoints
 DEFAULT_RESPONSES = {
     status.HTTP_400_BAD_REQUEST: {
@@ -287,4 +290,3 @@ async def http_put_status_v1(query_params: PutStatusV1Params = Depends()):
         response_content = BadRequest(message=f"No CI metadata found for: {query_params.guid}")
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=asdict(response_content))
 
-app.include_router(status_router.router)
