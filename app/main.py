@@ -25,6 +25,9 @@ from app.models.requests import (
 )
 from app.models.responses import BadRequest, CiMetadata, DeploymentStatus
 
+from app.routers import status_router
+
+
 app = FastAPI()
 logger = logging.getLogger(__name__)
 settings = Settings()
@@ -283,3 +286,5 @@ async def http_put_status_v1(query_params: PutStatusV1Params = Depends()):
     else:
         response_content = BadRequest(message=f"No CI metadata found for: {query_params.guid}")
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=asdict(response_content))
+
+app.include_router(status_router.router)

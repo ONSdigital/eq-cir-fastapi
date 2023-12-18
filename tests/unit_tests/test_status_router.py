@@ -4,7 +4,7 @@ from fastapi import status
 from fastapi.testclient import TestClient
 
 from app.config import Settings
-from app.status_router import app
+from app.routers.status_router import app
 
 client = TestClient(app)
 settings = Settings()

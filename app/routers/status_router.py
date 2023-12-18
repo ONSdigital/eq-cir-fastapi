@@ -1,16 +1,17 @@
 from dataclasses import asdict
 
-from fastapi import FastAPI, status
+from fastapi import APIRouter, FastAPI, status
 from fastapi.responses import JSONResponse
 
 from app.config import Settings
 
 from app.models.responses import BadRequest, DeploymentStatus
 
-app = FastAPI()
+router = APIRouter()
 settings = Settings()
 
-@app.get(
+
+@router.get(
     "/status",
     responses={
         status.HTTP_200_OK: {
