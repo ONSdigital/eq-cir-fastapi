@@ -9,6 +9,7 @@ from app.routers.status_router import router
 client = TestClient(router)
 settings = Settings()
 
+
 class TestDeploymentStatus:
     base_url = "/status"
 

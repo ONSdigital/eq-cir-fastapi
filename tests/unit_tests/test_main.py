@@ -540,5 +540,3 @@ class TestPutStatusV1:
         mocked_update_status_v1.return_value = (mock_ci_metadata.__dict__, "UNKOWN")
         response = client.put(self.base_url)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-
-

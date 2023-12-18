@@ -1,10 +1,9 @@
 from dataclasses import asdict
 
-from fastapi import APIRouter, FastAPI, status
+from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 
 from app.config import Settings
-
 from app.models.responses import BadRequest, DeploymentStatus
 
 router = APIRouter()
