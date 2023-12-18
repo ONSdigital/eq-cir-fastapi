@@ -1,12 +1,11 @@
 from dataclasses import asdict
 
-from fastapi import Depends, FastAPI, Request, status
-from fastapi.exceptions import RequestValidationError
+from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse
 
 from app.config import Settings
 
-from app.models.responses import BadRequest, CiMetadata, DeploymentStatus
+from app.models.responses import BadRequest, DeploymentStatus
 
 app = FastAPI()
 settings = Settings()
@@ -16,7 +15,7 @@ settings = Settings()
     responses={
         status.HTTP_200_OK: {
             "model": DeploymentStatus,
-            "description": ("Deployment done succuessfully"),
+            "description": ("Deployment done successfully"),
         },
         status.HTTP_500_INTERNAL_SERVER_ERROR: {
             "model": BadRequest,
