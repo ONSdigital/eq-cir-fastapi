@@ -4,9 +4,9 @@ from fastapi import status
 from fastapi.testclient import TestClient
 
 from app.config import Settings
-from app.routers.status_router import app
+from app.routers.status_router import router
 
-client = TestClient(app)
+client = TestClient(router)
 settings = Settings()
 
 class TestDeploymentStatus:
@@ -19,7 +19,7 @@ class TestDeploymentStatus:
         response = client.get(self.base_url)
         assert response.status_code == status.HTTP_200_OK
 
-    @patch("app.status_router.settings")
+    @patch("app.routers.status_router.settings")
     def test_endpoint_returns_right_message_if_deployment_successful(self, mocked_settings):
         """
         Endpoint should return the right response if the deployment is successful
@@ -30,7 +30,7 @@ class TestDeploymentStatus:
         expected_message = '{"version":"dev-048783a4","status":"OK"}'
         assert expected_message in response.content.decode("utf-8")
 
-    @patch("app.status_router.settings")
+    @patch("app.routers.status_router.settings")
     def test_endpoint_returns_500_if_deployment_successful(self, mocked_settings):
         """
         Endpoint should return `HTTP_500_INTERNAL_SERVER_ERROR` if the env var is
