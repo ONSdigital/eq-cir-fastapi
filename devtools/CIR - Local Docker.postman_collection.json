@@ -110,10 +110,7 @@
           "protocol": "http",
           "host": ["0", "0", "0", "0"],
           "port": "3030",
-          "path": [
-            "v1",
-            "retrieve_collection_instrument"
-          ],
+          "path": ["v1", "retrieve_collection_instrument"],
           "query": [
             {
               "key": "form_type",
@@ -145,10 +142,7 @@
           "protocol": "http",
           "host": ["0", "0", "0", "0"],
           "port": "3030",
-          "path": [
-            "v2",
-            "retrieve_collection_instrument"
-          ],
+          "path": ["v2", "retrieve_collection_instrument"],
           "query": [
             {
               "key": "guid",
@@ -178,10 +172,7 @@
           "protocol": "http",
           "host": ["0", "0", "0", "0"],
           "port": "3030",
-          "path": [
-            "v1",
-            "publish_collection_instrument"
-          ]
+          "path": ["v1", "publish_collection_instrument"]
         }
       },
       "response": []
@@ -205,10 +196,7 @@
           "protocol": "http",
           "host": ["0", "0", "0", "0"],
           "port": "3030",
-          "path": [
-            "v1",
-            "update_status"
-          ],
+          "path": ["v1", "update_status"],
           "query": [
             {
               "key": "guid",
@@ -227,16 +215,9 @@
         "url": {
           "raw": "http://0.0.0.0:3030/status",
           "protocol": "http",
-          "host": [
-            "0",
-            "0",
-            "0",
-            "0"
-          ],
+          "host": ["0", "0", "0", "0"],
           "port": "3030",
-          "path": [
-            "status"
-          ]
+          "path": ["status"]
         }
       },
       "response": []
