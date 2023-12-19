@@ -14,7 +14,7 @@ class TestDeploymentStatus:
     base_url = "/status"
 
     @patch("app.routers.status_router.settings")
-    def test_endpoint_returns_right_message_if_deployment_successful(self, mocked_settings):
+    def test_endpoint_returns_200_and_right_message_if_deployment_successful(self, mocked_settings):
         """
         Endpoint should return the right response if the deployment is successful
         """
