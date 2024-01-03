@@ -23,7 +23,8 @@ from app.models.requests import (
     PostCiMetadataV1PostData,
     PutStatusV1Params,
 )
-from app.models.responses import BadRequest, CiMetadata, DeploymentStatus
+from app.models.responses import BadRequest, CiMetadata
+from app.routers import status_router
 
 app = FastAPI()
 logger = logging.getLogger(__name__)
@@ -34,6 +35,9 @@ app.description = "Open api schema for CIR"
 app.openapi_version = "3.0.1"
 app.title = "Collection Instrumentation Register"
 app.version = "1.0.0"
+
+
+app.include_router(status_router.router)
 
 
 # Definition of default response messages that can be used across all endpoints
@@ -283,29 +287,3 @@ async def http_put_status_v1(query_params: PutStatusV1Params = Depends()):
     else:
         response_content = BadRequest(message=f"No CI metadata found for: {query_params.guid}")
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=asdict(response_content))
-
-
-@app.get(
-    "/status",
-    responses={
-        status.HTTP_200_OK: {
-            "model": DeploymentStatus,
-            "description": ("Deployment done succuessfully"),
-        },
-        status.HTTP_500_INTERNAL_SERVER_ERROR: {
-            "model": BadRequest,
-            "description": "Internal error. This is triggered when something an unexpected error occurs on the server side.",
-        },
-    },
-)
-async def http_get_status():
-    """
-    GET method that returns `CIR_APPLICATION_VERSION` if the deployment is successful
-    """
-    application_version = settings.CIR_APPLICATION_VERSION
-    if application_version:
-        response_content = DeploymentStatus(version=settings.CIR_APPLICATION_VERSION)
-        return JSONResponse(status_code=status.HTTP_200_OK, content=asdict(response_content))
-    else:
-        response_content = BadRequest(message="Internal server error")
-        return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content=asdict(response_content))
