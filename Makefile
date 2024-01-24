@@ -25,5 +25,5 @@ lint-check:
 unit-tests:
 	export CI_STORAGE_BUCKET_NAME='$(shell gcloud config get project)' && \
 	export PROJECT_NAME='$(shell gcloud config get project)' && \
-	python -m pytest tests/unit_tests -W ignore::DeprecationWarning
+	pytest --cov -vv ./tests/unit_tests/ -W ignore::DeprecationWarning
 
