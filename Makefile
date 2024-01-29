@@ -8,7 +8,7 @@ publish-multiple-ci:
 	python -m scripts.publish_multiple_ci
 
 integration-tests:
-	python -m pytest --cov=app tests/integration_tests -W ignore::DeprecationWarning
+	python -m pytest tests/integration_tests -W ignore::DeprecationWarning
 
 lint:
 	python -m black --line-length 127 .
