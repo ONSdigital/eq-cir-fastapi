@@ -2,7 +2,7 @@ annotated-types==0.5.0
 anyio==3.7.1
 appdirs==1.4.4
 astroid==2.15.6
-black==23.7.0
+black==24.3.0
 CacheControl==0.13.1
 cachetools==5.3.1
 certifi==2023.7.22
