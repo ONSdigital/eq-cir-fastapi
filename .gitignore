@@ -15,3 +15,5 @@ env/*
 *.pyc
 .coverage
 local.env
+.venv
+.gitignore
