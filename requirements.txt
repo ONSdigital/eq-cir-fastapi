@@ -79,7 +79,7 @@ sortedcontainers==2.4.0
 starlette==0.35.0
 toml==0.10.2
 tomlkit==0.12.1
-typing_extensions==4.7.1
+typing_extensions==4.8.0
 urllib3==1.26.18
 uvicorn==0.23.2
 webencodings==0.5.1
