@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     """Application settings"""
-
+    CONF: str = ""
     CI_FIRESTORE_COLLECTION_NAME: str = "ons-collection-instruments"
     CI_STORAGE_BUCKET_NAME: str = "ons-cir-dev"
     DEFAULT_HOSTNAME: str = "only required for integration tests"

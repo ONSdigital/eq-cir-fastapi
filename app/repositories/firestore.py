@@ -3,12 +3,12 @@ import uuid
 
 from google.cloud.firestore import Client, Query
 
-from app.config import Settings, logging
+from app.config import settings, logging
 from app.models.requests import PostCiMetadataV1PostData
 from app.models.responses import CiMetadata, CiStatus
+from app.repositories.firebase_loader import firebase_loader
 
 logger = logging.getLogger(__name__)
-settings = Settings()
 
 
 class FirestoreClient:
@@ -19,8 +19,8 @@ class FirestoreClient:
         Initialises the google firestore client and sets the target collection based on
         `settings.PROJECT_ID`, `settings.FIRESTORE_DB_NAME` and `settings.CI_FIRESTORE_COLLECTION_NAME`
         """
-        self.db = Client(project=settings.PROJECT_ID, database=settings.FIRESTORE_DB_NAME)
-        self.ci_collection = self.db.collection(settings.CI_FIRESTORE_COLLECTION_NAME)
+        self.db = firebase_loader.get_client()
+        self.ci_collection = firebase_loader.get_ci_collection()
 
     def delete_ci_metadata(self, survey_id):
         """

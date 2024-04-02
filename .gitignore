@@ -16,4 +16,6 @@ env/*
 .coverage
 local.env
 .venv
+venv
 .gitignore
+*key.json
