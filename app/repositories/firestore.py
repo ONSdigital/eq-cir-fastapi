@@ -387,6 +387,30 @@ class FirestoreClient:
             ci_metadata_list.append(metadata)
 
         return ci_metadata_list
+    
+    def get_ci_metadata_with_guid(self, guid: str) -> CiMetadata:
+        """
+        Gets CI metadata using guid
+
+        Parameters:
+        guid (str): The guid of the CI metadata being collected.
+        """
+        retrieved_ci_metadata = self.ci_collection.where("guid","==",guid).stream()
+
+        ci_metadata: CiMetadata = None
+        for returned_metadata in retrieved_ci_metadata:
+            ci_metadata: CiMetadata = {**returned_metadata.to_dict()}
+
+        return ci_metadata
+    
+    def update_ci_metadata_status_to_published_with_id(self, guid: str):
+        """
+        Updates CI status to published using guid
+        """
+
+        self.ci_collection.document(guid).update({"status": CiStatus.PUBLISHED.value})
+
+        return
 
 
 # Posts new CI metadata to Firestore

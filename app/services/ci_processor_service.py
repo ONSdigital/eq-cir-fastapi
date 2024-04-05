@@ -6,7 +6,8 @@ from app.models.requests import (
     PostCiMetadataV1PostData, 
     GetCiMetadataV1Params, 
     GetCiMetadataV2Params,
-    GetCiSchemaV1Params
+    GetCiSchemaV1Params,
+    GetCiSchemaV2Params
 )
 from app.models.responses import CiMetadata, CiStatus
 from app.services.document_version_service import DocumentVersionService
@@ -71,6 +72,7 @@ class CiProcessorService:
         self.try_publish_ci_metadata_to_topic(event_message)
 
         return next_version_ci_metadata
+    
     
     def process_raw_ci_in_transaction(
         self,
@@ -148,6 +150,7 @@ class CiProcessorService:
         )
         return next_version_ci_metadata
     
+    
     def calculate_next_ci_version(self, survey_id: str, form_type: str, language: str) -> int:
         """
         Calculates the next schema version for the metadata being built.
@@ -161,6 +164,7 @@ class CiProcessorService:
         return DocumentVersionService.calculate_survey_version(
             current_version_metadata, "ci_version"
         )
+    
     
     def try_publish_ci_metadata_to_topic(
         self, next_version_ci_metadata: CiMetadata
@@ -187,61 +191,64 @@ class CiProcessorService:
             logger.error("Error publishing CI metadata to topic.")
             raise #exceptions.GlobalException
 
-    # For Get CI Metadata V1 and V2 endpoints
-    def get_ci_metadata_collection_without_status(self, query_params: GetCiMetadataV1Params) -> list[CiMetadata]:
+
+    def get_ci_metadata_collection_without_status(self, survey_id: str, form_type: str, language: str) -> list[CiMetadata]:
         """
         Get a list of CI metadata without status
 
         Parameters:
-        query_params (GetCiMetadataV1Params): incoming CI metadata query parameters
+        survey_id (str): the survey id of the schemas.
+        form_type (str): the form type of the schemas.
+        language (str): the language of the schemas.
         
         Returns:
         List of CiMetadata: the list CI metadata of the requested CI
         """
         logger.info("Retrieving CI metadata without status...")
-        logger.debug(f"query parameters: {query_params.__dict__}")
 
-        ci_metadata = self.ci_firebase_repository.get_ci_metadata_collection_without_status(query_params.survey_id, query_params.form_type, query_params.language)
+        ci_metadata = self.ci_firebase_repository.get_ci_metadata_collection_without_status(
+            survey_id, form_type, language)
 
         return ci_metadata
     
-    # For Get CI Metadata endpoint
-    def get_ci_metadata_collection_with_status(self, query_params: GetCiMetadataV2Params) -> list[CiMetadata]:
+    
+    def get_ci_metadata_collection_with_status(self, survey_id: str, form_type: str, language: str, status: str) -> list[CiMetadata]:
         """
         Get a list of CI metadata with status
 
         Parameters:
-        query_params (GetCiMetadataV2Params): incoming CI metadata query parameters
+        survey_id (str): the survey id of the schemas.
+        form_type (str): the form type of the schemas.
+        language (str): the language of the schemas.
+        status (str): the status of the schemas.
         
         Returns:
         List of CiMetadata: the list CI metadata of the requested CI
         """
-        logger.info("Retrieving CI metadata V2 with status...")
-        logger.debug(f"query parameters: {query_params.__dict__}")
+        logger.info("Retrieving CI metadata with status...")
 
-        ci_metadata = self.ci_firebase_repository.get_ci_metadata_collection_with_status(query_params.survey_id, query_params.form_type, query_params.language, query_params.status)
+        ci_metadata = self.ci_firebase_repository.get_ci_metadata_collection_with_status(survey_id, form_type, language, status)
 
         return ci_metadata
     
-    # For Get CI Metadata endpoint
+    
     def get_ci_metadata_collection_only_with_status(self, status: str) -> list[CiMetadata]:
         """
         Get a list of CI metadata only with status
 
         Parameters:
-        query_params (GetCiMetadataV2Params): incoming CI metadata query parameters
-        
+        status (str): the status of the schemas.
+
         Returns:
         List of CiMetadata: the list CI metadata of the requested CI
         """
         logger.info("Retrieving CI metadata only with status...")
-        logger.debug(f"query parameters: status: {status}")
 
         ci_metadata = self.ci_firebase_repository.get_ci_metadata_collection_only_with_status(status)
 
         return ci_metadata
     
-    # For Get CI Metadata endpoint
+    
     def get_all_ci_metadata_collection(self) -> list[CiMetadata]:
         """
         Get a list of all CI metadata
@@ -256,24 +263,52 @@ class CiProcessorService:
         return ci_metadata
     
     
-    def get_latest_ci_schema_id(self, query_params: GetCiSchemaV1Params) -> None|str:
+    def get_latest_ci_metadata(self, survey_id: str, form_type: str, language: str) -> CiMetadata:
         """
-        Get the latest CI schema id
+        Get the latest CI metadata
 
         Parameters:
-        query_params (GetCiSchemaV1Params): incoming CI schema query parameters
+        survey_id (str): the survey id of the schemas.
+        form_type (str): the form type of the schemas.
+        language (str): the language of the schemas.
 
         Returns:
         str: the latest CI schema id
         """
-        logger.info("Stepping into get_ci_schema_v1")
-        logger.debug(f"get_ci_schema_v1 data received: {query_params.__dict__}")
+        logger.info("Getting latest CI metadata...")
 
-        ci_latest_ci_metadata = self.ci_firebase_repository.get_latest_ci_metadata(
-            query_params.survey_id, query_params.form_type, query_params.language
+        latest_ci_metadata = self.ci_firebase_repository.get_latest_ci_metadata(
+            survey_id, form_type, language
         )
 
-        if not ci_latest_ci_metadata:
-            return None
+        return latest_ci_metadata
+    
+    
+    def get_ci_metadata_with_id(self, guid: str) -> CiMetadata:
+        """
+        Get CI metadata with id
 
-        return ci_latest_ci_metadata["guid"]
+        Parameters:
+        query_params (GetCiSchemaV2Params): incoming CI metadata query parameters
+
+        Returns:
+        CiMetadata: the CI metadata of the requested CI
+        """
+        logger.info("Getting CI metadata with id...")
+
+        ci_metadata = self.ci_firebase_repository.get_ci_metadata_with_guid(guid)
+        
+        return ci_metadata
+    
+    
+    def update_ci_status_with_id(self, guid: str) -> CiMetadata:
+        """
+        HANDLER for UPDATE STATUS OF Collection Instrument
+        
+        Parameters:
+        """
+        logger.info("Updating CI status with id...")
+
+        updated_ci_metadata = self.ci_firebase_repository.update_ci_metadata_status_to_published_with_id(guid)
+
+        return updated_ci_metadata
