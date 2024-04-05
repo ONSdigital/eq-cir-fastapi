@@ -1,5 +1,11 @@
+# Global Variables
 GOOGLE_APPLICATION_CREDENTIALS=sandbox-key.json
 PROJECT_ID = $(shell gcloud config get project)
+OAUTH_BRAND_NAME = $(shell gcloud iap oauth-brands list --format='value(name)' --limit=1 --project=$(PROJECT_ID))
+OAUTH_CLIENT_NAME = $(shell gcloud iap oauth-clients list $(OAUTH_BRAND_NAME) --format='value(name)' \
+        --limit=1)
+OAUTH_CLIENT_ID = $(shell echo $(OAUTH_CLIENT_NAME)| cut -d'/' -f 6)
+SANDBOX_IP_ADDRESS = $(shell gcloud compute addresses list --global  --filter=name:$(PROJECT_ID)-cir-static-lb-ip --format='value(address)' --limit=1 --project=$(PROJECT_ID))
 
 audit:
 	python -m pip_audit
@@ -15,9 +21,9 @@ integration-tests-sandbox:
 	export FIRESTORE_DB_NAME='$(PROJECT_ID)-cir' && \
 	export CI_STORAGE_BUCKET_NAME='$(PROJECT_ID)-cir-europe-west2-schema' && \
 	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
-	export DEFAULT_HOSTNAME='34.111.178.226.nip.io' && \
+	export DEFAULT_HOSTNAME=${SANDBOX_IP_ADDRESS}.nip.io && \
 	export URL_SCHEME='https' && \
-	export OAUTH_CLIENT_ID='949511058357-tnn536t91kd7omqihao2hpbs3h44c3sm.apps.googleusercontent.com' && \
+	export OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID} && \
 	export PYTHONPATH=app && \
 	python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
 

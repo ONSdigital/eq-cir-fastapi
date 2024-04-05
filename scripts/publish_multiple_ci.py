@@ -4,7 +4,7 @@ import os
 
 from tests.integration_tests.utils import make_iap_request
 
-path_to_json = "scripts/CIR_test_schema"
+path_to_json = "Enter your Folder location here"
 post_url = "/v1/publish_collection_instrument"
 timestamp = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 mandatory_keys = ["data_version", "form_type", "language", "survey_id", "title", "schema_version", "description"]
