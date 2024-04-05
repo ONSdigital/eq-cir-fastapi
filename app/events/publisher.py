@@ -13,20 +13,8 @@ class Publisher:
     """Methods to publish pub/sub messages using the `pubsub_v1.PublisherClient()`"""
 
     def __init__(self) -> None:
-        self.client = PublisherClient()
-        self.topic_path = self.client.topic_path(settings.PROJECT_ID, settings.TOPIC_ID)
-
-    def create_topic(self) -> None:
-        """Create a new Pub/Sub topic."""
-
-        logger.debug("create_topic")
-
-        try:
-            if not self.topic_exists():
-                topic = self.client.create_topic(request={"name": self.topic_path})
-                logger.debug(f"Created topic: {topic.name}")
-        except Exception as e:
-            logger.debug(e)
+        self.publisher = None if settings.CONF == "unit" else PublisherClient()
+        self.topic_path = self.publisher.topic_path(settings.PROJECT_ID, settings.TOPIC_ID)
 
     def publish_message(self, event_msg: PostCIEvent) -> None:
         """Publishes an event message to a Pub/Sub topic."""
@@ -44,9 +32,21 @@ class Publisher:
 
         # Publishes a message
         try:
-            future = self.client.publish(self.topic_path, data=data)
+            future = self.publisher.publish(self.topic_path, data=data)
             result = future.result()  # Verify the publish succeeded
             logger.debug(f"Message published. {result}")
+        except Exception as e:
+            logger.debug(e)
+
+    def create_topic(self) -> None:
+        """Create a new Pub/Sub topic."""
+
+        logger.debug("create_topic")
+
+        try:
+            if not self.topic_exists():
+                topic = self.publisher.create_topic(request={"name": self.topic_path})
+                logger.debug(f"Created topic: {topic.name}")
         except Exception as e:
             logger.debug(e)
 
@@ -56,8 +56,10 @@ class Publisher:
         """
 
         try:
-            self.client.get_topic(request={"topic": self.topic_path})
+            self.publisher.get_topic(request={"topic": self.topic_path})
             return True
         except Exception as e:
             logger.debug(e)
             return False
+        
+publisher = Publisher()

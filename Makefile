@@ -37,8 +37,8 @@ lint-check:
 	python -m isort . --check-only --profile black --skip env
 
 unit-tests:
-	export CI_STORAGE_BUCKET_NAME='$(shell gcloud config get project)' && \
-	export PROJECT_NAME='$(shell gcloud config get project)' && \
+	export CI_STORAGE_BUCKET_NAME='$(PROJECT_ID)-cir-europe-west2-schema' && \
+	export PROJECT_ID='$(PROJECT_ID)' && \
 	python -m pytest --cov=app --cov-fail-under=90 --cov-report term-missing --cov-config=.coveragerc_unit -vv ./tests/unit_tests/ -W ignore::DeprecationWarning
 
 start-cloud-dev:

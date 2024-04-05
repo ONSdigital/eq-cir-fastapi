@@ -1,0 +1,62 @@
+import json
+
+from app.config import logging
+from app.repositories.buckets.bucket_loader import bucket_loader
+
+logger = logging.getLogger(__name__)
+
+
+class CiSchemaBucketRepository():
+    def __init__(self):
+        self.bucket = bucket_loader.get_ci_schema_bucket()
+
+    def store_ci_schema(self, blob_name: str, schema: dict) -> None:
+        """
+        Stores ci schema in google bucket as json.
+
+        Parameters:
+        blob_name (str): filename of uploaded json schema.
+        schema (Schema): ci schema being stored.
+        """
+        logger.info("attempting to store schema")
+        logger.debug(f"{blob_name} {schema}")
+
+        blob = self.bucket.blob(blob_name)
+        blob.upload_from_string(
+            json.dumps(schema, indent=2),
+            content_type="application/json",
+        )
+        logger.info(f"successfully stored: {blob_name}")
+
+
+    def retrieve_ci_schema(self, blob_name: str) -> dict:
+        """
+        Get the CI schema from the ci schema bucket using the filename provided.
+
+        Parameters:
+        blob_name (str): filename of the retreived json schema
+        """
+        logger.info("attempting to get schema")
+        logger.debug(f"get_schema blob_name: {blob_name}")
+
+        blob = self.bucket.blob(blob_name)
+        if not blob.exists():
+            return None
+        data = blob.download_as_string()
+        logger.debug(f"get_schema data: {data}")
+        return json.loads(data)
+    
+    def delete_ci_schema(self, ci_schemas: list[dict]) -> None:
+        """"
+        Deletes the CI schema from the ci schema bucket using the filename provided.
+
+        Parameters:
+        ci_schemas (list[dict]): list of schema dictionaries"""
+        logger.info("attempting to delete schema")
+
+        for schema in ci_schemas:
+            blob_name = schema["guid"]
+            logger.debug(f"delete_ci_schema: {blob_name}")
+            blob = self.bucket.blob(blob_name)
+            blob.delete()
+            logger.info(f"successfully deleted: {blob_name}")

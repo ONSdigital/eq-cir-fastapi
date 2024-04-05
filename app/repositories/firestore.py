@@ -7,6 +7,10 @@ from app.config import settings, logging
 from app.models.requests import PostCiMetadataV1PostData
 from app.models.responses import CiMetadata, CiStatus
 from app.repositories.firebase_loader import firebase_loader
+from firebase_admin import firestore
+from google.cloud.firestore import Transaction
+from app.repositories.cloud_storage import store_ci_schema
+from app.repositories.buckets.ci_schema_bucket_repository import CiSchemaBucketRepository
 
 logger = logging.getLogger(__name__)
 
@@ -19,8 +23,9 @@ class FirestoreClient:
         Initialises the google firestore client and sets the target collection based on
         `settings.PROJECT_ID`, `settings.FIRESTORE_DB_NAME` and `settings.CI_FIRESTORE_COLLECTION_NAME`
         """
-        self.db = firebase_loader.get_client()
+        self.client = firebase_loader.get_client()
         self.ci_collection = firebase_loader.get_ci_collection()
+        self.ci_bucket_repository = CiSchemaBucketRepository()
 
     def delete_ci_metadata(self, survey_id):
         """
@@ -216,6 +221,172 @@ class FirestoreClient:
 
         logger.info("stepping out of update_ci_by_guid")
         return
+    
+    def get_latest_ci_metadata(self, survey_id, form_type, language):
+        """
+        Get metadata of latest CI version.
+
+        Parameters:
+        survey_id (str): the survey id of the CI metadata.
+        form_type (str): the form type of the CI metadata.
+        language (str): the language of the CI metadata.
+        """
+        latest_ci_metadata = (
+            self.ci_collection.where("survey_id", "==", survey_id)
+            .where("form_type", "==", form_type)
+            .where("language", "==", language)
+            .order_by("ci_version", direction=Query.DESCENDING)
+            .limit(1)
+            .stream()
+        )
+        
+        ci_metadata: CiMetadata = None
+        for returned_metadata in latest_ci_metadata:
+            ci_metadata: CiMetadata = {**returned_metadata.to_dict()}
+
+        return ci_metadata
+    
+    def perform_new_ci_transaction(
+        self,
+        ci_id: str,
+        next_version_ci_metadata: CiMetadata,
+        ci: dict,
+        stored_ci_filename: str,
+    ) -> None:
+        """
+        A transactional function that wrap CI creation and CI storage processes
+
+        Parameters:
+        ci_id (str): The unique id of the new CI.
+        next_version_ci_metadata (CiMetadata): The CI metadata being added to firestore.
+        ci (dict): The CI being stored.
+        stored_ci_filename (str): Filename of uploaded json CI.
+        """
+
+        # A stipulation of the @firestore.transactional decorator is the first parameter HAS
+        # to be 'transaction', but since we're using classes the first parameter is always
+        # 'self'. Encapsulating the transaction within this function circumvents the issue.
+
+        @firestore.transactional
+        def post_ci_transaction_run(transaction: Transaction):
+            self.create_ci_in_transaction(
+                transaction, ci_id, next_version_ci_metadata
+            )
+            self.ci_bucket_repository.store_ci_schema(
+                stored_ci_filename, ci
+            )
+
+        post_ci_transaction_run(self.client.transaction())
+
+    def create_ci_in_transaction(
+        self,
+        transaction: Transaction,
+        ci_id: str,
+        ci_metadata: CiMetadata,
+    ) -> None:
+        """
+        Creates a new CI metadata entry in firestore.
+
+        Parameters:
+        ci_id (str): The unique id of the new CI.
+        ci_metadata (CiMetadata): The CI metadata being added to firestore.
+        """
+        # Add new version using `model_dump` method to generate dictionary of metadata. This
+        # removes `sds_schema` key if not filled
+
+        transaction.set(
+            self.ci_collection.document(ci_id),
+            ci_metadata.model_dump(),
+            merge=True,
+        )
+
+    def get_ci_metadata_collection_without_status(self, survey_id: str, form_type: str, language: str
+                                   ) -> list[CiMetadata]:
+        """
+        Gets the collection of CI metadata with a specific survey_id, form_type, language, and status.
+
+        Parameters:
+        survey_id (str): The survey id of the CI metadata being collected.
+        form_type (str): The form type of the CI metadata being collected.
+        language (str): The language of the CI metadata being collected.
+        """
+        returned_ci_metadata = (
+            self.ci_collection.where("survey_id", "==", survey_id)
+            .where("form_type", "==", form_type)
+            .where("language", "==", language)
+            .order_by("ci_version", direction=Query.DESCENDING)
+            .stream()
+        )
+
+        ci_metadata_list: list[CiMetadata] = []
+        for ci_metadata in returned_ci_metadata:
+            metadata: CiMetadata = {**(ci_metadata.to_dict())}
+            ci_metadata_list.append(metadata)
+
+        return ci_metadata_list
+
+    def get_ci_metadata_collection_with_status(self, survey_id: str, form_type: str, language: str, status: str
+                                   ) -> list[CiMetadata]:   
+        """
+        Gets the collection of CI metadata with a specific survey_id, form_type, language, and status.
+
+        Parameters:
+        survey_id (str): The survey id of the CI metadata being collected.
+        form_type (str): The form type of the CI metadata being collected.
+        language (str): The language of the CI metadata being collected.
+        status (str): The status of the CI metadata being collected.
+        """
+        returned_ci_metadata = (
+            self.ci_collection.where("survey_id", "==", survey_id)
+                .where("form_type", "==", form_type)
+                .where("language", "==", language)
+                .where("status", "==", status.upper())
+                .order_by("ci_version", direction=Query.DESCENDING)
+                .stream()
+        )
+
+        ci_metadata_list: list[CiMetadata] = []
+        for ci_metadata in returned_ci_metadata:
+            metadata: CiMetadata = {**(ci_metadata.to_dict())}
+            ci_metadata_list.append(metadata)
+
+        return ci_metadata_list
+    
+    def get_ci_metadata_collection_only_with_status(self, status: str) -> list[CiMetadata]:
+        """
+        Gets the collection of CI metadata with a specific status.
+
+        Parameters:
+        status (str): The status of the CI metadata being collected.
+        """
+        returned_ci_metadata = (
+            self.ci_collection.where("status", "==", status.upper())
+                .order_by("ci_version", direction=Query.DESCENDING)
+                .stream()
+        )
+
+        ci_metadata_list: list[CiMetadata] = []
+        for ci_metadata in returned_ci_metadata:
+            metadata: CiMetadata = {**(ci_metadata.to_dict())}
+            ci_metadata_list.append(metadata)
+
+        return ci_metadata_list
+    
+    def get_all_ci_metadata_collection(self) -> list[CiMetadata]:
+        """
+        Gets the collection of all CI metadata.
+        """
+        returned_ci_metadata = self.ci_collection.order_by(
+            "ci_version",
+            direction=Query.DESCENDING,
+        ).stream()
+
+        ci_metadata_list: list[CiMetadata] = []
+        for ci_metadata in returned_ci_metadata:
+            metadata: CiMetadata = {**(ci_metadata.to_dict())}
+            ci_metadata_list.append(metadata)
+
+        return ci_metadata_list
 
 
 # Posts new CI metadata to Firestore
