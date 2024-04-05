@@ -242,7 +242,7 @@ class FirestoreClient:
         
         ci_metadata: CiMetadata = None
         for returned_metadata in latest_ci_metadata:
-            ci_metadata: CiMetadata = {**returned_metadata.to_dict()}
+            ci_metadata = CiMetadata(**returned_metadata.to_dict())
 
         return ci_metadata
     
@@ -320,7 +320,7 @@ class FirestoreClient:
 
         ci_metadata_list: list[CiMetadata] = []
         for ci_metadata in returned_ci_metadata:
-            metadata: CiMetadata = {**(ci_metadata.to_dict())}
+            metadata = CiMetadata(**ci_metadata.to_dict())
             ci_metadata_list.append(metadata)
 
         return ci_metadata_list
@@ -347,7 +347,7 @@ class FirestoreClient:
 
         ci_metadata_list: list[CiMetadata] = []
         for ci_metadata in returned_ci_metadata:
-            metadata: CiMetadata = {**(ci_metadata.to_dict())}
+            metadata = CiMetadata(**ci_metadata.to_dict())
             ci_metadata_list.append(metadata)
 
         return ci_metadata_list
@@ -367,7 +367,7 @@ class FirestoreClient:
 
         ci_metadata_list: list[CiMetadata] = []
         for ci_metadata in returned_ci_metadata:
-            metadata: CiMetadata = {**(ci_metadata.to_dict())}
+            metadata = CiMetadata(**ci_metadata.to_dict())
             ci_metadata_list.append(metadata)
 
         return ci_metadata_list
@@ -383,7 +383,7 @@ class FirestoreClient:
 
         ci_metadata_list: list[CiMetadata] = []
         for ci_metadata in returned_ci_metadata:
-            metadata: CiMetadata = {**(ci_metadata.to_dict())}
+            metadata = CiMetadata(**ci_metadata.to_dict())
             ci_metadata_list.append(metadata)
 
         return ci_metadata_list
@@ -399,18 +399,73 @@ class FirestoreClient:
 
         ci_metadata: CiMetadata = None
         for returned_metadata in retrieved_ci_metadata:
-            ci_metadata: CiMetadata = {**returned_metadata.to_dict()}
+            ci_metadata = CiMetadata(**returned_metadata.to_dict())
 
         return ci_metadata
     
-    def update_ci_metadata_status_to_published_with_id(self, guid: str):
+    def get_ci_metadata_collection_with_survey_id(self, survey_id: str) -> list[CiMetadata]:
+        """
+        Gets the collection of CI metadata using survey_id
+
+        Parameters:
+        survey_id (str): The survey id of the CI metadata being collected.
+        """
+        returned_ci_metadata = self.ci_collection.where("survey_id","==",survey_id).stream()
+
+        ci_metadata_list: list[CiMetadata] = []
+        for ci_metadata in returned_ci_metadata:
+            metadata = CiMetadata(**ci_metadata.to_dict())
+            ci_metadata_list.append(metadata)
+
+        print(type(ci_metadata_list[0]))
+
+        return ci_metadata_list
+    
+    def update_ci_metadata_status_to_published_with_id(self, guid: str) -> None:
         """
         Updates CI status to published using guid
         """
-
         self.ci_collection.document(guid).update({"status": CiStatus.PUBLISHED.value})
 
-        return
+    
+    def perform_delete_ci_transaction(self, ci_metadata_collection: list[CiMetadata]) -> None:
+        """
+        A transactional function that wrap CI deletion and schema deletion processes
+
+        Parameters:
+        ci_metadata_collection (list[CiMetadata]): The CI metadata collection being deleted.
+        """
+        # A stipulation of the @firestore.transactional decorator is the first parameter HAS
+        # to be 'transaction', but since we're using classes the first parameter is always
+        # 'self'. Encapsulating the transaction within this function circumvents the issue.
+
+        @firestore.transactional
+        def delete_ci_transaction_run(transaction: Transaction):
+            self.delete_ci_metadata_collection_in_transaction(transaction, ci_metadata_collection)
+            for ci_metadata in ci_metadata_collection:
+                self.ci_bucket_repository.delete_ci_schema(ci_metadata)
+
+        delete_ci_transaction_run(self.client.transaction()) 
+
+    
+    def delete_ci_metadata_collection_in_transaction(
+            self, 
+            transaction: Transaction,
+            ci_metadata_collection: list[CiMetadata]):
+        """
+        For internal use only - deletes documents from remote firestore database
+        
+        Parameters:
+        transaction (Transaction): The transaction object.
+        ci_metadata_collection (list[CiMetadata]): The CI metadata collection being deleted.
+        """
+        for doc in ci_metadata_collection:
+            key = doc.guid
+
+            transaction.delete(
+                self.ci_collection.document(key)
+            )
+        
 
 
 # Posts new CI metadata to Firestore

@@ -11,6 +11,7 @@ from app.models.requests import (
 )
 from app.models.responses import CiMetadata, CiStatus
 from app.services.document_version_service import DocumentVersionService
+from app.services.ci_schema_location_service import CiSchemaLocationService
 from app.events.publisher import publisher
 from app.models.events import PostCIEvent
 from app.repositories.firestore import FirestoreClient
@@ -47,6 +48,8 @@ class CiProcessorService:
             post_data.title,
             post_data.description,
         )
+
+        stored_ci_filename = CiSchemaLocationService.get_ci_schema_location(next_version_ci_metadata)
 
         self.process_raw_ci_in_transaction(
             ci_id, next_version_ci_metadata, ci, stored_ci_filename
@@ -206,10 +209,10 @@ class CiProcessorService:
         """
         logger.info("Retrieving CI metadata without status...")
 
-        ci_metadata = self.ci_firebase_repository.get_ci_metadata_collection_without_status(
+        ci_metadata_collection = self.ci_firebase_repository.get_ci_metadata_collection_without_status(
             survey_id, form_type, language)
 
-        return ci_metadata
+        return ci_metadata_collection
     
     
     def get_ci_metadata_collection_with_status(self, survey_id: str, form_type: str, language: str, status: str) -> list[CiMetadata]:
@@ -227,9 +230,9 @@ class CiProcessorService:
         """
         logger.info("Retrieving CI metadata with status...")
 
-        ci_metadata = self.ci_firebase_repository.get_ci_metadata_collection_with_status(survey_id, form_type, language, status)
+        ci_metadata_collection = self.ci_firebase_repository.get_ci_metadata_collection_with_status(survey_id, form_type, language, status)
 
-        return ci_metadata
+        return ci_metadata_collection
     
     
     def get_ci_metadata_collection_only_with_status(self, status: str) -> list[CiMetadata]:
@@ -244,9 +247,9 @@ class CiProcessorService:
         """
         logger.info("Retrieving CI metadata only with status...")
 
-        ci_metadata = self.ci_firebase_repository.get_ci_metadata_collection_only_with_status(status)
+        ci_metadata_collection = self.ci_firebase_repository.get_ci_metadata_collection_only_with_status(status)
 
-        return ci_metadata
+        return ci_metadata_collection
     
     
     def get_all_ci_metadata_collection(self) -> list[CiMetadata]:
@@ -258,9 +261,9 @@ class CiProcessorService:
         """
         logger.info("Retrieving all CI metadata...")
 
-        ci_metadata = self.ci_firebase_repository.get_all_ci_metadata_collection()
+        ci_metadata_collection = self.ci_firebase_repository.get_all_ci_metadata_collection()
 
-        return ci_metadata
+        return ci_metadata_collection
     
     
     def get_latest_ci_metadata(self, survey_id: str, form_type: str, language: str) -> CiMetadata:
@@ -286,7 +289,7 @@ class CiProcessorService:
     
     def get_ci_metadata_with_id(self, guid: str) -> CiMetadata:
         """
-        Get CI metadata with id
+        Get a CI metadata with id
 
         Parameters:
         query_params (GetCiSchemaV2Params): incoming CI metadata query parameters
@@ -301,7 +304,7 @@ class CiProcessorService:
         return ci_metadata
     
     
-    def update_ci_status_with_id(self, guid: str) -> CiMetadata:
+    def update_ci_status_with_id(self, guid: str) -> None:
         """
         HANDLER for UPDATE STATUS OF Collection Instrument
         
@@ -309,6 +312,42 @@ class CiProcessorService:
         """
         logger.info("Updating CI status with id...")
 
-        updated_ci_metadata = self.ci_firebase_repository.update_ci_metadata_status_to_published_with_id(guid)
+        self.ci_firebase_repository.update_ci_metadata_status_to_published_with_id(guid)
 
-        return updated_ci_metadata
+    
+    def get_ci_metadata_colleciton_with_survey_id(self, survey_id:str) -> list[CiMetadata]:
+        """
+        Get CI metadata collection with survey_id
+
+        Parameters:
+        survey_id (str): the survey id of the schemas.
+
+        Returns:
+        List of CiMetadata: the list CI metadata of the requested CI
+        """
+        logger.info("Deleting CI metadata and schema by survey_id...")
+
+        ci_metadata_collection = self.ci_firebase_repository.get_ci_metadata_collection_with_survey_id(survey_id)
+
+        return ci_metadata_collection
+    
+    def delete_ci_in_transaction(self, ci_metadata_collection: list[CiMetadata]) -> None:
+        """
+        Delete CI by calling a transactional function that wrap the procedures
+
+        Parameters:
+        ci_metadata_collection (list[CiMetadata]): The CI metadata being deleted.
+        """
+        try:
+            logger.info("Beginning delete CI transaction...")
+            self.ci_firebase_repository.perform_delete_ci_transaction(
+                ci_metadata_collection
+            )
+
+            logger.info("Delete CI transaction committed successfully.")
+        
+        except Exception as e:
+            logger.error(f"Performing delete CI transaction: exception raised: {e}")
+            logger.error("Rolling back CI transaction")
+            raise  # exceptions.GlobalException
+

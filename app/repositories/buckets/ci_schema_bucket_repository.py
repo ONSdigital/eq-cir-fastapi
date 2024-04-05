@@ -1,6 +1,8 @@
 import json
 
 from app.config import logging
+from app.models.responses import CiMetadata
+from app.services.ci_schema_location_service import CiSchemaLocationService
 from app.repositories.buckets.bucket_loader import bucket_loader
 
 logger = logging.getLogger(__name__)
@@ -46,7 +48,7 @@ class CiSchemaBucketRepository():
         logger.debug(f"get_schema data: {data}")
         return json.loads(data)
     
-    def delete_ci_schema(self, ci_schemas: list[dict]) -> None:
+    def delete_ci_schema(self, ci_metadata: CiMetadata) -> None:
         """"
         Deletes the CI schema from the ci schema bucket using the filename provided.
 
@@ -54,9 +56,9 @@ class CiSchemaBucketRepository():
         ci_schemas (list[dict]): list of schema dictionaries"""
         logger.info("attempting to delete schema")
 
-        for schema in ci_schemas:
-            blob_name = schema["guid"]
-            logger.debug(f"delete_ci_schema: {blob_name}")
-            blob = self.bucket.blob(blob_name)
-            blob.delete()
-            logger.info(f"successfully deleted: {blob_name}")
+        stored_ci_filename = CiSchemaLocationService.get_ci_schema_location(ci_metadata)
+
+        logger.debug(f"delete_ci_schema: {stored_ci_filename}")
+        blob = self.bucket.blob(stored_ci_filename)
+        blob.delete()
+        logger.info(f"successfully deleted: {stored_ci_filename}")
