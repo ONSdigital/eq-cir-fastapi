@@ -5,15 +5,6 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from app.config import Settings, logging
-from app.handlers import (
-    delete_ci_v1,
-    get_ci_metadata_v1,
-    get_ci_metadata_v2,
-    get_ci_schema_v1,
-    get_ci_schema_v2,
-    post_ci_metadata_v1,
-    put_status_v1,
-)
 from app.models.requests import (
     DeleteCiV1Params,
     GetCiMetadataV1Params,

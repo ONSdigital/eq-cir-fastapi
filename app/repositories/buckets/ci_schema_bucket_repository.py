@@ -48,17 +48,16 @@ class CiSchemaBucketRepository():
         logger.debug(f"get_schema data: {data}")
         return json.loads(data)
     
-    def delete_ci_schema(self, ci_metadata: CiMetadata) -> None:
+    def delete_ci_schema(self, blob_name: str) -> None:
         """"
         Deletes the CI schema from the ci schema bucket using the filename provided.
 
         Parameters:
-        ci_schemas (list[dict]): list of schema dictionaries"""
+        blob_name (str): filename of the deleted json schema
+        """
         logger.info("attempting to delete schema")
 
-        stored_ci_filename = CiSchemaLocationService.get_ci_schema_location(ci_metadata)
-
-        logger.debug(f"delete_ci_schema: {stored_ci_filename}")
-        blob = self.bucket.blob(stored_ci_filename)
+        logger.debug(f"delete_ci_schema: {blob_name}")
+        blob = self.bucket.blob(blob_name)
         blob.delete()
-        logger.info(f"successfully deleted: {stored_ci_filename}")
+        logger.info(f"successfully deleted: {blob_name}")

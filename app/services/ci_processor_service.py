@@ -2,25 +2,20 @@ import uuid
 from datetime import datetime
 
 from app.config import settings, logging
-from app.models.requests import (
-    PostCiMetadataV1PostData, 
-    GetCiMetadataV1Params, 
-    GetCiMetadataV2Params,
-    GetCiSchemaV1Params,
-    GetCiSchemaV2Params
-)
+from app.models.requests import PostCiMetadataV1PostData
+
 from app.models.responses import CiMetadata, CiStatus
 from app.services.document_version_service import DocumentVersionService
 from app.services.ci_schema_location_service import CiSchemaLocationService
 from app.events.publisher import publisher
 from app.models.events import PostCIEvent
-from app.repositories.firestore import FirestoreClient
+from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 
 logger = logging.getLogger(__name__)
 
 class CiProcessorService:
     def __init__(self) -> None:
-        self.ci_firebase_repository = FirestoreClient()
+        self.ci_firebase_repository = CiFirebaseRepository()
 
     # Posts new CI metadata to Firestore
     def process_raw_ci(self, post_data: PostCiMetadataV1PostData) -> CiMetadata:
@@ -164,8 +159,8 @@ class CiProcessorService:
 
         current_version_metadata = self.ci_firebase_repository.get_latest_ci_metadata(survey_id, form_type, language)
 
-        return DocumentVersionService.calculate_survey_version(
-            current_version_metadata, "ci_version"
+        return DocumentVersionService.calculate_ci_version(
+            current_version_metadata
         )
     
     
