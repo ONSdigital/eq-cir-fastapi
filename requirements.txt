@@ -12,6 +12,7 @@ cyclonedx-python-lib==4.0.1
 defusedxml==0.7.1
 dill==0.3.7
 fastapi==0.109.1
+firebase_admin==6.1.0
 filelock==3.12.2
 flake8==6.1.0
 fs==2.4.16

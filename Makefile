@@ -53,3 +53,12 @@ start-cloud-dev:
 	export CI_STORAGE_BUCKET_NAME='$(PROJECT_ID)-cir-europe-west2-schema' && \
 	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
 	python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 3030
+
+start-docker-dev:
+	export PROJECT_ID=mock-project-id && \
+	export FIRESTORE_EMULATOR_HOST=localhost:8200 && \
+	export STORAGE_EMULATOR_HOST=localhost:9026 && \
+	export PUBSUB_EMULATOR_HOST=localhost:8086 && \
+	export FIRESTORE_DB_NAME='$(PROJECT_ID)-cir' && \
+	export CI_STORAGE_BUCKET_NAME='my-ci-bucket' && \
+	python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 3030
