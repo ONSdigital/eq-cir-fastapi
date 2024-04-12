@@ -406,9 +406,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CiMetadata'
-                title: Response Http Get Ci Schema V1 V1 Retrieve Collection Instrument
-                  Get
-                type: object
           description: Successfully retrieved the CI schema. This is illustrated by
             returning the CI schema to the user.
         '400':
@@ -588,9 +585,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CiMetadata'
-                title: Response Http Get Ci Schema V2 V2 Retrieve Collection Instrument
-                  Get
-                type: object
           description: Successfully Queried a CI. This is illustrated with the returned
             response containing the schema of the CI.
         '400':
