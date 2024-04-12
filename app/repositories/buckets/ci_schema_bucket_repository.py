@@ -28,7 +28,7 @@ class CiSchemaBucketRepository:
         )
         logger.info(f"successfully stored: {blob_name}")
 
-    def retrieve_ci_schema(self, blob_name: str) -> dict|None:
+    def retrieve_ci_schema(self, blob_name: str) -> dict | None:
         """
         Get the CI schema from the ci schema bucket using the filename provided.
 

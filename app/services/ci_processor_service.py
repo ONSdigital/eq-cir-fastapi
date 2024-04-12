@@ -104,7 +104,7 @@ class CiProcessorService:
         language: str,
         data_version: str,
         schema_version: str,
-        sds_schema: str|None,
+        sds_schema: str | None,
         title: str,
         description: str,
     ) -> CiMetadata:
@@ -242,7 +242,7 @@ class CiProcessorService:
 
         return ci_metadata_collection
 
-    def get_latest_ci_metadata(self, survey_id: str, form_type: str, language: str) -> CiMetadata|None:
+    def get_latest_ci_metadata(self, survey_id: str, form_type: str, language: str) -> CiMetadata | None:
         """
         Get the latest CI metadata
 
@@ -260,7 +260,7 @@ class CiProcessorService:
 
         return latest_ci_metadata
 
-    def get_ci_metadata_with_id(self, guid: str) -> CiMetadata|None:
+    def get_ci_metadata_with_id(self, guid: str) -> CiMetadata | None:
         """
         Get a CI metadata with id
 
