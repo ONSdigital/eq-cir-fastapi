@@ -35,12 +35,12 @@ class TestHttpPostCiV1:
     url = "/v1/publish_collection_instrument"
 
     def test_endpoint_returns_200_if_ci_created_successfully(
-            self, 
-            mocked_perform_new_ci_transaction, 
-            mocked_get_latest_ci_metadata,
-            mocked_publish_message,
-            mocked_create_guid,
-        ):
+        self,
+        mocked_perform_new_ci_transaction,
+        mocked_get_latest_ci_metadata,
+        mocked_publish_message,
+        mocked_create_guid,
+    ):
         """
         Endpoint should return `HTTP_200_OK` and serialized ci metadata as part of the response if new ci is created
         successfully. Assert mocked functions are called with the correct arguments.
@@ -50,7 +50,6 @@ class TestHttpPostCiV1:
         # Update mocked function to return a valid guid
         mocked_create_guid.return_value = mock_id
 
-
         response = client.post(self.url, headers={"ContentType": "application/json"}, json=mock_post_ci_schema.model_dump())
 
         assert response.status_code == status.HTTP_200_OK
@@ -59,21 +58,20 @@ class TestHttpPostCiV1:
             mock_post_ci_schema.survey_id, mock_post_ci_schema.form_type, mock_post_ci_schema.language
         )
         CiFirebaseRepository.perform_new_ci_transaction.assert_called_once_with(
-            mock_id, 
-            mock_ci_metadata, 
-            mock_post_ci_schema.model_dump(), 
-            CiSchemaLocationService.get_ci_schema_location(mock_ci_metadata)
+            mock_id,
+            mock_ci_metadata,
+            mock_post_ci_schema.model_dump(),
+            CiSchemaLocationService.get_ci_schema_location(mock_ci_metadata),
         )
         Publisher.publish_message.assert_called_once_with(PostCIEvent(**mock_ci_metadata.model_dump()))
-        
 
     def test_endpoint_returns_200_if_ci_next_version_created_successfully(
-            self,
-            mocked_perform_new_ci_transaction,
-            mocked_get_latest_ci_metadata,
-            mocked_publish_message,
-            mocked_create_guid,
-        ):
+        self,
+        mocked_perform_new_ci_transaction,
+        mocked_get_latest_ci_metadata,
+        mocked_publish_message,
+        mocked_create_guid,
+    ):
         """
         Endpoint should return `HTTP_200_OK` and serialized ci metadata with updated version
         as part of the response if new version of ci is created.
@@ -92,20 +90,16 @@ class TestHttpPostCiV1:
             mock_post_ci_schema.survey_id, mock_post_ci_schema.form_type, mock_post_ci_schema.language
         )
         CiFirebaseRepository.perform_new_ci_transaction.assert_called_once_with(
-            mock_next_version_id, 
-            mock_next_version_ci_metadata, 
-            mock_post_ci_schema.model_dump(), 
-            CiSchemaLocationService.get_ci_schema_location(mock_next_version_ci_metadata)
+            mock_next_version_id,
+            mock_next_version_ci_metadata,
+            mock_post_ci_schema.model_dump(),
+            CiSchemaLocationService.get_ci_schema_location(mock_next_version_ci_metadata),
         )
         Publisher.publish_message.assert_called_once_with(PostCIEvent(**mock_next_version_ci_metadata.model_dump()))
 
-
-    def test_endpoint_returns_400_if_no_post_data(self, 
-            mocked_perform_new_ci_transaction, 
-            mocked_get_latest_ci_metadata,
-            mocked_publish_message,
-            mocked_create_guid
-        ):
+    def test_endpoint_returns_400_if_no_post_data(
+        self, mocked_perform_new_ci_transaction, mocked_get_latest_ci_metadata, mocked_publish_message, mocked_create_guid
+    ):
         """
         Endpoint should return `HTTP_400_BAD_REQUEST` if empty or incomplete post data is posted
         as part of the request
@@ -115,15 +109,15 @@ class TestHttpPostCiV1:
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-
     @pytest.mark.parametrize("input_param", ["data_version", "form_type", "language", "survey_id", "title", "schema_version"])
-    def test_endpoint_returns_400_if_required_field_none(self, 
-            mocked_perform_new_ci_transaction, 
-            mocked_get_latest_ci_metadata,
-            mocked_publish_message,
-            mocked_create_guid,
-            input_param
-        ):
+    def test_endpoint_returns_400_if_required_field_none(
+        self,
+        mocked_perform_new_ci_transaction,
+        mocked_get_latest_ci_metadata,
+        mocked_publish_message,
+        mocked_create_guid,
+        input_param,
+    ):
         """
         Endpoint should return `HTTP_400_BAD_REQUEST` if any required field in post data is `None`
         """
@@ -131,19 +125,21 @@ class TestHttpPostCiV1:
         edited_mock_post_ci_schema = mock_post_ci_schema.model_copy()
         setattr(edited_mock_post_ci_schema, input_param, None)
 
-        response = client.post(self.url, headers={"ContentType": "application/json"}, json=edited_mock_post_ci_schema.model_dump())
+        response = client.post(
+            self.url, headers={"ContentType": "application/json"}, json=edited_mock_post_ci_schema.model_dump()
+        )
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-
     @pytest.mark.parametrize("input_param", ["data_version", "form_type", "language", "survey_id", "title", "schema_version"])
-    def test_endpoint_returns_400_if_required_field_empty_string(self, 
-            mocked_perform_new_ci_transaction, 
-            mocked_get_latest_ci_metadata,
-            mocked_try_publish_ci_metadata_to_topic,
-            mocked_create_guid,
-            input_param
-        ):
+    def test_endpoint_returns_400_if_required_field_empty_string(
+        self,
+        mocked_perform_new_ci_transaction,
+        mocked_get_latest_ci_metadata,
+        mocked_try_publish_ci_metadata_to_topic,
+        mocked_create_guid,
+        input_param,
+    ):
         """
         Endpoint should return `HTTP_400_BAD_REQUEST` if any required field in post data is an
         empty string
@@ -152,19 +148,21 @@ class TestHttpPostCiV1:
         edited_mock_post_ci_schema = mock_post_ci_schema.model_copy()
         setattr(edited_mock_post_ci_schema, input_param, "")
 
-        response = client.post(self.url, headers={"ContentType": "application/json"}, json=edited_mock_post_ci_schema.model_dump())
+        response = client.post(
+            self.url, headers={"ContentType": "application/json"}, json=edited_mock_post_ci_schema.model_dump()
+        )
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-
     @pytest.mark.parametrize("input_param", ["data_version", "form_type", "language", "survey_id", "title", "schema_version"])
-    def test_endpoint_returns_400_if_required_field_whitespace(self, 
-            mocked_perform_new_ci_transaction, 
-            mocked_get_latest_ci_metadata,
-            mocked_publish_message,
-            mocked_create_guid,
-            input_param
-        ):
+    def test_endpoint_returns_400_if_required_field_whitespace(
+        self,
+        mocked_perform_new_ci_transaction,
+        mocked_get_latest_ci_metadata,
+        mocked_publish_message,
+        mocked_create_guid,
+        input_param,
+    ):
         """
         Endpoint should return `HTTP_400_BAD_REQUEST` if any required field in post data is
         whitespace
@@ -173,17 +171,15 @@ class TestHttpPostCiV1:
         edited_mock_post_ci_schema = mock_post_ci_schema.model_copy()
         setattr(edited_mock_post_ci_schema, input_param, " ")
 
-        response = client.post(self.url, headers={"ContentType": "application/json"}, json=edited_mock_post_ci_schema.model_dump())
+        response = client.post(
+            self.url, headers={"ContentType": "application/json"}, json=edited_mock_post_ci_schema.model_dump()
+        )
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-
-    def test_endpoint_returns_500_if_exception_occurs(self, 
-            mocked_perform_new_ci_transaction, 
-            mocked_get_latest_ci_metadata,
-            mocked_publish_message,
-            mocked_create_guid
-        ):
+    def test_endpoint_returns_500_if_exception_occurs(
+        self, mocked_perform_new_ci_transaction, mocked_get_latest_ci_metadata, mocked_publish_message, mocked_create_guid
+    ):
         """
         Endpoint should return `HTTP_500_INTERNAL_SERVER_ERROR` as part of the response if ci metadata is created
         but not processed due to an error in transaction
@@ -195,7 +191,9 @@ class TestHttpPostCiV1:
         # Raise an exception to simulate an error in transaction
         mocked_perform_new_ci_transaction.side_effect = Exception()
 
-        response = test_500_client.post(self.url, headers={"ContentType": "application/json"}, json=mock_post_ci_schema.model_dump())
-        
+        response = test_500_client.post(
+            self.url, headers={"ContentType": "application/json"}, json=mock_post_ci_schema.model_dump()
+        )
+
         assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
         assert response.content == b"Internal Server Error"

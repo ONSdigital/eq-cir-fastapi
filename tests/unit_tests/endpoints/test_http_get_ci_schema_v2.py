@@ -45,8 +45,9 @@ class TestHttpGetCiSchemaV2:
         assert response.json() == mock_ci_metadata.__dict__
         CiFirebaseRepository.get_ci_metadata_with_id.assert_called_once_with(mock_id)
 
-
-    def test_endpoint_returns_BadRequest_if_metadata_not_found(self, mocked_retrieve_ci_schema, mocked_get_ci_metadata_with_id):
+    def test_endpoint_returns_BadRequest_if_metadata_not_found(
+        self, mocked_retrieve_ci_schema, mocked_get_ci_metadata_with_id
+    ):
         """
         Endpoint should return `HTTP_404_NOT_FOUND` and a string as part of the response if metadata is not
         found
@@ -59,7 +60,6 @@ class TestHttpGetCiSchemaV2:
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert response.json() == expected_response.__dict__
-
 
     def test_endpoint_returns_BadRequest_if_schema_not_found(self, mocked_retrieve_ci_schema, mocked_get_ci_metadata_with_id):
         """
@@ -75,9 +75,10 @@ class TestHttpGetCiSchemaV2:
         response = client.get(self.url)
 
         assert response.json() == expected_response.__dict__
-        
 
-    def test_endpoint_returns_400_if_query_parameters_are_not_present(self, mocked_retrieve_ci_schema, mocked_get_ci_metadata_with_id):
+    def test_endpoint_returns_400_if_query_parameters_are_not_present(
+        self, mocked_retrieve_ci_schema, mocked_get_ci_metadata_with_id
+    ):
         """
         Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `id` is not
         part of the querystring parameters

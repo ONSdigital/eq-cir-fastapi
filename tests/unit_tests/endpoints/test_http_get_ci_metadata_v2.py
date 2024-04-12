@@ -12,8 +12,8 @@ from app.models.requests import (
 )
 from app.models.responses import BadRequest
 from tests.test_data.ci_test_data import (
-    mock_survey_id, 
-    mock_form_type, 
+    mock_survey_id,
+    mock_form_type,
     mock_language,
     mock_status,
     mock_ci_metadata_list,
@@ -45,15 +45,14 @@ class TestHttpGetCiMetadataV2:
         form_type=mock_form_type, language=mock_language, status="WRONG_STATUS", survey_id=mock_survey_id
     )
     wrong_status_url = f"{base_url}?{urlencode(wrong_status_query_params.__dict__)}"
-    
 
     def test_endpoint_returns_200_if_ci_metadata_found_with_query(
-            self, 
-            mocked_get_all_ci_metadata_collection,
-            mocked_get_ci_metadata_collection_only_with_status,
-            mocked_get_ci_metadata_collection_without_status,
-            mocked_get_ci_metadata_collection_with_status,
-            ):
+        self,
+        mocked_get_all_ci_metadata_collection,
+        mocked_get_ci_metadata_collection_only_with_status,
+        mocked_get_ci_metadata_collection_without_status,
+        mocked_get_ci_metadata_collection_with_status,
+    ):
         """
         Endpoint should return `HTTP_200_OK` and ci metadata collection as part of the response if ci metadata is found if
         queried with params. Assert description is in response ci metadata.
@@ -74,14 +73,13 @@ class TestHttpGetCiMetadataV2:
             mock_survey_id, mock_form_type, mock_language, mock_status
         )
 
-
     def test_endpoint_returns_200_if_ci_metadata_found_with_query_without_status(
-            self, 
-            mocked_get_all_ci_metadata_collection,
-            mocked_get_ci_metadata_collection_only_with_status,
-            mocked_get_ci_metadata_collection_without_status,
-            mocked_get_ci_metadata_collection_with_status,
-            ):
+        self,
+        mocked_get_all_ci_metadata_collection,
+        mocked_get_ci_metadata_collection_only_with_status,
+        mocked_get_ci_metadata_collection_without_status,
+        mocked_get_ci_metadata_collection_with_status,
+    ):
         """
         Endpoint should return `HTTP_200_OK` and ci metadata collection as part of the response if ci metadata is found if
         queried with params without status. Assert description is in response ci metadata.
@@ -97,17 +95,18 @@ class TestHttpGetCiMetadataV2:
         for i in range(len(response.json())):
             assert response.json()[i] == mock_ci_metadata_list[i].__dict__
             assert "description" in response.json()[i]
-        
+
         CiFirebaseRepository.get_ci_metadata_collection_without_status.assert_called_once_with(
-            mock_survey_id, mock_form_type, mock_language)
+            mock_survey_id, mock_form_type, mock_language
+        )
 
-
-    def test_endpoint_returns_200_if_ci_metadata_found_with_empty_query(self, 
-            mocked_get_all_ci_metadata_collection,
-            mocked_get_ci_metadata_collection_only_with_status,
-            mocked_get_ci_metadata_collection_without_status,
-            mocked_get_ci_metadata_collection_with_status,
-            ):
+    def test_endpoint_returns_200_if_ci_metadata_found_with_empty_query(
+        self,
+        mocked_get_all_ci_metadata_collection,
+        mocked_get_ci_metadata_collection_only_with_status,
+        mocked_get_ci_metadata_collection_without_status,
+        mocked_get_ci_metadata_collection_with_status,
+    ):
         """
         Endpoint should return `HTTP_200_OK` and ci metadata collection as part of the response if ci metadata is found with
         empty query params. An empty request is still valid for this endpoint. Assert description is in response ci metadata.
@@ -126,13 +125,13 @@ class TestHttpGetCiMetadataV2:
 
         CiFirebaseRepository.get_all_ci_metadata_collection.assert_called_once()
 
-
-    def test_endpoint_returns_200_if_ci_metadata_found_with_status_only_query(self, 
-            mocked_get_all_ci_metadata_collection,
-            mocked_get_ci_metadata_collection_only_with_status,
-            mocked_get_ci_metadata_collection_without_status,
-            mocked_get_ci_metadata_collection_with_status,
-            ):
+    def test_endpoint_returns_200_if_ci_metadata_found_with_status_only_query(
+        self,
+        mocked_get_all_ci_metadata_collection,
+        mocked_get_ci_metadata_collection_only_with_status,
+        mocked_get_ci_metadata_collection_without_status,
+        mocked_get_ci_metadata_collection_with_status,
+    ):
         """
         Endpoint should return `HTTP_200_OK` and ci metadata collection as part of the response if ci metadata is found with
         status only query params. Assert description is in response ci metadata.
@@ -151,13 +150,13 @@ class TestHttpGetCiMetadataV2:
 
         CiFirebaseRepository.get_ci_metadata_collection_only_with_status.assert_called_once_with(mock_status)
 
-
-    def test_endpoint_returns_404_if_ci_metadata_not_found(self, 
-            mocked_get_all_ci_metadata_collection,
-            mocked_get_ci_metadata_collection_only_with_status,
-            mocked_get_ci_metadata_collection_without_status,
-            mocked_get_ci_metadata_collection_with_status,
-            ):
+    def test_endpoint_returns_404_if_ci_metadata_not_found(
+        self,
+        mocked_get_all_ci_metadata_collection,
+        mocked_get_ci_metadata_collection_only_with_status,
+        mocked_get_ci_metadata_collection_without_status,
+        mocked_get_ci_metadata_collection_with_status,
+    ):
         """
         Endpoint should return `HTTP_404_NOT_FOUND` and a string indicating a bad request
         as part of the response if ci metadata is not found
@@ -171,14 +170,13 @@ class TestHttpGetCiMetadataV2:
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert response.json() == expected_response.__dict__
 
-
     def test_endpoint_returns_400_if_status_is_invalid_in_query(
-            self, 
-            mocked_get_all_ci_metadata_collection,
-            mocked_get_ci_metadata_collection_only_with_status,
-            mocked_get_ci_metadata_collection_without_status,
-            mocked_get_ci_metadata_collection_with_status,
-            ):
+        self,
+        mocked_get_all_ci_metadata_collection,
+        mocked_get_ci_metadata_collection_only_with_status,
+        mocked_get_ci_metadata_collection_without_status,
+        mocked_get_ci_metadata_collection_with_status,
+    ):
         """
         Endpoint should return `HTTP_400_BAD_REQUEST` and a string indicating a bad request
         as part of the response if status is invalid in query

@@ -11,15 +11,15 @@ from tests.test_data.ci_test_data import (
 )
 
 
-
 class TestCiFirebaseRepository:
     """
     Tests for the `CiFirebaseRepository` class.
     `ci_collection` is mocked out and replaced with `MockFirestore.collection` for all tests.
     """
+
     def test_query_ci_by_survey_id_returns_single_ci_if_found(self, mock_firestore_collection):
         """
-        `get_ci_metadata_collection_with_survey_id` should return a list of a single ci 
+        `get_ci_metadata_collection_with_survey_id` should return a list of a single ci
         if ci with input `survey_id` is found in the firestore db
         """
         firestore_client = CiFirebaseRepository()
@@ -33,8 +33,8 @@ class TestCiFirebaseRepository:
 
     def test_query_ci_by_survey_id_returns_multiple_ci_if_found(self, mock_firestore_collection):
         """
-        `get_ci_metadata_collection_with_survey_id` should return a list of multiple ci 
-        if ci with input `survey_id` are found in the firestore db. Ci should be ordered in 
+        `get_ci_metadata_collection_with_survey_id` should return a list of multiple ci
+        if ci with input `survey_id` are found in the firestore db. Ci should be ordered in
         descending `ci_version` order
         """
         firestore_client = CiFirebaseRepository()
@@ -59,7 +59,7 @@ class TestCiFirebaseRepository:
         assert found_ci == []
 
     def test_query_latest_ci_version_returns_latest_ci_version(self, mock_firestore_collection):
-        """ 
+        """
         `get_latest_ci_metadata` should return the latest ci version for a given survey_id, form_type, and language
         """
         firestore_client = CiFirebaseRepository()
@@ -78,7 +78,7 @@ class TestCiFirebaseRepository:
 
     def test_query_latest_ci_version_returns_0(self, mock_firestore_collection):
         """
-        `get_latest_ci_metadata` should return None if no ci metadata is found for a given 
+        `get_latest_ci_metadata` should return None if no ci metadata is found for a given
         survey_id, form_type, and language
         """
         firestore_client = CiFirebaseRepository()

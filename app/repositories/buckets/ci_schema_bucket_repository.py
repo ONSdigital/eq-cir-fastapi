@@ -8,7 +8,7 @@ from app.repositories.buckets.bucket_loader import bucket_loader
 logger = logging.getLogger(__name__)
 
 
-class CiSchemaBucketRepository():
+class CiSchemaBucketRepository:
     def __init__(self):
         self.bucket = bucket_loader.get_ci_schema_bucket()
 
@@ -30,7 +30,6 @@ class CiSchemaBucketRepository():
         )
         logger.info(f"successfully stored: {blob_name}")
 
-
     def retrieve_ci_schema(self, blob_name: str) -> dict:
         """
         Get the CI schema from the ci schema bucket using the filename provided.
@@ -47,9 +46,9 @@ class CiSchemaBucketRepository():
         data = blob.download_as_string()
         logger.debug(f"get_schema data: {data}")
         return json.loads(data)
-    
+
     def delete_ci_schema(self, blob_name: str) -> None:
-        """"
+        """ "
         Deletes the CI schema from the ci schema bucket using the filename provided.
 
         Parameters:

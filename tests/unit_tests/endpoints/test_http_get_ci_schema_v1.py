@@ -13,8 +13,8 @@ from app.models.requests import (
 )
 from app.models.responses import BadRequest
 from tests.test_data.ci_test_data import (
-    mock_survey_id, 
-    mock_form_type, 
+    mock_survey_id,
+    mock_form_type,
     mock_language,
     mock_ci_metadata,
 )
@@ -41,15 +41,12 @@ class TestHttpGetCiSchemaV1:
         mocked_get_latest_ci_metadata.return_value = mock_ci_metadata
         # mocked function to return valid ci, indicating ci schema is found from bucket
         mocked_retrieve_ci_schema.return_value = mock_ci_metadata.__dict__
-        
+
         response = client.get(self.url)
 
         assert response.status_code == status.HTTP_200_OK
         assert response.json() == mock_ci_metadata.__dict__
-        CiFirebaseRepository.get_latest_ci_metadata.assert_called_once_with(
-            mock_survey_id, mock_form_type, mock_language
-        )
-
+        CiFirebaseRepository.get_latest_ci_metadata.assert_called_once_with(mock_survey_id, mock_form_type, mock_language)
 
     def test_endpoint_returns_BadRequest_if_metadata_not_found(self, mocked_retrieve_ci_schema, mocked_get_latest_ci_metadata):
         """
@@ -64,7 +61,6 @@ class TestHttpGetCiSchemaV1:
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert response.json() == expected_response.__dict__
-
 
     def test_endpoint_returns_BadRequest_if_schema_not_found(self, mocked_retrieve_ci_schema, mocked_get_latest_ci_metadata):
         """
@@ -82,8 +78,9 @@ class TestHttpGetCiSchemaV1:
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert response.json() == expected_response.__dict__
 
-
-    def test_endpoint_returns_400_if_query_parameters_are_not_present(self, mocked_retrieve_ci_schema, mocked_get_latest_ci_metadata):
+    def test_endpoint_returns_400_if_query_parameters_are_not_present(
+        self, mocked_retrieve_ci_schema, mocked_get_latest_ci_metadata
+    ):
         """
         Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `form_type`,
         `language` and/or `survey_id` are not part of the querystring parameters

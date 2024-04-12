@@ -61,5 +61,6 @@ class Publisher:
         except Exception as e:
             logger.debug(e)
             return False
-        
+
+
 publisher = Publisher()

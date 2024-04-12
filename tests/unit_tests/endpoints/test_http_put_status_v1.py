@@ -31,10 +31,8 @@ class TestHttpPutStatusV1:
     url = f"{base_url}?{urlencode(query_params.__dict__)}"
 
     def test_endpoint_returns_200_if_status_updated(
-            self, 
-            mocked_update_ci_metadata_status_to_published_with_id, 
-            mocked_get_ci_metadata_with_id
-            ):
+        self, mocked_update_ci_metadata_status_to_published_with_id, mocked_get_ci_metadata_with_id
+    ):
         """
         Endpoint should return `HTTP_200_OK` and a update successful string if status is updated to published.
         Assert mocked functions are called with the correct arguments.
@@ -50,12 +48,9 @@ class TestHttpPutStatusV1:
         CiFirebaseRepository.get_ci_metadata_with_id.assert_called_once_with(mock_id)
         CiFirebaseRepository.update_ci_metadata_status_to_published_with_id.assert_called_once_with(mock_id)
 
-
     def test_endpoint_returns_200_if_status_already_updated(
-            self, 
-            mocked_update_ci_metadata_status_to_published_with_id, 
-            mocked_get_ci_metadata_with_id
-            ):
+        self, mocked_update_ci_metadata_status_to_published_with_id, mocked_get_ci_metadata_with_id
+    ):
         """
         Endpoint should return `HTTP_200_OK` and a CI already published string
         if status is already updated to published.
@@ -73,12 +68,9 @@ class TestHttpPutStatusV1:
         CiFirebaseRepository.get_ci_metadata_with_id.assert_called_once_with(mock_id)
         CiFirebaseRepository.update_ci_metadata_status_to_published_with_id.assert_not_called()
 
-
     def test_endpoint_returns_BadRequest_if_ci_metadata_not_found(
-            self, 
-            mocked_update_ci_metadata_status_to_published_with_id, 
-            mocked_get_ci_metadata_with_id
-            ):
+        self, mocked_update_ci_metadata_status_to_published_with_id, mocked_get_ci_metadata_with_id
+    ):
         """
         Endpoint should return `HTTP_404_NOT_FOUND` and a not found string if metadata is not found.
         Assert mocked functions are called with the correct arguments.
@@ -89,17 +81,14 @@ class TestHttpPutStatusV1:
 
         expected_response = BadRequest(message=f"No CI metadata found for: {mock_id}")
         response = client.put(self.url)
-        
+
         assert response.json() == expected_response.__dict__
         CiFirebaseRepository.get_ci_metadata_with_id.assert_called_once_with(mock_id)
         CiFirebaseRepository.update_ci_metadata_status_to_published_with_id.assert_not_called()
 
-
     def test_endpoint_returns_400_if_query_parameters_are_not_present(
-            self, 
-            mocked_update_ci_metadata_status_to_published_with_id, 
-            mocked_get_ci_metadata_with_id
-            ):
+        self, mocked_update_ci_metadata_status_to_published_with_id, mocked_get_ci_metadata_with_id
+    ):
         """
         Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `id` is not
         part of the querystring parameters
@@ -109,14 +98,11 @@ class TestHttpPutStatusV1:
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-
     def test_endpoint_returns_Exception_if_query_parameters_invalid(
-            self, 
-            mocked_update_ci_metadata_status_to_published_with_id, 
-            mocked_get_ci_metadata_with_id
-            ):
+        self, mocked_update_ci_metadata_status_to_published_with_id, mocked_get_ci_metadata_with_id
+    ):
         """
-        Endpoint should return an `HTTP_400_BAD_REQUEST` as part of the response if invalid 
+        Endpoint should return an `HTTP_400_BAD_REQUEST` as part of the response if invalid
         query parameter is present in the request
         """
         # Make request to base url without any query params

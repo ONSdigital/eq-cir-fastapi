@@ -62,10 +62,7 @@ HTTP_404_NOT_FOUND_RESPONSE = {
         },
     },
 )
-async def http_delete_ci_v1(
-    query_params: DeleteCiV1Params = Depends(),
-    ci_processor_service: CiProcessorService = Depends()
-    ):
+async def http_delete_ci_v1(query_params: DeleteCiV1Params = Depends(), ci_processor_service: CiProcessorService = Depends()):
     """
     DELETE method that deletes the CI schema from the bucket as well as the CI metadata from Firestore.
     """
@@ -75,8 +72,7 @@ async def http_delete_ci_v1(
     ci_metadata_collection = ci_processor_service.get_ci_metadata_colleciton_with_survey_id(query_params.survey_id)
 
     if not ci_metadata_collection:
-        logger.error(
-            f"delete_ci_v1: exception raised - No CI found for: {asdict(query_params)}")
+        logger.error(f"delete_ci_v1: exception raised - No CI found for: {asdict(query_params)}")
         response_content = BadRequest(message=f"No CI found for: {asdict(query_params)}")
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=asdict(response_content))
 
@@ -103,16 +99,17 @@ async def http_delete_ci_v1(
     },
 )
 async def http_get_ci_metadata_v1(
-    query_params: GetCiMetadataV1Params = Depends(), 
-    ci_processor_service: CiProcessorService = Depends()
-    ) -> list[CiMetadata]:
+    query_params: GetCiMetadataV1Params = Depends(), ci_processor_service: CiProcessorService = Depends()
+) -> list[CiMetadata]:
     """
     GET method that returns any metadata objects from Firestore that match the parameters passed.
     """
     logger.info("Getting ci metadata via v1 endpoint...")
     logger.debug(f"Input data: query_params={query_params.__dict__}")
 
-    ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_without_status(query_params.survey_id, query_params.form_type, query_params.language)
+    ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_without_status(
+        query_params.survey_id, query_params.form_type, query_params.language
+    )
 
     if not ci_metadata_collection:
         logger.info(
@@ -138,9 +135,8 @@ async def http_get_ci_metadata_v1(
     },
 )
 async def http_get_ci_metadata_v2(
-    query_params: GetCiMetadataV2Params = Depends(), 
-    ci_processor_service: CiProcessorService = Depends()
-    ) -> list[CiMetadata]:
+    query_params: GetCiMetadataV2Params = Depends(), ci_processor_service: CiProcessorService = Depends()
+) -> list[CiMetadata]:
     """
     GET method that returns any metadata objects from Firestore that match the parameters passed.
     The user has multiple ways of querying the metadata.
@@ -162,10 +158,14 @@ async def http_get_ci_metadata_v2(
             return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content=asdict(response_content))
 
     if query_params.params_not_none("form_type", "language", "status", "survey_id"):
-        ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_with_status(query_params.survey_id, query_params.form_type, query_params.language, query_params.status)
+        ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_with_status(
+            query_params.survey_id, query_params.form_type, query_params.language, query_params.status
+        )
 
     elif query_params.params_not_none("form_type", "language", "survey_id"):
-        ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_without_status(query_params.survey_id, query_params.form_type, query_params.language)
+        ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_without_status(
+            query_params.survey_id, query_params.form_type, query_params.language
+        )
 
     elif query_params.params_not_none("status"):
         ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_only_with_status(query_params.status)
@@ -179,11 +179,10 @@ async def http_get_ci_metadata_v2(
         )
         response_content = BadRequest(message=f"No CI metadata found for: {asdict(query_params)}")
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=asdict(response_content))
-    
+
     logger.info("CI metadata retrieved successfully.")
-    
+
     return ci_metadata_collection
-    
 
 
 # Fetching CI schema from Bucket version 1
@@ -201,30 +200,33 @@ async def http_get_ci_metadata_v2(
     },
 )
 async def http_get_ci_schema_v1(
-    query_params: GetCiSchemaV1Params = Depends(), 
+    query_params: GetCiSchemaV1Params = Depends(),
     ci_processor_service: CiProcessorService = Depends(),
     ci_schema_bucket_repository: CiSchemaBucketRepository = Depends(),
-    ) -> dict:
+) -> dict:
     """
     GET method that fetches a CI schema by it's survey_id, form_type and language.
     """
     logger.info("Getting ci schema via v1 endpoint...")
     logger.debug(f"Input data: query_params={query_params.__dict__}")
 
-    latest_ci_metadata = ci_processor_service.get_latest_ci_metadata(query_params.survey_id, query_params.form_type, query_params.language)
+    latest_ci_metadata = ci_processor_service.get_latest_ci_metadata(
+        query_params.survey_id, query_params.form_type, query_params.language
+    )
 
     if not latest_ci_metadata:
         logger.debug(
-            f"get_ci_schema_v1: exception raised - No CI found for: {asdict(query_params)}",)
+            f"get_ci_schema_v1: exception raised - No CI found for: {asdict(query_params)}",
+        )
         message = f"No metadata found for: {asdict(query_params)}"
         logger.info(
             f"get_ci_schema_v1: exception raised - {message}",
         )
         response_content = BadRequest(message=message)
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=asdict(response_content))
-        
+
     bucket_schema_filename = CiSchemaLocationService.get_ci_schema_location(latest_ci_metadata)
-        
+
     logger.debug(f"Bucket schema location: {bucket_schema_filename}")
     logger.info("Bucket schema location successfully retrieved. Getting schema...")
 
@@ -232,7 +234,8 @@ async def http_get_ci_schema_v1(
 
     if not ci_schema:
         logger.debug(
-            f"get_ci_schema_v1: exception raised - No schema found for: {asdict(query_params)}",)
+            f"get_ci_schema_v1: exception raised - No schema found for: {asdict(query_params)}",
+        )
         message = f"No schema found for: {asdict(query_params)}"
         logger.info(
             f"get_ci_schema_v1: exception raised - {message}",
@@ -263,7 +266,7 @@ async def http_get_ci_schema_v2(
     query_params: GetCiSchemaV2Params = Depends(),
     ci_processor_service: CiProcessorService = Depends(),
     ci_schema_bucket_repository: CiSchemaBucketRepository = Depends(),
-    ) -> dict:
+) -> dict:
     """
     GET method that fetches a CI schema by it's GUID.
     """
@@ -274,14 +277,15 @@ async def http_get_ci_schema_v2(
 
     if not ci_metadata:
         logger.debug(
-            f"get_ci_schema_v2: exception raised - No CI found for: {query_params.guid}",)
+            f"get_ci_schema_v2: exception raised - No CI found for: {query_params.guid}",
+        )
         message = f"No CI metadata found for: {query_params.guid}"
         logger.info(
             f"get_ci_schema_v2: exception raised - {message}",
         )
         response_content = BadRequest(message=message)
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=asdict(response_content))
-    
+
     bucket_schema_filename = CiSchemaLocationService.get_ci_schema_location(ci_metadata)
 
     logger.debug(f"Bucket schema location: {bucket_schema_filename}")
@@ -291,7 +295,8 @@ async def http_get_ci_schema_v2(
 
     if not ci_schema:
         logger.debug(
-            f"get_ci_schema_v2: exception raised - No schema found for: {query_params.guid}",)
+            f"get_ci_schema_v2: exception raised - No schema found for: {query_params.guid}",
+        )
         message = f"No schema found for: {query_params.guid}"
         logger.info(
             f"get_ci_schema_v2: exception raised - {message}",
@@ -317,9 +322,8 @@ async def http_get_ci_schema_v2(
     },
 )
 async def http_post_ci_metadata_v1(
-    post_data: PostCiMetadataV1PostData,
-    ci_processor_service: CiProcessorService = Depends()
-    ) -> CiMetadata:
+    post_data: PostCiMetadataV1PostData, ci_processor_service: CiProcessorService = Depends()
+) -> CiMetadata:
     """
     POST method that creates a Collection Instrument. This will post the metadata to Firestore and
     the whole request body to a Google Cloud Bucket.
@@ -349,7 +353,7 @@ async def http_post_ci_metadata_v1(
 async def http_put_status_v1(
     query_params: PutStatusV1Params = Depends(),
     ci_processor_service: CiProcessorService = Depends(),
-    ) -> None:
+) -> None:
     """
     PUT method that sets the status of a CI's metadata in Firestore to 'PUBLISH'.
     """
@@ -359,22 +363,22 @@ async def http_put_status_v1(
 
     if not ci_metadata:
         logger.debug(
-            f"put_status_v1: exception raised - No CI found for: {query_params.guid}",)
+            f"put_status_v1: exception raised - No CI found for: {query_params.guid}",
+        )
         message = f"No CI metadata found for: {query_params.guid}"
         logger.info(
             f"put_status_v1: exception raised - {message}",
         )
         response_content = BadRequest(message=message)
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=asdict(response_content))
-    
+
     if ci_metadata.status == Status.PUBLISHED.value:
         logger.info("CI already set to PUBLISHED")
         message = f"CI status has already been changed to Published for {query_params.guid}."
         return JSONResponse(status_code=status.HTTP_200_OK, content=message)
-    
+
     ci_processor_service.update_ci_status_with_id(query_params.guid)
 
     logger.info("CI status updated to Published successfully")
     message = f"CI status has been changed to Published for {query_params.guid}."
     return JSONResponse(status_code=status.HTTP_200_OK, content=message)
-

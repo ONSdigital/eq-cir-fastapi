@@ -1,5 +1,6 @@
 import uuid
 
+
 class CreateGuidService:
     @staticmethod
     def create_guid() -> str:

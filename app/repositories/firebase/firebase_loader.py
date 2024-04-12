@@ -25,9 +25,7 @@ class FirebaseLoader:
         """
         if settings.CONF == "unit":
             return None
-        return Client(
-            project=settings.PROJECT_ID, database=settings.FIRESTORE_DB_NAME
-        )
+        return Client(project=settings.PROJECT_ID, database=settings.FIRESTORE_DB_NAME)
 
     def _set_collection(self, collection) -> CollectionReference:
         """

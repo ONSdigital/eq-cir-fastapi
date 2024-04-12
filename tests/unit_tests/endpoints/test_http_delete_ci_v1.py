@@ -12,7 +12,7 @@ from app.models.requests import (
 )
 from app.models.responses import BadRequest
 from tests.test_data.ci_test_data import (
-    mock_survey_id, 
+    mock_survey_id,
     mock_ci_metadata,
 )
 
@@ -30,9 +30,11 @@ class TestHttpDeleteCiV1:
     query_params = DeleteCiV1Params(survey_id=mock_survey_id)
     url = f"{base_url}?{urlencode(query_params.__dict__)}"
 
-    def test_endpoint_returns_200_if_ci_deleted(self, mocked_perform_delete_ci_transaction, mocked_get_ci_metadata_collection_with_survey_id):
+    def test_endpoint_returns_200_if_ci_deleted(
+        self, mocked_perform_delete_ci_transaction, mocked_get_ci_metadata_collection_with_survey_id
+    ):
         """
-        Endpoint should return `HTTP_200_OK` and a return confirmation string as part of the response 
+        Endpoint should return `HTTP_200_OK` and a return confirmation string as part of the response
         if ci is found and deleted. Assert that the correct methods are called with the correct arguments
         """
         # Update mocked function to return a list of valid ci metadata
@@ -46,8 +48,9 @@ class TestHttpDeleteCiV1:
         CiFirebaseRepository.get_ci_metadata_collection_with_survey_id.assert_called_once_with(mock_survey_id)
         CiFirebaseRepository.perform_delete_ci_transaction.assert_called_once_with([mock_ci_metadata])
 
-
-    def test_endpoint_returns_400_if_query_parameters_are_not_present(self, mocked_perform_delete_ci_transaction, mocked_get_ci_metadata_collection_with_survey_id):
+    def test_endpoint_returns_400_if_query_parameters_are_not_present(
+        self, mocked_perform_delete_ci_transaction, mocked_get_ci_metadata_collection_with_survey_id
+    ):
         """
         Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `
         `survey_id` are not part of the querystring parameters
@@ -57,8 +60,9 @@ class TestHttpDeleteCiV1:
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-
-    def test_endpoint_returns_404_if_ci_not_found(self, mocked_perform_delete_ci_transaction, mocked_get_ci_metadata_collection_with_survey_id):
+    def test_endpoint_returns_404_if_ci_not_found(
+        self, mocked_perform_delete_ci_transaction, mocked_get_ci_metadata_collection_with_survey_id
+    ):
         """
         Endpoint should return `HTTP_404_NOT_FOUND` and a string indicating a bad request
         as part of the response if no ci is found to delete
@@ -72,8 +76,9 @@ class TestHttpDeleteCiV1:
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert response.json() == expected_response.__dict__
 
-
-    def test_endpoint_returns_500_if_ci_not_deleted(self, mocked_perform_delete_ci_transaction, mocked_get_ci_metadata_collection_with_survey_id):
+    def test_endpoint_returns_500_if_ci_not_deleted(
+        self, mocked_perform_delete_ci_transaction, mocked_get_ci_metadata_collection_with_survey_id
+    ):
         """
         Endpoint should return `HTTP_500_INTERNAL_SERVER_ERROR` as part of the response if ci is
         found but not deleted due to an error in transaction
