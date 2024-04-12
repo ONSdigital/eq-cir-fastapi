@@ -27,7 +27,14 @@ integration-tests-sandbox:
 	export PYTHONPATH=app && \
 	python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
 
-integration-tests:
+integration-tests-cloudbuild:
+	export PROJECT_ID=${INT_PROJECT_ID} && \
+	export FIRESTORE_DB_NAME=${INT_FIRESTORE_DB_NAME} \
+	export CI_STORAGE_BUCKET_NAME=${INT_CI_STORAGE_BUCKET_NAME} && \
+	export DEFAULT_HOSTNAME=${INT_DEFAULT_HOSTNAME} && \
+	export URL_SCHEME=${INT_URL_SCHEME} && \
+	export OAUTH_CLIENT_ID=${INT_OAUTH_CLIENT_ID} && \
+	export PYTHONPATH=app && \
 	python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
 
 lint:
