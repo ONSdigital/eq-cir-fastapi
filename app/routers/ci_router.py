@@ -155,7 +155,11 @@ async def http_get_ci_metadata_v2(
     # Validate the status parameter
     if query_params.params_not_none("status"):
         if query_params.status.upper() not in [CiStatus.DRAFT.value, CiStatus.PUBLISHED.value]:
-           raise ValueError("Status must be either DRAFT or PUBLISHED")
+            logger.error(
+                f"get_ci_metadata_v2: exception raised - Status is invalid in query: {asdict(query_params)}",
+            )
+            response_content = BadRequest(message=f"Status is invalid in query: {asdict(query_params)}")
+            return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content=asdict(response_content))
 
     if query_params.params_not_none("form_type", "language", "status", "survey_id"):
         ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_with_status(query_params.survey_id, query_params.form_type, query_params.language, query_params.status)
@@ -287,8 +291,8 @@ async def http_get_ci_schema_v2(
 
     if not ci_schema:
         logger.debug(
-            f"get_ci_schema_v2: exception raised - No schema found for: {asdict(query_params)}",)
-        message = f"No schema found for: {asdict(query_params)}"
+            f"get_ci_schema_v2: exception raised - No schema found for: {query_params.guid}",)
+        message = f"No schema found for: {query_params.guid}"
         logger.info(
             f"get_ci_schema_v2: exception raised - {message}",
         )

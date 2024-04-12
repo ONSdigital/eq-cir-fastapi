@@ -10,7 +10,7 @@ client = TestClient(router)
 settings = Settings()
 
 
-class TestDeploymentStatus:
+class TestHttpGetStatus:
     base_url = "/status"
 
     @patch("app.routers.status_router.settings")

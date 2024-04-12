@@ -9,7 +9,7 @@ from mockfirestore import MockFirestore
 from app.config import Settings, logging
 
 logger = logging.getLogger(__name__)
-mock_publish_date = datetime.datetime(2023, 12, 31)
+mock_publish_date = datetime.datetime(2023, 4, 20, 12, 0, 0, 0)
 settings = Settings()
 
 
@@ -24,8 +24,12 @@ def setup_mock_firestore():
 @pytest.fixture(autouse=True)
 def mock_firestore_collection(mocker, setup_mock_firestore):
     logger.debug("***mock_firestore_collection")
-    mocker.patch("app.repositories.firestore.Client", return_value=setup_mock_firestore)
+    # mock firebase client
+    mocker.patch("app.repositories.firebase.firebase_loader.firebase_loader.get_client", return_value=setup_mock_firestore)
+    # mock firestore ci collection
     collection = setup_mock_firestore.collection(settings.CI_FIRESTORE_COLLECTION_NAME)
+    mocker.patch("app.repositories.firebase.firebase_loader.firebase_loader.get_ci_collection", return_value=collection)
+    # use ci collection
     yield collection
     setup_mock_firestore.reset()
 
@@ -60,6 +64,11 @@ def patch_datetime_now(monkeypatch):
         "datetime",
         mydatetime,
     )
+
+
+@pytest.fixture(autouse=True)
+def mock_datetime(mocker):
+    mocker.patch("app.services.datetime_service.DatetimeService.get_current_date_and_time", return_value=mock_publish_date)
 
 
 @pytest.fixture(scope="session")

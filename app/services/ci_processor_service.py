@@ -7,6 +7,8 @@ from app.models.requests import PostCiMetadataV1PostData
 from app.models.responses import CiMetadata, CiStatus
 from app.services.document_version_service import DocumentVersionService
 from app.services.ci_schema_location_service import CiSchemaLocationService
+from app.services.create_guid_service import CreateGuidService
+from app.services.datetime_service import DatetimeService
 from app.events.publisher import publisher
 from app.models.events import PostCIEvent
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
@@ -27,7 +29,7 @@ class CiProcessorService:
         """
 
         # Generate new uid
-        ci_id = str(uuid.uuid4())
+        ci_id = CreateGuidService.create_guid()
 
         stored_ci_filename = f"{ci_id}.json"
         ci = post_data.__dict__
@@ -97,10 +99,11 @@ class CiProcessorService:
 
             logger.info("CI transaction committed successfully.")
             return next_version_ci_metadata
+        
         except Exception as e:
             logger.error(f"Performing CI transaction: exception raised: {e}")
             logger.error("Rolling back CI transaction")
-            raise  # exceptions.GlobalException
+            raise Exception("Error processing CI transaction")
 
     
     def build_next_version_ci_metadata(
@@ -138,7 +141,7 @@ class CiProcessorService:
             data_version=data_version,
             form_type=form_type,
             language=language,
-            published_at=datetime.now().strftime(settings.PUBLISHED_AT_FORMAT),
+            published_at=str(DatetimeService.get_current_date_and_time().strftime(settings.PUBLISHED_AT_FORMAT)),
             schema_version=schema_version,
             sds_schema=sds_schema,
             status=CiStatus.DRAFT.value,
@@ -187,7 +190,7 @@ class CiProcessorService:
                 f"CI metadata {next_version_ci_metadata} failed to publish to topic with error {e}"
             )
             logger.error("Error publishing CI metadata to topic.")
-            raise #exceptions.GlobalException
+            raise Exception("Error publishing CI metadata to topic.")
 
 
     def get_ci_metadata_collection_without_status(self, survey_id: str, form_type: str, language: str) -> list[CiMetadata]:
@@ -294,7 +297,7 @@ class CiProcessorService:
         """
         logger.info("Getting CI metadata with id...")
 
-        ci_metadata = self.ci_firebase_repository.get_ci_metadata_with_guid(guid)
+        ci_metadata = self.ci_firebase_repository.get_ci_metadata_with_id(guid)
         
         return ci_metadata
     
@@ -344,5 +347,4 @@ class CiProcessorService:
         except Exception as e:
             logger.error(f"Performing delete CI transaction: exception raised: {e}")
             logger.error("Rolling back CI transaction")
-            raise  # exceptions.GlobalException
-
+            raise Exception("Error processing delete CI transaction")
