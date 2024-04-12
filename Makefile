@@ -28,7 +28,7 @@ integration-tests-sandbox:
 	python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
 
 integration-tests:
-	python -m pytest --cov=app tests/integration_tests -W ignore::DeprecationWarning
+	python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
 
 lint:
 	python -m black --line-length 127 .
