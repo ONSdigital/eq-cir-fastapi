@@ -39,20 +39,21 @@ integration-tests-cloudbuild:
 
 lint:
 	python -m black --line-length 127 .
-	python -m flake8 --max-line-length=127 --exclude=./scripts,env
+	python -m flake8 --max-line-length=127 --exclude=./scripts,env,.venv
 	python -m mypy . --exclude env --disable-error-code attr-defined --disable-error-code import
-	python -m isort . --profile black --skip env
+	python -m isort . --profile black --skip env --skip .venv
 
 lint-check:
 	python -m black . --check --line-length 127
-	python -m flake8 --max-line-length=127 --exclude=./scripts,env
+	python -m flake8 --max-line-length=127 --exclude=./scripts,env,.venv
 	python -m mypy . --exclude env --disable-error-code attr-defined --disable-error-code import
-	python -m isort . --check-only --profile black --skip env
+	python -m isort . --check-only --profile black --skip env --skip .venv
 
 lint-fix:
 	black . --line-length 127
 
 unit-tests:
+	export CONF=unit && \
 	export CI_STORAGE_BUCKET_NAME='the-ci-schema-bucket' && \
 	export PROJECT_ID='$(PROJECT_ID)' && \
 	python -m pytest --cov=app --cov-fail-under=90 --cov-report term-missing --cov-config=.coveragerc_unit -vv ./tests/unit_tests/ -W ignore::DeprecationWarning
