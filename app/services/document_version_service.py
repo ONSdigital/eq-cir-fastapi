@@ -4,7 +4,7 @@ from app.models.responses import CiMetadata
 class DocumentVersionService:
     @staticmethod
     def calculate_ci_version(
-        document_current_version: CiMetadata,
+        document_current_version: CiMetadata|None,
     ) -> int:
         """
         Calculates the next version number of a document based on a version key, returning 1 by default if no document exists.

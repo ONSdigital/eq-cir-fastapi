@@ -32,8 +32,6 @@ class FirebaseLoader:
         """
         Setup the collection reference for schemas and datasets
         """
-        if settings.CONF == "unit":
-            return None
         return self.client.collection(collection)
 
 

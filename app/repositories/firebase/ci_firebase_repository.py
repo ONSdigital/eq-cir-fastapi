@@ -24,7 +24,7 @@ class CiFirebaseRepository:
         self.ci_collection = firebase_loader.get_ci_collection()
         self.ci_bucket_repository = CiSchemaBucketRepository()
 
-    def get_latest_ci_metadata(self, survey_id, form_type, language) -> CiMetadata:
+    def get_latest_ci_metadata(self, survey_id, form_type, language) -> CiMetadata|None:
         """
         Get metadata of latest CI version.
 
@@ -42,7 +42,7 @@ class CiFirebaseRepository:
             .stream()
         )
 
-        ci_metadata: CiMetadata = None
+        ci_metadata = None
         for returned_metadata in latest_ci_metadata:
             ci_metadata = CiMetadata(**returned_metadata.to_dict())
 
@@ -186,7 +186,7 @@ class CiFirebaseRepository:
 
         return ci_metadata_list
 
-    def get_ci_metadata_with_id(self, guid: str) -> CiMetadata:
+    def get_ci_metadata_with_id(self, guid: str) -> CiMetadata|None:
         """
         Gets CI metadata using guid
 
@@ -195,7 +195,7 @@ class CiFirebaseRepository:
         """
         retrieved_ci_metadata = self.ci_collection.where("guid", "==", guid).stream()
 
-        ci_metadata: CiMetadata = None
+        ci_metadata = None
         for returned_metadata in retrieved_ci_metadata:
             ci_metadata = CiMetadata(**returned_metadata.to_dict())
 

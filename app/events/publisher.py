@@ -13,7 +13,7 @@ class Publisher:
     """Methods to publish pub/sub messages using the `pubsub_v1.PublisherClient()`"""
 
     def __init__(self) -> None:
-        self.publisher = None if settings.CONF == "unit" else PublisherClient()
+        self.publisher = PublisherClient()
         self.topic_path = self.publisher.topic_path(settings.PROJECT_ID, settings.TOPIC_ID)
 
     def publish_message(self, event_msg: PostCIEvent) -> None:

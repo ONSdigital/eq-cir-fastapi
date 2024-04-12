@@ -22,9 +22,6 @@ class BucketLoader:
         Parameters:
         bucket_name (str): The bucket name
         """
-        if settings.CONF == "unit":
-            return None
-
         __storage_client = storage.Client(project=settings.PROJECT_ID)
         try:
             bucket = __storage_client.get_bucket(

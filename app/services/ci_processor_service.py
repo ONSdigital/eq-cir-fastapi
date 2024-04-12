@@ -28,7 +28,6 @@ class CiProcessorService:
         # Generate new uid
         ci_id = CreateGuidService.create_guid()
 
-        stored_ci_filename = f"{ci_id}.json"
         ci = post_data.__dict__
 
         next_version_ci_metadata = self.build_next_version_ci_metadata(
@@ -105,7 +104,7 @@ class CiProcessorService:
         language: str,
         data_version: str,
         schema_version: str,
-        sds_schema: str,
+        sds_schema: str|None,
         title: str,
         description: str,
     ) -> CiMetadata:
@@ -154,7 +153,7 @@ class CiProcessorService:
 
         return DocumentVersionService.calculate_ci_version(current_version_metadata)
 
-    def try_publish_ci_metadata_to_topic(self, next_version_ci_metadata: CiMetadata) -> None:
+    def try_publish_ci_metadata_to_topic(self, post_ci_event: PostCIEvent) -> None:
         """
         Publish CI metadata to pubsub topic
 
@@ -163,11 +162,11 @@ class CiProcessorService:
         """
         try:
             logger.info("Publishing CI metadata to topic...")
-            publisher.publish_message(next_version_ci_metadata)
-            logger.debug(f"CI metadata {next_version_ci_metadata} published to topic")
+            publisher.publish_message(post_ci_event)
+            logger.debug(f"CI metadata {post_ci_event} published to topic")
             logger.info("CI metadata published successfully.")
         except Exception as e:
-            logger.debug(f"CI metadata {next_version_ci_metadata} failed to publish to topic with error {e}")
+            logger.debug(f"CI metadata {post_ci_event} failed to publish to topic with error {e}")
             logger.error("Error publishing CI metadata to topic.")
             raise Exception("Error publishing CI metadata to topic.")
 
@@ -243,7 +242,7 @@ class CiProcessorService:
 
         return ci_metadata_collection
 
-    def get_latest_ci_metadata(self, survey_id: str, form_type: str, language: str) -> CiMetadata:
+    def get_latest_ci_metadata(self, survey_id: str, form_type: str, language: str) -> CiMetadata|None:
         """
         Get the latest CI metadata
 
@@ -261,7 +260,7 @@ class CiProcessorService:
 
         return latest_ci_metadata
 
-    def get_ci_metadata_with_id(self, guid: str) -> CiMetadata:
+    def get_ci_metadata_with_id(self, guid: str) -> CiMetadata|None:
         """
         Get a CI metadata with id
 
