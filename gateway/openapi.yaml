@@ -90,10 +90,16 @@ components:
       title: HTTPValidationError
       type: object
     PostCiMetadataV1PostData:
-      description: "\n    Model for `post_ci_metadata_v1` request post data\n\n  \
-        \  This is the entire CI JSON object that you would like to publish. The example\
-        \ below illustrates\n    the required attributes to put into the request body.\
-        \ The POST will fail if these are not\n    included.\n    "
+      description: 'Model for `post_ci_metadata_v1` request post data
+
+
+        This is the entire CI JSON object that you would like to publish. The example
+        below illustrates
+
+        the required attributes to put into the request body. The POST will fail if
+        these are not
+
+        included.'
       properties:
         data_version:
           title: Data Version
@@ -200,7 +206,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DeploymentStatus'
-          description: Deployment done succuessfully
+          description: Deployment done successfully
         '500':
           content:
             application/json:
@@ -400,6 +406,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CiMetadata'
+                title: Response Http Get Ci Schema V1 V1 Retrieve Collection Instrument
+                  Get
+                type: object
           description: Successfully retrieved the CI schema. This is illustrated by
             returning the CI schema to the user.
         '400':
@@ -579,6 +588,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CiMetadata'
+                title: Response Http Get Ci Schema V2 V2 Retrieve Collection Instrument
+                  Get
+                type: object
           description: Successfully Queried a CI. This is illustrated with the returned
             response containing the schema of the CI.
         '400':

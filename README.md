@@ -56,6 +56,28 @@ We can build and run the FastAPI application, including emulators for firestore 
 
 The FastAPI application will now be running and available at the host `0.0.0.0:3030`. You can use the interactive Swagger docs at `0.0.0.0:3030/docs`.
 
+## Running the application locally with services running in GCloud
+
+In order to connect to real services in GCloud, you will need a GCP test project or make
+use of the sandbox project. Instructions for setting this up are included in the IaC repo.
+
+Once you have setup your project, you will need a key file to allow CIR to talk to bucket storage
+and the database. To create one:
+
+- Go the IAM page and select Service accounts
+- Create a new service account
+- Call it "test"
+- Add the roles that are needed for testing
+- Go into service account and create a key. This will download a JSON file to your machine
+- Copy the downloaded JSON file to this directory and rename to `key.json`
+
+To run CIR locally, activate the virtual environment, then run the following commands (ensuring that the values in the
+makefile represent the connections you wish to make):
+
+```bash
+make start-cloud-dev
+```
+
 ## Deploying the application containers for testing
 
 We can deploy the Collection Instrument Registry container to a project within the `cir-sandbox` GCP project for development and testing. You will need a cloud project configured for the Collection Instrument Registry to do this.

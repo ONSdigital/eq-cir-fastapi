@@ -100,7 +100,7 @@ async def http_delete_ci_v1(query_params: DeleteCiV1Params = Depends(), ci_proce
 )
 async def http_get_ci_metadata_v1(
     query_params: GetCiMetadataV1Params = Depends(), ci_processor_service: CiProcessorService = Depends()
-) -> list[CiMetadata]:
+):
     """
     GET method that returns any metadata objects from Firestore that match the parameters passed.
     """
@@ -118,9 +118,14 @@ async def http_get_ci_metadata_v1(
         response_content = BadRequest(message=f"No CI metadata found for: {asdict(query_params)}")
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=asdict(response_content))
 
+    # Call model_dump to remove optional fields that are None
+    return_ci_metadata_collection = []
+    for ci_metadata in ci_metadata_collection:
+        return_ci_metadata_collection.append(ci_metadata.model_dump())
+
     logger.info("CI metadata retrieved successfully.")
 
-    return ci_metadata_collection
+    return return_ci_metadata_collection
 
 
 @router.get(
@@ -136,7 +141,7 @@ async def http_get_ci_metadata_v1(
 )
 async def http_get_ci_metadata_v2(
     query_params: GetCiMetadataV2Params = Depends(), ci_processor_service: CiProcessorService = Depends()
-) -> list[CiMetadata]:
+):
     """
     GET method that returns any metadata objects from Firestore that match the parameters passed.
     The user has multiple ways of querying the metadata.
@@ -180,9 +185,14 @@ async def http_get_ci_metadata_v2(
         response_content = BadRequest(message=f"No CI metadata found for: {asdict(query_params)}")
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=asdict(response_content))
 
+    # Call model_dump to remove optional fields that are None
+    return_ci_metadata_collection = []
+    for ci_metadata in ci_metadata_collection:
+        return_ci_metadata_collection.append(ci_metadata.model_dump())
+
     logger.info("CI metadata retrieved successfully.")
 
-    return ci_metadata_collection
+    return return_ci_metadata_collection
 
 
 # Fetching CI schema from Bucket version 1
