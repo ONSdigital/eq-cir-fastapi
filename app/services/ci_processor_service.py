@@ -1,17 +1,16 @@
 import uuid
 from datetime import datetime
 
-from app.config import settings, logging
+from app.config import logging, settings
+from app.events.publisher import publisher
+from app.models.events import PostCIEvent
 from app.models.requests import PostCiMetadataV1PostData
-
 from app.models.responses import CiMetadata, CiStatus
-from app.services.document_version_service import DocumentVersionService
+from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from app.services.ci_schema_location_service import CiSchemaLocationService
 from app.services.create_guid_service import CreateGuidService
 from app.services.datetime_service import DatetimeService
-from app.events.publisher import publisher
-from app.models.events import PostCIEvent
-from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
+from app.services.document_version_service import DocumentVersionService
 
 logger = logging.getLogger(__name__)
 
@@ -47,9 +46,13 @@ class CiProcessorService:
             post_data.description,
         )
 
-        stored_ci_filename = CiSchemaLocationService.get_ci_schema_location(next_version_ci_metadata)
+        stored_ci_filename = CiSchemaLocationService.get_ci_schema_location(
+            next_version_ci_metadata
+        )
 
-        self.process_raw_ci_in_transaction(ci_id, next_version_ci_metadata, ci, stored_ci_filename)
+        self.process_raw_ci_in_transaction(
+            ci_id, next_version_ci_metadata, ci, stored_ci_filename
+        )
         logger.debug(f"New CI created: {next_version_ci_metadata.model_dump()}")
 
         # create event message
@@ -91,7 +94,9 @@ class CiProcessorService:
         """
         try:
             logger.info("Beginning CI transaction...")
-            self.ci_firebase_repository.perform_new_ci_transaction(ci_id, next_version_ci_metadata, ci, stored_ci_filename)
+            self.ci_firebase_repository.perform_new_ci_transaction(
+                ci_id, next_version_ci_metadata, ci, stored_ci_filename
+            )
 
             logger.info("CI transaction committed successfully.")
             return next_version_ci_metadata
@@ -136,7 +141,11 @@ class CiProcessorService:
             data_version=data_version,
             form_type=form_type,
             language=language,
-            published_at=str(DatetimeService.get_current_date_and_time().strftime(settings.PUBLISHED_AT_FORMAT)),
+            published_at=str(
+                DatetimeService.get_current_date_and_time().strftime(
+                    settings.PUBLISHED_AT_FORMAT
+                )
+            ),
             schema_version=schema_version,
             sds_schema=sds_schema,
             status=CiStatus.DRAFT.value,
@@ -146,7 +155,9 @@ class CiProcessorService:
         )
         return next_version_ci_metadata
 
-    def calculate_next_ci_version(self, survey_id: str, form_type: str, language: str) -> int:
+    def calculate_next_ci_version(
+        self, survey_id: str, form_type: str, language: str
+    ) -> int:
         """
         Calculates the next schema version for the metadata being built.
 
@@ -154,11 +165,15 @@ class CiProcessorService:
         survey_id (str): the survey id of the schema.
         """
 
-        current_version_metadata = self.ci_firebase_repository.get_latest_ci_metadata(survey_id, form_type, language)
+        current_version_metadata = self.ci_firebase_repository.get_latest_ci_metadata(
+            survey_id, form_type, language
+        )
 
         return DocumentVersionService.calculate_ci_version(current_version_metadata)
 
-    def try_publish_ci_metadata_to_topic(self, next_version_ci_metadata: CiMetadata) -> None:
+    def try_publish_ci_metadata_to_topic(
+        self, next_version_ci_metadata: CiMetadata
+    ) -> None:
         """
         Publish CI metadata to pubsub topic
 
@@ -171,11 +186,15 @@ class CiProcessorService:
             logger.debug(f"CI metadata {next_version_ci_metadata} published to topic")
             logger.info("CI metadata published successfully.")
         except Exception as e:
-            logger.debug(f"CI metadata {next_version_ci_metadata} failed to publish to topic with error {e}")
+            logger.debug(
+                f"CI metadata {next_version_ci_metadata} failed to publish to topic with error {e}"
+            )
             logger.error("Error publishing CI metadata to topic.")
             raise Exception("Error publishing CI metadata to topic.")
 
-    def get_ci_metadata_collection_without_status(self, survey_id: str, form_type: str, language: str) -> list[CiMetadata]:
+    def get_ci_metadata_collection_without_status(
+        self, survey_id: str, form_type: str, language: str
+    ) -> list[CiMetadata]:
         """
         Get a list of CI metadata without status
 
@@ -189,8 +208,10 @@ class CiProcessorService:
         """
         logger.info("Retrieving CI metadata without status...")
 
-        ci_metadata_collection = self.ci_firebase_repository.get_ci_metadata_collection_without_status(
-            survey_id, form_type, language
+        ci_metadata_collection = (
+            self.ci_firebase_repository.get_ci_metadata_collection_without_status(
+                survey_id, form_type, language
+            )
         )
 
         return ci_metadata_collection
@@ -212,13 +233,17 @@ class CiProcessorService:
         """
         logger.info("Retrieving CI metadata with status...")
 
-        ci_metadata_collection = self.ci_firebase_repository.get_ci_metadata_collection_with_status(
-            survey_id, form_type, language, status
+        ci_metadata_collection = (
+            self.ci_firebase_repository.get_ci_metadata_collection_with_status(
+                survey_id, form_type, language, status
+            )
         )
 
         return ci_metadata_collection
 
-    def get_ci_metadata_collection_only_with_status(self, status: str) -> list[CiMetadata]:
+    def get_ci_metadata_collection_only_with_status(
+        self, status: str
+    ) -> list[CiMetadata]:
         """
         Get a list of CI metadata only with status
 
@@ -230,7 +255,11 @@ class CiProcessorService:
         """
         logger.info("Retrieving CI metadata only with status...")
 
-        ci_metadata_collection = self.ci_firebase_repository.get_ci_metadata_collection_only_with_status(status)
+        ci_metadata_collection = (
+            self.ci_firebase_repository.get_ci_metadata_collection_only_with_status(
+                status
+            )
+        )
 
         return ci_metadata_collection
 
@@ -243,11 +272,15 @@ class CiProcessorService:
         """
         logger.info("Retrieving all CI metadata...")
 
-        ci_metadata_collection = self.ci_firebase_repository.get_all_ci_metadata_collection()
+        ci_metadata_collection = (
+            self.ci_firebase_repository.get_all_ci_metadata_collection()
+        )
 
         return ci_metadata_collection
 
-    def get_latest_ci_metadata(self, survey_id: str, form_type: str, language: str) -> CiMetadata:
+    def get_latest_ci_metadata(
+        self, survey_id: str, form_type: str, language: str
+    ) -> CiMetadata:
         """
         Get the latest CI metadata
 
@@ -261,7 +294,9 @@ class CiProcessorService:
         """
         logger.info("Getting latest CI metadata...")
 
-        latest_ci_metadata = self.ci_firebase_repository.get_latest_ci_metadata(survey_id, form_type, language)
+        latest_ci_metadata = self.ci_firebase_repository.get_latest_ci_metadata(
+            survey_id, form_type, language
+        )
 
         return latest_ci_metadata
 
@@ -291,7 +326,9 @@ class CiProcessorService:
 
         self.ci_firebase_repository.update_ci_metadata_status_to_published_with_id(guid)
 
-    def get_ci_metadata_colleciton_with_survey_id(self, survey_id: str) -> list[CiMetadata]:
+    def get_ci_metadata_colleciton_with_survey_id(
+        self, survey_id: str
+    ) -> list[CiMetadata]:
         """
         Get CI metadata collection with survey_id
 
@@ -303,11 +340,17 @@ class CiProcessorService:
         """
         logger.info("Deleting CI metadata and schema by survey_id...")
 
-        ci_metadata_collection = self.ci_firebase_repository.get_ci_metadata_collection_with_survey_id(survey_id)
+        ci_metadata_collection = (
+            self.ci_firebase_repository.get_ci_metadata_collection_with_survey_id(
+                survey_id
+            )
+        )
 
         return ci_metadata_collection
 
-    def delete_ci_in_transaction(self, ci_metadata_collection: list[CiMetadata]) -> None:
+    def delete_ci_in_transaction(
+        self, ci_metadata_collection: list[CiMetadata]
+    ) -> None:
         """
         Delete CI by calling a transactional function that wrap the procedures
 
@@ -316,7 +359,9 @@ class CiProcessorService:
         """
         try:
             logger.info("Beginning delete CI transaction...")
-            self.ci_firebase_repository.perform_delete_ci_transaction(ci_metadata_collection)
+            self.ci_firebase_repository.perform_delete_ci_transaction(
+                ci_metadata_collection
+            )
 
             logger.info("Delete CI transaction committed successfully.")
 

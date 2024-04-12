@@ -1,5 +1,6 @@
-from app.config import settings
 from google.cloud.firestore import Client, CollectionReference
+
+from app.config import settings
 
 
 class FirebaseLoader:

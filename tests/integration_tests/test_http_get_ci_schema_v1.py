@@ -46,7 +46,9 @@ class TestHttpGetCiSchemaV1:
         """
         # Construct a valid querystring using `setup_payload` data
         query_params = GetCiSchemaV1Params(
-            form_type=setup_payload["form_type"], language=setup_payload["language"], survey_id=setup_payload["survey_id"]
+            form_type=setup_payload["form_type"],
+            language=setup_payload["language"],
+            survey_id=setup_payload["survey_id"],
         )
         querystring = urlencode(asdict(query_params))
 
@@ -65,7 +67,9 @@ class TestHttpGetCiSchemaV1:
 
         # Construct the querystring to retrieve newly created ci schema
         query_params = GetCiSchemaV1Params(
-            form_type=setup_payload["form_type"], language=setup_payload["language"], survey_id=setup_payload["survey_id"]
+            form_type=setup_payload["form_type"],
+            language=setup_payload["language"],
+            survey_id=setup_payload["survey_id"],
         )
         querystring = urlencode(asdict(query_params))
         # sends request to http_get_ci_schema_v1 endpoint for data
@@ -78,10 +82,14 @@ class TestHttpGetCiSchemaV1:
         http_get_ci_schema_v1 should return a 401 unauthorized error if the endpoint is requested with an unauthorized token.
         """
         query_params = GetCiSchemaV1Params(
-            form_type=setup_payload["form_type"], language=setup_payload["language"], survey_id=setup_payload["survey_id"]
+            form_type=setup_payload["form_type"],
+            language=setup_payload["language"],
+            survey_id=setup_payload["survey_id"],
         )
 
         querystring = urlencode(asdict(query_params))
 
-        response = make_iap_request("GET", f"{self.url}?{querystring}", unauthenticated=True)
+        response = make_iap_request(
+            "GET", f"{self.url}?{querystring}", unauthenticated=True
+        )
         assert response.status_code == status.HTTP_401_UNAUTHORIZED

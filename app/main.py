@@ -31,4 +31,6 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     # Build the error message as a semi-colon separated string of error messages
     message = ";".join([e["msg"] for e in exc.errors()])
     response_content = BadRequest(message=message)
-    return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content=asdict(response_content))
+    return JSONResponse(
+        status_code=status.HTTP_400_BAD_REQUEST, content=asdict(response_content)
+    )

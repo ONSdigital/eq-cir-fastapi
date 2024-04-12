@@ -32,12 +32,18 @@ class TestPutStatusV1:
         survey_id = setup_payload["survey_id"]
         form_type = setup_payload["form_type"]
         language = setup_payload["language"]
-        querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
+        querystring = urlencode(
+            {"form_type": form_type, "language": language, "survey_id": survey_id}
+        )
         # sends request to http_query_ci endpoint for data
-        query_ci_pre_response = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
+        query_ci_pre_response = make_iap_request(
+            "GET", f"{self.get_metadata_url}?{querystring}"
+        )
         return query_ci_pre_response.json()
 
-    def test_post_ci_v1_returns_draft_and_put_status_v1_returns_published(self, setup_payload):
+    def test_post_ci_v1_returns_draft_and_put_status_v1_returns_published(
+        self, setup_payload
+    ):
         """
         What am I testing:
         http_put_status_v1 should return a HTTP_200_OK and have the payload's status to published
@@ -61,7 +67,9 @@ class TestPutStatusV1:
 
         assert query_ci_post_response_data[0]["status"] == "PUBLISHED"
 
-    def test_post_ci_v1_returns_draft_and_put_status_v1_returns_already_published(self, setup_payload):
+    def test_post_ci_v1_returns_draft_and_put_status_v1_returns_already_published(
+        self, setup_payload
+    ):
         """
         What am I testing:
         http_put_status_v1 should return a HTTP_200_OK and throw a message status is already changed to published.
@@ -78,7 +86,10 @@ class TestPutStatusV1:
 
         # returning text as opposed to json as its a string
         ci_update_data = ci_update.json()
-        assert ci_update_data == f"CI status has already been changed to Published for {ci_id}."
+        assert (
+            ci_update_data
+            == f"CI status has already been changed to Published for {ci_id}."
+        )
 
     def test_guid_not_found(self):
         """
@@ -105,5 +116,7 @@ class TestPutStatusV1:
         ci_id = "401"
         querystring = urlencode({"guid": ci_id})
         # sends request to http_put_status
-        ci_update = make_iap_request("PUT", f"{self.base_url}?{querystring}", unauthenticated=True)
+        ci_update = make_iap_request(
+            "PUT", f"{self.base_url}?{querystring}", unauthenticated=True
+        )
         assert ci_update.status_code == status.HTTP_401_UNAUTHORIZED

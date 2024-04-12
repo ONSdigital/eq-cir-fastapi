@@ -1,11 +1,12 @@
-from google.cloud.firestore import Query
+from firebase_admin import firestore
+from google.cloud.firestore import Query, Transaction
 
 from app.config import logging
 from app.models.responses import CiMetadata, CiStatus
+from app.repositories.buckets.ci_schema_bucket_repository import (
+    CiSchemaBucketRepository,
+)
 from app.repositories.firebase.firebase_loader import firebase_loader
-from firebase_admin import firestore
-from google.cloud.firestore import Transaction
-from app.repositories.buckets.ci_schema_bucket_repository import CiSchemaBucketRepository
 from app.services.ci_schema_location_service import CiSchemaLocationService
 
 logger = logging.getLogger(__name__)
@@ -97,7 +98,9 @@ class CiFirebaseRepository:
             merge=True,
         )
 
-    def get_ci_metadata_collection_without_status(self, survey_id: str, form_type: str, language: str) -> list[CiMetadata]:
+    def get_ci_metadata_collection_without_status(
+        self, survey_id: str, form_type: str, language: str
+    ) -> list[CiMetadata]:
         """
         Gets the collection of CI metadata with a specific survey_id, form_type, language, and status.
 
@@ -149,7 +152,9 @@ class CiFirebaseRepository:
 
         return ci_metadata_list
 
-    def get_ci_metadata_collection_only_with_status(self, status: str) -> list[CiMetadata]:
+    def get_ci_metadata_collection_only_with_status(
+        self, status: str
+    ) -> list[CiMetadata]:
         """
         Gets the collection of CI metadata with a specific status.
 
@@ -200,7 +205,9 @@ class CiFirebaseRepository:
 
         return ci_metadata
 
-    def get_ci_metadata_collection_with_survey_id(self, survey_id: str) -> list[CiMetadata]:
+    def get_ci_metadata_collection_with_survey_id(
+        self, survey_id: str
+    ) -> list[CiMetadata]:
         """
         Gets the collection of CI metadata using survey_id
 
@@ -208,7 +215,9 @@ class CiFirebaseRepository:
         survey_id (str): The survey id of the CI metadata being collected.
         """
         returned_ci_metadata = (
-            self.ci_collection.where("survey_id", "==", survey_id).order_by("ci_version", direction=Query.DESCENDING).stream()
+            self.ci_collection.where("survey_id", "==", survey_id)
+            .order_by("ci_version", direction=Query.DESCENDING)
+            .stream()
         )
 
         ci_metadata_list: list[CiMetadata] = []
@@ -224,7 +233,9 @@ class CiFirebaseRepository:
         """
         self.ci_collection.document(guid).update({"status": CiStatus.PUBLISHED.value})
 
-    def perform_delete_ci_transaction(self, ci_metadata_collection: list[CiMetadata]) -> None:
+    def perform_delete_ci_transaction(
+        self, ci_metadata_collection: list[CiMetadata]
+    ) -> None:
         """
         A transactional function that wrap CI deletion and schema deletion processes
 
@@ -236,18 +247,24 @@ class CiFirebaseRepository:
         # 'self'. Encapsulating the transaction within this function circumvents the issue.
 
         @firestore.transactional
-        def delete_ci_transaction_run(transaction: Transaction, ci_metadata: CiMetadata):
+        def delete_ci_transaction_run(
+            transaction: Transaction, ci_metadata: CiMetadata
+        ):
             # Delete ci metadata from FireStore
             self.delete_ci_metadata_collection_in_transaction(transaction, ci_metadata)
 
             # Delete ci schema from bucket
-            stored_ci_filename = CiSchemaLocationService.get_ci_schema_location(ci_metadata)
+            stored_ci_filename = CiSchemaLocationService.get_ci_schema_location(
+                ci_metadata
+            )
             self.ci_bucket_repository.delete_ci_schema(stored_ci_filename)
 
         for ci_metadata in ci_metadata_collection:
             delete_ci_transaction_run(self.client.transaction(), ci_metadata)
 
-    def delete_ci_metadata_collection_in_transaction(self, transaction: Transaction, ci_metadata: CiMetadata):
+    def delete_ci_metadata_collection_in_transaction(
+        self, transaction: Transaction, ci_metadata: CiMetadata
+    ):
         """
         For internal use only - deletes document from remote firestore database
 

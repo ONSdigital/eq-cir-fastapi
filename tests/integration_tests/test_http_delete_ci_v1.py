@@ -29,7 +29,9 @@ class TestDeleteCiV1:
         self.subscriber.pull_messages_and_acknowledge()
         # Send request to http_delete_ci endpoint
         response = make_iap_request("DELETE", f"{self.base_url}?{querystring}")
-        assert response.text == json.dumps(f"CI metadata and schema successfully deleted for {survey_id}.")
+        assert response.text == json.dumps(
+            f"CI metadata and schema successfully deleted for {survey_id}."
+        )
         assert response.status_code == status.HTTP_200_OK
 
     def test_can_delete_ci_returns_400(self):
@@ -64,5 +66,7 @@ class TestDeleteCiV1:
         """
         survey_id = setup_payload["survey_id"]
         querystring = urlencode({"survey_id": survey_id})
-        response = make_iap_request("DELETE", f"{self.base_url}?{querystring}", unauthenticated=True)
+        response = make_iap_request(
+            "DELETE", f"{self.base_url}?{querystring}", unauthenticated=True
+        )
         assert response.status_code == status.HTTP_401_UNAUTHORIZED

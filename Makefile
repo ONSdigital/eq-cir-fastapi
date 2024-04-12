@@ -42,6 +42,10 @@ lint-check:
 	python -m mypy . --exclude env --disable-error-code attr-defined --disable-error-code import
 	python -m isort . --check-only --profile black --skip env
 
+lint-fix:
+	black .
+	isort . --profile black
+
 unit-tests:
 	export CI_STORAGE_BUCKET_NAME='the-ci-schema-bucket' && \
 	export PROJECT_ID='$(PROJECT_ID)' && \

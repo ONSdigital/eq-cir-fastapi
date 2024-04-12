@@ -15,7 +15,9 @@ class Status(Enum):
 class DeleteCiV1Params:
     """Model for `delete_ci_metadata_v1` request query params"""
 
-    survey_id: str = Query(description="The survey ID of the CI to be deleted.", example="123")
+    survey_id: str = Query(
+        description="The survey ID of the CI to be deleted.", example="123"
+    )
 
 
 @dataclass
@@ -66,7 +68,10 @@ class GetCiSchemaV1Params:
 class GetCiSchemaV2Params:
     """Model for `get_ci_schema_v2` request query params"""
 
-    guid: str = Query(description="The global unique ID of the CI", example="428ae4d1-8e7f-4a9d-8bef-05a266bf81e7")
+    guid: str = Query(
+        description="The global unique ID of the CI",
+        example="428ae4d1-8e7f-4a9d-8bef-05a266bf81e7",
+    )
 
 
 class PostCiMetadataV1PostData(BaseModel):
@@ -98,7 +103,9 @@ class PostCiMetadataV1PostData(BaseModel):
     submission: dict | SkipJsonSchema[None] = None
     theme: str | SkipJsonSchema[None] = ""
 
-    @field_validator("data_version", "form_type", "language", "survey_id", "title", "schema_version")
+    @field_validator(
+        "data_version", "form_type", "language", "survey_id", "title", "schema_version"
+    )
     @classmethod
     def check_not_empty_string(cls, value: str, info: FieldValidationInfo) -> str:
         """Raise `ValueError` if input `value` is an empty string or whitespace"""

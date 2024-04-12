@@ -2,8 +2,8 @@ import datetime
 import uuid
 
 from app.config import Settings
-from app.models.responses import CiMetadata, CiStatus
 from app.models.requests import PostCiMetadataV1PostData
+from app.models.responses import CiMetadata, CiStatus
 
 settings = Settings()
 

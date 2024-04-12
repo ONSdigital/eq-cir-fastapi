@@ -1,5 +1,6 @@
-from app.config import settings
 from google.cloud import exceptions, storage
+
+from app.config import settings
 
 
 class BucketLoader:

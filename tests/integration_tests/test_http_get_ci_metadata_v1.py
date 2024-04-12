@@ -35,7 +35,9 @@ class TestGetCiMetadataV1:
         survey_id = setup_payload["survey_id"]
         form_type = setup_payload["form_type"]
         language = setup_payload["language"]
-        querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
+        querystring = urlencode(
+            {"form_type": form_type, "language": language, "survey_id": survey_id}
+        )
         # sends request to http_query_ci endpoint for data
         query_ci_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         query_ci_response_data = query_ci_response.json()
@@ -58,23 +60,31 @@ class TestGetCiMetadataV1:
         survey_id = setup_payload["survey_id"]
         form_type = setup_payload["form_type"]
         language = setup_payload["language"]
-        querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
+        querystring = urlencode(
+            {"form_type": form_type, "language": language, "survey_id": survey_id}
+        )
         # sends request to http_query_ci endpoint for data
         query_ci_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         query_ci_response_data = query_ci_response.json()
 
         setup_payload["language"] = "English"
         make_iap_request("POST", f"{self.post_url}", json=setup_payload)
-        querystring = urlencode({"form_type": form_type, "language": "English", "survey_id": survey_id})
+        querystring = urlencode(
+            {"form_type": form_type, "language": "English", "survey_id": survey_id}
+        )
         # sends request to http_query_ci endpoint for data
-        new_language_query_ci_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
+        new_language_query_ci_response = make_iap_request(
+            "GET", f"{self.base_url}?{querystring}"
+        )
         new_language_query_ci_response_data = new_language_query_ci_response.json()
 
         assert len(query_ci_response_data) == 3
         assert len(new_language_query_ci_response_data) == 1
         assert new_language_query_ci_response_data[0]["language"] == "English"
 
-    def test_post_ci_with_same_metadata_query_ci_returns_with_new_keys_sds_schema_description(self, setup_payload):
+    def test_post_ci_with_same_metadata_query_ci_returns_with_new_keys_sds_schema_description(
+        self, setup_payload
+    ):
         """
         What am I testing:
         http_get_ci_metadata_v1 should return ci with new keys sds_schema and description when queried.
@@ -86,7 +96,9 @@ class TestGetCiMetadataV1:
         survey_id = setup_payload["survey_id"]
         form_type = setup_payload["form_type"]
         language = setup_payload["language"]
-        querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
+        querystring = urlencode(
+            {"form_type": form_type, "language": language, "survey_id": survey_id}
+        )
         # sends request to http_query_ci endpoint for data
         query_ci_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         query_ci_response_json = query_ci_response.json()
@@ -102,14 +114,14 @@ class TestGetCiMetadataV1:
         survey_id = setup_payload["survey_id"]
         form_type = setup_payload["form_type"]
         language = setup_payload["language"]
-        querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
+        querystring = urlencode(
+            {"form_type": form_type, "language": language, "survey_id": survey_id}
+        )
         # sends request to http_query_ci endpoint for data
         query_ci_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         assert query_ci_response.status_code == status.HTTP_404_NOT_FOUND
         query_ci_response = query_ci_response.json()
-        expected_response = (
-            f"No CI metadata found for: {{'form_type': '{form_type}', 'language': '{language}', 'survey_id': '{survey_id}'}}"
-        )
+        expected_response = f"No CI metadata found for: {{'form_type': '{form_type}', 'language': '{language}', 'survey_id': '{survey_id}'}}"
         assert query_ci_response["message"] == expected_response
         assert query_ci_response["status"] == "error"
 
@@ -132,7 +144,11 @@ class TestGetCiMetadataV1:
         survey_id = setup_payload["survey_id"]
         form_type = setup_payload["form_type"]
         language = setup_payload["language"]
-        querystring = urlencode({"survey_id": survey_id, "form_type": form_type, language: "language"})
-        response = make_iap_request("GET", f"{self.base_url}?{querystring}", unauthenticated=True)
+        querystring = urlencode(
+            {"survey_id": survey_id, "form_type": form_type, language: "language"}
+        )
+        response = make_iap_request(
+            "GET", f"{self.base_url}?{querystring}", unauthenticated=True
+        )
         print(response)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
