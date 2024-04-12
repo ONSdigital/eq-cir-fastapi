@@ -2,10 +2,10 @@ from urllib.parse import urlencode
 
 import pytest
 
-from app.repositories.firestore import FirestoreClient
+from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from tests.integration_tests.utils import make_iap_request
 
-firestore_client = FirestoreClient()
+firestore_client = CiFirebaseRepository()
 
 
 @pytest.fixture
@@ -19,7 +19,7 @@ def setup_publish_ci_return_payload():
         response: post ci response object
 
     """
-    ci_exists = firestore_client.query_latest_ci_version("3456", "business", "welsh")
+    ci_exists = firestore_client.get_latest_ci_metadata("3456", "business", "welsh")
     if ci_exists:
         querystring = urlencode({"survey_id": 3456})
         make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
@@ -39,7 +39,7 @@ def setup_publish_ci_return_payload():
 
 @pytest.fixture
 def setup_payload():
-    ci_exists = firestore_client.query_latest_ci_version("3456", "business", "welsh")
+    ci_exists = firestore_client.get_latest_ci_metadata("3456", "business", "welsh")
     if ci_exists:
         querystring = urlencode({"survey_id": 3456})
         make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
