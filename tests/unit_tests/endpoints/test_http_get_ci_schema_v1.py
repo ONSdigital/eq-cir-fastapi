@@ -1,7 +1,6 @@
 from unittest.mock import patch
 from urllib.parse import urlencode
 
-import pytest
 from fastapi import status
 from fastapi.testclient import TestClient
 

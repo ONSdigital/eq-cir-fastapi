@@ -1,9 +1,7 @@
 import json
 
 from app.config import logging
-from app.models.responses import CiMetadata
 from app.repositories.buckets.bucket_loader import bucket_loader
-from app.services.ci_schema_location_service import CiSchemaLocationService
 
 logger = logging.getLogger(__name__)
 

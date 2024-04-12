@@ -1,5 +1,3 @@
-from typing import Literal
-
 from app.models.responses import CiMetadata
 
 

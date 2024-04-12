@@ -1,6 +1,3 @@
-import uuid
-from datetime import datetime
-
 from app.config import logging, settings
 from app.events.publisher import publisher
 from app.models.events import PostCIEvent

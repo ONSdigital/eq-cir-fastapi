@@ -102,7 +102,7 @@ class TestCiFirebaseRepository:
             mock_language,
         )
 
-        assert latest_ci_metadata == None
+        assert latest_ci_metadata is None
 
     def test_query_latest_ci_version_id_returns_latest_id(
         self, mock_firestore_collection
@@ -138,7 +138,7 @@ class TestCiFirebaseRepository:
             "wrong_survey_id", mock_form_type, mock_language
         )
 
-        assert latest_ci_metadata == None
+        assert latest_ci_metadata is None
 
     def test_get_query_ci_metadata_with_guid_returns_ci(
         self, mock_firestore_collection
@@ -171,4 +171,4 @@ class TestCiFirebaseRepository:
 
         ci_metadata = firestore_client.get_ci_metadata_with_id("wrong_guid")
 
-        assert ci_metadata == None
+        assert ci_metadata is None
