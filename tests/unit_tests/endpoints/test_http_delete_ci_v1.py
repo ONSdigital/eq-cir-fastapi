@@ -16,12 +16,8 @@ test_500_client = TestClient(app, raise_server_exceptions=False)
 settings = Settings()
 
 
-@patch(
-    "app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_collection_with_survey_id"
-)
-@patch(
-    "app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.perform_delete_ci_transaction"
-)
+@patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_collection_with_survey_id")
+@patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.perform_delete_ci_transaction")
 class TestHttpDeleteCiV1:
     """Tests for the `http_delete_ci_v1` endpoint"""
 
@@ -39,21 +35,15 @@ class TestHttpDeleteCiV1:
         if ci is found and deleted. Assert that the correct methods are called with the correct arguments
         """
         # Update mocked function to return a list of valid ci metadata
-        mocked_get_ci_metadata_collection_with_survey_id.return_value = [
-            mock_ci_metadata
-        ]
+        mocked_get_ci_metadata_collection_with_survey_id.return_value = [mock_ci_metadata]
 
         response = client.delete(self.url)
         expected_message = f"CI metadata and schema successfully deleted for {self.query_params.survey_id}."
 
         assert response.status_code == status.HTTP_200_OK
         assert response.json() == expected_message
-        CiFirebaseRepository.get_ci_metadata_collection_with_survey_id.assert_called_once_with(
-            mock_survey_id
-        )
-        CiFirebaseRepository.perform_delete_ci_transaction.assert_called_once_with(
-            [mock_ci_metadata]
-        )
+        CiFirebaseRepository.get_ci_metadata_collection_with_survey_id.assert_called_once_with(mock_survey_id)
+        CiFirebaseRepository.perform_delete_ci_transaction.assert_called_once_with([mock_ci_metadata])
 
     def test_endpoint_returns_400_if_query_parameters_are_not_present(
         self,
@@ -82,9 +72,7 @@ class TestHttpDeleteCiV1:
         mocked_get_ci_metadata_collection_with_survey_id.return_value = None
 
         response = client.delete(self.url)
-        expected_response = BadRequest(
-            message=f"No CI found for: {self.query_params.__dict__}"
-        )
+        expected_response = BadRequest(message=f"No CI found for: {self.query_params.__dict__}")
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert response.json() == expected_response.__dict__
@@ -99,9 +87,7 @@ class TestHttpDeleteCiV1:
         found but not deleted due to an error in transaction
         """
         # Update mocked function to return a list of valid ci metadata to indicate ci is found
-        mocked_get_ci_metadata_collection_with_survey_id.return_value = [
-            mock_ci_metadata
-        ]
+        mocked_get_ci_metadata_collection_with_survey_id.return_value = [mock_ci_metadata]
         # Raise an exception to simulate an error in transaction
         mocked_perform_delete_ci_transaction.side_effect = Exception()
 

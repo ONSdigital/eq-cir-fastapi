@@ -21,12 +21,8 @@ class TestPostCiMetadata:
     url = "/v1/publish_collection_instrument"
 
     @patch("app.events.publisher.Publisher.publish_message")
-    @patch(
-        "app.repositories.buckets.ci_schema_bucket_repository.CiSchemaBucketRepository.store_ci_schema"
-    )
-    @patch(
-        "app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_latest_ci_metadata"
-    )
+    @patch("app.repositories.buckets.ci_schema_bucket_repository.CiSchemaBucketRepository.store_ci_schema")
+    @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_latest_ci_metadata")
     def test_creates_new_ci_metadata_on_firestore(
         self,
         mocked_get_latest_ci_metadata,
@@ -58,12 +54,8 @@ class TestPostCiMetadata:
         assert ci_metadata_query.__next__ is not None
 
     @patch("app.events.publisher.Publisher.publish_message")
-    @patch(
-        "app.repositories.buckets.ci_schema_bucket_repository.CiSchemaBucketRepository.store_ci_schema"
-    )
-    @patch(
-        "app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_latest_ci_metadata"
-    )
+    @patch("app.repositories.buckets.ci_schema_bucket_repository.CiSchemaBucketRepository.store_ci_schema")
+    @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_latest_ci_metadata")
     def test_creates_new_ci_metadata_omits_optional_sds_schema_if_not_present(
         self,
         mocked_get_latest_ci_metadata,
@@ -100,12 +92,8 @@ class TestPostCiMetadata:
             assert "sds_schema" not in ci._doc.keys()
 
     @patch("app.events.publisher.Publisher.publish_message")
-    @patch(
-        "app.repositories.buckets.ci_schema_bucket_repository.CiSchemaBucketRepository.store_ci_schema"
-    )
-    @patch(
-        "app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_latest_ci_metadata"
-    )
+    @patch("app.repositories.buckets.ci_schema_bucket_repository.CiSchemaBucketRepository.store_ci_schema")
+    @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_latest_ci_metadata")
     def test_creates_new_ci_metadata_includes_optional_sds_schema_if_present(
         self,
         mocked_get_latest_ci_metadata,
@@ -139,6 +127,4 @@ class TestPostCiMetadata:
         for ci in ci_metadata_query:
             # ci should contain doc and `sds_schema` should be present in created document keys
             assert "sds_schema" in ci._doc.keys()
-            assert (
-                ci._doc["sds_schema"] == mock_post_ci_schema_with_sds_schema.sds_schema
-            )
+            assert ci._doc["sds_schema"] == mock_post_ci_schema_with_sds_schema.sds_schema

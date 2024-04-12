@@ -30,9 +30,7 @@ async def http_get_status():
     application_version = settings.CIR_APPLICATION_VERSION
     if application_version:
         response_content = DeploymentStatus(version=settings.CIR_APPLICATION_VERSION)
-        return JSONResponse(
-            status_code=status.HTTP_200_OK, content=asdict(response_content)
-        )
+        return JSONResponse(status_code=status.HTTP_200_OK, content=asdict(response_content))
     else:
         response_content = BadRequest(message="Internal server error")
         return JSONResponse(

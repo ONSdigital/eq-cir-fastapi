@@ -25,16 +25,9 @@ class TestGetCiMetadataV2Params:
         `params_not_none` class method should return `True` if all param name strings as input
         arguments have a corresponding non-none class attribute value
         """
-        assert (
-            self.query_params.params_not_none(
-                "form_type", "language", "status", "survey_id"
-            )
-            is True
-        )
+        assert self.query_params.params_not_none("form_type", "language", "status", "survey_id") is True
 
-    @pytest.mark.parametrize(
-        "input_param", ["form_type", "language", "status", "survey_id"]
-    )
+    @pytest.mark.parametrize("input_param", ["form_type", "language", "status", "survey_id"])
     def test_params_not_none_returns_false_when_single_param_none(self, input_param):
         """
         `params_not_none` class method should return `False` if any of param name strings as input
@@ -43,12 +36,7 @@ class TestGetCiMetadataV2Params:
         # Update `query_params` to contain a single `None` value
         setattr(self.query_params, input_param, None)
 
-        assert (
-            self.query_params.params_not_none(
-                "form_type", "language", "status", "survey_id"
-            )
-            is False
-        )
+        assert self.query_params.params_not_none("form_type", "language", "status", "survey_id") is False
 
     def test_params_not_none_returns_false_when_all_params_none(self):
         """
@@ -61,12 +49,7 @@ class TestGetCiMetadataV2Params:
         self.query_params.status = None
         self.query_params.survey_id = None
 
-        assert (
-            self.query_params.params_not_none(
-                "form_type", "language", "status", "survey_id"
-            )
-            is False
-        )
+        assert self.query_params.params_not_none("form_type", "language", "status", "survey_id") is False
 
 
 class TestPostCiMetadataV1PostData:
@@ -124,9 +107,7 @@ class TestPostCiMetadataV1PostData:
             "schema_version",
         ],
     )
-    def test_data_model_raises_value_error_if_required_field_is_empty_string(
-        self, input_param
-    ):
+    def test_data_model_raises_value_error_if_required_field_is_empty_string(self, input_param):
         """
         `PostCiMetadataV1PostData` data model should raise `ValueError` on init if any required
         field is an empty string
@@ -148,9 +129,7 @@ class TestPostCiMetadataV1PostData:
             "schema_version",
         ],
     )
-    def test_data_model_raises_value_error_if_required_field_is_whitespace(
-        self, input_param
-    ):
+    def test_data_model_raises_value_error_if_required_field_is_whitespace(self, input_param):
         """
         `PostCiMetadataV1PostData` data model should raise `ValueError` on init if any required
         field is whitespace

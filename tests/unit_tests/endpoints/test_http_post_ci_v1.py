@@ -25,12 +25,8 @@ settings = Settings()
 
 @patch("app.services.create_guid_service.CreateGuidService.create_guid")
 @patch("app.events.publisher.Publisher.publish_message")
-@patch(
-    "app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_latest_ci_metadata"
-)
-@patch(
-    "app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.perform_new_ci_transaction"
-)
+@patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_latest_ci_metadata")
+@patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.perform_new_ci_transaction")
 class TestHttpPostCiV1:
     """
     Tests for the `http_post_ci_v1` endpoint
@@ -73,9 +69,7 @@ class TestHttpPostCiV1:
             mock_post_ci_schema.model_dump(),
             CiSchemaLocationService.get_ci_schema_location(mock_ci_metadata),
         )
-        Publisher.publish_message.assert_called_once_with(
-            PostCIEvent(**mock_ci_metadata.model_dump())
-        )
+        Publisher.publish_message.assert_called_once_with(PostCIEvent(**mock_ci_metadata.model_dump()))
 
     def test_endpoint_returns_200_if_ci_next_version_created_successfully(
         self,
@@ -111,13 +105,9 @@ class TestHttpPostCiV1:
             mock_next_version_id,
             mock_next_version_ci_metadata,
             mock_post_ci_schema.model_dump(),
-            CiSchemaLocationService.get_ci_schema_location(
-                mock_next_version_ci_metadata
-            ),
+            CiSchemaLocationService.get_ci_schema_location(mock_next_version_ci_metadata),
         )
-        Publisher.publish_message.assert_called_once_with(
-            PostCIEvent(**mock_next_version_ci_metadata.model_dump())
-        )
+        Publisher.publish_message.assert_called_once_with(PostCIEvent(**mock_next_version_ci_metadata.model_dump()))
 
     def test_endpoint_returns_400_if_no_post_data(
         self,

@@ -19,12 +19,8 @@ client = TestClient(app)
 settings = Settings()
 
 
-@patch(
-    "app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_with_id"
-)
-@patch(
-    "app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.update_ci_metadata_status_to_published_with_id"
-)
+@patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_with_id")
+@patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.update_ci_metadata_status_to_published_with_id")
 class TestHttpPutStatusV1:
     "Tests for for the `http_put_status_v1` endpoint"
 
@@ -44,17 +40,13 @@ class TestHttpPutStatusV1:
         # mocked function to return valid ci metadata, indicating ci metadata is found
         mocked_get_ci_metadata_with_id.return_value = mock_ci_metadata
 
-        expected_message = (
-            f"CI status has been changed to Published for {self.query_params.guid}."
-        )
+        expected_message = f"CI status has been changed to Published for {self.query_params.guid}."
         response = client.put(self.url)
 
         assert response.status_code == status.HTTP_200_OK
         assert expected_message in response.content.decode("utf-8")
         CiFirebaseRepository.get_ci_metadata_with_id.assert_called_once_with(mock_id)
-        CiFirebaseRepository.update_ci_metadata_status_to_published_with_id.assert_called_once_with(
-            mock_id
-        )
+        CiFirebaseRepository.update_ci_metadata_status_to_published_with_id.assert_called_once_with(mock_id)
 
     def test_endpoint_returns_200_if_status_already_updated(
         self,

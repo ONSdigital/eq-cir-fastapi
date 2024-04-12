@@ -14,9 +14,7 @@ class Publisher:
 
     def __init__(self) -> None:
         self.publisher = None if settings.CONF == "unit" else PublisherClient()
-        self.topic_path = self.publisher.topic_path(
-            settings.PROJECT_ID, settings.TOPIC_ID
-        )
+        self.topic_path = self.publisher.topic_path(settings.PROJECT_ID, settings.TOPIC_ID)
 
     def publish_message(self, event_msg: PostCIEvent) -> None:
         """Publishes an event message to a Pub/Sub topic."""

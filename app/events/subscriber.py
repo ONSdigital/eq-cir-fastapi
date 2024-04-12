@@ -19,9 +19,7 @@ class Subscriber:
     def __init__(self) -> None:
         self.client = SubscriberClient()
         self.max_messages = 5
-        self.subscription_path = self.client.subscription_path(
-            settings.PROJECT_ID, settings.SUBSCRIPTION_ID
-        )
+        self.subscription_path = self.client.subscription_path(settings.PROJECT_ID, settings.SUBSCRIPTION_ID)
         self.topic_path = self.client.topic_path(settings.PROJECT_ID, settings.TOPIC_ID)
 
     def create_subscription(self) -> None:
@@ -39,9 +37,7 @@ class Subscriber:
 
     def delete_subscription(self) -> None:
         """Deletes an existing subscription using `self.subscription_path`"""
-        self.client.delete_subscription(
-            request={"subscription": self.subscription_path}
-        )
+        self.client.delete_subscription(request={"subscription": self.subscription_path})
 
         logger.debug(f"Subscription deleted: {self.subscription_path}.")
 
@@ -67,12 +63,8 @@ class Subscriber:
                 ack_ids.append(received_message.ack_id)
 
             # Acknowledges the received messages so they will not be sent again.
-            self.client.acknowledge(
-                request={"subscription": self.subscription_path, "ack_ids": ack_ids}
-            )
-            logger.info(
-                f"Received and acknowledged {len(response.received_messages)} messages from {self.subscription_path}."
-            )
+            self.client.acknowledge(request={"subscription": self.subscription_path, "ack_ids": ack_ids})
+            logger.info(f"Received and acknowledged {len(response.received_messages)} messages from {self.subscription_path}.")
 
         else:
             logger.debug("No messages received")
@@ -82,9 +74,7 @@ class Subscriber:
     def subscription_exists(self) -> bool:
         """Returns `True` if subscription matching `self.subscription_path` exists, otherwise `False`."""
         try:
-            self.client.get_subscription(
-                request={"subscription": self.subscription_path}
-            )
+            self.client.get_subscription(request={"subscription": self.subscription_path})
             return True
         except Exception:
             return False

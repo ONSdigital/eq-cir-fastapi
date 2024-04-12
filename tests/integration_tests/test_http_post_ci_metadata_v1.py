@@ -41,13 +41,9 @@ class TestPostCiV1:
         form_type = setup_payload["form_type"]
         language = setup_payload["language"]
 
-        querystring = urlencode(
-            {"form_type": form_type, "language": language, "survey_id": survey_id}
-        )
+        querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
         # sends request to http_query_ci endpoint for data
-        check_ci_in_db = make_iap_request(
-            "GET", f"{self.get_matadata_url}?{querystring}"
-        )
+        check_ci_in_db = make_iap_request("GET", f"{self.get_matadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
 
         received_messages = self.subscriber.pull_messages_and_acknowledge()
@@ -94,13 +90,9 @@ class TestPostCiV1:
         form_type = setup_payload["form_type"]
         language = setup_payload["language"]
 
-        querystring = urlencode(
-            {"form_type": form_type, "language": language, "survey_id": survey_id}
-        )
+        querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
         # sends request to http_query_ci endpoint for data
-        check_ci_in_db = make_iap_request(
-            "GET", f"{self.get_matadata_url}?{querystring}"
-        )
+        check_ci_in_db = make_iap_request("GET", f"{self.get_matadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
         # Need to pull and acknowledge messages in any test where post_ci_v1 is called so the subscription doesn't get clogged
         received_messages = self.subscriber.pull_messages_and_acknowledge()
@@ -139,9 +131,7 @@ class TestPostCiV1:
         Where the same CI is submitted(survey_id),
         then a new version is returned based on the survey_id
         """
-        ci_response = make_iap_request(
-            "POST", f"{self.post_url}", json=setup_publish_ci_return_payload
-        )
+        ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_publish_ci_return_payload)
         ci_response_data = ci_response.json()
 
         # Need to pull and acknowledge messages in any test where post_ci_v1 is called so the subscription doesn't get clogged
@@ -150,13 +140,9 @@ class TestPostCiV1:
         survey_id = setup_publish_ci_return_payload["survey_id"]
         form_type = setup_publish_ci_return_payload["form_type"]
         language = setup_publish_ci_return_payload["language"]
-        querystring = urlencode(
-            {"form_type": form_type, "language": language, "survey_id": survey_id}
-        )
+        querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
         # sends request to http_query_ci endpoint for data
-        check_ci_in_db = make_iap_request(
-            "GET", f"{self.get_matadata_url}?{querystring}"
-        )
+        check_ci_in_db = make_iap_request("GET", f"{self.get_matadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
 
         expected_ci = CiMetadata(
@@ -299,8 +285,6 @@ class TestPostCiV1:
         requested with an unauthorized token.
         """
         payload = setup_payload
-        ci_response = make_iap_request(
-            "POST", f"{self.post_url}", json=payload, unauthenticated=True
-        )
+        ci_response = make_iap_request("POST", f"{self.post_url}", json=payload, unauthenticated=True)
 
         assert ci_response.status_code == status.HTTP_401_UNAUTHORIZED

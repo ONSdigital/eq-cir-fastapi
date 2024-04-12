@@ -42,9 +42,7 @@ class TestSubscriber:
         `SubscriberClient.subscription_path`
         """
         subscription_path_value = "test-subscription-path"
-        mocked_subscriber_client.return_value.subscription_path.return_value = (
-            subscription_path_value
-        )
+        mocked_subscriber_client.return_value.subscription_path.return_value = subscription_path_value
 
         subscriber = Subscriber()
         assert subscriber.subscription_path == subscription_path_value
@@ -83,9 +81,7 @@ class TestSubscriber:
         # Check the right client method was called
         mocked_subscriber_client.return_value.delete_subscription.assert_called_once()
 
-    def test_pull_messages_and_acknowledge_calls_client_pull(
-        self, mocked_subscriber_client
-    ):
+    def test_pull_messages_and_acknowledge_calls_client_pull(self, mocked_subscriber_client):
         """
         `pull_messages_and_acknowledge` method should call the `SubscriberClient.pull` method
         to fetch messages from `self.subscription_path` on pub/sub.
@@ -97,9 +93,7 @@ class TestSubscriber:
         # Check the right client method was called
         mocked_subscriber_client.return_value.pull.assert_called_once()
 
-    def test_pull_messages_and_acknowledge_returns_empty_list_if_pull_returns_no_messages(
-        self, mocked_subscriber_client
-    ):
+    def test_pull_messages_and_acknowledge_returns_empty_list_if_pull_returns_no_messages(self, mocked_subscriber_client):
         """
         `pull_messages_and_acknowledge` method should return an empty list if
         `SubscriberClient.pull` method returns no messages from `self.subscription_path` on
@@ -116,9 +110,7 @@ class TestSubscriber:
         # Returned messages should be an empty list as `PullResponse` is empty
         assert messages == []
 
-    def test_pull_messages_and_acknowledge_returns_valid_messages(
-        self, mocked_subscriber_client
-    ):
+    def test_pull_messages_and_acknowledge_returns_valid_messages(self, mocked_subscriber_client):
         """
         `pull_messages_and_acknowledge` method should return a list of messages if
         `SubscriberClient.pull` method returns valid messages from `self.subscription_path` on
@@ -143,9 +135,7 @@ class TestSubscriber:
         # Returned messages should be a list of message data
         assert messages == [self.message_data]
 
-    def test_pull_messages_and_acknowledge_acknowledges_messages(
-        self, mocked_subscriber_client
-    ):
+    def test_pull_messages_and_acknowledge_acknowledges_messages(self, mocked_subscriber_client):
         """
         `pull_messages_and_acknowledge` method should call the `SubscriberClient.acknowledge` method
         to acknowledge received messages if `SubscriberClient.pull` method returns valid messages from
@@ -181,9 +171,7 @@ class TestSubscriber:
         # Check the right client method was called
         mocked_subscriber_client.return_value.get_subscription.assert_called_once()
 
-    def test_subscription_exists_returns_true_if_subscription_exists(
-        self, mocked_subscriber_client
-    ):
+    def test_subscription_exists_returns_true_if_subscription_exists(self, mocked_subscriber_client):
         """
         `subscription_exists` method should call the `SubscriberClient.get_subscription` method
         to check whether a subscription exists at the `self.subscription_path` on pub/sub. If the
@@ -195,9 +183,7 @@ class TestSubscriber:
 
         assert subscription_exists is True
 
-    def test_subscription_exists_returns_false_if_exception_raised(
-        self, mocked_subscriber_client
-    ):
+    def test_subscription_exists_returns_false_if_exception_raised(self, mocked_subscriber_client):
         """
         `subscription_exists` method should call the `SubscriberClient.get_subscription` method
         to check whether a subscription exists at the `self.subscription_path` on pub/sub. If the

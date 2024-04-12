@@ -43,8 +43,7 @@ lint-check:
 	python -m isort . --check-only --profile black --skip env
 
 lint-fix:
-	black .
-	isort . --profile black
+	black . --line-length 127
 
 unit-tests:
 	export CI_STORAGE_BUCKET_NAME='the-ci-schema-bucket' && \

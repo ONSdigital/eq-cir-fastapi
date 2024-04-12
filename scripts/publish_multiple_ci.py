@@ -58,13 +58,9 @@ def publish_ci_file(ci, file_name, log_file, total_errors_found):
     ci_response = ci_response.json()
     if ci_response["message"] == "Field required" and ci_response["status"] == "error":
         total_errors_found += 1
-        mandatory_missing_keys = [
-            key for key in (mandatory_keys) if key not in ci.keys()
-        ]
+        mandatory_missing_keys = [key for key in (mandatory_keys) if key not in ci.keys()]
         optional_missing_keys = [key for key in (optional_keys) if key not in ci.keys()]
-        additional_keys = [
-            key for key in ci.keys() if key not in (mandatory_keys + optional_keys)
-        ]
+        additional_keys = [key for key in ci.keys() if key not in (mandatory_keys + optional_keys)]
         log_file.write(
             f"CI File name: {file_name}\n"
             f"CI response {ci_response}\n"
@@ -88,9 +84,7 @@ def process_ci_files(ci_list, json_files):
     total_errors_found = 0
     with open(f"log_{timestamp}.log", "a") as log_file:
         for ci, file_name in zip(ci_list, json_files):
-            total_errors_found = publish_ci_file(
-                ci, file_name, log_file, total_errors_found
-            )
+            total_errors_found = publish_ci_file(ci, file_name, log_file, total_errors_found)
         log_file.write(
             f"Folder location provided: {path_to_json}\n"
             f"Total Number of Json files to be published: {len(json_files)}\n"

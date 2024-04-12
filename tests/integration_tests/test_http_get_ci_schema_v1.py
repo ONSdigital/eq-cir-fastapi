@@ -89,7 +89,5 @@ class TestHttpGetCiSchemaV1:
 
         querystring = urlencode(asdict(query_params))
 
-        response = make_iap_request(
-            "GET", f"{self.url}?{querystring}", unauthenticated=True
-        )
+        response = make_iap_request("GET", f"{self.url}?{querystring}", unauthenticated=True)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED

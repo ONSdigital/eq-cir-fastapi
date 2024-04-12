@@ -21,18 +21,10 @@ client = TestClient(app)
 settings = Settings()
 
 
-@patch(
-    "app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_collection_with_status"
-)
-@patch(
-    "app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_collection_without_status"
-)
-@patch(
-    "app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_collection_only_with_status"
-)
-@patch(
-    "app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_all_ci_metadata_collection"
-)
+@patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_collection_with_status")
+@patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_collection_without_status")
+@patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_collection_only_with_status")
+@patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_all_ci_metadata_collection")
 class TestHttpGetCiMetadataV2:
     """Tests for the `http_get_ci_metadata_v2` endpoint"""
 
@@ -71,9 +63,7 @@ class TestHttpGetCiMetadataV2:
         Assert the mocked function is called with the correct params.
         """
         # Update mocked function to return a list of valid ci metadata
-        mocked_get_ci_metadata_collection_with_status.return_value = (
-            mock_ci_metadata_list
-        )
+        mocked_get_ci_metadata_collection_with_status.return_value = mock_ci_metadata_list
 
         response = client.get(self.url)
 
@@ -100,9 +90,7 @@ class TestHttpGetCiMetadataV2:
         Assert the mocked function is called with the correct params.
         """
         # Update mocked function to return a list of valid ci metadata
-        mocked_get_ci_metadata_collection_without_status.return_value = (
-            mock_ci_metadata_list
-        )
+        mocked_get_ci_metadata_collection_without_status.return_value = mock_ci_metadata_list
 
         response = client.get(self.without_status_url)
 
@@ -154,9 +142,7 @@ class TestHttpGetCiMetadataV2:
         Assert the mocked function is called with the correct params.
         """
         # Update mocked function to return a list of valid ci metadata
-        mocked_get_ci_metadata_collection_only_with_status.return_value = (
-            mock_ci_metadata_list
-        )
+        mocked_get_ci_metadata_collection_only_with_status.return_value = mock_ci_metadata_list
         # Make request to base url only with status
         response = client.get(self.status_only_url)
 
@@ -166,9 +152,7 @@ class TestHttpGetCiMetadataV2:
             assert response.json()[i] == mock_ci_metadata_list[i].model_dump()
             assert "description" in response.json()[i]
 
-        CiFirebaseRepository.get_ci_metadata_collection_only_with_status.assert_called_once_with(
-            mock_status
-        )
+        CiFirebaseRepository.get_ci_metadata_collection_only_with_status.assert_called_once_with(mock_status)
 
     def test_endpoint_returns_404_if_ci_metadata_not_found(
         self,
@@ -184,9 +168,7 @@ class TestHttpGetCiMetadataV2:
         # Update mocked function to return `None` showing ci metadata is not found
         mocked_get_ci_metadata_collection_with_status.return_value = None
 
-        expected_response = BadRequest(
-            message=f"No CI metadata found for: {self.query_params.__dict__}"
-        )
+        expected_response = BadRequest(message=f"No CI metadata found for: {self.query_params.__dict__}")
         response = client.get(self.url)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -204,9 +186,7 @@ class TestHttpGetCiMetadataV2:
         as part of the response if status is invalid in query
         """
         response = client.get(self.wrong_status_url)
-        expected_response = BadRequest(
-            message=f"Status is invalid in query: {self.wrong_status_query_params.__dict__}"
-        )
+        expected_response = BadRequest(message=f"Status is invalid in query: {self.wrong_status_query_params.__dict__}")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert response.json() == expected_response.__dict__

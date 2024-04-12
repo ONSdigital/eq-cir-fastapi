@@ -24,9 +24,7 @@ class TestGetCiMetadataV2:
         querystring = urlencode({"survey_id": 3456})
         make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
 
-    def test_post_3_ci_with_same_metadata_get_ci_metadata_v2_returns_3(
-        self, setup_payload
-    ):
+    def test_post_3_ci_with_same_metadata_get_ci_metadata_v2_returns_3(self, setup_payload):
         """
         What am I testing:
         http_get_ci_metadata_v2 should return three ci_versions if the same ci is posted thrice.
@@ -43,9 +41,7 @@ class TestGetCiMetadataV2:
         querystring = urlencode(get_ci_metadata_v2_payload)
 
         # sends request to http_get_ci_metadata_v2 endpoint for data
-        get_ci_metadata_v2_response = make_iap_request(
-            "GET", f"{self.base_url}?{querystring}"
-        )
+        get_ci_metadata_v2_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         get_ci_metadata_v2_response_data = get_ci_metadata_v2_response.json()
 
         assert len(get_ci_metadata_v2_response_data) == 3
@@ -63,9 +59,7 @@ class TestGetCiMetadataV2:
         get_ci_metadata_v2_response_data = get_ci_metadata_v2_response.json()
         assert len(get_ci_metadata_v2_response_data) > 0
 
-    def test_post_ci_with_same_metadata_query_ci_returns_with_new_keys_sds_schema_description(
-        self, setup_payload
-    ):
+    def test_post_ci_with_same_metadata_query_ci_returns_with_new_keys_sds_schema_description(self, setup_payload):
         """
         What am I testing:
         http_get_ci_metadata_v2 should return ci with new keys sds_schema and description when queried.
@@ -84,9 +78,7 @@ class TestGetCiMetadataV2:
         querystring = urlencode(get_ci_metadata_v2_payload)
 
         # sends request to http_get_ci_metadata_v2 endpoint for data
-        get_ci_metadata_v2_response = make_iap_request(
-            "GET", f"{self.base_url}?{querystring}"
-        )
+        get_ci_metadata_v2_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         query_ci_response_json = get_ci_metadata_v2_response.json()
         assert query_ci_response_json[0]["sds_schema"] == "xx-ytr-1234-856"
         assert query_ci_response_json[0]["description"] == setup_payload["description"]
@@ -105,9 +97,7 @@ class TestGetCiMetadataV2:
         querystring = urlencode(get_ci_metadata_v2_payload)
 
         # sends request to http_get_ci_metadata_v2 endpoint for data
-        get_ci_metadata_v2_response = make_iap_request(
-            "GET", f"{self.base_url}?{querystring}"
-        )
+        get_ci_metadata_v2_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         assert get_ci_metadata_v2_response.status_code == status.HTTP_404_NOT_FOUND
         query_ci_response = get_ci_metadata_v2_response.json()
         expected_response = f"No CI metadata found for: {get_ci_metadata_v2_payload}"
@@ -125,7 +115,5 @@ class TestGetCiMetadataV2:
             "survey_id": setup_payload["survey_id"],
         }
         querystring = urlencode(get_ci_metadata_v2_payload)
-        response = make_iap_request(
-            "GET", f"{self.base_url}?{querystring}", unauthenticated=True
-        )
+        response = make_iap_request("GET", f"{self.base_url}?{querystring}", unauthenticated=True)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
