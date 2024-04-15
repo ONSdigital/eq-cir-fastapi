@@ -229,7 +229,7 @@ class TestHttpPostCiV1:
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    def test_endpoint_returns_500_if_exception_occurs(
+    def test_endpoint_returns_500_if_exception_occurs_in_transaction(
         self,
         mocked_perform_new_ci_transaction,
         mocked_get_latest_ci_metadata,
@@ -246,6 +246,33 @@ class TestHttpPostCiV1:
         mocked_create_guid.return_value = mock_id
         # Raise an exception to simulate an error in transaction
         mocked_perform_new_ci_transaction.side_effect = Exception()
+
+        response = test_500_client.post(
+            self.url,
+            headers={"ContentType": "application/json"},
+            json=mock_post_ci_schema.model_dump(),
+        )
+
+        assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+        assert response.content == b"Internal Server Error"
+
+    def test_endpoint_returns_500_if_exception_occurs_in_publish_message(
+        self,
+        mocked_perform_new_ci_transaction,
+        mocked_get_latest_ci_metadata,
+        mocked_publish_message,
+        mocked_create_guid,
+    ):
+        """
+        Endpoint should return `HTTP_500_INTERNAL_SERVER_ERROR` as part of the response if ci metadata is created
+        but not processed due to an error in publish message
+        """
+        # Update mocked function to return `None` indicating no previous version of metadata is found
+        mocked_get_latest_ci_metadata.return_value = None
+        # Update mocked function to return a valid guid
+        mocked_create_guid.return_value = mock_id
+        # Raise an exception to simulate an error in publish message
+        mocked_publish_message.side_effect = Exception()
 
         response = test_500_client.post(
             self.url,
