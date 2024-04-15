@@ -7,14 +7,18 @@ OAUTH_CLIENT_NAME = $(shell gcloud iap oauth-clients list $(OAUTH_BRAND_NAME) --
 OAUTH_CLIENT_ID = $(shell echo $(OAUTH_CLIENT_NAME)| cut -d'/' -f 6)
 SANDBOX_IP_ADDRESS = $(shell gcloud compute addresses list --global  --filter=name:$(PROJECT_ID)-cir-static-lb-ip --format='value(address)' --limit=1 --project=$(PROJECT_ID))
 
-audit:
-	python -m pip_audit
+start-cloud-dev:
+	export PROJECT_ID='$(PROJECT_ID)' && \
+	export FIRESTORE_DB_NAME='$(PROJECT_ID)-cir' && \
+	export CI_STORAGE_BUCKET_NAME='$(PROJECT_ID)-cir-europe-west2-schema' && \
+	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
+	python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 3030
 
-generate-spec:
-	python -m scripts.generate_openapi
-
-publish-multiple-ci:
-	python -m scripts.publish_multiple_ci
+unit-tests:
+	export CONF=unit && \
+	export CI_STORAGE_BUCKET_NAME='the-ci-schema-bucket' && \
+	export PROJECT_ID='$(PROJECT_ID)' && \
+	python -m pytest --cov=app --cov-fail-under=90 --cov-report term-missing --cov-config=.coveragerc_unit -vv ./tests/unit_tests/ -W ignore::DeprecationWarning
 
 integration-tests-sandbox:
 	export PROJECT_ID='$(PROJECT_ID)' && \
@@ -27,6 +31,7 @@ integration-tests-sandbox:
 	export PYTHONPATH=app && \
 	python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
 
+#For use only by automated cloudbuild, is not intended to work locally.
 integration-tests-cloudbuild:
 	export PROJECT_ID=${INT_PROJECT_ID} && \
 	export FIRESTORE_DB_NAME=${INT_FIRESTORE_DB_NAME} \
@@ -36,6 +41,9 @@ integration-tests-cloudbuild:
 	export OAUTH_CLIENT_ID=${INT_OAUTH_CLIENT_ID} && \
 	export PYTHONPATH=app && \
 	python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
+
+generate-spec:
+	python -m scripts.generate_openapi
 
 lint:
 	python -m black --line-length 127 .
@@ -52,16 +60,8 @@ lint-check:
 lint-fix:
 	black . --line-length 127
 
-unit-tests:
-	export CONF=unit && \
-	export CI_STORAGE_BUCKET_NAME='the-ci-schema-bucket' && \
-	export PROJECT_ID='$(PROJECT_ID)' && \
-	python -m pytest --cov=app --cov-fail-under=90 --cov-report term-missing --cov-config=.coveragerc_unit -vv ./tests/unit_tests/ -W ignore::DeprecationWarning
+audit:
+	python -m pip_audit
 
-start-cloud-dev:
-	export PROJECT_ID='$(PROJECT_ID)' && \
-	export FIRESTORE_DB_NAME='$(PROJECT_ID)-cir' && \
-	export CI_STORAGE_BUCKET_NAME='$(PROJECT_ID)-cir-europe-west2-schema' && \
-	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
-	python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 3030
-
+publish-multiple-ci:
+	python -m scripts.publish_multiple_ci
