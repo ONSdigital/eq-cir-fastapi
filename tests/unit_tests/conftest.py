@@ -58,20 +58,6 @@ def setup_mock_storage():
     logger.info("local storage stopped")
 
 
-@pytest.fixture
-def patch_datetime_now(monkeypatch):
-    class mydatetime:
-        @classmethod
-        def utcnow(cls):
-            return mock_publish_date
-
-    monkeypatch.setattr(
-        datetime,
-        "datetime",
-        mydatetime,
-    )
-
-
 @pytest.fixture(autouse=True)
 def mock_datetime(mocker):
     mocker.patch(
