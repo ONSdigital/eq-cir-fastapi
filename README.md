@@ -56,6 +56,28 @@ We can build and run the FastAPI application, including emulators for firestore 
 
 The FastAPI application will now be running and available at the host `0.0.0.0:3030`. You can use the interactive Swagger docs at `0.0.0.0:3030/docs`.
 
+## Running the application locally with services running in GCloud
+
+In order to connect to real services in GCloud, you will need a GCP test project or make
+use of the sandbox project. Instructions for setting this up are included in the IaC repo.
+
+Once you have setup your project, you will need a key file to allow CIR to talk to bucket storage
+and the database. To create one:
+
+- Go the IAM page and select Service accounts
+- Create a new service account
+- Call it "test"
+- Add the roles that are needed for testing
+- Go into service account and create a key. This will download a JSON file to your machine
+- Copy the downloaded JSON file to this directory and rename to `key.json`
+
+To run CIR locally, activate the virtual environment, then run the following commands (ensuring that the values in the
+makefile represent the connections you wish to make):
+
+```bash
+make start-cloud-dev
+```
+
 ## Deploying the application containers for testing
 
 We can deploy the Collection Instrument Registry container to a project within the `cir-sandbox` GCP project for development and testing. You will need a cloud project configured for the Collection Instrument Registry to do this.
@@ -103,7 +125,17 @@ If you want to test posting data to these functions using Postman or similar, yo
 
 ### Integration testsing
 
-To run integration tests from root folder run `make integration-tests`
+### Everything running in the cloud
+
+In this configuration, the integration test uses the CIR API service running in Cloud Run of your test/dev GCP project. Please note that the CIR is not the updated version unless run after either executing the deploy script or creating a PR and gone through the pipeline. These services both talk to Firestore and Cloud Storage running on the same project.
+
+```bash
+PROJECT_NAME=ons-sds-sandbox-01
+gcloud auth login
+gcloud config set project $PROJECT_NAME
+
+make integration-test-sandbox
+```
 
 ### Unit testing
 

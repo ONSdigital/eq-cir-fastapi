@@ -26,7 +26,11 @@ class Subscriber:
         """Creates a subscription using `self.subscription_path`"""
 
         subscription = self.client.create_subscription(
-            request={"name": self.subscription_path, "topic": self.topic_path, "enable_message_ordering": True}
+            request={
+                "name": self.subscription_path,
+                "topic": self.topic_path,
+                "enable_message_ordering": True,
+            }
         )
 
         logger.debug(f"Subscription created: {subscription}")
@@ -48,7 +52,9 @@ class Subscriber:
         # The subscriber pulls a specific number of messages. The actual
         # number of messages pulled may be smaller than max_messages.
         response = self.client.pull(
-            max_messages=self.max_messages, return_immediately=True, subscription=self.subscription_path
+            max_messages=self.max_messages,
+            return_immediately=True,
+            subscription=self.subscription_path,
         )
         if len(response.received_messages) > 0:
             for received_message in response.received_messages:

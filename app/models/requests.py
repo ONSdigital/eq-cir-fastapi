@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 from fastapi import Query
-from pydantic import BaseModel, FieldValidationInfo, field_validator
+from pydantic import BaseModel, ValidationInfo, field_validator
 from pydantic.json_schema import SkipJsonSchema
 
 
@@ -66,7 +66,10 @@ class GetCiSchemaV1Params:
 class GetCiSchemaV2Params:
     """Model for `get_ci_schema_v2` request query params"""
 
-    guid: str = Query(description="The global unique ID of the CI", example="428ae4d1-8e7f-4a9d-8bef-05a266bf81e7")
+    guid: str = Query(
+        description="The global unique ID of the CI",
+        example="428ae4d1-8e7f-4a9d-8bef-05a266bf81e7",
+    )
 
 
 class PostCiMetadataV1PostData(BaseModel):
@@ -100,7 +103,7 @@ class PostCiMetadataV1PostData(BaseModel):
 
     @field_validator("data_version", "form_type", "language", "survey_id", "title", "schema_version")
     @classmethod
-    def check_not_empty_string(cls, value: str, info: FieldValidationInfo) -> str:
+    def check_not_empty_string(cls, value: str, info: ValidationInfo) -> str:
         """Raise `ValueError` if input `value` is an empty string or whitespace"""
         if value == "" or value.isspace():
             raise ValueError(f"{info.field_name} can't be empty or null")

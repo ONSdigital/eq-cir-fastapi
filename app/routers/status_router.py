@@ -33,4 +33,7 @@ async def http_get_status():
         return JSONResponse(status_code=status.HTTP_200_OK, content=asdict(response_content))
     else:
         response_content = BadRequest(message="Internal server error")
-        return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content=asdict(response_content))
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content=asdict(response_content),
+        )
