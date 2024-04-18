@@ -40,9 +40,7 @@ class TestHttpGetCiSchemaV2:
         assert response.json() == mock_ci_metadata.__dict__
         CiFirebaseRepository.get_ci_metadata_with_id.assert_called_once_with(mock_id)
 
-    def test_endpoint_returns_404_if_metadata_not_found(
-        self, mocked_retrieve_ci_schema, mocked_get_ci_metadata_with_id
-    ):
+    def test_endpoint_returns_404_if_metadata_not_found(self, mocked_retrieve_ci_schema, mocked_get_ci_metadata_with_id):
         """
         Endpoint should return `HTTP_404_NOT_FOUND` and a string as part of the response if metadata is not
         found
