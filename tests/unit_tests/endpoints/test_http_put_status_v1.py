@@ -70,7 +70,7 @@ class TestHttpPutStatusV1:
         CiFirebaseRepository.get_ci_metadata_with_id.assert_called_once_with(mock_id)
         CiFirebaseRepository.update_ci_metadata_status_to_published_with_id.assert_not_called()
 
-    def test_endpoint_returns_BadRequest_if_ci_metadata_not_found(
+    def test_endpoint_returns_404_if_ci_metadata_not_found(
         self,
         mocked_update_ci_metadata_status_to_published_with_id,
         mocked_get_ci_metadata_with_id,
@@ -104,7 +104,7 @@ class TestHttpPutStatusV1:
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    def test_endpoint_returns_Exception_if_query_parameters_invalid(
+    def test_endpoint_returns_400_if_query_parameters_invalid(
         self,
         mocked_update_ci_metadata_status_to_published_with_id,
         mocked_get_ci_metadata_with_id,

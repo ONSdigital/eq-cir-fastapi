@@ -22,6 +22,8 @@ client = TestClient(app)
 test_500_client = TestClient(app, raise_server_exceptions=False)
 settings = Settings()
 
+CONTENT_TYPE = "application/json"
+
 
 @patch("app.services.create_guid_service.CreateGuidService.create_guid")
 @patch("app.events.publisher.Publisher.publish_message")
@@ -52,7 +54,7 @@ class TestHttpPostCiV1:
 
         response = client.post(
             self.url,
-            headers={"ContentType": "application/json"},
+            headers={"ContentType": CONTENT_TYPE},
             json=mock_post_ci_schema.model_dump(),
         )
 
@@ -90,7 +92,7 @@ class TestHttpPostCiV1:
 
         response = client.post(
             self.url,
-            headers={"ContentType": "application/json"},
+            headers={"ContentType": CONTENT_TYPE},
             json=mock_post_ci_schema.model_dump(),
         )
 
@@ -121,7 +123,7 @@ class TestHttpPostCiV1:
         as part of the request
         """
         # Make request to base url without any post data
-        response = client.post(self.url, headers={"ContentType": "application/json"})
+        response = client.post(self.url, headers={"ContentType": CONTENT_TYPE})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -153,7 +155,7 @@ class TestHttpPostCiV1:
 
         response = client.post(
             self.url,
-            headers={"ContentType": "application/json"},
+            headers={"ContentType": CONTENT_TYPE},
             json=edited_mock_post_ci_schema.model_dump(),
         )
 
@@ -188,7 +190,7 @@ class TestHttpPostCiV1:
 
         response = client.post(
             self.url,
-            headers={"ContentType": "application/json"},
+            headers={"ContentType": CONTENT_TYPE},
             json=edited_mock_post_ci_schema.model_dump(),
         )
 
@@ -223,7 +225,7 @@ class TestHttpPostCiV1:
 
         response = client.post(
             self.url,
-            headers={"ContentType": "application/json"},
+            headers={"ContentType": CONTENT_TYPE},
             json=edited_mock_post_ci_schema.model_dump(),
         )
 
@@ -249,7 +251,7 @@ class TestHttpPostCiV1:
 
         response = test_500_client.post(
             self.url,
-            headers={"ContentType": "application/json"},
+            headers={"ContentType": CONTENT_TYPE},
             json=mock_post_ci_schema.model_dump(),
         )
 
@@ -276,7 +278,7 @@ class TestHttpPostCiV1:
 
         response = test_500_client.post(
             self.url,
-            headers={"ContentType": "application/json"},
+            headers={"ContentType": CONTENT_TYPE},
             json=mock_post_ci_schema.model_dump(),
         )
 
