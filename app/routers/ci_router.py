@@ -1,5 +1,5 @@
 from dataclasses import asdict
-import exception.exception_response_models as erm
+import app.exception.exception_response_models as erm
 
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
@@ -47,8 +47,8 @@ settings = Settings()
     },
 )
 async def http_delete_ci_v1(
-        query_params: DeleteCiV1Params = Depends(),
-        ci_processor_service: CiProcessorService = Depends(),
+    query_params: DeleteCiV1Params = Depends(),
+    ci_processor_service: CiProcessorService = Depends(),
 ):
     """
     DELETE method that deletes the CI schema from the bucket as well as the CI metadata from Firestore.
@@ -72,6 +72,7 @@ async def http_delete_ci_v1(
 
 # Fetching CI Metadata from Firestore
 
+
 @router.get(
     "/v1/ci_metadata",
     responses={
@@ -85,15 +86,13 @@ async def http_delete_ci_v1(
         },
         404: {
             "model": ExceptionResponseModel,
-            "content": {
-                "application/json": {"example": erm.erm_404_no_collection_instrument_metadata_exception}
-            },
+            "content": {"application/json": {"example": erm.erm_404_no_collection_instrument_metadata_exception}},
         },
     },
 )
 async def http_get_ci_metadata_v1(
-        query_params: GetCiMetadataV1Params = Depends(),
-        ci_processor_service: CiProcessorService = Depends(),
+    query_params: GetCiMetadataV1Params = Depends(),
+    ci_processor_service: CiProcessorService = Depends(),
 ):
     """
     GET method that returns any metadata objects from Firestore that match the parameters passed.
@@ -135,15 +134,13 @@ async def http_get_ci_metadata_v1(
         },
         404: {
             "model": ExceptionResponseModel,
-            "content": {
-                "application/json": {"example": erm.erm_404_no_collection_instrument_metadata_exception}
-            },
+            "content": {"application/json": {"example": erm.erm_404_no_collection_instrument_metadata_exception}},
         },
     },
 )
 async def http_get_ci_metadata_v2(
-        query_params: GetCiMetadataV2Params = Depends(),
-        ci_processor_service: CiProcessorService = Depends(),
+    query_params: GetCiMetadataV2Params = Depends(),
+    ci_processor_service: CiProcessorService = Depends(),
 ):
     """
     GET method that returns any metadata objects from Firestore that match the parameters passed.
@@ -211,7 +208,7 @@ async def http_get_ci_metadata_v2(
         200: {
             "model": CiMetadata,
             "description": (
-                    "Successfully retrieved the CI schema. This is illustrated by returning the CI schema to the user."
+                "Successfully retrieved the CI schema. This is illustrated by returning the CI schema to the user."
             ),
         },
         400: {
@@ -224,16 +221,14 @@ async def http_get_ci_metadata_v2(
         },
         404: {
             "model": ExceptionResponseModel,
-            "content": {
-                "application/json": {"example": erm.erm_404_no_collection_instrument_metadata_exception}
-            },
+            "content": {"application/json": {"example": erm.erm_404_no_collection_instrument_metadata_exception}},
         },
     },
 )
 async def http_get_ci_schema_v1(
-        query_params: GetCiSchemaV1Params = Depends(),
-        ci_processor_service: CiProcessorService = Depends(),
-        ci_schema_bucket_repository: CiSchemaBucketRepository = Depends(),
+    query_params: GetCiSchemaV1Params = Depends(),
+    ci_processor_service: CiProcessorService = Depends(),
+    ci_schema_bucket_repository: CiSchemaBucketRepository = Depends(),
 ):
     """
     GET method that fetches a CI schema by it's survey_id, form_type and language.
@@ -278,7 +273,7 @@ async def http_get_ci_schema_v1(
         200: {
             "model": CiMetadata,
             "description": (
-                    "Successfully Queried a CI. This is illustrated with the returned response containing the schema of the CI."
+                "Successfully Queried a CI. This is illustrated with the returned response containing the schema of the CI."
             ),
         },
         400: {
@@ -291,16 +286,14 @@ async def http_get_ci_schema_v1(
         },
         404: {
             "model": ExceptionResponseModel,
-            "content": {
-                "application/json": {"example": erm.erm_404_no_collection_instrument_metadata_exception}
-            },
+            "content": {"application/json": {"example": erm.erm_404_no_collection_instrument_metadata_exception}},
         },
     },
 )
 async def http_get_ci_schema_v2(
-        query_params: GetCiSchemaV2Params = Depends(),
-        ci_processor_service: CiProcessorService = Depends(),
-        ci_schema_bucket_repository: CiSchemaBucketRepository = Depends(),
+    query_params: GetCiSchemaV2Params = Depends(),
+    ci_processor_service: CiProcessorService = Depends(),
+    ci_schema_bucket_repository: CiSchemaBucketRepository = Depends(),
 ):
     """
     GET method that fetches a CI schema by it's GUID.
@@ -337,7 +330,7 @@ async def http_get_ci_schema_v2(
         200: {
             "model": CiMetadata,
             "description": (
-                    "Successfully created a CI. This is illustrated with the returned response containing the metadata of the CI."
+                "Successfully created a CI. This is illustrated with the returned response containing the metadata of the CI."
             ),
         },
         400: {
@@ -351,8 +344,8 @@ async def http_get_ci_schema_v2(
     },
 )
 async def http_post_ci_metadata_v1(
-        post_data: PostCiMetadataV1PostData,
-        ci_processor_service: CiProcessorService = Depends(),
+    post_data: PostCiMetadataV1PostData,
+    ci_processor_service: CiProcessorService = Depends(),
 ):
     """
     POST method that creates a Collection Instrument. This will post the metadata to Firestore and
@@ -388,8 +381,8 @@ async def http_post_ci_metadata_v1(
     },
 )
 async def http_put_status_v1(
-        query_params: PutStatusV1Params = Depends(),
-        ci_processor_service: CiProcessorService = Depends(),
+    query_params: PutStatusV1Params = Depends(),
+    ci_processor_service: CiProcessorService = Depends(),
 ):
     """
     PUT method that sets the status of a CI's metadata in Firestore to 'PUBLISH'.
