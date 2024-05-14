@@ -1,3 +1,4 @@
+import app.exception.exceptions as exceptions
 from app.config import logging, settings
 from app.events.publisher import publisher
 from app.models.events import PostCIEvent
@@ -94,7 +95,7 @@ class CiProcessorService:
         except Exception as e:
             logger.error(f"Performing CI transaction: exception raised: {e}")
             logger.error("Rolling back CI transaction")
-            raise Exception("Error processing CI transaction")
+            raise exceptions.GlobalException
 
     def build_next_version_ci_metadata(
         self,
@@ -168,7 +169,7 @@ class CiProcessorService:
         except Exception as e:
             logger.debug(f"CI metadata {post_ci_event} failed to publish to topic with error {e}")
             logger.error("Error publishing CI metadata to topic.")
-            raise Exception("Error publishing CI metadata to topic.")
+            raise exceptions.GlobalException
 
     def get_ci_metadata_collection_without_status(self, survey_id: str, form_type: str, language: str) -> list[CiMetadata]:
         """
@@ -318,4 +319,4 @@ class CiProcessorService:
         except Exception as e:
             logger.error(f"Performing delete CI transaction: exception raised: {e}")
             logger.error("Rolling back CI transaction")
-            raise Exception("Error processing delete CI transaction")
+            raise exceptions.GlobalException

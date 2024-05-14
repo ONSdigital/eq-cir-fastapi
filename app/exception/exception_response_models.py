@@ -14,9 +14,5 @@ erm_400_incorrect_key_names_exception = ExceptionResponseModel(status="error", m
 erm_404_no_results_exception = ExceptionResponseModel(status="error", message="No results found")
 erm_404_no_schema_exception = ExceptionResponseModel(status="error", message="No schema found")
 erm_404_no_datasets_exception = ExceptionResponseModel(status="error", message="No datasets found")
-erm_404_no_collection_instrument_exception = ExceptionResponseModel(status="error", message="No collection instrument found")
-erm_404_no_collection_instrument_metadata_exception = ExceptionResponseModel(
-    status="error", message="No collection instrument metadata found"
-)
 erm_404_no_unit_data_exception = ExceptionResponseModel(status="error", message="No unit data found")
 erm_404_no_survey_id_exception = ExceptionResponseModel(status="error", message="No Survey IDs found")

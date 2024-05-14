@@ -1,5 +1,6 @@
-from app.exception.exception_response_models import ExceptionResponseModel
 from fastapi.responses import JSONResponse
+
+from app.exception.exception_response_models import ExceptionResponseModel
 
 
 class ExceptionResponder:
