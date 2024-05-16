@@ -3,8 +3,11 @@ from dataclasses import asdict
 from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 
+import app.exception.exception_response_models as erm
+import app.exception.exceptions as exceptions
 from app.config import Settings
-from app.models.responses import BadRequest, DeploymentStatus
+from app.exception.exception_response_models import ExceptionResponseModel
+from app.models.responses import DeploymentStatus
 
 router = APIRouter()
 settings = Settings()
@@ -15,11 +18,11 @@ settings = Settings()
     responses={
         status.HTTP_200_OK: {
             "model": DeploymentStatus,
-            "description": ("Deployment done successfully"),
+            "description": "Deployment done successfully",
         },
-        status.HTTP_500_INTERNAL_SERVER_ERROR: {
-            "model": BadRequest,
-            "description": "Internal error. This is triggered when something an unexpected error occurs on the server side.",
+        500: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_500_global_exception}},
         },
     },
 )
@@ -32,8 +35,4 @@ async def http_get_status():
         response_content = DeploymentStatus(version=settings.CIR_APPLICATION_VERSION)
         return JSONResponse(status_code=status.HTTP_200_OK, content=asdict(response_content))
     else:
-        response_content = BadRequest(message="Internal server error")
-        return JSONResponse(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content=asdict(response_content),
-        )
+        raise exceptions.GlobalException

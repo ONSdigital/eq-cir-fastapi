@@ -7,7 +7,6 @@ from fastapi.testclient import TestClient
 from app.config import Settings
 from app.main import app
 from app.models.requests import GetCiMetadataV2Params
-from app.models.responses import BadRequest
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from tests.test_data.ci_test_data import (
     mock_ci_metadata_list,
@@ -168,11 +167,10 @@ class TestHttpGetCiMetadataV2:
         # Update mocked function to return `None` showing ci metadata is not found
         mocked_get_ci_metadata_collection_with_status.return_value = None
 
-        expected_response = BadRequest(message=f"No CI metadata found for: {self.query_params.__dict__}")
         response = client.get(self.url)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
-        assert response.json() == expected_response.__dict__
+        assert response.json()["message"] == "No schema found"
 
     def test_endpoint_returns_400_if_status_is_invalid_in_query(
         self,
@@ -186,7 +184,6 @@ class TestHttpGetCiMetadataV2:
         as part of the response if status is invalid in query
         """
         response = client.get(self.wrong_status_url)
-        expected_response = BadRequest(message=f"Status is invalid in query: {self.wrong_status_query_params.__dict__}")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert response.json() == expected_response.__dict__
+        assert response.json()["message"] == "Validation has failed"

@@ -7,7 +7,6 @@ from fastapi.testclient import TestClient
 from app.config import Settings
 from app.main import app
 from app.models.requests import GetCiSchemaV2Params
-from app.models.responses import BadRequest
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from tests.test_data.ci_test_data import mock_ci_metadata, mock_id
 
@@ -48,11 +47,10 @@ class TestHttpGetCiSchemaV2:
         # Update mocked function to return `None`, indicating ci metadata is not found
         mocked_get_ci_metadata_with_id.return_value = None
 
-        expected_response = BadRequest(message=f"No CI metadata found for: {self.query_params.guid}")
         response = client.get(self.url)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
-        assert response.json() == expected_response.__dict__
+        assert response.json()["message"] == "No results found"
 
     def test_endpoint_returns_404_if_schema_not_found(self, mocked_retrieve_ci_schema, mocked_get_ci_metadata_with_id):
         """
@@ -64,10 +62,10 @@ class TestHttpGetCiSchemaV2:
         # mocked function to return `None`, indicating ci schema is not found from bucket
         mocked_retrieve_ci_schema.return_value = None
 
-        expected_response = BadRequest(message=f"No schema found for: {self.query_params.guid}")
         response = client.get(self.url)
 
-        assert response.json() == expected_response.__dict__
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert response.json()["message"] == "No schema found"
 
     def test_endpoint_returns_400_if_query_parameters_are_not_present(
         self, mocked_retrieve_ci_schema, mocked_get_ci_metadata_with_id
@@ -80,3 +78,4 @@ class TestHttpGetCiSchemaV2:
         response = client.get(self.base_url)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json()["message"] == "Validation has failed"

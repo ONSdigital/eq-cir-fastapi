@@ -126,6 +126,7 @@ class TestHttpPostCiV1:
         response = client.post(self.url, headers={"ContentType": CONTENT_TYPE})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json()["message"] == "Validation has failed"
 
     @pytest.mark.parametrize(
         "input_param",
@@ -160,6 +161,7 @@ class TestHttpPostCiV1:
         )
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json()["message"] == "Validation has failed"
 
     @pytest.mark.parametrize(
         "input_param",
@@ -195,6 +197,7 @@ class TestHttpPostCiV1:
         )
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json()["message"] == "Validation has failed"
 
     @pytest.mark.parametrize(
         "input_param",
@@ -230,6 +233,7 @@ class TestHttpPostCiV1:
         )
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json()["message"] == "Validation has failed"
 
     def test_endpoint_returns_500_if_exception_occurs_in_transaction(
         self,
@@ -256,7 +260,7 @@ class TestHttpPostCiV1:
         )
 
         assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
-        assert response.content == b"Internal Server Error"
+        assert response.json()["message"] == "Unable to process request"
 
     def test_endpoint_returns_500_if_exception_occurs_in_publish_message(
         self,
@@ -283,4 +287,4 @@ class TestHttpPostCiV1:
         )
 
         assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
-        assert response.content == b"Internal Server Error"
+        assert response.json()["message"] == "Unable to process request"

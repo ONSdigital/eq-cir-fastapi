@@ -7,7 +7,6 @@ from fastapi.testclient import TestClient
 from app.config import Settings
 from app.main import app
 from app.models.requests import DeleteCiV1Params
-from app.models.responses import BadRequest
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from tests.test_data.ci_test_data import mock_ci_metadata, mock_survey_id
 
@@ -58,6 +57,7 @@ class TestHttpDeleteCiV1:
         response = client.delete(self.base_url)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json()["message"] == "Validation has failed"
 
     def test_endpoint_returns_404_if_ci_not_found(
         self,
@@ -72,10 +72,9 @@ class TestHttpDeleteCiV1:
         mocked_get_ci_metadata_collection_with_survey_id.return_value = None
 
         response = client.delete(self.url)
-        expected_response = BadRequest(message=f"No CI found for: {self.query_params.__dict__}")
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
-        assert response.json() == expected_response.__dict__
+        assert response.json()["message"] == "No schema found"
 
     def test_endpoint_returns_500_if_ci_not_deleted(
         self,
@@ -94,4 +93,4 @@ class TestHttpDeleteCiV1:
         response = test_500_client.delete(self.url)
 
         assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
-        assert response.content == b"Internal Server Error"
+        assert response.json()["message"] == "Unable to process request"

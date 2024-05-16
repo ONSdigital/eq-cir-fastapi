@@ -7,6 +7,7 @@ from app.config import Settings
 from app.routers.status_router import router
 
 client = TestClient(router)
+test_500_client = TestClient(router, raise_server_exceptions=False)
 settings = Settings()
 
 
@@ -31,7 +32,5 @@ class TestHttpGetStatus:
         None due to a unsuccessful deployment
         """
         mocked_settings.CIR_APPLICATION_VERSION = None
-        response = client.get(self.base_url)
+        response = test_500_client.get(self.base_url)
         assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
-        expected_message = '{"message":"Internal server error","status":"error"}'
-        assert expected_message in response.content.decode("utf-8")
