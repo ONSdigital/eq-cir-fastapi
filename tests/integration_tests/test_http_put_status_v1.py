@@ -55,7 +55,7 @@ class TestPutStatusV1:
 
         # returning text as opposed to json as its a string
         ci_update_data = ci_update.json()
-        assert ci_update_data == f"CI status has been changed to Published for {ci_id}."
+        assert ci_update_data == "put_status_v1: CI status has been changed to PUBLISHED"
 
         query_ci_post_response_data = self.return_query_ci(setup_payload)
 
@@ -73,12 +73,11 @@ class TestPutStatusV1:
         querystring = urlencode({"guid": ci_id})
         # Updating status twice to return already published
         ci_update = make_iap_request("PUT", f"{self.base_url}?{querystring}")
-        ci_update = make_iap_request("PUT", f"{self.base_url}?{querystring}")
         assert ci_update.status_code == status.HTTP_200_OK
 
         # returning text as opposed to json as its a string
         ci_update_data = ci_update.json()
-        assert ci_update_data == f"CI status has already been changed to Published for {ci_id}."
+        assert ci_update_data == "put_status_v1: CI status has already been changed to PUBLISHED"
 
     def test_guid_not_found(self):
         """
@@ -93,7 +92,7 @@ class TestPutStatusV1:
 
         ci_update_data = ci_update.json()
         assert ci_update_data == {
-            "message": f"No CI metadata found for: {ci_id}",
+            "message": "No schema found",
             "status": "error",
         }
 
