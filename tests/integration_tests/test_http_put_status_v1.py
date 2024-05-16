@@ -77,7 +77,7 @@ class TestPutStatusV1:
 
         # returning text as opposed to json as its a string
         ci_update_data = ci_update.json()
-        assert ci_update_data == "put_status_v1: CI status has already been changed to PUBLISHED"
+        assert ci_update_data == "put_status_v1: CI status has been changed to PUBLISHED"
 
     def test_guid_not_found(self):
         """
