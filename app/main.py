@@ -26,16 +26,12 @@ app.add_exception_handler(
     ExceptionInterceptor.throw_400_incorrect_ci_v2_key_exception,
 )
 app.add_exception_handler(
-    exceptions.ExceptionNoCIMetadataCollection,
+    exceptions.ExceptionNoCIMetadata,
     ExceptionInterceptor.throw_404_no_ci_metadata_exception,
 )
 app.add_exception_handler(
     exceptions.ExceptionNoCIFound,
     ExceptionInterceptor.throw_404_no_ci_exception,
-)
-app.add_exception_handler(
-    exceptions.ExceptionNoCIMetadata,
-    ExceptionInterceptor.throw_404_no_result_exception,
 )
 app.add_exception_handler(
     exceptions.GlobalException,

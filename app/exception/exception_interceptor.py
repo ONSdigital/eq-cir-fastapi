@@ -57,12 +57,6 @@ class ExceptionInterceptor:
         er = ExceptionResponder(status.HTTP_400_BAD_REQUEST, erm.erm_400_incorrect_key_names_exception)
         return er.throw_er_with_json()
 
-    def throw_404_no_result_exception(request: Request, exc: Exception) -> JSONResponse:
-        """
-        When there is no dataset metadata endpoint and a 404 HTTP response is returned
-        """
-        er = ExceptionResponder(status.HTTP_404_NOT_FOUND, erm.erm_404_no_datasets_exception)
-        return er.throw_er_with_json()
 
     def throw_404_no_survey_id_exception(request: Request, exc: Exception) -> JSONResponse:
         """

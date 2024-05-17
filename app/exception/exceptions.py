@@ -13,10 +13,6 @@ class ExceptionIncorrectSchemaV2Key(Exception):
     pass
 
 
-class ExceptionNoCIMetadataCollection(Exception):
-    pass
-
-
 class ExceptionNoCIFound(Exception):
     pass
 
