@@ -19,11 +19,11 @@ app.version = "1.0.0"
 
 app.add_exception_handler(
     exceptions.ExceptionIncorrectSchemaKey,
-    ExceptionInterceptor.throw_400_incorrect_schema_key_exception,
+    ExceptionInterceptor.throw_400_incorrect_ci_key_exception,
 )
 app.add_exception_handler(
     exceptions.ExceptionIncorrectSchemaV2Key,
-    ExceptionInterceptor.throw_400_incorrect_schema_v2_key_exception,
+    ExceptionInterceptor.throw_400_incorrect_ci_v2_key_exception,
 )
 app.add_exception_handler(
     exceptions.ExceptionNoCIMetadataCollection,
