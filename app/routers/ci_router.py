@@ -108,7 +108,7 @@ async def http_get_ci_metadata_v1(
         error_message = "get_ci_metadata_v1: exception raised - No collection instrument metadata found"
         logger.error(error_message)
         logger.debug(f"{error_message}:{asdict(query_params)}")
-        raise exceptions.ExceptionNoSchemaMetadataCollection
+        raise exceptions.ExceptionNoCIMetadataCollection
 
     # Call model_dump to remove optional fields that are None
     return_ci_metadata_collection = []
@@ -302,7 +302,7 @@ async def http_get_ci_schema_v2(
         error_message = "get_ci_schema_v2: exception raised - No collection instrument metadata found"
         logger.error(error_message)
         logger.debug(f"{error_message}:{query_params.guid}")
-        raise exceptions.ExceptionNoSchemaMetadataCollection
+        raise exceptions.ExceptionNoCIMetadataCollection
 
     bucket_schema_filename = CiSchemaLocationService.get_ci_schema_location(ci_metadata)
 

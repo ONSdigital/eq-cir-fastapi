@@ -34,14 +34,14 @@ class ExceptionInterceptor:
         er = ExceptionResponder(status.HTTP_400_BAD_REQUEST, erm.erm_400_invalid_parameter_exception)
         return er.throw_er_with_json()
 
-    def throw_404_no_schemas_metadata_exception(request: Request, exc: Exception) -> JSONResponse:
+    def throw_404_no_ci_metadata_exception(request: Request, exc: Exception) -> JSONResponse:
         """
         When there is no schema metadata and a 404 HTTP response is returned.
         """
         er = ExceptionResponder(status.HTTP_404_NOT_FOUND, erm.erm_404_no_results_exception)
         return er.throw_er_with_json()
 
-    def throw_404_no_schema_exception(request: Request, exc: Exception) -> JSONResponse:
+    def throw_404_no_ci_exception(request: Request, exc: Exception) -> JSONResponse:
         """
         When there is No CI found and a 404 HTTP response is returned
         Triggered when either schema metadata or schema json file is not found

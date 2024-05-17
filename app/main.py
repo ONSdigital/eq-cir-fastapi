@@ -26,24 +26,16 @@ app.add_exception_handler(
     ExceptionInterceptor.throw_400_incorrect_schema_v2_key_exception,
 )
 app.add_exception_handler(
-    exceptions.ExceptionNoSchemaMetadataCollection,
-    ExceptionInterceptor.throw_404_no_schemas_metadata_exception,
+    exceptions.ExceptionNoCIMetadataCollection,
+    ExceptionInterceptor.throw_404_no_ci_metadata_exception,
 )
 app.add_exception_handler(
     exceptions.ExceptionNoCIFound,
-    ExceptionInterceptor.throw_404_no_schema_exception,
+    ExceptionInterceptor.throw_404_no_ci_exception,
 )
 app.add_exception_handler(
-    exceptions.ExceptionIncorrectDatasetKey,
-    ExceptionInterceptor.throw_400_incorrect_key_names_exception,
-)
-app.add_exception_handler(
-    exceptions.ExceptionNoDatasetMetadata,
+    exceptions.ExceptionNoCIMetadata,
     ExceptionInterceptor.throw_404_no_result_exception,
-)
-app.add_exception_handler(
-    exceptions.ExceptionNoUnitData,
-    ExceptionInterceptor.throw_404_unit_data_no_response_exception,
 )
 app.add_exception_handler(
     exceptions.GlobalException,

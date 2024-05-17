@@ -13,7 +13,7 @@ class ExceptionIncorrectSchemaV2Key(Exception):
     pass
 
 
-class ExceptionNoSchemaMetadataCollection(Exception):
+class ExceptionNoCIMetadataCollection(Exception):
     pass
 
 
@@ -21,15 +21,7 @@ class ExceptionNoCIFound(Exception):
     pass
 
 
-class ExceptionIncorrectDatasetKey(Exception):
-    pass
-
-
-class ExceptionNoDatasetMetadata(Exception):
-    pass
-
-
-class ExceptionNoUnitData(Exception):
+class ExceptionNoCIMetadata(Exception):
     pass
 
 
