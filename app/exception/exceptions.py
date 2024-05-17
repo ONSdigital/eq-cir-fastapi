@@ -17,7 +17,7 @@ class ExceptionNoSchemaMetadataCollection(Exception):
     pass
 
 
-class ExceptionNoSchemaFound(Exception):
+class ExceptionNoCIFound(Exception):
     pass
 
 

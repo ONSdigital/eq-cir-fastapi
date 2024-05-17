@@ -85,7 +85,7 @@ class TestHttpPutStatusV1:
         response = client.put(self.url)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
-        assert response.json()["message"] == "No schema found"
+        assert response.json()["message"] == "No CI found"
         CiFirebaseRepository.get_ci_metadata_with_id.assert_called_once_with(mock_id)
         CiFirebaseRepository.update_ci_metadata_status_to_published_with_id.assert_not_called()
 

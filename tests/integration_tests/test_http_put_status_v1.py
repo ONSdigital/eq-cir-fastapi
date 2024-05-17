@@ -92,7 +92,7 @@ class TestPutStatusV1:
 
         ci_update_data = ci_update.json()
         assert ci_update_data == {
-            "message": "No schema found",
+            "message": "No CI found",
             "status": "error",
         }
 

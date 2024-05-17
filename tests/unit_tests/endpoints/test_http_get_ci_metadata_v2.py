@@ -170,7 +170,7 @@ class TestHttpGetCiMetadataV2:
         response = client.get(self.url)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
-        assert response.json()["message"] == "No schema found"
+        assert response.json()["message"] == "No CI found"
 
     def test_endpoint_returns_400_if_status_is_invalid_in_query(
         self,

@@ -30,7 +30,7 @@ app.add_exception_handler(
     ExceptionInterceptor.throw_404_no_schemas_metadata_exception,
 )
 app.add_exception_handler(
-    exceptions.ExceptionNoSchemaFound,
+    exceptions.ExceptionNoCIFound,
     ExceptionInterceptor.throw_404_no_schema_exception,
 )
 app.add_exception_handler(

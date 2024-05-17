@@ -43,7 +43,7 @@ settings = Settings()
         },
         404: {
             "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_404_no_schema_exception}},
+            "content": {"application/json": {"example": erm.erm_404_no_ci_exception}},
         },
     },
 )
@@ -61,7 +61,7 @@ async def http_delete_ci_v1(
 
     if not ci_metadata_collection:
         logger.error(f"delete_ci_v1: exception raised - No collection instrument found: {asdict(query_params)}")
-        raise exceptions.ExceptionNoSchemaFound
+        raise exceptions.ExceptionNoCIFound
 
     ci_processor_service.delete_ci_in_transaction(ci_metadata_collection)
 
@@ -86,7 +86,7 @@ async def http_delete_ci_v1(
         },
         404: {
             "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_404_no_schema_exception}},
+            "content": {"application/json": {"example": erm.erm_404_no_ci_exception}},
         },
     },
 )
@@ -133,7 +133,7 @@ async def http_get_ci_metadata_v1(
         },
         404: {
             "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_404_no_schema_exception}},
+            "content": {"application/json": {"example": erm.erm_404_no_ci_exception}},
         },
     },
 )
@@ -186,7 +186,7 @@ async def http_get_ci_metadata_v2(
         error_message = "get_ci_metadata_v2: exception raised - No collection instruments found"
         logger.error(error_message)
         logger.debug(f"{error_message}:{asdict(query_params)}")
-        raise exceptions.ExceptionNoSchemaFound
+        raise exceptions.ExceptionNoCIFound
 
     # Call model_dump to remove optional fields that are None
     return_ci_metadata_collection = []
@@ -218,7 +218,7 @@ async def http_get_ci_metadata_v2(
         },
         404: {
             "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_404_no_schema_exception}},
+            "content": {"application/json": {"example": erm.erm_404_no_ci_exception}},
         },
     },
 )
@@ -241,7 +241,7 @@ async def http_get_ci_schema_v1(
         error_message = "get_ci_schema_v1: exception raised - No CI found for"
         logger.debug(f"{error_message}:{asdict(query_params)}")
         logger.info(error_message)
-        raise exceptions.ExceptionNoSchemaFound
+        raise exceptions.ExceptionNoCIFound
 
     bucket_schema_filename = CiSchemaLocationService.get_ci_schema_location(latest_ci_metadata)
 
@@ -251,10 +251,10 @@ async def http_get_ci_schema_v1(
     ci_schema = ci_schema_bucket_repository.retrieve_ci_schema(bucket_schema_filename)
 
     if not ci_schema:
-        error_message = "get_ci_schema_v1: exception raised - No schema found"
+        error_message = "get_ci_schema_v1: exception raised - No CI found"
         logger.info(error_message)
         logger.debug(f"{error_message}:{asdict(query_params)}")
-        raise exceptions.ExceptionNoSchemaFound
+        raise exceptions.ExceptionNoCIFound
 
     logger.info("Schema successfully retrieved.")
 
@@ -281,7 +281,7 @@ async def http_get_ci_schema_v1(
         },
         404: {
             "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_404_no_schema_exception}},
+            "content": {"application/json": {"example": erm.erm_404_no_ci_exception}},
         },
     },
 )
@@ -312,10 +312,10 @@ async def http_get_ci_schema_v2(
     ci_schema = ci_schema_bucket_repository.retrieve_ci_schema(bucket_schema_filename)
 
     if not ci_schema:
-        message = "get_ci_schema_v2: exception raised - No schema found for"
+        message = "get_ci_schema_v2: exception raised - No CI found for"
         logger.info(message)
         logger.debug(f"{message}:{query_params.guid}")
-        raise exceptions.ExceptionNoSchemaFound
+        raise exceptions.ExceptionNoCIFound
 
     logger.info("Schema successfully retrieved.")
 
@@ -374,7 +374,7 @@ async def http_post_ci_metadata_v1(
         },
         404: {
             "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_404_no_schema_exception}},
+            "content": {"application/json": {"example": erm.erm_404_no_ci_exception}},
         },
     },
 )
@@ -393,7 +393,7 @@ async def http_put_status_v1(
         error_message = "put_status_v1: exception raised - No collection instrument metadata found"
         logger.error(error_message)
         logger.debug(f"{error_message}:{query_params.guid}")
-        raise exceptions.ExceptionNoSchemaFound
+        raise exceptions.ExceptionNoCIFound
 
     if ci_metadata.status == Status.PUBLISHED.value:
         success_message = "put_status_v1: CI status has already been changed to PUBLISHED"

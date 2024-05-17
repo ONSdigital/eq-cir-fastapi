@@ -65,7 +65,7 @@ class TestHttpGetCiSchemaV2:
         response = client.get(self.url)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
-        assert response.json()["message"] == "No schema found"
+        assert response.json()["message"] == "No CI found"
 
     def test_endpoint_returns_400_if_query_parameters_are_not_present(
         self, mocked_retrieve_ci_schema, mocked_get_ci_metadata_with_id

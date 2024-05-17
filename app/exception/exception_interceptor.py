@@ -43,10 +43,10 @@ class ExceptionInterceptor:
 
     def throw_404_no_schema_exception(request: Request, exc: Exception) -> JSONResponse:
         """
-        When there is no schema found and a 404 HTTP response is returned
+        When there is No CI found and a 404 HTTP response is returned
         Triggered when either schema metadata or schema json file is not found
         """
-        er = ExceptionResponder(status.HTTP_404_NOT_FOUND, erm.erm_404_no_schema_exception)
+        er = ExceptionResponder(status.HTTP_404_NOT_FOUND, erm.erm_404_no_ci_exception)
         return er.throw_er_with_json()
 
     def throw_400_incorrect_key_names_exception(request: Request, exc: Exception) -> JSONResponse:
