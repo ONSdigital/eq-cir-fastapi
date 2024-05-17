@@ -20,20 +20,6 @@ class ExceptionInterceptor:
         er = ExceptionResponder(status.HTTP_400_BAD_REQUEST, erm.erm_400_validation_exception)
         return er.throw_er_with_json()
 
-    def throw_400_incorrect_ci_key_exception(request: Request, exc: Exception) -> JSONResponse:
-        """
-        When wrong search parameters are supplied for schema or schema metadata query and a 400 HTTP response is returned.
-        """
-        er = ExceptionResponder(status.HTTP_400_BAD_REQUEST, erm.erm_400_invalid_search_exception)
-        return er.throw_er_with_json()
-
-    def throw_400_incorrect_ci_v2_key_exception(request: Request, exc: Exception) -> JSONResponse:
-        """
-        When wrong search parameters are supplied for schema v2 query and a 400 HTTP response is returned.
-        """
-        er = ExceptionResponder(status.HTTP_400_BAD_REQUEST, erm.erm_400_invalid_parameter_exception)
-        return er.throw_er_with_json()
-
     def throw_404_no_ci_metadata_exception(request: Request, exc: Exception) -> JSONResponse:
         """
         When there is no schema metadata and a 404 HTTP response is returned.
@@ -47,21 +33,6 @@ class ExceptionInterceptor:
         Triggered when either schema metadata or schema json file is not found
         """
         er = ExceptionResponder(status.HTTP_404_NOT_FOUND, erm.erm_404_no_ci_exception)
-        return er.throw_er_with_json()
-
-    def throw_400_incorrect_key_names_exception(request: Request, exc: Exception) -> JSONResponse:
-        """
-        When searching for the dataset metadata endpoint with the incorrect search
-        queries a 400 HTTP response is returned
-        """
-        er = ExceptionResponder(status.HTTP_400_BAD_REQUEST, erm.erm_400_incorrect_key_names_exception)
-        return er.throw_er_with_json()
-
-    def throw_404_no_survey_id_exception(request: Request, exc: Exception) -> JSONResponse:
-        """
-        When there are no survey IDs and a 404 HTTP response is returned
-        """
-        er = ExceptionResponder(status.HTTP_404_NOT_FOUND, erm.erm_404_no_survey_id_exception)
         return er.throw_er_with_json()
 
 

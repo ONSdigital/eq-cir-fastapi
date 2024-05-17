@@ -5,14 +5,6 @@ functions to be raised properly
 """
 
 
-class ExceptionIncorrectSchemaKey(Exception):
-    pass
-
-
-class ExceptionIncorrectSchemaV2Key(Exception):
-    pass
-
-
 class ExceptionNoCIFound(Exception):
     pass
 
@@ -26,8 +18,4 @@ class GlobalException(Exception):
 
 
 class ValidationException(Exception):
-    pass
-
-
-class ExceptionNoSurveyIDs(Exception):
     pass
