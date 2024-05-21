@@ -43,7 +43,7 @@ settings = Settings()
         },
         404: {
             "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_404_no_ci_exception}},
+            "content": {"application/json": {"example": erm.erm_404_no_ci_to_delete}},
         },
     },
 )
@@ -61,7 +61,7 @@ async def http_delete_ci_v1(
 
     if not ci_metadata_collection:
         logger.error(f"delete_ci_v1: exception raised - No collection instrument found: {asdict(query_params)}")
-        raise exceptions.ExceptionNoCIFound
+        raise exceptions.ExceptionNoCIToDelete
 
     ci_processor_service.delete_ci_in_transaction(ci_metadata_collection)
 

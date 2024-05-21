@@ -53,7 +53,7 @@ class TestDeleteCiV1:
         # Send request to http_delete_ci endpoint
         response = make_iap_request("DELETE", f"{self.base_url}?{querystring}")
         assert response.status_code == status.HTTP_404_NOT_FOUND
-        assert response.json()["message"] == "No CI found"
+        assert response.json()["message"] == "No CI to delete"
         assert response.json()["status"] == "error"
 
     def test_delete_ci_returns_unauthorized_request(self, setup_payload):

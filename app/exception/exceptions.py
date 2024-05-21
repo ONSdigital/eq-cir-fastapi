@@ -9,6 +9,10 @@ class ExceptionNoCIFound(Exception):
     pass
 
 
+class ExceptionNoCIToDelete(Exception):
+    pass
+
+
 class ExceptionNoCIMetadata(Exception):
     pass
 

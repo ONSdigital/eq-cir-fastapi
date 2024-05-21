@@ -74,7 +74,7 @@ class TestHttpDeleteCiV1:
         response = client.delete(self.url)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
-        assert response.json()["message"] == "No CI found"
+        assert response.json()["message"] == "No CI to delete"
 
     def test_endpoint_returns_500_if_ci_not_deleted(
         self,

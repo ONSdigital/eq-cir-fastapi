@@ -22,7 +22,7 @@ app.add_exception_handler(
     ExceptionInterceptor.throw_404_no_ci_metadata_exception,
 )
 app.add_exception_handler(
-    exceptions.ExceptionNoCIFound,
+    exceptions.ExceptionNoCIToDelete,
     ExceptionInterceptor.throw_404_no_ci_to_delete,
 )
 app.add_exception_handler(
