@@ -92,7 +92,7 @@ class TestPutStatusV1:
 
         ci_update_data = ci_update.json()
         assert ci_update_data == {
-            "message": "No CI found",
+            "message": "No results found",
             "status": "error",
         }
 
