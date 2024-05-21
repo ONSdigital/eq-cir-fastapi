@@ -27,12 +27,28 @@ class ExceptionInterceptor:
         er = ExceptionResponder(status.HTTP_404_NOT_FOUND, erm.erm_404_no_results_exception)
         return er.throw_er_with_json()
 
+    def throw_404_no_ci_to_delete(request: Request, exc: Exception) -> JSONResponse:
+        """
+        When there is No CI found and a 404 HTTP response is returned
+        Triggered when either schema metadata or schema json file is not found
+        """
+        er = ExceptionResponder(status.HTTP_404_NOT_FOUND, erm.erm_404_no_ci_to_delete)
+        return er.throw_er_with_json()
+
     def throw_404_no_ci_exception(request: Request, exc: Exception) -> JSONResponse:
         """
         When there is No CI found and a 404 HTTP response is returned
         Triggered when either schema metadata or schema json file is not found
         """
         er = ExceptionResponder(status.HTTP_404_NOT_FOUND, erm.erm_404_no_ci_exception)
+        return er.throw_er_with_json()
+
+    def throw_400_incorrect_key_names_exception(request: Request, exc: Exception) -> JSONResponse:
+        """
+        When there is No CI found and a 404 HTTP response is returned
+        Triggered when either schema metadata or schema json file is not found
+        """
+        er = ExceptionResponder(status.HTTP_400_BAD_REQUEST, erm.erm_400_incorrect_key_names_exception)
         return er.throw_er_with_json()
 
 

@@ -13,6 +13,10 @@ class ExceptionNoCIMetadata(Exception):
     pass
 
 
+class ExceptionIncorrectKeyNames(Exception):
+    pass
+
+
 class GlobalException(Exception):
     pass
 

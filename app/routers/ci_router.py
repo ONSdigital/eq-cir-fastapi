@@ -76,17 +76,13 @@ async def http_delete_ci_v1(
 @router.get(
     "/v1/ci_metadata",
     responses={
-        400: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
-        },
         500: {
             "model": ExceptionResponseModel,
             "content": {"application/json": {"example": erm.erm_500_global_exception}},
         },
         404: {
             "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_404_no_ci_exception}},
+            "content": {"application/json": {"example": erm.erm_404_no_ci_metadata_exception}},
         },
     },
 )
@@ -161,7 +157,7 @@ async def http_get_ci_metadata_v2(
             error_message = "get_ci_metadata_v2: exception raised - Status is invalid in query"
             logger.error(error_message)
             logger.debug(f"{error_message}: {asdict(query_params)}")
-            raise exceptions.ValidationException
+            raise exceptions.ExceptionIncorrectKeyNames
 
     if query_params.params_not_none("form_type", "language", "status", "survey_id"):
         ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_with_status(
@@ -207,10 +203,6 @@ async def http_get_ci_metadata_v2(
             "description": (
                 "Successfully retrieved the CI schema. This is illustrated by returning the CI schema to the user."
             ),
-        },
-        400: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
         },
         500: {
             "model": ExceptionResponseModel,
@@ -271,10 +263,6 @@ async def http_get_ci_schema_v1(
                 "Successfully Queried a CI. This is illustrated with the returned response containing the schema of the CI."
             ),
         },
-        400: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
-        },
         500: {
             "model": ExceptionResponseModel,
             "content": {"application/json": {"example": erm.erm_500_global_exception}},
@@ -331,10 +319,6 @@ async def http_get_ci_schema_v2(
                 "Successfully created a CI. This is illustrated with the returned response containing the metadata of the CI."
             ),
         },
-        400: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
-        },
         500: {
             "model": ExceptionResponseModel,
             "content": {"application/json": {"example": erm.erm_500_global_exception}},
@@ -364,17 +348,13 @@ async def http_post_ci_metadata_v1(
             "model": CiMetadata,
             "description": "Successfully set CI status to PUBLISHED OR CI status already set to PUBLISHED so no change",
         },
-        400: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
-        },
         500: {
             "model": ExceptionResponseModel,
             "content": {"application/json": {"example": erm.erm_500_global_exception}},
         },
         404: {
             "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_404_no_ci_exception}},
+            "content": {"application/json": {"example": erm.erm_404_no_ci_metadata_exception}},
         },
     },
 )
@@ -393,7 +373,7 @@ async def http_put_status_v1(
         error_message = "put_status_v1: exception raised - No collection instrument metadata found"
         logger.error(error_message)
         logger.debug(f"{error_message}:{query_params.guid}")
-        raise exceptions.ExceptionNoCIFound
+        raise exceptions.ExceptionNoCIMetadata
 
     if ci_metadata.status == Status.PUBLISHED.value:
         success_message = "put_status_v1: CI status has already been changed to PUBLISHED"

@@ -23,7 +23,15 @@ app.add_exception_handler(
 )
 app.add_exception_handler(
     exceptions.ExceptionNoCIFound,
+    ExceptionInterceptor.throw_404_no_ci_to_delete,
+)
+app.add_exception_handler(
+    exceptions.ExceptionNoCIFound,
     ExceptionInterceptor.throw_404_no_ci_exception,
+)
+app.add_exception_handler(
+    exceptions.ExceptionIncorrectKeyNames,
+    ExceptionInterceptor.throw_400_incorrect_key_names_exception,
 )
 app.add_exception_handler(
     exceptions.GlobalException,
