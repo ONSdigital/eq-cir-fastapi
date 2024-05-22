@@ -74,8 +74,6 @@ async def http_delete_ci_v1(
 
 
 # Fetching CI Metadata from Firestore
-
-
 @router.get(
     "/v1/ci_metadata",
     responses={
@@ -86,6 +84,10 @@ async def http_delete_ci_v1(
         404: {
             "model": ExceptionResponseModel,
             "content": {"application/json": {"example": erm.erm_404_no_ci_metadata_exception}},
+        },
+        400: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
         },
     },
 )
@@ -204,6 +206,10 @@ async def http_get_ci_metadata_v2(
             "model": ExceptionResponseModel,
             "content": {"application/json": {"example": erm.erm_404_no_ci_exception}},
         },
+        400: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
+        },
     },
 )
 async def http_get_ci_schema_v1(
@@ -212,7 +218,7 @@ async def http_get_ci_schema_v1(
     ci_schema_bucket_repository: CiSchemaBucketRepository = Depends(),
 ):
     """
-    GET method that fetches a CI schema by it's survey_id, form_type and language.
+    GET method that fetches a CI schema by survey_id, form_type and language.
     """
     logger.info("Getting ci schema via v1 endpoint")
     logger.debug(f"get_ci_schema_vi: Getting CI schemaInput data: query_params={query_params.__dict__}")
@@ -266,6 +272,10 @@ async def http_get_ci_schema_v1(
             "model": ExceptionResponseModel,
             "content": {"application/json": {"example": erm.erm_404_no_ci_exception}},
         },
+        400: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
+        },
     },
 )
 async def http_get_ci_schema_v2(
@@ -274,7 +284,7 @@ async def http_get_ci_schema_v2(
     ci_schema_bucket_repository: CiSchemaBucketRepository = Depends(),
 ):
     """
-    GET method that fetches a CI schema by it's GUID.
+    GET method that fetches a CI schema by GUID.
     """
     logger.info("Getting ci schema via v2 endpoint...")
     logger.debug(f"Input data: query_params={query_params.__dict__}")
@@ -353,6 +363,10 @@ async def http_post_ci_metadata_v1(
         404: {
             "model": ExceptionResponseModel,
             "content": {"application/json": {"example": erm.erm_404_no_ci_metadata_exception}},
+        },
+        400: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
         },
     },
 )
