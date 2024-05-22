@@ -57,7 +57,7 @@ class TestHttpDeleteCiV1:
         response = client.delete(self.base_url)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert response.json()["message"] == "Validation has failed"
+        assert response.json()["message"] == "Invalid search parameters provided"
 
     def test_endpoint_returns_404_if_ci_not_found(
         self,

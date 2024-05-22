@@ -17,7 +17,7 @@ from app.models.requests import (
     PutStatusV1Params,
     Status,
 )
-from app.models.responses import CiMetadata, CiStatus
+from app.models.responses import CiMetadata
 from app.repositories.buckets.ci_schema_bucket_repository import (
     CiSchemaBucketRepository,
 )
@@ -57,6 +57,9 @@ async def http_delete_ci_v1(
     logger.info("Deleting ci metadata and schema via v1 endpoint...")
     logger.debug(f"Input data: query_params={query_params.__dict__}")
 
+    if query_params.survey_id is None:
+        raise exceptions.ExceptionIncorrectKeyNames
+
     ci_metadata_collection = ci_processor_service.get_ci_metadata_colleciton_with_survey_id(query_params.survey_id)
 
     if not ci_metadata_collection:
@@ -95,6 +98,9 @@ async def http_get_ci_metadata_v1(
     """
     logger.info("Getting ci metadata via v1 endpoint")
     logger.debug(f"Input data: query_params={query_params.__dict__}")
+
+    if not query_params.params_not_none("survey_id", "form_type", "language"):
+        raise exceptions.ExceptionIncorrectKeyNames
 
     ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_without_status(
         query_params.survey_id, query_params.form_type, query_params.language
@@ -140,43 +146,29 @@ async def http_get_ci_metadata_v2(
     """
     GET method that returns any metadata objects from Firestore that match the parameters passed.
     The user has multiple ways of querying the metadata.
-    1. Provide survey_id, form_type, language and status.
-    2. Provide survey_id, form_type, language.
-    3. Provide status.
-    4. Provide no parameters.
+    1. Provide survey_id, form_type, language.
+    2. Provide no parameters.
     """
     logger.info("Getting ci metadata via v2 endpoint")
     logger.debug(f"get_ci_metadata_v2: Input data: query_params={query_params.__dict__}")
 
-    # Validate the status parameter
-    if query_params.params_not_none("status"):
-        if query_params.status.upper() not in [
-            CiStatus.DRAFT.value,
-            CiStatus.PUBLISHED.value,
-        ]:
-            error_message = "get_ci_metadata_v2: exception raised - Status is invalid in query"
-            logger.error(error_message)
-            logger.debug(f"{error_message}: {asdict(query_params)}")
-            raise exceptions.ExceptionIncorrectKeyNames
+    none_count = 0
 
-    if query_params.params_not_none("form_type", "language", "status", "survey_id"):
-        ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_with_status(
-            query_params.survey_id,
-            query_params.form_type,
-            query_params.language,
-            query_params.status,
-        )
+    if not query_params.params_not_none("form_type"):
+        none_count = none_count + 1
+    if not query_params.params_not_none("language"):
+        none_count = none_count + 1
+    if not query_params.params_not_none("survey_id"):
+        none_count = none_count + 1
 
-    elif query_params.params_not_none("form_type", "language", "survey_id"):
+    if none_count == 0:
         ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_without_status(
             query_params.survey_id, query_params.form_type, query_params.language
         )
-
-    elif query_params.params_not_none("status"):
-        ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_only_with_status(query_params.status)
-
-    else:
+    elif none_count == 3:
         ci_metadata_collection = ci_processor_service.get_all_ci_metadata_collection()
+    else:
+        raise exceptions.ExceptionIncorrectKeyNames
 
     if not ci_metadata_collection:
         error_message = "get_ci_metadata_v2: exception raised - No collection instruments found"
@@ -224,6 +216,9 @@ async def http_get_ci_schema_v1(
     """
     logger.info("Getting ci schema via v1 endpoint")
     logger.debug(f"get_ci_schema_vi: Getting CI schemaInput data: query_params={query_params.__dict__}")
+
+    if not query_params.params_not_none("survey_id", "form_type", "language"):
+        raise exceptions.ExceptionIncorrectKeyNames
 
     latest_ci_metadata = ci_processor_service.get_latest_ci_metadata(
         query_params.survey_id, query_params.form_type, query_params.language
@@ -283,6 +278,9 @@ async def http_get_ci_schema_v2(
     """
     logger.info("Getting ci schema via v2 endpoint...")
     logger.debug(f"Input data: query_params={query_params.__dict__}")
+
+    if query_params.guid is None:
+        raise exceptions.ExceptionIncorrectKeyNames
 
     ci_metadata = ci_processor_service.get_ci_metadata_with_id(query_params.guid)
 
@@ -366,6 +364,9 @@ async def http_put_status_v1(
     PUT method that sets the status of a CI's metadata in Firestore to 'PUBLISH'.
     """
     logger.info("Updating ci status via v1 endpoint")
+
+    if query_params.guid is None:
+        raise exceptions.ExceptionIncorrectKeyNames
 
     ci_metadata = ci_processor_service.get_ci_metadata_with_id(query_params.guid)
 

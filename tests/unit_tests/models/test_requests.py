@@ -16,7 +16,6 @@ class TestGetCiMetadataV2Params:
     query_params = GetCiMetadataV2Params(
         form_type=mock_form_type,
         language=mock_language,
-        status=mock_status,
         survey_id=mock_survey_id,
     )
 
@@ -25,7 +24,7 @@ class TestGetCiMetadataV2Params:
         `params_not_none` class method should return `True` if all param name strings as input
         arguments have a corresponding non-none class attribute value
         """
-        assert self.query_params.params_not_none("form_type", "language", "status", "survey_id") is True
+        assert self.query_params.params_not_none("form_type", "language", "survey_id") is True
 
     @pytest.mark.parametrize("input_param", ["form_type", "language", "status", "survey_id"])
     def test_params_not_none_returns_false_when_single_param_none(self, input_param):
