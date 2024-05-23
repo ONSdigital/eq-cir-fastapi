@@ -63,7 +63,7 @@ class GetCiMetadataV2Params:
                 return False
 
         return True
-    
+
     def params_all_none(self, keys):
         """
         Loops through each input `keys` and checks if associated class param is `None`

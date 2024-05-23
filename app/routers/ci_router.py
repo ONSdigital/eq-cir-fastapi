@@ -158,7 +158,7 @@ async def http_get_ci_metadata_v2(
     if query_params.params_all_none(query_params.__dict__.keys()):
         ci_metadata_collection = ci_processor_service.get_all_ci_metadata_collection()
     else:
-    # If parameters are provided, return CI metadata that matches the parameters
+        # If parameters are provided, return CI metadata that matches the parameters
         if not query_params.params_not_none(query_params.__dict__.keys()):
             raise exceptions.ExceptionIncorrectKeyNames
         else:
