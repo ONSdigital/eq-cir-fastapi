@@ -101,7 +101,7 @@ async def http_get_ci_metadata_v1(
     logger.info("Getting ci metadata via v1 endpoint")
     logger.debug(f"Input data: query_params={query_params.__dict__}")
 
-    if not query_params.params_not_none("survey_id", "form_type", "language"):
+    if not query_params.params_not_none(query_params.__dict__.keys()):
         raise exceptions.ExceptionIncorrectKeyNames
 
     ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_without_status(
@@ -154,23 +154,17 @@ async def http_get_ci_metadata_v2(
     logger.info("Getting ci metadata via v2 endpoint")
     logger.debug(f"get_ci_metadata_v2: Input data: query_params={query_params.__dict__}")
 
-    none_count = 0
-
-    if not query_params.params_not_none("form_type"):
-        none_count = none_count + 1
-    if not query_params.params_not_none("language"):
-        none_count = none_count + 1
-    if not query_params.params_not_none("survey_id"):
-        none_count = none_count + 1
-
-    if none_count == 0:
-        ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_without_status(
-            query_params.survey_id, query_params.form_type, query_params.language
-        )
-    elif none_count == 3:
+    # If no parameters are provided, return all CI metadata
+    if query_params.params_all_none(query_params.__dict__.keys()):
         ci_metadata_collection = ci_processor_service.get_all_ci_metadata_collection()
     else:
-        raise exceptions.ExceptionIncorrectKeyNames
+    # If parameters are provided, return CI metadata that matches the parameters
+        if not query_params.params_not_none(query_params.__dict__.keys()):
+            raise exceptions.ExceptionIncorrectKeyNames
+        else:
+            ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_without_status(
+                query_params.survey_id, query_params.form_type, query_params.language
+            )
 
     if not ci_metadata_collection:
         error_message = "get_ci_metadata_v2: exception raised - No collection instruments found"

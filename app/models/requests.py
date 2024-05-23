@@ -26,15 +26,15 @@ class GetCiMetadataV1Params:
     language: str = Query(default=None, description="The language of the CI", example="en")
     survey_id: str = Query(default=None, description="The survey ID of the CI", example="123")
 
-    def params_not_none(self, *args):
+    def params_not_none(self, keys):
         """
-        Loops through each input `arg` and checks if associated class param is `None`
+        Loops through each input `keys` and checks if associated class param is `None`
 
         If all param values are not `None` return `True`, otherwise return `False`
         """
-        for arg in args:
+        for key in keys:
             # If value is `None`, return `False` and break out of loop
-            if not getattr(self, arg):
+            if not getattr(self, key):
                 return False
 
         return True
@@ -51,15 +51,28 @@ class GetCiMetadataV2Params:
     language: str = Query(default=None, description="language to get", example="en")
     survey_id: str = Query(default=None, description="survey id to get", example="123")
 
-    def params_not_none(self, *args):
+    def params_not_none(self, keys):
         """
-        Loops through each input `arg` and checks if associated class param is `None`
+        Loops through each input `keys` and checks if associated class param is `None`
 
         If all param values are not `None` return `True`, otherwise return `False`
         """
-        for arg in args:
+        for key in keys:
             # If value is `None`, return `False` and break out of loop
-            if not getattr(self, arg):
+            if not getattr(self, key):
+                return False
+
+        return True
+    
+    def params_all_none(self, keys):
+        """
+        Loops through each input `keys` and checks if associated class param is `None`
+
+        If all param values are `None` return `True`, otherwise return `False`
+        """
+        for key in keys:
+            # If value is `None`, return `False` and break out of loop
+            if getattr(self, key):
                 return False
 
         return True
