@@ -105,6 +105,7 @@ class GetCiSchemaV2Params:
     """Model for `get_ci_schema_v2` request query params"""
 
     guid: str = Query(
+        default=None,
         description="The global unique ID of the CI",
         example="428ae4d1-8e7f-4a9d-8bef-05a266bf81e7",
     )
@@ -155,6 +156,7 @@ class PutStatusV1Params:
     """
 
     guid: str = Query(
+        default=None,
         description="The global unique ID of the CI Metadata to be updated to 'PUBLISH'.",
         example="428ae4d1-8e7f-4a9d-8bef-05a266bf81e7",
     )
