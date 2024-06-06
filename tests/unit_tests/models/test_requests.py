@@ -16,7 +16,6 @@ class TestGetCiMetadataV2Params:
     query_params = GetCiMetadataV2Params(
         form_type=mock_form_type,
         language=mock_language,
-        status=mock_status,
         survey_id=mock_survey_id,
     )
 
@@ -25,7 +24,14 @@ class TestGetCiMetadataV2Params:
         `params_not_none` class method should return `True` if all param name strings as input
         arguments have a corresponding non-none class attribute value
         """
-        assert self.query_params.params_not_none("form_type", "language", "status", "survey_id") is True
+        assert self.query_params.params_not_none(self.query_params.__dict__.keys()) is True
+
+    def test_params_all_none_returns_false_when_all_params_none(self):
+        """
+        `params_not_none` class method should return `False` if all param name strings as input
+        arguments have a corresponding non-none class attribute value
+        """
+        assert self.query_params.params_all_none(self.query_params.__dict__.keys()) is False
 
     @pytest.mark.parametrize("input_param", ["form_type", "language", "status", "survey_id"])
     def test_params_not_none_returns_false_when_single_param_none(self, input_param):
@@ -36,7 +42,7 @@ class TestGetCiMetadataV2Params:
         # Update `query_params` to contain a single `None` value
         setattr(self.query_params, input_param, None)
 
-        assert self.query_params.params_not_none("form_type", "language", "status", "survey_id") is False
+        assert self.query_params.params_not_none(self.query_params.__dict__.keys()) is False
 
     def test_params_not_none_returns_false_when_all_params_none(self):
         """
@@ -49,7 +55,7 @@ class TestGetCiMetadataV2Params:
         self.query_params.status = None
         self.query_params.survey_id = None
 
-        assert self.query_params.params_not_none("form_type", "language", "status", "survey_id") is False
+        assert self.query_params.params_not_none(self.query_params.__dict__.keys()) is False
 
 
 class TestPostCiMetadataV1PostData:

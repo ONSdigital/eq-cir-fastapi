@@ -100,8 +100,7 @@ class TestGetCiMetadataV2:
         get_ci_metadata_v2_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         assert get_ci_metadata_v2_response.status_code == status.HTTP_404_NOT_FOUND
         query_ci_response = get_ci_metadata_v2_response.json()
-        expected_response = f"No CI metadata found for: {get_ci_metadata_v2_payload}"
-        assert query_ci_response["message"] == expected_response
+        assert query_ci_response["message"] == "No CI found"
         assert query_ci_response["status"] == "error"
 
     def test_metadata_query_ci_v2_returns_unauthorized_request(self, setup_payload):

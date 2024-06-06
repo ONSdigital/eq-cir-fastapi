@@ -7,7 +7,6 @@ from fastapi.testclient import TestClient
 from app.config import Settings
 from app.main import app
 from app.models.requests import PutStatusV1Params
-from app.models.responses import BadRequest
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from tests.test_data.ci_test_data import (
     mock_ci_metadata,
@@ -40,7 +39,7 @@ class TestHttpPutStatusV1:
         # mocked function to return valid ci metadata, indicating ci metadata is found
         mocked_get_ci_metadata_with_id.return_value = mock_ci_metadata
 
-        expected_message = f"CI status has been changed to Published for {self.query_params.guid}."
+        expected_message = "put_status_v1: CI status has been changed to PUBLISHED"
         response = client.put(self.url)
 
         assert response.status_code == status.HTTP_200_OK
@@ -62,7 +61,7 @@ class TestHttpPutStatusV1:
         # mocked function to return an already published ci metadata, indicating ci metadata is found but published
         mocked_get_ci_metadata_with_id.return_value = mock_ci_published_metadata
 
-        expected_message = f"CI status has already been changed to Published for {self.query_params.guid}"
+        expected_message = "put_status_v1: CI status has already been changed to PUBLISHED"
         response = client.put(self.url)
 
         assert response.status_code == status.HTTP_200_OK
@@ -83,10 +82,10 @@ class TestHttpPutStatusV1:
         # mocked function to return `None`, indicating ci metadata is not found
         mocked_get_ci_metadata_with_id.return_value = None
 
-        expected_response = BadRequest(message=f"No CI metadata found for: {mock_id}")
         response = client.put(self.url)
 
-        assert response.json() == expected_response.__dict__
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert response.json()["message"] == "No results found"
         CiFirebaseRepository.get_ci_metadata_with_id.assert_called_once_with(mock_id)
         CiFirebaseRepository.update_ci_metadata_status_to_published_with_id.assert_not_called()
 

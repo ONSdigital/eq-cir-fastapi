@@ -184,7 +184,7 @@ class TestPostCiV1:
 
         ci_response_data = ci_response.json()
         assert ci_response_data == {
-            "message": "Value error, survey_id can't be empty or null",
+            "message": "Validation has failed",
             "status": "error",
         }
 
@@ -202,7 +202,7 @@ class TestPostCiV1:
 
         ci_response_data = ci_response.json()
         assert ci_response_data == {
-            "message": "Value error, language can't be empty or null",
+            "message": "Validation has failed",
             "status": "error",
         }
 
@@ -220,7 +220,7 @@ class TestPostCiV1:
 
         ci_response_data = ci_response.json()
         assert ci_response_data == {
-            "message": "Value error, form_type can't be empty or null",
+            "message": "Validation has failed",
             "status": "error",
         }
 
@@ -238,7 +238,7 @@ class TestPostCiV1:
 
         ci_response_data = ci_response.json()
         assert ci_response_data == {
-            "message": "Value error, title can't be empty or null",
+            "message": "Validation has failed",
             "status": "error",
         }
 
@@ -256,7 +256,7 @@ class TestPostCiV1:
 
         ci_response_data = ci_response.json()
         assert ci_response_data == {
-            "message": "Value error, schema_version can't be empty or null",
+            "message": "Validation has failed",
             "status": "error",
         }
 
@@ -274,7 +274,7 @@ class TestPostCiV1:
 
         ci_response_data = ci_response.json()
         assert ci_response_data == {
-            "message": "Value error, data_version can't be empty or null",
+            "message": "Validation has failed",
             "status": "error",
         }
 
