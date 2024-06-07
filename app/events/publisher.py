@@ -38,7 +38,7 @@ class Publisher:
         except Exception as e:
             logger.debug(e)
 
-    def _verify_topic_exists(self, topic_path: str) -> None:
+    def _verify_topic_exists(self) -> None:
         """
         If the topic does not exist raises 500 global error.
         """
