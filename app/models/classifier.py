@@ -6,4 +6,4 @@ class Classifier(Enum):
 
     @classmethod
     def valid_classifier(cls, classifier):
-        return classifier == Classifier.FORM_TYPE
+        return classifier in cls.__members__
