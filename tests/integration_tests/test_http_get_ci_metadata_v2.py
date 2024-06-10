@@ -34,7 +34,8 @@ class TestGetCiMetadataV2:
             make_iap_request("POST", f"{self.post_url}", json=setup_payload)
 
         get_ci_metadata_v2_payload = {
-            "form_type": setup_payload["form_type"],
+            "classifier_type": setup_payload["form_type"],
+            "classifier_value": setup_payload["classifier_value"],
             "language": setup_payload["language"],
             "survey_id": setup_payload["survey_id"],
         }
@@ -70,7 +71,8 @@ class TestGetCiMetadataV2:
         make_iap_request("POST", f"{self.post_url}", json=setup_payload)
 
         get_ci_metadata_v2_payload = {
-            "form_type": setup_payload["form_type"],
+            "classifier_type": setup_payload["form_type"],
+            "classifier_value": setup_payload["classifier_value"],
             "language": setup_payload["language"],
             "status": setup_payload["status"],
             "survey_id": setup_payload["survey_id"],
@@ -89,7 +91,8 @@ class TestGetCiMetadataV2:
         http_get_ci metadata_v2 should return 404 status code if ci is not found.
         """
         get_ci_metadata_v2_payload = {
-            "form_type": setup_payload["form_type"],
+            "classifier_type": setup_payload["form_type"],
+            "classifier_value": setup_payload["classifier_value"],
             "language": setup_payload["language"],
             "status": setup_payload["status"],
             "survey_id": setup_payload["survey_id"],
@@ -109,7 +112,8 @@ class TestGetCiMetadataV2:
         http_get_ci metadata_v2 should return a 401 unauthorized error if the endpoint is requested with an unauthorized token.
         """
         get_ci_metadata_v2_payload = {
-            "form_type": setup_payload["form_type"],
+            "classifier_type": setup_payload["form_type"],
+            "classifier_value": setup_payload["classifier_value"],
             "language": setup_payload["language"],
             "survey_id": setup_payload["survey_id"],
         }

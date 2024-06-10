@@ -101,11 +101,11 @@ async def http_get_ci_metadata_v1(
     logger.info("Getting ci metadata via v1 endpoint")
     logger.debug(f"Input data: query_params={query_params.__dict__}")
 
-    if not query_params.params_not_none(query_params.__dict__.keys()):
+    if not query_params.params_not_none(query_params.__dict__.keys()) and query_params.classifier_type != "form_type":
         raise exceptions.ExceptionIncorrectKeyNames
 
     ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_without_status(
-        query_params.survey_id, query_params.form_type, query_params.language
+        query_params.survey_id, query_params.classifier_type, query_params.classifier_value, query_params.language
     )
 
     if not ci_metadata_collection:
@@ -161,9 +161,11 @@ async def http_get_ci_metadata_v2(
         # If parameters are provided, return CI metadata that matches the parameters
         if not query_params.params_not_none(query_params.__dict__.keys()):
             raise exceptions.ExceptionIncorrectKeyNames
+        if query_params.classifier_type != "form_type":
+            raise exceptions.ExceptionIncorrectKeyNames
         else:
             ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_without_status(
-                query_params.survey_id, query_params.form_type, query_params.language
+                query_params.survey_id, query_params.classifier_type, query_params.classifier_value, query_params.language
             )
 
     if not ci_metadata_collection:
@@ -217,11 +219,14 @@ async def http_get_ci_schema_v1(
     logger.info("Getting ci schema via v1 endpoint")
     logger.debug(f"get_ci_schema_vi: Getting CI schemaInput data: query_params={query_params.__dict__}")
 
-    if not query_params.params_not_none("survey_id", "form_type", "language"):
+    if (
+        not query_params.params_not_none("survey_id", "classifier_type", "classifier_value", "language")
+        and query_params.classifier_type != "form_type"
+    ):
         raise exceptions.ExceptionIncorrectKeyNames
 
     latest_ci_metadata = ci_processor_service.get_latest_ci_metadata(
-        query_params.survey_id, query_params.form_type, query_params.language
+        query_params.survey_id, query_params.classifier_type, query_params.classifier_value, query_params.language
     )
 
     if not latest_ci_metadata:

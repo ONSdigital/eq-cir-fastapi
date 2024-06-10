@@ -24,7 +24,8 @@ class CiMetadata(BaseModel):
     # Required fields
     ci_version: int
     data_version: str
-    form_type: str
+    classifier_type: str
+    classifier_value: str
     guid: str
     language: str
     published_at: str

@@ -10,7 +10,8 @@ settings = Settings()
 # Mock data for all tests
 mock_ci_version = "1"
 mock_data_version = "1"
-mock_form_type = "ft"
+mock_classifier_type = "form_type"
+mock_classifier_value = "ft"
 mock_id = str(uuid.uuid4())
 mock_language = "en-US"
 mock_published_at = datetime.datetime.utcnow().strftime(settings.PUBLISHED_AT_FORMAT)
@@ -33,7 +34,8 @@ class TestCiMetadata:
         ci_metadata = CiMetadata(
             ci_version=mock_ci_version,
             data_version=mock_data_version,
-            form_type=mock_form_type,
+            classifier_type=mock_classifier_type,
+            classifier_value=mock_classifier_value,
             guid=mock_id,
             language=mock_language,
             published_at=mock_published_at,
@@ -58,7 +60,8 @@ class TestCiMetadata:
         ci_metadata = CiMetadata(
             ci_version=mock_ci_version,
             data_version=mock_data_version,
-            form_type=mock_form_type,
+            classifier_type=mock_classifier_type,
+            classifier_value=mock_classifier_value,
             guid=mock_id,
             language=mock_language,
             published_at=mock_published_at,
@@ -82,7 +85,8 @@ class TestCiMetadata:
         ci_metadata = CiMetadata(
             ci_version=mock_ci_version,
             data_version=mock_data_version,
-            form_type=mock_form_type,
+            classifier_type=mock_classifier_type,
+            classifier_value=mock_classifier_value,
             guid=mock_id,
             language=mock_language,
             published_at=mock_published_at,

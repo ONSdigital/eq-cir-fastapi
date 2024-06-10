@@ -62,7 +62,8 @@ class TestHttpPostCiV1:
         assert response.json() == mock_ci_metadata.model_dump()
         CiFirebaseRepository.get_latest_ci_metadata.assert_called_once_with(
             mock_post_ci_schema.survey_id,
-            mock_post_ci_schema.form_type,
+            mock_post_ci_schema.classifier_type,
+            mock_post_ci_schema.classifier_value,
             mock_post_ci_schema.language,
         )
         CiFirebaseRepository.perform_new_ci_transaction.assert_called_once_with(
@@ -100,7 +101,8 @@ class TestHttpPostCiV1:
         assert response.json() == mock_next_version_ci_metadata.model_dump()
         CiFirebaseRepository.get_latest_ci_metadata.assert_called_once_with(
             mock_post_ci_schema.survey_id,
-            mock_post_ci_schema.form_type,
+            mock_post_ci_schema.classifier_type,
+            mock_post_ci_schema.classifier_value,
             mock_post_ci_schema.language,
         )
         CiFirebaseRepository.perform_new_ci_transaction.assert_called_once_with(
@@ -132,7 +134,8 @@ class TestHttpPostCiV1:
         "input_param",
         [
             "data_version",
-            "form_type",
+            "classifier_type",
+            "classifier_value",
             "language",
             "survey_id",
             "title",
@@ -167,7 +170,8 @@ class TestHttpPostCiV1:
         "input_param",
         [
             "data_version",
-            "form_type",
+            "classifier_type",
+            "classifier_value",
             "language",
             "survey_id",
             "title",
@@ -203,7 +207,8 @@ class TestHttpPostCiV1:
         "input_param",
         [
             "data_version",
-            "form_type",
+            "classifier_type",
+            "classifier_value",
             "language",
             "survey_id",
             "title",

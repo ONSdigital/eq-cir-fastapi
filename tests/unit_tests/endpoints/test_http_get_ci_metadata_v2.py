@@ -10,7 +10,8 @@ from app.models.requests import GetCiMetadataV2Params
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from tests.test_data.ci_test_data import (
     mock_ci_metadata_list,
-    mock_form_type,
+    mock_classifier_type,
+    mock_classifier_value,
     mock_language,
     mock_status,
     mock_survey_id,
@@ -30,7 +31,8 @@ class TestHttpGetCiMetadataV2:
     base_url = "/v2/ci_metadata"
 
     query_params = GetCiMetadataV2Params(
-        form_type=mock_form_type,
+        classifier_type=mock_classifier_type,
+        classifier_value=mock_classifier_value,
         language=mock_language,
         survey_id=mock_survey_id,
     )
@@ -38,14 +40,18 @@ class TestHttpGetCiMetadataV2:
 
     status_only_url = f"{base_url}?status={mock_status}"
 
-    without_status_url = f"{base_url}?form_type={mock_form_type}&language={mock_language}&survey_id={mock_survey_id}"
+    without_status_url = (
+        f"{base_url}?classifier_type={mock_classifier_type}&classifier_value={mock_classifier_value}"
+        f"&language={mock_language}&survey_id={mock_survey_id}"
+    )
 
     missing_all_query_param = f"{base_url}"
 
-    missing_one_query_param = f"{base_url}?form_type={mock_form_type}&survey_id={mock_survey_id}"
+    missing_one_query_param = f"{base_url}?classifier_type={mock_classifier_type}&&survey_id={mock_survey_id}"
 
     wrong_status_query_params = GetCiMetadataV2Params(
-        form_type=mock_form_type,
+        classifier_type=mock_classifier_type,
+        classifier_value=mock_classifier_value,
         language=mock_language,
         survey_id=mock_survey_id,
     )
@@ -100,7 +106,7 @@ class TestHttpGetCiMetadataV2:
             assert "description" in response.json()[i]
 
         CiFirebaseRepository.get_ci_metadata_collection_without_status.assert_called_once_with(
-            mock_survey_id, mock_form_type, mock_language
+            mock_survey_id, mock_classifier_type, mock_classifier_value, mock_language
         )
 
     def test_endpoint_returns_200_if_ci_metadata_found_with_query_without_status(
@@ -127,7 +133,7 @@ class TestHttpGetCiMetadataV2:
             assert "description" in response.json()[i]
 
         CiFirebaseRepository.get_ci_metadata_collection_without_status.assert_called_once_with(
-            mock_survey_id, mock_form_type, mock_language
+            mock_survey_id, mock_classifier_type, mock_classifier_value, mock_language
         )
 
     def test_endpoint_returns_200_if_ci_metadata_found_with_empty_query(

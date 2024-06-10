@@ -17,7 +17,8 @@ class TestSubscriber:
     message_data = {
         "ci_version": 2,
         "data_version": "1",
-        "form_type": "business",
+        "classifier_type": "form_type",
+        "classifier_value": "business",
         "id": "ca9c5b88-0700-4e87-a90e-0d3e05ae37d5",
         "language": "welsh",
         "published_at": "2023-06-14T08:54:27.722250Z",

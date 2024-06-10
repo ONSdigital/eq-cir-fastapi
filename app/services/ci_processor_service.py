@@ -34,7 +34,8 @@ class CiProcessorService:
         next_version_ci_metadata = self.build_next_version_ci_metadata(
             ci_id,
             post_data.survey_id,
-            post_data.form_type,
+            post_data.classifier_type,
+            post_data.classifier_value,
             post_data.language,
             post_data.data_version,
             post_data.schema_version,
@@ -52,7 +53,8 @@ class CiProcessorService:
         event_message = PostCIEvent(
             ci_version=next_version_ci_metadata.ci_version,
             data_version=next_version_ci_metadata.data_version,
-            form_type=next_version_ci_metadata.form_type,
+            classifier_type=next_version_ci_metadata.classifier_type,
+            classifier_value=next_version_ci_metadata.classifier_value,
             guid=next_version_ci_metadata.guid,
             language=next_version_ci_metadata.language,
             published_at=next_version_ci_metadata.published_at,
@@ -101,7 +103,8 @@ class CiProcessorService:
         self,
         ci_id: str,
         survey_id: str,
-        form_type: str,
+        classifier_type: str,
+        classifier_value: str,
         language: str,
         data_version: str,
         schema_version: str,
@@ -115,7 +118,8 @@ class CiProcessorService:
         Parameters:
         ci_id (str): the guid of the metadata.
         survey_id (str): the survey id of the schema.
-        form_type (str): the form type of the schema.
+        classifier_type (str): the classifier type used.
+        classifier_value (str): the classier value
         language (str): the language of the schema.
         data_version (str): the data version of the schema.
         schema_version (str): the schema version of the schema.
@@ -128,9 +132,10 @@ class CiProcessorService:
         """
         next_version_ci_metadata = CiMetadata(
             guid=ci_id,
-            ci_version=self.calculate_next_ci_version(survey_id, form_type, language),
+            ci_version=self.calculate_next_ci_version(survey_id, classifier_type, classifier_value, language),
             data_version=data_version,
-            form_type=form_type,
+            classifier_type=classifier_type,
+            classifier_value=classifier_value,
             language=language,
             published_at=str(DatetimeService.get_current_date_and_time().strftime(settings.PUBLISHED_AT_FORMAT)),
             schema_version=schema_version,
@@ -142,7 +147,7 @@ class CiProcessorService:
         )
         return next_version_ci_metadata
 
-    def calculate_next_ci_version(self, survey_id: str, form_type: str, language: str) -> int:
+    def calculate_next_ci_version(self, survey_id: str, classifier_type, classifier_value, language: str) -> int:
         """
         Calculates the next schema version for the metadata being built.
 
@@ -150,7 +155,9 @@ class CiProcessorService:
         survey_id (str): the survey id of the schema.
         """
 
-        current_version_metadata = self.ci_firebase_repository.get_latest_ci_metadata(survey_id, form_type, language)
+        current_version_metadata = self.ci_firebase_repository.get_latest_ci_metadata(
+            survey_id, classifier_type, classifier_value, language
+        )
 
         return DocumentVersionService.calculate_ci_version(current_version_metadata)
 
@@ -171,13 +178,16 @@ class CiProcessorService:
             logger.error("Error publishing CI metadata to topic.")
             raise exceptions.GlobalException
 
-    def get_ci_metadata_collection_without_status(self, survey_id: str, form_type: str, language: str) -> list[CiMetadata]:
+    def get_ci_metadata_collection_without_status(
+        self, survey_id: str, classifier_type, classifier_value, language: str
+    ) -> list[CiMetadata]:
         """
         Get a list of CI metadata without status
 
         Parameters:
         survey_id (str): the survey id of the schemas.
-        form_type (str): the form type of the schemas.
+        classifier_type (str): the classifier type used.
+        classifier_value (str): the classier value
         language (str): the language of the schemas.
 
         Returns:
@@ -186,20 +196,21 @@ class CiProcessorService:
         logger.info("Retrieving CI metadata without status...")
 
         ci_metadata_collection = self.ci_firebase_repository.get_ci_metadata_collection_without_status(
-            survey_id, form_type, language
+            survey_id, classifier_type, classifier_value, language
         )
 
         return ci_metadata_collection
 
     def get_ci_metadata_collection_with_status(
-        self, survey_id: str, form_type: str, language: str, status: str
+        self, survey_id: str, classifier_value: str, classifier_type: str, language: str, status: str
     ) -> list[CiMetadata]:
         """
         Get a list of CI metadata with status
 
         Parameters:
         survey_id (str): the survey id of the schemas.
-        form_type (str): the form type of the schemas.
+        classifier_type (str): the classifier type.
+        classifier_type (str): the classifier value.
         language (str): the language of the schemas.
         status (str): the status of the schemas.
 
@@ -209,7 +220,7 @@ class CiProcessorService:
         logger.info("Retrieving CI metadata with status...")
 
         ci_metadata_collection = self.ci_firebase_repository.get_ci_metadata_collection_with_status(
-            survey_id, form_type, language, status
+            survey_id, classifier_value, classifier_type, language, status
         )
 
         return ci_metadata_collection
@@ -243,7 +254,9 @@ class CiProcessorService:
 
         return ci_metadata_collection
 
-    def get_latest_ci_metadata(self, survey_id: str, form_type: str, language: str) -> CiMetadata | None:
+    def get_latest_ci_metadata(
+        self, survey_id: str, classifier_type: str, classifier_value: str, language: str
+    ) -> CiMetadata | None:
         """
         Get the latest CI metadata
 
@@ -257,7 +270,9 @@ class CiProcessorService:
         """
         logger.info("Getting latest CI metadata...")
 
-        latest_ci_metadata = self.ci_firebase_repository.get_latest_ci_metadata(survey_id, form_type, language)
+        latest_ci_metadata = self.ci_firebase_repository.get_latest_ci_metadata(
+            survey_id, classifier_type, classifier_value, language
+        )
 
         return latest_ci_metadata
 

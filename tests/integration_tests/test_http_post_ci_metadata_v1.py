@@ -38,10 +38,18 @@ class TestPostCiV1:
         ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_payload)
         ci_response_data = ci_response.json()
         survey_id = setup_payload["survey_id"]
-        form_type = setup_payload["form_type"]
+        classifier_type = setup_payload["form_type"]
+        classifier_value = setup_payload["classifier_value"]
         language = setup_payload["language"]
 
-        querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
+        querystring = urlencode(
+            {
+                "classifier_type": classifier_type,
+                "classifier_value": classifier_value,
+                "language": language,
+                "survey_id": survey_id,
+            }
+        )
         # sends request to http_query_ci endpoint for data
         check_ci_in_db = make_iap_request("GET", f"{self.get_matadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
@@ -54,7 +62,8 @@ class TestPostCiV1:
         expected_ci = CiMetadata(
             ci_version=1,
             data_version=setup_payload["data_version"],
-            form_type=setup_payload["form_type"],
+            classifier_type=setup_payload["form_type"],
+            classifier_value=setup_payload["classifier_value"],
             guid=check_ci_in_db_data[0]["guid"],
             language=setup_payload["language"],
             published_at=check_ci_in_db_data[0]["published_at"],
@@ -87,10 +96,18 @@ class TestPostCiV1:
         ci_response_data = ci_response.json()
 
         survey_id = setup_payload["survey_id"]
-        form_type = setup_payload["form_type"]
+        classifier_type = setup_payload["form_type"]
+        classifier_value = setup_payload["classifier_value"]
         language = setup_payload["language"]
 
-        querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
+        querystring = urlencode(
+            {
+                "classifier_type": classifier_type,
+                "classifier_value": classifier_value,
+                "language": language,
+                "survey_id": survey_id,
+            }
+        )
         # sends request to http_query_ci endpoint for data
         check_ci_in_db = make_iap_request("GET", f"{self.get_matadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
@@ -103,7 +120,8 @@ class TestPostCiV1:
         expected_ci = CiMetadata(
             ci_version=1,
             data_version=setup_payload["data_version"],
-            form_type=setup_payload["form_type"],
+            classifier_type=setup_payload["form_type"],
+            classifier_value=setup_payload["classifier_value"],
             guid=check_ci_in_db_data[0]["guid"],
             language=setup_payload["language"],
             published_at=check_ci_in_db_data[0]["published_at"],
@@ -138,9 +156,17 @@ class TestPostCiV1:
         self.subscriber.pull_messages_and_acknowledge()
 
         survey_id = setup_publish_ci_return_payload["survey_id"]
-        form_type = setup_publish_ci_return_payload["form_type"]
+        classifier_type = setup_publish_ci_return_payload["form_type"]
+        classifier_value = setup_publish_ci_return_payload["classifier_value"]
         language = setup_publish_ci_return_payload["language"]
-        querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
+        querystring = urlencode(
+            {
+                "classifier_type": classifier_type,
+                "classifier_value": classifier_value,
+                "language": language,
+                "survey_id": survey_id,
+            }
+        )
         # sends request to http_query_ci endpoint for data
         check_ci_in_db = make_iap_request("GET", f"{self.get_matadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
@@ -148,7 +174,8 @@ class TestPostCiV1:
         expected_ci = CiMetadata(
             ci_version=2,
             data_version=setup_publish_ci_return_payload["data_version"],
-            form_type=setup_publish_ci_return_payload["form_type"],
+            classifier_type=setup_publish_ci_return_payload["form_type"],
+            classifier_value=setup_publish_ci_return_payload["classifier-value"],
             guid=check_ci_in_db_data[0]["guid"],
             language=setup_publish_ci_return_payload["language"],
             published_at=check_ci_in_db_data[0]["published_at"],
@@ -206,13 +233,13 @@ class TestPostCiV1:
             "status": "error",
         }
 
-    def test_cannot_publish_ci_missing_form_type(self, setup_payload):
+    def test_cannot_publish_ci_missing_classifier_type(self, setup_payload):
         """
         What am I testing:
-        AC-3.3	If a metadata field is missing <form_type>, then the correct response is returned.
+        AC-3.3	If a metadata field is missing a classifier, then the correct response is returned.
         """
         payload = setup_payload
-        payload["form_type"] = " "
+        payload["classifier_type"] = " "
         ci_response = make_iap_request("POST", f"{self.post_url}", json=payload)
         self.subscriber.pull_messages_and_acknowledge()
 

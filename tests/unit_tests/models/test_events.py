@@ -11,7 +11,8 @@ settings = Settings()
 # Mock data for all tests
 mock_ci_version = "1"
 mock_data_version = "1"
-mock_form_type = "t"
+mock_classifier_type = "form_type"
+mock_classifier_value = "t"
 mock_id = str(uuid.uuid4())
 mock_language = "em"
 mock_published_at = datetime.datetime.utcnow().strftime(settings.PUBLISHED_AT_FORMAT)
@@ -34,7 +35,8 @@ class TestPostCIEvent:
         ci_event = PostCIEvent(
             ci_version=mock_ci_version,
             data_version=mock_data_version,
-            form_type=mock_form_type,
+            classifier_type=mock_classifier_type,
+            classifier_value=mock_classifier_value,
             guid=mock_id,
             language=mock_language,
             published_at=mock_published_at,
@@ -59,7 +61,8 @@ class TestPostCIEvent:
         ci_event = PostCIEvent(
             ci_version=mock_ci_version,
             data_version=mock_data_version,
-            form_type=mock_form_type,
+            classifier_type=mock_classifier_type,
+            classifier_value=mock_classifier_value,
             guid=mock_id,
             language=mock_language,
             published_at=mock_published_at,
@@ -83,7 +86,8 @@ class TestPostCIEvent:
         ci_event = PostCIEvent(
             ci_version=mock_ci_version,
             data_version=mock_data_version,
-            form_type=mock_form_type,
+            classifier_type=mock_classifier_type,
+            classifier_value=mock_classifier_value,
             guid=mock_id,
             language=mock_language,
             published_at=mock_published_at,
