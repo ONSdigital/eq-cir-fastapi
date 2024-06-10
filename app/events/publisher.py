@@ -1,9 +1,9 @@
 import json
 
-from app.exception.exceptions import ExceptionTopicNotFound
 from google.cloud.pubsub_v1 import PublisherClient
 
 from app.config import Settings, logging
+from app.exception.exceptions import ExceptionTopicNotFound
 from app.models.events import PostCIEvent
 
 logger = logging.getLogger(__name__)
@@ -45,6 +45,7 @@ class Publisher:
         try:
             self.publisher.get_topic(request={"topic": self.topic_path})
         except Exception:
+            logger.debug("Error getting topic")
             raise ExceptionTopicNotFound
 
 
