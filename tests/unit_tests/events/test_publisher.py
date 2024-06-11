@@ -77,10 +77,9 @@ class TestPublisher:
         assert result is None
 
     def test_topic_exists_failure(self, mocked_publisher_client):
-        mocked_publisher_client.get_topic.side_effect = Exception
+        mocked_publisher_client.return_value.get_topic.side_effect = Exception
 
         publisher = Publisher()
-        publisher.publisher = mocked_publisher_client
 
         with pytest.raises(ExceptionTopicNotFound):
             publisher._verify_topic_exists()
