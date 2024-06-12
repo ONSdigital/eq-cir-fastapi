@@ -1,6 +1,7 @@
 from google.cloud import exceptions, storage
 
 from app.config import settings
+from app.exception.exceptions import ExceptionBucketNotFound
 
 
 class BucketLoader:
@@ -31,9 +32,7 @@ class BucketLoader:
                 bucket_name,
             )
         except exceptions.NotFound:
-            bucket = __storage_client.create_bucket(
-                bucket_name,
-            )
+            raise ExceptionBucketNotFound
 
         return bucket
 

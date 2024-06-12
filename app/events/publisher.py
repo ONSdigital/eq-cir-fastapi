@@ -3,6 +3,7 @@ import json
 from google.cloud.pubsub_v1 import PublisherClient
 
 from app.config import Settings, logging
+from app.exception.exceptions import ExceptionTopicNotFound
 from app.models.events import PostCIEvent
 
 logger = logging.getLogger(__name__)
@@ -19,9 +20,8 @@ class Publisher:
     def publish_message(self, event_msg: PostCIEvent) -> None:
         """Publishes an event message to a Pub/Sub topic."""
 
-        # If topic doesn't already exist, create one
-        if not self.topic_exists():
-            self.create_topic()
+        # Verify if the topic exists - if not, raise an exception
+        self._verify_topic_exists()
 
         # Convert the event object to a JSON string using `model_dump`, which exlcudes `sds_schema`
         # key if this field is not filled
@@ -38,29 +38,15 @@ class Publisher:
         except Exception as e:
             logger.debug(e)
 
-    def create_topic(self) -> None:
-        """Create a new Pub/Sub topic."""
-
-        logger.debug("create_topic")
-
-        try:
-            if not self.topic_exists():
-                topic = self.publisher.create_topic(request={"name": self.topic_path})
-                logger.debug(f"Created topic: {topic.name}")
-        except Exception as e:
-            logger.debug(e)
-
-    def topic_exists(self) -> bool:
+    def _verify_topic_exists(self) -> None:
         """
-        Returns `true` if the topic defined by `self.topic_path` exists otherwise returns `false`.
+        If the topic does not exist raises 500 global error.
         """
-
         try:
             self.publisher.get_topic(request={"topic": self.topic_path})
-            return True
-        except Exception as e:
-            logger.debug(e)
-            return False
+        except Exception:
+            logger.debug("Error getting topic")
+            raise ExceptionTopicNotFound
 
 
 publisher = Publisher()
