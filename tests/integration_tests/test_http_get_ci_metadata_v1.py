@@ -32,7 +32,18 @@ class TestGetCiMetadataV1:
         for _ in range(3):
             make_iap_request("POST", f"{self.post_url}", json=setup_payload)
 
-        querystring = self._build_payload(setup_payload)
+        survey_id = setup_payload["survey_id"]
+        classifier_type = setup_payload["classifier_type"]
+        classifier_value = setup_payload["classifier_value"]
+        language = setup_payload["language"]
+        querystring = urlencode(
+            {
+                "classifier_type": classifier_type,
+                "classifier_value": classifier_value,
+                "language": language,
+                "survey_id": survey_id,
+            }
+        )
         # sends request to http_query_ci endpoint for data
         query_ci_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         query_ci_response_data = query_ci_response.json()
@@ -55,8 +66,15 @@ class TestGetCiMetadataV1:
         survey_id = setup_payload["survey_id"]
         classifier_type = setup_payload["classifier_type"]
         classifier_value = setup_payload["classifier_value"]
-        language = setup_payload["English"]
-        querystring = self._build_payload(setup_payload)
+        language = setup_payload["language"]
+        querystring = urlencode(
+            {
+                "classifier_type": classifier_type,
+                "classifier_value": classifier_value,
+                "language": language,
+                "survey_id": survey_id,
+            }
+        )
         # sends request to http_query_ci endpoint for data
         query_ci_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         query_ci_response_data = query_ci_response.json()
@@ -67,7 +85,7 @@ class TestGetCiMetadataV1:
             {
                 "classifier_type": classifier_type,
                 "classifier_value": classifier_value,
-                "language": language,
+                "language": "English",
                 "survey_id": survey_id,
             }
         )
@@ -88,7 +106,18 @@ class TestGetCiMetadataV1:
         setup_payload["sds_schema"] = "xx-ytr-1234-856"
         # Posts the ci using http_post_ci endpoint
         make_iap_request("POST", f"{self.post_url}", json=setup_payload)
-        querystring = self._build_payload(setup_payload)
+        survey_id = setup_payload["survey_id"]
+        classifier_type = setup_payload["classifier_type"]
+        classifier_value = setup_payload["classifier_value"]
+        language = setup_payload["language"]
+        querystring = urlencode(
+            {
+                "classifier_type": classifier_type,
+                "classifier_value": classifier_value,
+                "language": language,
+                "survey_id": survey_id,
+            }
+        )
         # sends request to http_query_ci endpoint for data
         query_ci_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         query_ci_response_json = query_ci_response.json()
@@ -101,7 +130,18 @@ class TestGetCiMetadataV1:
         What am I testing:
         http_get_ci metadata_v1 should return 404 status code if ci is not found.
         """
-        querystring = self._build_payload(setup_payload)
+        survey_id = setup_payload["survey_id"]
+        classifier_type = setup_payload["classifier_type"]
+        classifier_value = setup_payload["classifier_value"]
+        language = setup_payload["language"]
+        querystring = urlencode(
+            {
+                "classifier_type": classifier_type,
+                "classifier_value": classifier_value,
+                "language": language,
+                "survey_id": survey_id,
+            }
+        )
         # sends request to http_query_ci endpoint for data
         query_ci_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         assert query_ci_response.status_code == status.HTTP_404_NOT_FOUND
@@ -114,22 +154,6 @@ class TestGetCiMetadataV1:
         What am I testing:
         http_get_ci metadata_v1 should return 400 status code if incorrect args are provided.
         """
-        querystring = self._build_payload(setup_payload)
-        response = make_iap_request("GET", f"{self.base_url}?{querystring}")
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-
-    def test_metadata_query_ci_returns_unauthorized_request(self, setup_payload):
-        """
-        What am I testing:
-        http_get_ci metadata_v1 should return a 401 unauthorized error if the endpoint is requested with an unauthorized token.
-        """
-        querystring = self._build_payload(setup_payload)
-        response = make_iap_request("GET", f"{self.base_url}?{querystring}", unauthenticated=True)
-        print(response)
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
-
-    @staticmethod
-    def _build_payload(setup_payload):
         survey_id = setup_payload["survey_id"]
         classifier_type = setup_payload["form_type"]
         classifier_value = setup_payload["classifier_value"]
@@ -142,4 +166,26 @@ class TestGetCiMetadataV1:
                 "language": language,
             }
         )
-        return querystring
+        response = make_iap_request("GET", f"{self.base_url}?{querystring}")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_metadata_query_ci_returns_unauthorized_request(self, setup_payload):
+        """
+        What am I testing:
+        http_get_ci metadata_v1 should return a 401 unauthorized error if the endpoint is requested with an unauthorized token.
+        """
+        survey_id = setup_payload["survey_id"]
+        classifier_type = setup_payload["classifier_type"]
+        classifier_value = setup_payload["classifier_value"]
+        language = setup_payload["language"]
+        querystring = urlencode(
+            {
+                "survey_id": survey_id,
+                "classifier_type": classifier_type,
+                "classifier_value": classifier_value,
+                language: "language",
+            }
+        )
+        response = make_iap_request("GET", f"{self.base_url}?{querystring}", unauthenticated=True)
+        print(response)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
