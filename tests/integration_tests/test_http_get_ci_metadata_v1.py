@@ -155,11 +155,8 @@ class TestGetCiMetadataV1:
         http_get_ci metadata_v1 should return 400 status code if incorrect args are provided.
         """
         survey_id = setup_payload["survey_id"]
-        classifier_type = setup_payload["classifier_type"]
         classifier_value = setup_payload["classifier_value"]
-        querystring = urlencode(
-            {"survey_id": survey_id, "classifier_type": "form_type", "classifier_value": classifier_value}
-        )
+        querystring = urlencode({"survey_id": survey_id, "classifier_type": "form_type", "classifier_value": classifier_value})
         response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
