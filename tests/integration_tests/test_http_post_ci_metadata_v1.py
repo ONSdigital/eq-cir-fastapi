@@ -156,7 +156,7 @@ class TestPostCiV1:
         self.subscriber.pull_messages_and_acknowledge()
 
         survey_id = setup_publish_ci_return_payload["survey_id"]
-        classifier_type = setup_publish_ci_return_payload["form_type"]
+        classifier_type = setup_publish_ci_return_payload["classifier_type"]
         classifier_value = setup_publish_ci_return_payload["classifier_value"]
         language = setup_publish_ci_return_payload["language"]
         querystring = urlencode(
