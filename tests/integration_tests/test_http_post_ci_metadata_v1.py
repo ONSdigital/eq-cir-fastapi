@@ -174,7 +174,7 @@ class TestPostCiV1:
         expected_ci = CiMetadata(
             ci_version=2,
             data_version=setup_publish_ci_return_payload["data_version"],
-            classifier_type=setup_publish_ci_return_payload["form_type"],
+            classifier_type=setup_publish_ci_return_payload["classifier_type"],
             classifier_value=setup_publish_ci_return_payload["classifier-value"],
             guid=check_ci_in_db_data[0]["guid"],
             language=setup_publish_ci_return_payload["language"],
