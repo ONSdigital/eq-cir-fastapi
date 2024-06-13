@@ -155,7 +155,7 @@ class TestGetCiMetadataV1:
         http_get_ci metadata_v1 should return 400 status code if incorrect args are provided.
         """
         survey_id = setup_payload["survey_id"]
-        classifier_type = setup_payload["form_type"]
+        classifier_type = setup_payload["classifier_type"]
         classifier_value = setup_payload["classifier_value"]
         language = setup_payload["language"]
         querystring = urlencode(
