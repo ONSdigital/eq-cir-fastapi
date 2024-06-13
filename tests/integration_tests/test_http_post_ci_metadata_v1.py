@@ -38,7 +38,7 @@ class TestPostCiV1:
         ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_payload)
         ci_response_data = ci_response.json()
         survey_id = setup_payload["survey_id"]
-        classifier_type = setup_payload["form_type"]
+        classifier_type = setup_payload["classifier_type"]
         classifier_value = setup_payload["classifier_value"]
         language = setup_payload["language"]
 
@@ -62,7 +62,7 @@ class TestPostCiV1:
         expected_ci = CiMetadata(
             ci_version=1,
             data_version=setup_payload["data_version"],
-            classifier_type=setup_payload["form_type"],
+            classifier_type=setup_payload["classifier_type"],
             classifier_value=setup_payload["classifier_value"],
             guid=check_ci_in_db_data[0]["guid"],
             language=setup_payload["language"],
@@ -96,7 +96,7 @@ class TestPostCiV1:
         ci_response_data = ci_response.json()
 
         survey_id = setup_payload["survey_id"]
-        classifier_type = setup_payload["form_type"]
+        classifier_type = setup_payload["classifier_type"]
         classifier_value = setup_payload["classifier_value"]
         language = setup_payload["language"]
 
@@ -120,7 +120,7 @@ class TestPostCiV1:
         expected_ci = CiMetadata(
             ci_version=1,
             data_version=setup_payload["data_version"],
-            classifier_type=setup_payload["form_type"],
+            classifier_type=setup_payload["classifier_type"],
             classifier_value=setup_payload["classifier_value"],
             guid=check_ci_in_db_data[0]["guid"],
             language=setup_payload["language"],

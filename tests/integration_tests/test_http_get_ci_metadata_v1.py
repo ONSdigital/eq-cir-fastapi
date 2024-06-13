@@ -33,7 +33,7 @@ class TestGetCiMetadataV1:
             make_iap_request("POST", f"{self.post_url}", json=setup_payload)
 
         survey_id = setup_payload["survey_id"]
-        classifier_type = setup_payload["form_type"]
+        classifier_type = setup_payload["classifier_type"]
         classifier_value = setup_payload["classifier_value"]
         language = setup_payload["language"]
         querystring = urlencode(
@@ -64,7 +64,7 @@ class TestGetCiMetadataV1:
             make_iap_request("POST", f"{self.post_url}", json=setup_payload)
 
         survey_id = setup_payload["survey_id"]
-        classifier_type = setup_payload["form_type"]
+        classifier_type = setup_payload["classifier_type"]
         classifier_value = setup_payload["classifier_value"]
         language = setup_payload["language"]
         querystring = urlencode(
@@ -107,7 +107,7 @@ class TestGetCiMetadataV1:
         # Posts the ci using http_post_ci endpoint
         make_iap_request("POST", f"{self.post_url}", json=setup_payload)
         survey_id = setup_payload["survey_id"]
-        classifier_value = setup_payload["form_type"]
+        classifier_value = setup_payload["classifier_type"]
         classifier_type = setup_payload["classifier_type"]
         language = setup_payload["language"]
         querystring = urlencode(
@@ -131,7 +131,7 @@ class TestGetCiMetadataV1:
         http_get_ci metadata_v1 should return 404 status code if ci is not found.
         """
         survey_id = setup_payload["survey_id"]
-        classifier_type = setup_payload["form_type"]
+        classifier_type = setup_payload["classifier_type"]
         classifier_value = setup_payload["classifier_value"]
         language = setup_payload["language"]
         querystring = urlencode(
@@ -155,7 +155,7 @@ class TestGetCiMetadataV1:
         http_get_ci metadata_v1 should return 400 status code if incorrect args are provided.
         """
         survey_id = setup_payload["survey_id"]
-        classifier_type = setup_payload["form_type"]
+        classifier_type = setup_payload["classifier_type"]
         classifier_value = setup_payload["classifier_value"]
         querystring = urlencode(
             {"survey_id": survey_id, "classifier_type": classifier_type, "classifier_value": classifier_value}
@@ -169,7 +169,7 @@ class TestGetCiMetadataV1:
         http_get_ci metadata_v1 should return a 401 unauthorized error if the endpoint is requested with an unauthorized token.
         """
         survey_id = setup_payload["survey_id"]
-        classifier_type = setup_payload["form_type"]
+        classifier_type = setup_payload["classifier_type"]
         classifier_value = setup_payload["classifier_value"]
         language = setup_payload["language"]
         querystring = urlencode(

@@ -46,7 +46,7 @@ class TestHttpGetCiSchemaV1:
         """
         # Construct a valid querystring using `setup_payload` data
         query_params = GetCiSchemaV1Params(
-            classifier_type=setup_payload["form_type"],
+            classifier_type=setup_payload["classifier_type"],
             classifier_value=setup_payload["classifier_value"],
             language=setup_payload["language"],
             survey_id=setup_payload["survey_id"],
@@ -68,7 +68,7 @@ class TestHttpGetCiSchemaV1:
 
         # Construct the querystring to retrieve newly created ci schema
         query_params = GetCiSchemaV1Params(
-            classifier_type=setup_payload["form_type"],
+            classifier_type=setup_payload["classifier_type"],
             classifier_value=setup_payload["classifier_value"],
             language=setup_payload["language"],
             survey_id=setup_payload["survey_id"],
@@ -84,7 +84,7 @@ class TestHttpGetCiSchemaV1:
         http_get_ci_schema_v1 should return a 401 unauthorized error if the endpoint is requested with an unauthorized token.
         """
         query_params = GetCiSchemaV1Params(
-            classifier_type=setup_payload["form_type"],
+            classifier_type=setup_payload["classifier_type"],
             classifier_value=setup_payload["classifier_value"],
             language=setup_payload["language"],
             survey_id=setup_payload["survey_id"],
