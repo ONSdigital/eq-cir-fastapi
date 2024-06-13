@@ -41,6 +41,14 @@ app.add_exception_handler(
     exceptions.ValidationException,
     ExceptionInterceptor.throw_400_validation_exception,
 )
+app.add_exception_handler(
+    exceptions.ExceptionBucketNotFound,
+    ExceptionInterceptor.throw_500_global_exception,
+)
+app.add_exception_handler(
+    exceptions.ExceptionTopicNotFound,
+    ExceptionInterceptor.throw_500_global_exception,
+)
 
 
 @app.exception_handler(500)

@@ -65,7 +65,6 @@ class TestHttpGetCiMetadataV2:
         mocked_get_ci_metadata_collection_without_status,
         mocked_get_ci_metadata_collection_with_status,
     ):
-
         response = client.get(self.missing_all_query_param)
 
         assert response.status_code == 200

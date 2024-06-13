@@ -27,3 +27,11 @@ class GlobalException(Exception):
 
 class ValidationException(Exception):
     pass
+
+
+class ExceptionBucketNotFound(Exception):
+    pass
+
+
+class ExceptionTopicNotFound(Exception):
+    pass
