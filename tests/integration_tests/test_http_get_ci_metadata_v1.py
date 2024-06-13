@@ -131,7 +131,7 @@ class TestGetCiMetadataV1:
     @staticmethod
     def _build_payload(setup_payload):
         survey_id = setup_payload["survey_id"]
-        classifier_type = setup_payload["classifier_type"]
+        classifier_type = setup_payload["form_type"]
         classifier_value = setup_payload["classifier_value"]
         language = setup_payload["language"]
         querystring = urlencode(
