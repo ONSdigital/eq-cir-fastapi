@@ -107,8 +107,8 @@ class TestGetCiMetadataV1:
         # Posts the ci using http_post_ci endpoint
         make_iap_request("POST", f"{self.post_url}", json=setup_payload)
         survey_id = setup_payload["survey_id"]
-        classifier_value = setup_payload["classifier_type"]
         classifier_type = setup_payload["classifier_type"]
+        classifier_value = setup_payload["classifier_value"]
         language = setup_payload["language"]
         querystring = urlencode(
             {
