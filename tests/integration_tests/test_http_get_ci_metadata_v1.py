@@ -173,7 +173,6 @@ class TestGetCiMetadataV1:
         assert response_json["message"] == "Invalid search parameters provided"
         assert response_json["status"] == "error"
 
-
     def test_metadata_query_ci_returns_unauthorized_request(self, setup_payload):
         """
         What am I testing:
