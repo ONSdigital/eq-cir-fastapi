@@ -157,14 +157,11 @@ class TestGetCiMetadataV1:
         survey_id = setup_payload["survey_id"]
         classifier_type = setup_payload["classifier_type"]
         classifier_value = setup_payload["classifier_value"]
-        language = setup_payload["language"]
-        setup_payload["classifier_type"] = "form_type"
         querystring = urlencode(
             {
                 "survey_id": survey_id,
                 "classifier_type": classifier_type,
                 "classifier_value": classifier_value,
-                "language": language,
             }
         )
 
