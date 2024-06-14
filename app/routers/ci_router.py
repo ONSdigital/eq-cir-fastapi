@@ -7,6 +7,7 @@ import app.exception.exception_response_models as erm
 import app.exception.exceptions as exceptions
 from app.config import Settings, logging
 from app.exception.exception_response_models import ExceptionResponseModel
+from app.models.classifier import Classifiers
 from app.models.requests import (
     DeleteCiV1Params,
     GetCiMetadataV1Params,
@@ -101,7 +102,9 @@ async def http_get_ci_metadata_v1(
     logger.info("Getting ci metadata via v1 endpoint")
     logger.debug(f"Input data: query_params={query_params.__dict__}")
 
-    if not query_params.params_not_none(query_params.__dict__.keys()) and query_params.classifier_type != "form_type":
+    if not query_params.params_not_none(query_params.__dict__.keys()):
+        raise exceptions.ExceptionIncorrectKeyNames
+    if not Classifiers.has_member_key(query_params.classifier_type):
         raise exceptions.ExceptionIncorrectKeyNames
 
     ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_without_status(
@@ -161,7 +164,7 @@ async def http_get_ci_metadata_v2(
         # If parameters are provided, return CI metadata that matches the parameters
         if not query_params.params_not_none(query_params.__dict__.keys()):
             raise exceptions.ExceptionIncorrectKeyNames
-        if query_params.classifier_type != "form_type":
+        if not Classifiers.has_member_key(query_params.classifier_type):
             raise exceptions.ExceptionIncorrectKeyNames
         else:
             ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_without_status(
@@ -219,10 +222,9 @@ async def http_get_ci_schema_v1(
     logger.info("Getting ci schema via v1 endpoint")
     logger.debug(f"get_ci_schema_vi: Getting CI schemaInput data: query_params={query_params.__dict__}")
 
-    if (
-        not query_params.params_not_none("survey_id", "classifier_type", "classifier_value", "language")
-        and query_params.classifier_type != "form_type"
-    ):
+    if not query_params.params_not_none("survey_id", "classifier_type", "classifier_value", "language"):
+        raise exceptions.ExceptionIncorrectKeyNames
+    if not Classifiers.has_member_key(query_params.classifier_type):
         raise exceptions.ExceptionIncorrectKeyNames
 
     latest_ci_metadata = ci_processor_service.get_latest_ci_metadata(

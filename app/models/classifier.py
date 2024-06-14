@@ -1,9 +1,10 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class Classifier(Enum):
+class Classifiers(StrEnum):
     FORM_TYPE = "form_type"
 
     @classmethod
-    def valid_classifier(cls, classifier):
-        return classifier in cls.__members__
+    def has_member_key(cls, key):
+        if key in Classifiers:
+            return True
