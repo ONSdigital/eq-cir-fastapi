@@ -156,7 +156,7 @@ class TestGetCiMetadataV1:
         """
         survey_id = setup_payload["survey_id"]
         classifier_type = setup_payload["classifier_type"]
-        classifier_value = "something_else"
+        classifier_value = None
         language = setup_payload["language"]
         querystring = urlencode(
             {
