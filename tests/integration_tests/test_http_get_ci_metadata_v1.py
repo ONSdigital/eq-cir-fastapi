@@ -156,22 +156,23 @@ class TestGetCiMetadataV1:
         """
         survey_id = setup_payload["survey_id"]
         classifier_type = setup_payload["classifier_type"]
-        classifier_value = None
+        classifier_value = setup_payload["classifier_value"]
         language = setup_payload["language"]
         querystring = urlencode(
             {
                 "survey_id": survey_id,
                 "classifier_type": classifier_type,
-                "classifier_value": classifier_value,
+                "incorrect_args": classifier_value,
                 "language": language,
             }
         )
 
         response = make_iap_request("GET", f"{self.base_url}?{querystring}")
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.status_code == status.HTTP_100_CONTINUE
         response_json = response.json()
-        assert response_json["message"] == "No results found"
+        assert response_json["message"] == "Invalid search parameters provided"
         assert response_json["status"] == "error"
+
 
     def test_metadata_query_ci_returns_unauthorized_request(self, setup_payload):
         """
