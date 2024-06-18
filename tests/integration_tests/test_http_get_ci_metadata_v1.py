@@ -168,7 +168,7 @@ class TestGetCiMetadataV1:
         )
 
         response = make_iap_request("GET", f"{self.base_url}?{querystring}")
-        assert response.status_code == status.HTTP_100_CONTINUE
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
         response_json = response.json()
         assert response_json["message"] == "Invalid search parameters provided"
         assert response_json["status"] == "error"
