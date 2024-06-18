@@ -105,7 +105,7 @@ async def http_get_ci_metadata_v1(
     if not query_params.params_not_none(query_params.__dict__.keys()):
         raise exceptions.ExceptionIncorrectKeyNames
     if not Classifiers.has_member_key(query_params.classifier_type):
-        raise exceptions.ExceptionIncorrectKeyNames
+        raise exceptions.ExceptionInvalidClassifier
 
     ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_without_status(
         query_params.survey_id, query_params.classifier_type, query_params.classifier_value, query_params.language
@@ -165,7 +165,7 @@ async def http_get_ci_metadata_v2(
         if not query_params.params_not_none(query_params.__dict__.keys()):
             raise exceptions.ExceptionIncorrectKeyNames
         if not Classifiers.has_member_key(query_params.classifier_type):
-            raise exceptions.ExceptionIncorrectKeyNames
+            raise exceptions.ExceptionInvalidClassifier
         else:
             ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_without_status(
                 query_params.survey_id, query_params.classifier_type, query_params.classifier_value, query_params.language
@@ -225,7 +225,7 @@ async def http_get_ci_schema_v1(
     if not query_params.params_not_none("survey_id", "classifier_type", "classifier_value", "language"):
         raise exceptions.ExceptionIncorrectKeyNames
     if not Classifiers.has_member_key(query_params.classifier_type):
-        raise exceptions.ExceptionIncorrectKeyNames
+        raise exceptions.ExceptionInvalidClassifier
 
     latest_ci_metadata = ci_processor_service.get_latest_ci_metadata(
         query_params.survey_id, query_params.classifier_type, query_params.classifier_value, query_params.language

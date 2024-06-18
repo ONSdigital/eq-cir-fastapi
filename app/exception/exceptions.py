@@ -21,6 +21,10 @@ class ExceptionIncorrectKeyNames(Exception):
     pass
 
 
+class ExceptionInvalidClassifier(Exception):
+    pass
+
+
 class GlobalException(Exception):
     pass
 

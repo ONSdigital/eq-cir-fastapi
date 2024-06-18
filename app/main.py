@@ -30,6 +30,10 @@ app.add_exception_handler(
     ExceptionInterceptor.throw_404_no_ci_exception,
 )
 app.add_exception_handler(
+    exceptions.ExceptionInvalidClassifier,
+    ExceptionInterceptor.throw_404_invalid_clasifier_exception,
+)
+app.add_exception_handler(
     exceptions.ExceptionIncorrectKeyNames,
     ExceptionInterceptor.throw_400_incorrect_key_names_exception,
 )
