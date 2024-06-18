@@ -6,14 +6,17 @@ components:
         ci_version:
           title: Ci Version
           type: integer
+        classifier_type:
+          title: Classifier Type
+          type: string
+        classifier_value:
+          title: Classifier Value
+          type: string
         data_version:
           title: Data Version
           type: string
         description:
           title: Description
-          type: string
-        form_type:
-          title: Form Type
           type: string
         guid:
           title: Guid
@@ -43,7 +46,8 @@ components:
       required:
       - ci_version
       - data_version
-      - form_type
+      - classifier_type
+      - classifier_value
       - guid
       - language
       - published_at
@@ -54,6 +58,10 @@ components:
       - description
       title: CiMetadata
       type: object
+    Classifiers:
+      const: form_type
+      title: Classifiers
+      type: string
     DeploymentStatus:
       properties:
         status:
@@ -101,14 +109,17 @@ components:
 
         included.'
       properties:
+        classifier_type:
+          title: Classifier Type
+          type: string
+        classifier_value:
+          title: Classifier Value
+          type: string
         data_version:
           title: Data Version
           type: string
         description:
           title: Description
-          type: string
-        form_type:
-          title: Form Type
           type: string
         language:
           title: Language
@@ -160,7 +171,8 @@ components:
           type: string
       required:
       - data_version
-      - form_type
+      - classifier_type
+      - classifier_value
       - language
       - survey_id
       - title
@@ -223,14 +235,24 @@ paths:
         match the parameters passed.
       operationId: http_get_ci_metadata_v1_v1_ci_metadata_get
       parameters:
-      - description: The form type of the CI
-        example: '0005'
+      - description: Classifier type used by the CI
         in: query
-        name: form_type
+        name: classifier_type
         required: false
         schema:
-          description: The form type of the CI
-          title: Form Type
+          allOf:
+          - $ref: '#/components/schemas/Classifiers'
+          description: Classifier type used by the CI
+          examples: form_type
+          title: Classifier Type
+      - description: Classifier value used by the CI
+        in: query
+        name: classifier_value
+        required: false
+        schema:
+          description: Classifier value used by the CI
+          examples: '0001'
+          title: Classifier Value
           type: string
       - description: The language of the CI
         example: en
@@ -388,14 +410,24 @@ paths:
         language.
       operationId: http_get_ci_schema_v1_v1_retrieve_collection_instrument_get
       parameters:
-      - description: The form type of the CI
-        example: '0005'
+      - description: Classifier type used by the CI
         in: query
-        name: form_type
+        name: classifier_type
         required: false
         schema:
-          description: The form type of the CI
-          title: Form Type
+          allOf:
+          - $ref: '#/components/schemas/Classifiers'
+          description: Classifier type used by the CI
+          examples: form_type
+          title: Classifier Type
+      - description: Classifier value used by the CI
+        in: query
+        name: classifier_value
+        required: false
+        schema:
+          description: Classifier value used by the CI
+          examples: '0001'
+          title: Classifier Value
           type: string
       - description: The language of the CI
         example: en
@@ -467,7 +499,7 @@ paths:
         example: 428ae4d1-8e7f-4a9d-8bef-05a266bf81e7
         in: query
         name: guid
-        required: true
+        required: false
         schema:
           description: The global unique ID of the CI Metadata to be updated to 'PUBLISH'.
           title: Guid
@@ -526,14 +558,24 @@ paths:
         2. Provide no parameters.'
       operationId: http_get_ci_metadata_v2_v2_ci_metadata_get
       parameters:
-      - description: form type to get
-        example: '0005'
+      - description: Classifier type used by the CI
         in: query
-        name: form_type
+        name: classifier_type
         required: false
         schema:
-          description: form type to get
-          title: Form Type
+          allOf:
+          - $ref: '#/components/schemas/Classifiers'
+          description: Classifier type used by the CI
+          examples: form_type
+          title: Classifier Type
+      - description: Classifier value used by the CI
+        in: query
+        name: classifier_value
+        required: false
+        schema:
+          description: Classifier value used by the CI
+          examples: '0001'
+          title: Classifier Value
           type: string
       - description: language to get
         example: en
@@ -602,7 +644,7 @@ paths:
         example: 428ae4d1-8e7f-4a9d-8bef-05a266bf81e7
         in: query
         name: guid
-        required: true
+        required: false
         schema:
           description: The global unique ID of the CI
           title: Guid
