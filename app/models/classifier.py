@@ -6,5 +6,5 @@ class Classifiers(StrEnum):
 
     @classmethod
     def has_member_key(cls, key):
-        if key in Classifiers:
+        if key in cls:
             return True
