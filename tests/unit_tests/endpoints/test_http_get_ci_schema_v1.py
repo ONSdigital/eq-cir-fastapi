@@ -34,6 +34,11 @@ class TestHttpGetCiSchemaV1:
     )
     url = f"{base_url}?{urlencode(query_params.__dict__)}"
 
+    classifier_error = (
+        f"{base_url}?classifier_type=bad_classifier&classifier_value={mock_classifier_value}"
+        f"&language={mock_language}&survey_id={mock_survey_id}"
+    )
+
     def test_endpoint_returns_200_if_ci_schema_found(self, mocked_retrieve_ci_schema, mocked_get_latest_ci_metadata):
         """
         Endpoint should return `HTTP_200_OK` and ci schema as part of the response if ci schema is found.
@@ -89,5 +94,17 @@ class TestHttpGetCiSchemaV1:
         """
         # Make request to base url without any query params
         response = client.get(self.base_url)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_endpoint_returns_400_if_invalid_classifier_present(
+            self, mocked_retrieve_ci_schema, mocked_get_latest_ci_metadata
+    ):
+        """
+        Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `form_type`,
+        `language` and/or `survey_id` are not part of the querystring parameters
+        """
+        # Make request to base url without any query params
+        response = client.get(self.classifier_error)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

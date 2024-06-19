@@ -31,7 +31,7 @@ app.add_exception_handler(
 )
 app.add_exception_handler(
     exceptions.ExceptionInvalidClassifier,
-    ExceptionInterceptor.throw_404_invalid_clasifier_exception,
+    ExceptionInterceptor.throw_400_invalid_clasifier_exception,
 )
 app.add_exception_handler(
     exceptions.ExceptionIncorrectKeyNames,

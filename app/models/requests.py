@@ -127,7 +127,7 @@ class PostCiMetadataV1PostData(BaseModel):
 
     # Required fields
     data_version: str
-    classifier_type: str
+    classifier_type: Classifiers
     classifier_value: str
     language: str
     survey_id: str

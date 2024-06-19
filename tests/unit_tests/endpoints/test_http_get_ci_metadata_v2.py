@@ -45,6 +45,11 @@ class TestHttpGetCiMetadataV2:
         f"&language={mock_language}&survey_id={mock_survey_id}"
     )
 
+    classifier_error = (
+        f"{base_url}?classifier_type=bad_classifier&classifier_value={mock_classifier_value}"
+        f"&language={mock_language}&survey_id={mock_survey_id}"
+    )
+
     missing_all_query_param = f"{base_url}"
 
     missing_one_query_param = f"{base_url}?classifier_type={mock_classifier_type}&&survey_id={mock_survey_id}"
@@ -178,3 +183,20 @@ class TestHttpGetCiMetadataV2:
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert response.json()["message"] == "No CI found"
+
+    def test_endpoint_returns_400_if_invalid_classifier_is_used(
+        self,
+        mocked_get_all_ci_metadata_collection,
+        mocked_get_ci_metadata_collection_only_with_status,
+        mocked_get_ci_metadata_collection_without_status,
+        mocked_get_ci_metadata_collection_with_status,
+    ):
+        """
+        Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `classifier_type`, `classifier_value`
+        `language` and/or `survey_id` are not part of the query string parameters
+        """
+        # Make request to base url without any query params
+        response = client.get(self.classifier_error)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json()["message"] == "Validation has failed"

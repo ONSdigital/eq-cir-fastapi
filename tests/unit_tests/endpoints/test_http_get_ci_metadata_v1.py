@@ -33,6 +33,11 @@ class TestHttpGetCiMetadataV1:
     )
     url = f"{base_url}?{urlencode(query_params.__dict__)}"
 
+    classifier_error = (
+        f"{base_url}?classifier_type=bad_classifier&classifier_value={mock_classifier_value}"
+        f"&language={mock_language}&survey_id={mock_survey_id}"
+    )
+
     def test_endpoint_returns_200_if_ci_metadata_found(self, mocked_get_ci_metadata_collection_without_status):
         """
         Endpoint should return `HTTP_200_OK` and ci metadata collection as part of the response
@@ -61,6 +66,17 @@ class TestHttpGetCiMetadataV1:
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert response.json()["message"] == "Invalid search parameters provided"
+
+    def test_endpoint_returns_400_if_invalid_classifier_is_used(self, mocked_get_ci_metadata_collection_without_status):
+        """
+        Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `classifier_type`, `classifier_value`
+        `language` and/or `survey_id` are not part of the query string parameters
+        """
+        # Make request to base url without any query params
+        response = client.get(self.classifier_error)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json()["message"] == "Validation has failed"
 
     def test_endpoint_returns_404_if_ci_metadata_not_found(self, mocked_get_ci_metadata_collection_without_status):
         """

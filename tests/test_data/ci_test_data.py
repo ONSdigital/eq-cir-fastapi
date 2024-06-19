@@ -1,14 +1,17 @@
 import uuid
+from enum import StrEnum
 
 from app.config import Settings
+from app.models.classifier import Classifiers
 from app.models.requests import PostCiMetadataV1PostData
 from app.models.responses import CiMetadata, CiStatus
 
 settings = Settings()
 
+
 # Mock data for all tests
 mock_data_version = "test_data_version"
-mock_classifier_type = "form_type"
+mock_classifier_type = Classifiers.FORM_TYPE
 mock_classifier_value = "test_form_type"
 mock_id = str(uuid.uuid4())
 mock_next_version_id = str(uuid.uuid4())

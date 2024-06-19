@@ -344,6 +344,9 @@ async def http_post_ci_metadata_v1(
     """
     logger.info("Posting ci schema via v1 endpoint")
 
+    if not Classifiers.has_member_key(post_data.classifier_type):
+        raise exceptions.ExceptionInvalidClassifier
+
     ci_metadata = ci_processor_service.process_raw_ci(post_data)
 
     logger.info("CI schema posted successfully")

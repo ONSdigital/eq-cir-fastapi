@@ -11,6 +11,6 @@ erm_400_validation_exception = ExceptionResponseModel(status="error", message="V
 erm_400_incorrect_key_names_exception = ExceptionResponseModel(status="error", message="Invalid search parameters provided")
 erm_404_no_results_exception = ExceptionResponseModel(status="error", message="No results found")
 erm_404_no_ci_exception = ExceptionResponseModel(status="error", message="No CI found")
-erm_404_invalid_classifier = ExceptionResponseModel(status="error", message="Invalid classifier")
+erm_400_invalid_classifier = ExceptionResponseModel(status="error", message="Invalid classifier")
 erm_404_no_ci_metadata_exception = ExceptionResponseModel(status="error", message="No schema metadata to update")
 erm_404_no_ci_to_delete = ExceptionResponseModel(status="error", message="No CI to delete")
