@@ -98,7 +98,7 @@ class TestHttpGetCiSchemaV1:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_endpoint_returns_400_if_invalid_classifier_present(
-            self, mocked_retrieve_ci_schema, mocked_get_latest_ci_metadata
+        self, mocked_retrieve_ci_schema, mocked_get_latest_ci_metadata
     ):
         """
         Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `form_type`,

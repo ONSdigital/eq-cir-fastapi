@@ -1,5 +1,4 @@
 import uuid
-from enum import StrEnum
 
 from app.config import Settings
 from app.models.classifier import Classifiers
