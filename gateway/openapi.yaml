@@ -110,8 +110,7 @@ components:
         included.'
       properties:
         classifier_type:
-          title: Classifier Type
-          type: string
+          $ref: '#/components/schemas/Classifiers'
         classifier_value:
           title: Classifier Value
           type: string
@@ -236,6 +235,7 @@ paths:
       operationId: http_get_ci_metadata_v1_v1_ci_metadata_get
       parameters:
       - description: Classifier type used by the CI
+        example: form_type
         in: query
         name: classifier_type
         required: false
@@ -243,15 +243,14 @@ paths:
           allOf:
           - $ref: '#/components/schemas/Classifiers'
           description: Classifier type used by the CI
-          examples: form_type
           title: Classifier Type
       - description: Classifier value used by the CI
+        example: '0001'
         in: query
         name: classifier_value
         required: false
         schema:
           description: Classifier value used by the CI
-          examples: '0001'
           title: Classifier Value
           type: string
       - description: The language of the CI
@@ -411,6 +410,7 @@ paths:
       operationId: http_get_ci_schema_v1_v1_retrieve_collection_instrument_get
       parameters:
       - description: Classifier type used by the CI
+        example: form_type
         in: query
         name: classifier_type
         required: false
@@ -418,15 +418,14 @@ paths:
           allOf:
           - $ref: '#/components/schemas/Classifiers'
           description: Classifier type used by the CI
-          examples: form_type
           title: Classifier Type
       - description: Classifier value used by the CI
+        example: '0001'
         in: query
         name: classifier_value
         required: false
         schema:
           description: Classifier value used by the CI
-          examples: '0001'
           title: Classifier Value
           type: string
       - description: The language of the CI
@@ -559,6 +558,7 @@ paths:
       operationId: http_get_ci_metadata_v2_v2_ci_metadata_get
       parameters:
       - description: Classifier type used by the CI
+        example: form_type
         in: query
         name: classifier_type
         required: false
@@ -566,15 +566,14 @@ paths:
           allOf:
           - $ref: '#/components/schemas/Classifiers'
           description: Classifier type used by the CI
-          examples: form_type
           title: Classifier Type
       - description: Classifier value used by the CI
+        example: '0001'
         in: query
         name: classifier_value
         required: false
         schema:
           description: Classifier value used by the CI
-          examples: '0001'
           title: Classifier Value
           type: string
       - description: language to get

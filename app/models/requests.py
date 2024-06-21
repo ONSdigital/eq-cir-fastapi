@@ -24,8 +24,8 @@ class DeleteCiV1Params:
 class GetCiMetadataV1Params:
     """Model for `get_ci_metadata_v1` request query params"""
 
-    classifier_type: Classifiers = Query(default=None, description="Classifier type used by the CI", examples="form_type")
-    classifier_value: str = Query(default=None, description="Classifier value used by the CI", examples="0001")
+    classifier_type: Classifiers = Query(default=None, description="Classifier type used by the CI", example="form_type")
+    classifier_value: str = Query(default=None, description="Classifier value used by the CI", example="0001")
     language: str = Query(default=None, description="The language of the CI", example="en")
     survey_id: str = Query(default=None, description="The survey ID of the CI", example="123")
 
@@ -50,8 +50,8 @@ class GetCiMetadataV2Params:
     All parameters are optional
     """
 
-    classifier_type: Classifiers = Query(default=None, description="Classifier type used by the CI", examples="form_type")
-    classifier_value: str = Query(default=None, description="Classifier value used by the CI", examples="0001")
+    classifier_type: Classifiers = Query(default=None, description="Classifier type used by the CI", example="form_type")
+    classifier_value: str = Query(default=None, description="Classifier value used by the CI", example="0001")
     language: str = Query(default=None, description="language to get", example="en")
     survey_id: str = Query(default=None, description="survey id to get", example="123")
 
@@ -86,8 +86,8 @@ class GetCiMetadataV2Params:
 class GetCiSchemaV1Params:
     """Model for `get_ci_schema_v1` request query params"""
 
-    classifier_type: Classifiers = Query(default=None, description="Classifier type used by the CI", examples="form_type")
-    classifier_value: str = Query(default=None, description="Classifier value used by the CI", examples="0001")
+    classifier_type: Classifiers = Query(default=None, description="Classifier type used by the CI", example="form_type")
+    classifier_value: str = Query(default=None, description="Classifier value used by the CI", example="0001")
     language: str = Query(default=None, description="The language of the CI", example="en")
     survey_id: str = Query(default=None, description="The survey ID of the CI", example="123")
 
