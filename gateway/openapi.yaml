@@ -59,7 +59,9 @@ components:
       title: CiMetadata
       type: object
     Classifiers:
-      const: form_type
+      enum:
+      - form_type
+      - default
       title: Classifiers
       type: string
     DeploymentStatus:
