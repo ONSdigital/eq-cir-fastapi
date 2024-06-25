@@ -24,7 +24,7 @@ class CiFirebaseRepository:
         self.ci_collection = firebase_loader.get_ci_collection()
         self.ci_bucket_repository = CiSchemaBucketRepository()
 
-    def get_latest_ci_metadata(self, survey_id, form_type, language) -> CiMetadata | None:
+    def get_latest_ci_metadata(self, survey_id, classifier_type, classifier_value, language) -> CiMetadata | None:
         """
         Get metadata of latest CI version.
 
@@ -35,7 +35,8 @@ class CiFirebaseRepository:
         """
         latest_ci_metadata = (
             self.ci_collection.where("survey_id", "==", survey_id)
-            .where("form_type", "==", form_type)
+            .where("classifier_type", "==", classifier_type)
+            .where("classifier_value", "==", classifier_value)
             .where("language", "==", language)
             .order_by("ci_version", direction=Query.DESCENDING)
             .limit(1)
@@ -98,7 +99,9 @@ class CiFirebaseRepository:
             merge=True,
         )
 
-    def get_ci_metadata_collection_without_status(self, survey_id: str, form_type: str, language: str) -> list[CiMetadata]:
+    def get_ci_metadata_collection_without_status(
+        self, survey_id: str, classifier_type, classifier_value, language: str
+    ) -> list[CiMetadata]:
         """
         Gets the collection of CI metadata with a specific survey_id, form_type, language, and status.
 
@@ -109,7 +112,8 @@ class CiFirebaseRepository:
         """
         returned_ci_metadata = (
             self.ci_collection.where("survey_id", "==", survey_id)
-            .where("form_type", "==", form_type)
+            .where("classifier_type", "==", classifier_type)
+            .where("classifier_value", "==", classifier_value)
             .where("language", "==", language)
             .order_by("ci_version", direction=Query.DESCENDING)
             .stream()
@@ -123,20 +127,22 @@ class CiFirebaseRepository:
         return ci_metadata_list
 
     def get_ci_metadata_collection_with_status(
-        self, survey_id: str, form_type: str, language: str, status: str
+        self, survey_id: str, classifier_type: str, classifier_value: str, language: str, status: str
     ) -> list[CiMetadata]:
         """
         Gets the collection of CI metadata with a specific survey_id, form_type, language, and status.
 
         Parameters:
         survey_id (str): The survey id of the CI metadata being collected.
-        form_type (str): The form type of the CI metadata being collected.
+        classifier_type (str): the CI classifier type.
+        classifier_type (str): the CI classifier value.
         language (str): The language of the CI metadata being collected.
         status (str): The status of the CI metadata being collected.
         """
         returned_ci_metadata = (
             self.ci_collection.where("survey_id", "==", survey_id)
-            .where("form_type", "==", form_type)
+            .where("classifier_type", "==", classifier_type)
+            .where("classifier_value", "==", classifier_value)
             .where("language", "==", language)
             .where("status", "==", status.upper())
             .order_by("ci_version", direction=Query.DESCENDING)

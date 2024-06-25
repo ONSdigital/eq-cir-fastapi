@@ -10,7 +10,8 @@ from app.models.requests import GetCiSchemaV1Params
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from tests.test_data.ci_test_data import (
     mock_ci_metadata,
-    mock_form_type,
+    mock_classifier_type,
+    mock_classifier_value,
     mock_language,
     mock_survey_id,
 )
@@ -25,8 +26,18 @@ class TestHttpGetCiSchemaV1:
     """Tests for the `http_get_ci_schema_v1` endpoint"""
 
     base_url = "/v1/retrieve_collection_instrument"
-    query_params = GetCiSchemaV1Params(form_type=mock_form_type, language=mock_language, survey_id=mock_survey_id)
+    query_params = GetCiSchemaV1Params(
+        classifier_type=mock_classifier_type,
+        classifier_value=mock_classifier_value,
+        language=mock_language,
+        survey_id=mock_survey_id,
+    )
     url = f"{base_url}?{urlencode(query_params.__dict__)}"
+
+    classifier_error = (
+        f"{base_url}?classifier_type=bad_classifier&classifier_value={mock_classifier_value}"
+        f"&language={mock_language}&survey_id={mock_survey_id}"
+    )
 
     def test_endpoint_returns_200_if_ci_schema_found(self, mocked_retrieve_ci_schema, mocked_get_latest_ci_metadata):
         """
@@ -42,7 +53,9 @@ class TestHttpGetCiSchemaV1:
 
         assert response.status_code == status.HTTP_200_OK
         assert response.json() == mock_ci_metadata.__dict__
-        CiFirebaseRepository.get_latest_ci_metadata.assert_called_once_with(mock_survey_id, mock_form_type, mock_language)
+        CiFirebaseRepository.get_latest_ci_metadata.assert_called_once_with(
+            mock_survey_id, mock_classifier_type, mock_classifier_value, mock_language
+        )
 
     def test_endpoint_returns_404_if_metadata_not_found(self, mocked_retrieve_ci_schema, mocked_get_latest_ci_metadata):
         """
@@ -81,5 +94,17 @@ class TestHttpGetCiSchemaV1:
         """
         # Make request to base url without any query params
         response = client.get(self.base_url)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_endpoint_returns_400_if_invalid_classifier_present(
+        self, mocked_retrieve_ci_schema, mocked_get_latest_ci_metadata
+    ):
+        """
+        Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `form_type`,
+        `language` and/or `survey_id` are not part of the querystring parameters
+        """
+        # Make request to base url without any query params
+        response = client.get(self.classifier_error)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

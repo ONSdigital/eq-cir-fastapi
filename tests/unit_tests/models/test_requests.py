@@ -3,7 +3,8 @@ import pytest
 from app.models.requests import GetCiMetadataV2Params, PostCiMetadataV1PostData
 from app.models.responses import CiStatus
 
-mock_form_type = "0005"
+mock_classifier_type = "form_type"
+mock_classifier_value = "0005"
 mock_language = "en"
 mock_status = CiStatus.DRAFT.value
 mock_survey_id = "123"
@@ -14,7 +15,8 @@ class TestGetCiMetadataV2Params:
     """Tests for the `GetCiMetadataV2Params` data class"""
 
     query_params = GetCiMetadataV2Params(
-        form_type=mock_form_type,
+        classifier_type=mock_classifier_type,
+        classifier_value=mock_classifier_value,
         language=mock_language,
         survey_id=mock_survey_id,
     )
@@ -33,7 +35,7 @@ class TestGetCiMetadataV2Params:
         """
         assert self.query_params.params_all_none(self.query_params.__dict__.keys()) is False
 
-    @pytest.mark.parametrize("input_param", ["form_type", "language", "status", "survey_id"])
+    @pytest.mark.parametrize("input_param", ["classifier_type", "classifier_value", "language", "status", "survey_id"])
     def test_params_not_none_returns_false_when_single_param_none(self, input_param):
         """
         `params_not_none` class method should return `False` if any of param name strings as input
@@ -50,7 +52,8 @@ class TestGetCiMetadataV2Params:
         arguments have a corresponding class attribute value of `None`
         """
         # Update `query_params` to contain `None` values
-        self.query_params.form_type = None
+        self.query_params.classifier_value = None
+        self.query_params.classifier_type = None
         self.query_params.language = None
         self.query_params.status = None
         self.query_params.survey_id = None
@@ -63,7 +66,8 @@ class TestPostCiMetadataV1PostData:
 
     post_data = {
         "data_version": "1",
-        "form_type": mock_form_type,
+        "classifier_type": mock_classifier_type,
+        "classifier_value": mock_classifier_value,
         "language": mock_language,
         "survey_id": mock_survey_id,
         "title": "test",
@@ -84,7 +88,8 @@ class TestPostCiMetadataV1PostData:
         "input_param",
         [
             "data_version",
-            "form_type",
+            "classifier_type",
+            "classifier_value",
             "language",
             "survey_id",
             "title",
@@ -106,7 +111,8 @@ class TestPostCiMetadataV1PostData:
         "input_param",
         [
             "data_version",
-            "form_type",
+            "classifier_type",
+            "classifier_value",
             "language",
             "survey_id",
             "title",
@@ -128,8 +134,8 @@ class TestPostCiMetadataV1PostData:
         "input_param",
         [
             "data_version",
-            "form_type",
-            "language",
+            "classifier_type",
+            "classifier_value" "language",
             "survey_id",
             "title",
             "schema_version",

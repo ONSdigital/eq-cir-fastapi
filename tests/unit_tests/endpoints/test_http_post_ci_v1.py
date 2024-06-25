@@ -1,3 +1,4 @@
+import json
 from unittest.mock import patch
 
 import pytest
@@ -62,7 +63,8 @@ class TestHttpPostCiV1:
         assert response.json() == mock_ci_metadata.model_dump()
         CiFirebaseRepository.get_latest_ci_metadata.assert_called_once_with(
             mock_post_ci_schema.survey_id,
-            mock_post_ci_schema.form_type,
+            mock_post_ci_schema.classifier_type,
+            mock_post_ci_schema.classifier_value,
             mock_post_ci_schema.language,
         )
         CiFirebaseRepository.perform_new_ci_transaction.assert_called_once_with(
@@ -100,7 +102,8 @@ class TestHttpPostCiV1:
         assert response.json() == mock_next_version_ci_metadata.model_dump()
         CiFirebaseRepository.get_latest_ci_metadata.assert_called_once_with(
             mock_post_ci_schema.survey_id,
-            mock_post_ci_schema.form_type,
+            mock_post_ci_schema.classifier_type,
+            mock_post_ci_schema.classifier_value,
             mock_post_ci_schema.language,
         )
         CiFirebaseRepository.perform_new_ci_transaction.assert_called_once_with(
@@ -132,7 +135,8 @@ class TestHttpPostCiV1:
         "input_param",
         [
             "data_version",
-            "form_type",
+            "classifier_type",
+            "classifier_value",
             "language",
             "survey_id",
             "title",
@@ -163,11 +167,36 @@ class TestHttpPostCiV1:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert response.json()["message"] == "Validation has failed"
 
+    def test_endpoint_returns_400_if_classifier_invalid(
+        self,
+        mocked_perform_new_ci_transaction,
+        mocked_get_latest_ci_metadata,
+        mocked_publish_message,
+        mocked_create_guid,
+    ):
+        """
+        Endpoint should return `HTTP_200_OK` and serialized ci metadata as part of the response if new ci is created
+        successfully. Assert mocked functions are called with the correct arguments.
+        """
+        # Update mocked function to return `None` indicating no previous version of metadata is found
+        mocked_get_latest_ci_metadata.return_value = None
+        # Update mocked function to return a valid guid
+        mocked_create_guid.return_value = mock_id
+
+        with open("tests/test_data/classifier_invalid_input.json") as json_file:
+            test_data = json.load(json_file)
+
+        response = client.post(self.url, headers={"ContentType": CONTENT_TYPE}, json=test_data)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json()["message"] == "Validation has failed"
+
     @pytest.mark.parametrize(
         "input_param",
         [
             "data_version",
-            "form_type",
+            "classifier_type",
+            "classifier_value",
             "language",
             "survey_id",
             "title",
@@ -203,7 +232,8 @@ class TestHttpPostCiV1:
         "input_param",
         [
             "data_version",
-            "form_type",
+            "classifier_type",
+            "classifier_value",
             "language",
             "survey_id",
             "title",

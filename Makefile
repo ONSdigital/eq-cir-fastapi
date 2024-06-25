@@ -43,6 +43,10 @@ integration-tests-cloudbuild:
 	python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
 
 generate-spec:
+	export PROJECT_ID='$(PROJECT_ID)' && \
+	export FIRESTORE_DB_NAME='$(PROJECT_ID)-cir' && \
+	export CI_STORAGE_BUCKET_NAME='$(PROJECT_ID)-cir-europe-west2-schema' && \
+	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
 	python -m scripts.generate_openapi
 
 lint:

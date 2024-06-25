@@ -5,6 +5,8 @@ from fastapi import Query
 from pydantic import BaseModel, ValidationInfo, field_validator
 from pydantic.json_schema import SkipJsonSchema
 
+from app.models.classifier import Classifiers
+
 
 class Status(Enum):
     DRAFT = "DRAFT"
@@ -22,7 +24,8 @@ class DeleteCiV1Params:
 class GetCiMetadataV1Params:
     """Model for `get_ci_metadata_v1` request query params"""
 
-    form_type: str = Query(default=None, description="The form type of the CI", example="0005")
+    classifier_type: Classifiers = Query(default=None, description="Classifier type used by the CI", example="form_type")
+    classifier_value: str = Query(default=None, description="Classifier value used by the CI", example="0001")
     language: str = Query(default=None, description="The language of the CI", example="en")
     survey_id: str = Query(default=None, description="The survey ID of the CI", example="123")
 
@@ -47,7 +50,8 @@ class GetCiMetadataV2Params:
     All parameters are optional
     """
 
-    form_type: str = Query(default=None, description="form type to get", example="0005")
+    classifier_type: Classifiers = Query(default=None, description="Classifier type used by the CI", example="form_type")
+    classifier_value: str = Query(default=None, description="Classifier value used by the CI", example="0001")
     language: str = Query(default=None, description="language to get", example="en")
     survey_id: str = Query(default=None, description="survey id to get", example="123")
 
@@ -82,7 +86,8 @@ class GetCiMetadataV2Params:
 class GetCiSchemaV1Params:
     """Model for `get_ci_schema_v1` request query params"""
 
-    form_type: str = Query(default=None, description="The form type of the CI", example="0005")
+    classifier_type: Classifiers = Query(default=None, description="Classifier type used by the CI", example="form_type")
+    classifier_value: str = Query(default=None, description="Classifier value used by the CI", example="0001")
     language: str = Query(default=None, description="The language of the CI", example="en")
     survey_id: str = Query(default=None, description="The survey ID of the CI", example="123")
 
@@ -122,7 +127,8 @@ class PostCiMetadataV1PostData(BaseModel):
 
     # Required fields
     data_version: str
-    form_type: str
+    classifier_type: Classifiers
+    classifier_value: str
     language: str
     survey_id: str
     title: str
@@ -140,7 +146,7 @@ class PostCiMetadataV1PostData(BaseModel):
     submission: dict | SkipJsonSchema[None] = None
     theme: str | SkipJsonSchema[None] = ""
 
-    @field_validator("data_version", "form_type", "language", "survey_id", "title", "schema_version")
+    @field_validator("data_version", "classifier_type", "classifier_value", "language", "survey_id", "title", "schema_version")
     @classmethod
     def check_not_empty_string(cls, value: str, info: ValidationInfo) -> str:
         """Raise `ValueError` if input `value` is an empty string or whitespace"""

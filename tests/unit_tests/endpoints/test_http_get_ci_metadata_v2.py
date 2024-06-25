@@ -10,7 +10,8 @@ from app.models.requests import GetCiMetadataV2Params
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from tests.test_data.ci_test_data import (
     mock_ci_metadata_list,
-    mock_form_type,
+    mock_classifier_type,
+    mock_classifier_value,
     mock_language,
     mock_status,
     mock_survey_id,
@@ -30,7 +31,8 @@ class TestHttpGetCiMetadataV2:
     base_url = "/v2/ci_metadata"
 
     query_params = GetCiMetadataV2Params(
-        form_type=mock_form_type,
+        classifier_type=mock_classifier_type,
+        classifier_value=mock_classifier_value,
         language=mock_language,
         survey_id=mock_survey_id,
     )
@@ -38,14 +40,23 @@ class TestHttpGetCiMetadataV2:
 
     status_only_url = f"{base_url}?status={mock_status}"
 
-    without_status_url = f"{base_url}?form_type={mock_form_type}&language={mock_language}&survey_id={mock_survey_id}"
+    without_status_url = (
+        f"{base_url}?classifier_type={mock_classifier_type}&classifier_value={mock_classifier_value}"
+        f"&language={mock_language}&survey_id={mock_survey_id}"
+    )
+
+    classifier_error = (
+        f"{base_url}?classifier_type=bad_classifier&classifier_value={mock_classifier_value}"
+        f"&language={mock_language}&survey_id={mock_survey_id}"
+    )
 
     missing_all_query_param = f"{base_url}"
 
-    missing_one_query_param = f"{base_url}?form_type={mock_form_type}&survey_id={mock_survey_id}"
+    missing_one_query_param = f"{base_url}?classifier_type={mock_classifier_type}&&survey_id={mock_survey_id}"
 
     wrong_status_query_params = GetCiMetadataV2Params(
-        form_type=mock_form_type,
+        classifier_type=mock_classifier_type,
+        classifier_value=mock_classifier_value,
         language=mock_language,
         survey_id=mock_survey_id,
     )
@@ -99,7 +110,7 @@ class TestHttpGetCiMetadataV2:
             assert "description" in response.json()[i]
 
         CiFirebaseRepository.get_ci_metadata_collection_without_status.assert_called_once_with(
-            mock_survey_id, mock_form_type, mock_language
+            mock_survey_id, mock_classifier_type, mock_classifier_value, mock_language
         )
 
     def test_endpoint_returns_200_if_ci_metadata_found_with_query_without_status(
@@ -126,7 +137,7 @@ class TestHttpGetCiMetadataV2:
             assert "description" in response.json()[i]
 
         CiFirebaseRepository.get_ci_metadata_collection_without_status.assert_called_once_with(
-            mock_survey_id, mock_form_type, mock_language
+            mock_survey_id, mock_classifier_type, mock_classifier_value, mock_language
         )
 
     def test_endpoint_returns_200_if_ci_metadata_found_with_empty_query(
@@ -172,3 +183,20 @@ class TestHttpGetCiMetadataV2:
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert response.json()["message"] == "No CI found"
+
+    def test_endpoint_returns_400_if_invalid_classifier_is_used(
+        self,
+        mocked_get_all_ci_metadata_collection,
+        mocked_get_ci_metadata_collection_only_with_status,
+        mocked_get_ci_metadata_collection_without_status,
+        mocked_get_ci_metadata_collection_with_status,
+    ):
+        """
+        Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `classifier_type`, `classifier_value`
+        `language` and/or `survey_id` are not part of the query string parameters
+        """
+        # Make request to base url without any query params
+        response = client.get(self.classifier_error)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json()["message"] == "Validation has failed"
