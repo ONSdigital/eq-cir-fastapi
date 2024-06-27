@@ -30,7 +30,6 @@ class CiMetadata(BaseModel):
     language: str
     published_at: str
     schema_version: str
-    status: str
     survey_id: str
     title: str
     description: str
@@ -54,12 +53,6 @@ class CiMetadata(BaseModel):
             kwargs.update({"exclude": exclude_fields})
 
         return super().model_dump(*args, **kwargs)
-
-
-class CiStatus(Enum):
-    DRAFT = "DRAFT"
-    PUBLISHED = "PUBLISHED"
-
 
 @dataclass
 class DeploymentStatus:

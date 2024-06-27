@@ -15,7 +15,6 @@ class PostCIEvent(BaseModel):
     language: str
     published_at: str
     schema_version: str
-    status: str
     survey_id: str
     title: str
     description: str

@@ -52,7 +52,6 @@ def setup_payload():
         "title": "NotDune",
         "schema_version": "1",
         "data_version": "1",
-        "status": "DRAFT",
         "description": "Version of CI is for March 2023",
     }
     return payload

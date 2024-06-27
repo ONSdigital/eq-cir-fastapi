@@ -2,7 +2,7 @@ import datetime
 import uuid
 
 from app.config import Settings
-from app.models.responses import CiMetadata, CiStatus
+from app.models.responses import CiMetadata
 
 settings = Settings()
 
@@ -17,7 +17,6 @@ mock_language = "en-US"
 mock_published_at = datetime.datetime.utcnow().strftime(settings.PUBLISHED_AT_FORMAT)
 mock_schema_version = "1"
 mock_sds_schema = "my test schema"
-mock_status = CiStatus.DRAFT.value
 mock_survey_id = "123"
 mock_title = "My test survey"
 mock_description = "description"
@@ -41,7 +40,6 @@ class TestCiMetadata:
             published_at=mock_published_at,
             schema_version=mock_schema_version,
             sds_schema=mock_sds_schema,
-            status=mock_status,
             survey_id=mock_survey_id,
             title=mock_title,
             description=mock_description,
@@ -66,7 +64,6 @@ class TestCiMetadata:
             language=mock_language,
             published_at=mock_published_at,
             schema_version=mock_schema_version,
-            status=mock_status,
             survey_id=mock_survey_id,
             title=mock_title,
             description=mock_description,
@@ -91,7 +88,6 @@ class TestCiMetadata:
             language=mock_language,
             published_at=mock_published_at,
             schema_version=mock_schema_version,
-            status=mock_status,
             survey_id=mock_survey_id,
             title=mock_title,
             description=mock_description,
