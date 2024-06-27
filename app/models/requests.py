@@ -9,8 +9,6 @@ from app.models.classifier import Classifiers
 # from enum import Enum
 
 
-
-
 @dataclass
 class DeleteCiV1Params:
     """Model for `delete_ci_metadata_v1` request query params"""
