@@ -4,7 +4,6 @@ import uuid
 from app.config import Settings
 from app.models.events import PostCIEvent
 
-
 settings = Settings()
 
 

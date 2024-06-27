@@ -2,7 +2,6 @@ import pytest
 
 from app.models.requests import GetCiMetadataV2Params, PostCiMetadataV1PostData
 
-
 mock_classifier_type = "form_type"
 mock_classifier_value = "0005"
 mock_language = "en"

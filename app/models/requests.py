@@ -1,12 +1,14 @@
 from dataclasses import dataclass
 
-# from enum import Enum
-
 from fastapi import Query
 from pydantic import BaseModel, ValidationInfo, field_validator
 from pydantic.json_schema import SkipJsonSchema
 
 from app.models.classifier import Classifiers
+
+# from enum import Enum
+
+
 
 
 @dataclass
