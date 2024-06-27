@@ -35,7 +35,6 @@ class TestHttpGetCiMetadataV2:
     )
     url = f"{base_url}?{urlencode(query_params.__dict__)}"
 
-
     url = (
         f"{base_url}?classifier_type={mock_classifier_type}&classifier_value={mock_classifier_value}"
         f"&language={mock_language}&survey_id={mock_survey_id}"

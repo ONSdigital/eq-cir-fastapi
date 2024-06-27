@@ -99,9 +99,7 @@ class CiFirebaseRepository:
             merge=True,
         )
 
-    def get_ci_metadata_collection(
-        self, survey_id: str, classifier_type, classifier_value, language: str
-    ) -> list[CiMetadata]:
+    def get_ci_metadata_collection(self, survey_id: str, classifier_type, classifier_value, language: str) -> list[CiMetadata]:
         """
         Gets the collection of CI metadata with a specific survey_id, form_type, language.
 

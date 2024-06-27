@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from enum import Enum
 from typing import Any
 
 from pydantic import BaseModel
@@ -53,6 +52,7 @@ class CiMetadata(BaseModel):
             kwargs.update({"exclude": exclude_fields})
 
         return super().model_dump(*args, **kwargs)
+
 
 @dataclass
 class DeploymentStatus:

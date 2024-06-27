@@ -176,9 +176,7 @@ class CiProcessorService:
             logger.error("Error publishing CI metadata to topic.")
             raise exceptions.GlobalException
 
-    def get_ci_metadata_collection(
-        self, survey_id: str, classifier_type, classifier_value, language: str
-    ) -> list[CiMetadata]:
+    def get_ci_metadata_collection(self, survey_id: str, classifier_type, classifier_value, language: str) -> list[CiMetadata]:
         """
         Get a list of CI metadata
 

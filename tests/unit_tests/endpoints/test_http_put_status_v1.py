@@ -47,4 +47,3 @@
 #         assert response.json()["message"] == "No results found"
 #         CiFirebaseRepository.get_ci_metadata_with_id.assert_called_once_with(mock_id)
 #         CiFirebaseRepository.update_ci_metadata_status_to_published_with_id.assert_not_called()
-

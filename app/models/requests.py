@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+
 # from enum import Enum
 
 from fastapi import Query
@@ -6,6 +7,7 @@ from pydantic import BaseModel, ValidationInfo, field_validator
 from pydantic.json_schema import SkipJsonSchema
 
 from app.models.classifier import Classifiers
+
 
 @dataclass
 class DeleteCiV1Params:
@@ -147,4 +149,3 @@ class PostCiMetadataV1PostData(BaseModel):
         if value == "" or value.isspace():
             raise ValueError(f"{info.field_name} can't be empty or null")
         return value
-

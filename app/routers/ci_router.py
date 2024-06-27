@@ -349,6 +349,3 @@ async def http_post_ci_metadata_v1(
 
     logger.info("CI schema posted successfully")
     return ci_metadata.model_dump()
-
-
-
