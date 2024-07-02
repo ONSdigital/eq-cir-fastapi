@@ -74,7 +74,7 @@ class TestHttpPostCiV1:
             CiSchemaLocationService.get_ci_schema_location(mock_ci_metadata),
         )
         publisher_service.publish_data_to_topic.assert_called_once_with(
-            settings.PROJECT_ID, PostCIEvent(**mock_ci_metadata.model_dump()), settings.TOPIC_ID
+            settings.PROJECT_ID, mock_ci_metadata.model_dump(), settings.TOPIC_ID
         )
 
     def test_endpoint_returns_200_if_ci_next_version_created_successfully(
@@ -115,7 +115,7 @@ class TestHttpPostCiV1:
             CiSchemaLocationService.get_ci_schema_location(mock_next_version_ci_metadata),
         )
         publisher_service.publish_data_to_topic.assert_called_once_with(
-            settings.PROJECT_ID, PostCIEvent(**mock_next_version_ci_metadata.model_dump()), settings.TOPIC_ID
+            settings.PROJECT_ID, mock_next_version_ci_metadata.model_dump(), settings.TOPIC_ID
         )
 
     def test_endpoint_returns_400_if_no_post_data(
