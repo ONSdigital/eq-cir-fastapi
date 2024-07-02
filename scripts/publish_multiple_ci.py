@@ -9,7 +9,8 @@ post_url = "/v1/publish_collection_instrument"
 timestamp = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 mandatory_keys = [
     "data_version",
-    "form_type",
+    "classifier_type",
+    "classifier_value",
     "language",
     "survey_id",
     "title",

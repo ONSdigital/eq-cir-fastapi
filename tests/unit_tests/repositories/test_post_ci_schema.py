@@ -4,7 +4,8 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 from tests.test_data.ci_test_data import (
-    mock_form_type,
+    mock_classifier_type,
+    mock_classifier_value,
     mock_language,
     mock_post_ci_schema,
     mock_post_ci_schema_with_sds_schema,
@@ -45,7 +46,8 @@ class TestPostCiMetadata:
         # Query the mocked firestore db and confirm the new record is there
         ci_metadata_query = (
             mock_firestore_collection.where("survey_id", "==", mock_survey_id)
-            .where("form_type", "==", mock_form_type)
+            .where("classifier_type", "==", mock_classifier_type)
+            .where("classifier_value", "==", mock_classifier_value)
             .where("language", "==", mock_language)
             .limit(1)
             .stream()
@@ -80,7 +82,8 @@ class TestPostCiMetadata:
         # Query the mocked firestore db and confirm the new record is there
         ci_metadata_query = (
             mock_firestore_collection.where("survey_id", "==", mock_survey_id)
-            .where("form_type", "==", mock_form_type)
+            .where("classifier_type", "==", mock_classifier_type)
+            .where("classifier_value", "==", mock_classifier_value)
             .where("language", "==", mock_language)
             .limit(1)
             .stream()
@@ -118,7 +121,8 @@ class TestPostCiMetadata:
         # Query the mocked firestore db and confirm the new record is there
         ci_metadata_query = (
             mock_firestore_collection.where("survey_id", "==", mock_survey_id)
-            .where("form_type", "==", mock_form_type)
+            .where("classifier_type", "==", mock_classifier_type)
+            .where("classifier_value", "==", mock_classifier_value)
             .where("language", "==", mock_language)
             .limit(1)
             .stream()

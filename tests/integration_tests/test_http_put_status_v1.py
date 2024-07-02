@@ -30,9 +30,17 @@ class TestPutStatusV1:
         the response in JSON
         """
         survey_id = setup_payload["survey_id"]
-        form_type = setup_payload["form_type"]
+        classifier_type = setup_payload["classifier_type"]
+        classifier_value = setup_payload["classifier_value"]
         language = setup_payload["language"]
-        querystring = urlencode({"form_type": form_type, "language": language, "survey_id": survey_id})
+        querystring = urlencode(
+            {
+                "classifier_type": classifier_type,
+                "classifier_value": classifier_value,
+                "language": language,
+                "survey_id": survey_id,
+            }
+        )
         # sends request to http_query_ci endpoint for data
         query_ci_pre_response = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
         return query_ci_pre_response.json()

@@ -1,7 +1,8 @@
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from tests.test_data.ci_test_data import (
     mock_ci_metadata,
-    mock_form_type,
+    mock_classifier_type,
+    mock_classifier_value,
     mock_id,
     mock_language,
     mock_next_version_ci_metadata,
@@ -59,7 +60,8 @@ class TestCiFirebaseRepository:
 
     def test_query_latest_ci_version_returns_latest_ci_version(self, mock_firestore_collection):
         """
-        `get_latest_ci_metadata` should return the latest ci version for a given survey_id, form_type, and language
+        `get_latest_ci_metadata` should return the latest ci version for a given survey_id, classifier_type,
+        classifier_value, and language
         """
         firestore_client = CiFirebaseRepository()
 
@@ -69,7 +71,8 @@ class TestCiFirebaseRepository:
 
         latest_ci_metadata = firestore_client.get_latest_ci_metadata(
             mock_survey_id,
-            mock_form_type,
+            mock_classifier_type,
+            mock_classifier_value,
             mock_language,
         )
 
@@ -78,13 +81,14 @@ class TestCiFirebaseRepository:
     def test_query_latest_ci_version_returns_0(self, mock_firestore_collection):
         """
         `get_latest_ci_metadata` should return None if no ci metadata is found for a given
-        survey_id, form_type, and language
+        survey_id, classifier_type, classifier_value, and language
         """
         firestore_client = CiFirebaseRepository()
 
         latest_ci_metadata = firestore_client.get_latest_ci_metadata(
             mock_survey_id,
-            mock_form_type,
+            mock_classifier_type,
+            mock_classifier_value,
             mock_language,
         )
 
@@ -100,7 +104,9 @@ class TestCiFirebaseRepository:
         mock_firestore_collection.document(mock_id).set(mock_ci_metadata.__dict__)
         mock_firestore_collection.document(mock_next_version_id).set(mock_next_version_ci_metadata.__dict__)
 
-        latest_ci_metadata = firestore_client.get_latest_ci_metadata(mock_survey_id, mock_form_type, mock_language)
+        latest_ci_metadata = firestore_client.get_latest_ci_metadata(
+            mock_survey_id, mock_classifier_type, mock_classifier_value, mock_language
+        )
 
         assert latest_ci_metadata.guid == mock_next_version_id
 
@@ -114,7 +120,9 @@ class TestCiFirebaseRepository:
         mock_firestore_collection.document().set(mock_ci_metadata.__dict__)
         mock_firestore_collection.document().set(mock_next_version_ci_metadata.__dict__)
 
-        latest_ci_metadata = firestore_client.get_latest_ci_metadata("wrong_survey_id", mock_form_type, mock_language)
+        latest_ci_metadata = firestore_client.get_latest_ci_metadata(
+            "wrong_survey_id", mock_classifier_type, mock_classifier_value, mock_language
+        )
 
         assert latest_ci_metadata is None
 
