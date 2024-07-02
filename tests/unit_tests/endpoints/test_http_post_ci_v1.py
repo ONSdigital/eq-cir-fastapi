@@ -8,7 +8,6 @@ from ons_sds_publisher_demo.publisher_service import publisher_service
 
 from app.config import Settings
 from app.main import app
-from app.models.events import PostCIEvent
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from app.services.ci_schema_location_service import CiSchemaLocationService
 from tests.test_data.ci_test_data import (
