@@ -1,6 +1,7 @@
+from ons_sds_publisher_demo.publisher_service import publisher_service
+
 import app.exception.exceptions as exceptions
 from app.config import logging, settings
-from app.events.publisher import publisher
 from app.models.events import PostCIEvent
 from app.models.requests import PostCiMetadataV1PostData
 from app.models.responses import CiMetadata, CiStatus
@@ -163,7 +164,10 @@ class CiProcessorService:
         """
         try:
             logger.info("Publishing CI metadata to topic...")
-            publisher.publish_message(post_ci_event)
+
+            if not publisher_service.publish_data_to_topic(settings.PROJECT_ID, post_ci_event, settings.TOPIC_ID):
+                raise exceptions.ExceptionTopicNotFound
+
             logger.debug(f"CI metadata {post_ci_event} published to topic")
             logger.info("CI metadata published successfully.")
         except Exception as e:

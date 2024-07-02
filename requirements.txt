@@ -86,3 +86,4 @@ uvicorn==0.23.2
 webencodings==0.5.1
 wrapt==1.15.0
 coverage==7.2.2
+ons-sds-publisher-demo==0.0.2

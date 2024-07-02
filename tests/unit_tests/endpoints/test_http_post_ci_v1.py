@@ -5,7 +5,7 @@ from fastapi import status
 from fastapi.testclient import TestClient
 
 from app.config import Settings
-from app.events.publisher import Publisher
+from ons_sds_publisher_demo.publisher_service import publisher_service
 from app.main import app
 from app.models.events import PostCIEvent
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
@@ -26,7 +26,7 @@ CONTENT_TYPE = "application/json"
 
 
 @patch("app.services.create_guid_service.CreateGuidService.create_guid")
-@patch("app.events.publisher.Publisher.publish_message")
+@patch("ons_sds_publisher_demo.publisher_service.publisher_service.publish_data_to_topic")
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_latest_ci_metadata")
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.perform_new_ci_transaction")
 class TestHttpPostCiV1:
@@ -71,7 +71,9 @@ class TestHttpPostCiV1:
             mock_post_ci_schema.model_dump(),
             CiSchemaLocationService.get_ci_schema_location(mock_ci_metadata),
         )
-        Publisher.publish_message.assert_called_once_with(PostCIEvent(**mock_ci_metadata.model_dump()))
+        publisher_service.publish_data_to_topic.assert_called_once_with(
+            settings.PROJECT_ID, PostCIEvent(**mock_ci_metadata.model_dump()), settings.TOPIC_ID
+        )
 
     def test_endpoint_returns_200_if_ci_next_version_created_successfully(
         self,
@@ -109,7 +111,9 @@ class TestHttpPostCiV1:
             mock_post_ci_schema.model_dump(),
             CiSchemaLocationService.get_ci_schema_location(mock_next_version_ci_metadata),
         )
-        Publisher.publish_message.assert_called_once_with(PostCIEvent(**mock_next_version_ci_metadata.model_dump()))
+        publisher_service.publish_data_to_topic.assert_called_once_with(
+            settings.PROJECT_ID, PostCIEvent(**mock_next_version_ci_metadata.model_dump()), settings.TOPIC_ID
+        )
 
     def test_endpoint_returns_400_if_no_post_data(
         self,

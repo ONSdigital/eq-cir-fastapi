@@ -20,7 +20,7 @@ class TestPostCiMetadata:
 
     url = "/v1/publish_collection_instrument"
 
-    @patch("app.events.publisher.Publisher.publish_message")
+    @patch("ons_sds_publisher_demo.publisher_service.publisher_service.publish_data_to_topic")
     @patch("app.repositories.buckets.ci_schema_bucket_repository.CiSchemaBucketRepository.store_ci_schema")
     @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_latest_ci_metadata")
     def test_creates_new_ci_metadata_on_firestore(
@@ -53,7 +53,7 @@ class TestPostCiMetadata:
         # Confirm the where query returns a valid object
         assert ci_metadata_query.__next__ is not None
 
-    @patch("app.events.publisher.Publisher.publish_message")
+    @patch("ons_sds_publisher_demo.publisher_service.publisher_service.publish_data_to_topic")
     @patch("app.repositories.buckets.ci_schema_bucket_repository.CiSchemaBucketRepository.store_ci_schema")
     @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_latest_ci_metadata")
     def test_creates_new_ci_metadata_omits_optional_sds_schema_if_not_present(
@@ -91,7 +91,7 @@ class TestPostCiMetadata:
             # `sds_schema` should not be present in created document keys
             assert "sds_schema" not in ci._doc.keys()
 
-    @patch("app.events.publisher.Publisher.publish_message")
+    @patch("ons_sds_publisher_demo.publisher_service.publisher_service.publish_data_to_topic")
     @patch("app.repositories.buckets.ci_schema_bucket_repository.CiSchemaBucketRepository.store_ci_schema")
     @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_latest_ci_metadata")
     def test_creates_new_ci_metadata_includes_optional_sds_schema_if_present(
