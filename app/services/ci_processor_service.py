@@ -172,7 +172,7 @@ class CiProcessorService:
         try:
             logger.info("Publishing CI metadata to topic...")
 
-            if not publisher_service.publish_data_to_topic(settings.PROJECT_ID, post_ci_event, settings.TOPIC_ID):
+            if not publisher_service.publish_data_to_topic(settings.PROJECT_ID, post_ci_event.model_dump(), settings.TOPIC_ID):
                 raise exceptions.ExceptionTopicNotFound
 
             logger.debug(f"CI metadata {post_ci_event} published to topic")
