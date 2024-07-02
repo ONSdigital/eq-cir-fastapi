@@ -4,9 +4,9 @@ from unittest.mock import patch
 import pytest
 from fastapi import status
 from fastapi.testclient import TestClient
+from ons_sds_publisher_demo.publisher_service import publisher_service
 
 from app.config import Settings
-from ons_sds_publisher_demo.publisher_service import publisher_service
 from app.main import app
 from app.models.events import PostCIEvent
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
