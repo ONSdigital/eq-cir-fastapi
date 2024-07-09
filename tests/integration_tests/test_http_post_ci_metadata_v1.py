@@ -12,7 +12,7 @@ class TestPostCiV1:
     """Tests for the `http_post_ci_v1` endpoint."""
 
     post_url = "/v1/publish_collection_instrument"
-    get_matadata_url = "/v1/ci_metadata"
+    get_metadata_url = "/v1/ci_metadata"
     # Initialise the subscriber client
     subscriber = Subscriber()
     # NOTE: Anytime a happy path for post_ci_v1 is called, make sure to add in a line that pulls &
@@ -51,7 +51,7 @@ class TestPostCiV1:
             }
         )
         # sends request to http_query_ci endpoint for data
-        check_ci_in_db = make_iap_request("GET", f"{self.get_matadata_url}?{querystring}")
+        check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
 
         received_messages = self.subscriber.pull_messages_and_acknowledge()
@@ -68,7 +68,6 @@ class TestPostCiV1:
             language=setup_payload["language"],
             published_at=check_ci_in_db_data[0]["published_at"],
             schema_version=setup_payload["schema_version"],
-            status=setup_payload["status"],
             survey_id=setup_payload["survey_id"],
             title=setup_payload["title"],
             description=setup_payload["description"],
@@ -109,7 +108,7 @@ class TestPostCiV1:
             }
         )
         # sends request to http_query_ci endpoint for data
-        check_ci_in_db = make_iap_request("GET", f"{self.get_matadata_url}?{querystring}")
+        check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
         # Need to pull and acknowledge messages in any test where post_ci_v1 is called so the subscription doesn't get clogged
         received_messages = self.subscriber.pull_messages_and_acknowledge()
@@ -127,7 +126,6 @@ class TestPostCiV1:
             published_at=check_ci_in_db_data[0]["published_at"],
             schema_version=setup_payload["schema_version"],
             sds_schema=setup_payload["sds_schema"],
-            status=setup_payload["status"],
             survey_id=setup_payload["survey_id"],
             title=setup_payload["title"],
             description=setup_payload["description"],

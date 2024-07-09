@@ -45,48 +45,6 @@ class TestPutStatusV1:
         query_ci_pre_response = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
         return query_ci_pre_response.json()
 
-    def test_post_ci_v1_returns_draft_and_put_status_v1_returns_published(self, setup_payload):
-        """
-        What am I testing:
-        http_put_status_v1 should return a HTTP_200_OK and have the payload's status to published
-        """
-        # Posts the ci using http_post_ci endpoint
-        make_iap_request("POST", f"{self.post_url}", json=setup_payload)
-        query_ci_pre_response_data = self.return_query_ci(setup_payload)
-        ci_id = query_ci_pre_response_data[0]["guid"]
-        assert query_ci_pre_response_data[0]["status"] == "DRAFT"
-
-        querystring = urlencode({"guid": ci_id})
-        # sends request to http_put_status for updating status
-        ci_update = make_iap_request("PUT", f"{self.base_url}?{querystring}")
-        assert ci_update.status_code == status.HTTP_200_OK
-
-        # returning text as opposed to json as its a string
-        ci_update_data = ci_update.json()
-        assert ci_update_data == "put_status_v1: CI status has been changed to PUBLISHED"
-
-        query_ci_post_response_data = self.return_query_ci(setup_payload)
-
-        assert query_ci_post_response_data[0]["status"] == "PUBLISHED"
-
-    def test_post_ci_v1_returns_draft_and_put_status_v1_returns_already_published(self, setup_payload):
-        """
-        What am I testing:
-        http_put_status_v1 should return a HTTP_200_OK and throw a message status is already changed to published.
-        """
-        # Posts the ci using http_post_ci endpoint
-        make_iap_request("POST", f"{self.post_url}", json=setup_payload)
-        query_ci_pre_response_data = self.return_query_ci(setup_payload)
-        ci_id = query_ci_pre_response_data[0]["guid"]
-        querystring = urlencode({"guid": ci_id})
-        # Updating status twice to return already published
-        ci_update = make_iap_request("PUT", f"{self.base_url}?{querystring}")
-        assert ci_update.status_code == status.HTTP_200_OK
-
-        # returning text as opposed to json as its a string
-        ci_update_data = ci_update.json()
-        assert ci_update_data == "put_status_v1: CI status has been changed to PUBLISHED"
-
     def test_guid_not_found(self):
         """
         What am I testing:
