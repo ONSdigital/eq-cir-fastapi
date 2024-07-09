@@ -166,7 +166,7 @@ class TestPostCiV1:
             }
         )
         # sends request to http_query_ci endpoint for data
-        check_ci_in_db = make_iap_request("GET", f"{self.get_matadata_url}?{querystring}")
+        check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
 
         expected_ci = CiMetadata(
