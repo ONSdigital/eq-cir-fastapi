@@ -87,7 +87,7 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://0.0.0.0:3030/v2/ci_metadata?classifier_type=form_type&classifier_value=0005&language=en&status=draft&survey_id=123",
+          "raw": "http://0.0.0.0:3030/v2/ci_metadata?classifier_type=form_type&classifier_value=0005&language=en&survey_id=123",
           "protocol": "http",
           "host": [
             "0",
@@ -115,11 +115,6 @@
               "key": "language",
               "value": "en",
               "description": "language to get"
-            },
-            {
-              "key": "status",
-              "value": "draft",
-              "description": "status to get"
             },
             {
               "key": "survey_id",
@@ -232,66 +227,6 @@
           "path": [
             "v1",
             "publish_collection_instrument"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Http Put Status V1",
-      "request": {
-        "method": "PUT",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"$id\": \"https://ons.gov.uk/roofing_tiles_schema_for_data.schema.json\",\n  \"language\": \"en\",\n  \"data_version\": \"v1.0.0\",\n  \"form_type\": \"888\",\n  \"survey_id\": \"068\",\n  \"title\": \"Roofing Tiles\",\n  \"description\": \"Roofing Tiles\",\n  \"schema_version\": \"v2.1.0\",\n  \"sample_unit_key_field\": \"ruref\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "http://0.0.0.0:3030/v1/update_status?guid=a821234d-6aee-48ac-bdd9-d4a6e113705d",
-          "protocol": "http",
-          "host": [
-            "0",
-            "0",
-            "0",
-            "0"
-          ],
-          "port": "3030",
-          "path": [
-            "v1",
-            "update_status"
-          ],
-          "query": [
-            {
-              "key": "guid",
-              "value": "a821234d-6aee-48ac-bdd9-d4a6e113705d"
-            }
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Status",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "http://0.0.0.0:3030/status",
-          "protocol": "http",
-          "host": [
-            "0",
-            "0",
-            "0",
-            "0"
-          ],
-          "port": "3030",
-          "path": [
-            "status"
           ]
         }
       },
