@@ -27,8 +27,7 @@ def setup_publish_ci_return_payload():
     payload = {
         "survey_id": "3456",
         "language": "welsh",
-        "classifier_type": "form_type",
-        "classifier_value": "business",
+        "form_type": "business",
         "title": "NotDune",
         "schema_version": "1",
         "data_version": "1",
@@ -47,8 +46,7 @@ def setup_payload():
     payload = {
         "survey_id": "3456",
         "language": "welsh",
-        "classifier_type": "form_type",
-        "classifier_value": "business",
+        "form_type": "business",
         "title": "NotDune",
         "schema_version": "1",
         "data_version": "1",

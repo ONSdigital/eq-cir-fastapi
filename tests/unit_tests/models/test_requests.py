@@ -66,8 +66,7 @@ class TestPostCiMetadataV1PostData:
 
     post_data = {
         "data_version": "1",
-        "classifier_type": mock_classifier_type,
-        "classifier_value": mock_classifier_value,
+        "form_type": mock_classifier_value,
         "language": mock_language,
         "survey_id": mock_survey_id,
         "title": "test",

@@ -5,6 +5,7 @@ from fastapi import status
 
 from app.events.subscriber import Subscriber
 from app.models.responses import CiMetadata, CiStatus
+from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request
 
 
@@ -38,8 +39,8 @@ class TestPostCiV1:
         ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_payload)
         ci_response_data = ci_response.json()
         survey_id = setup_payload["survey_id"]
-        classifier_type = setup_payload["classifier_type"]
-        classifier_value = setup_payload["classifier_value"]
+        classifier_type = CiClassifierService.get_classifier_type(setup_payload)
+        classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)
         language = setup_payload["language"]
 
         querystring = urlencode(
@@ -62,8 +63,8 @@ class TestPostCiV1:
         expected_ci = CiMetadata(
             ci_version=1,
             data_version=setup_payload["data_version"],
-            classifier_type=setup_payload["classifier_type"],
-            classifier_value=setup_payload["classifier_value"],
+            classifier_type=classifier_type,
+            classifier_value=classifier_value,
             guid=check_ci_in_db_data[0]["guid"],
             language=setup_payload["language"],
             published_at=check_ci_in_db_data[0]["published_at"],
@@ -96,8 +97,8 @@ class TestPostCiV1:
         ci_response_data = ci_response.json()
 
         survey_id = setup_payload["survey_id"]
-        classifier_type = setup_payload["classifier_type"]
-        classifier_value = setup_payload["classifier_value"]
+        classifier_type = CiClassifierService.get_classifier_type(setup_payload)
+        classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)
         language = setup_payload["language"]
 
         querystring = urlencode(
@@ -120,8 +121,8 @@ class TestPostCiV1:
         expected_ci = CiMetadata(
             ci_version=1,
             data_version=setup_payload["data_version"],
-            classifier_type=setup_payload["classifier_type"],
-            classifier_value=setup_payload["classifier_value"],
+            classifier_type=classifier_type,
+            classifier_value=classifier_value,
             guid=check_ci_in_db_data[0]["guid"],
             language=setup_payload["language"],
             published_at=check_ci_in_db_data[0]["published_at"],
@@ -156,8 +157,8 @@ class TestPostCiV1:
         self.subscriber.pull_messages_and_acknowledge()
 
         survey_id = setup_publish_ci_return_payload["survey_id"]
-        classifier_type = setup_publish_ci_return_payload["classifier_type"]
-        classifier_value = setup_publish_ci_return_payload["classifier_value"]
+        classifier_type = CiClassifierService.get_classifier_type(setup_publish_ci_return_payload)
+        classifier_value = CiClassifierService.get_classifier_value(setup_publish_ci_return_payload, classifier_type)
         language = setup_publish_ci_return_payload["language"]
         querystring = urlencode(
             {
@@ -174,8 +175,8 @@ class TestPostCiV1:
         expected_ci = CiMetadata(
             ci_version=2,
             data_version=setup_publish_ci_return_payload["data_version"],
-            classifier_type=setup_publish_ci_return_payload["classifier_type"],
-            classifier_value=setup_publish_ci_return_payload["classifier_value"],
+            classifier_type=classifier_type,
+            classifier_value=classifier_value,
             guid=check_ci_in_db_data[0]["guid"],
             language=setup_publish_ci_return_payload["language"],
             published_at=check_ci_in_db_data[0]["published_at"],
@@ -239,7 +240,9 @@ class TestPostCiV1:
         AC-3.3	If a metadata field is missing a classifier, then the correct response is returned.
         """
         payload = setup_payload
-        payload["classifier_type"] = " "
+        classifier_type = CiClassifierService.get_classifier_type(payload)
+        payload.pop(classifier_type)
+
         ci_response = make_iap_request("POST", f"{self.post_url}", json=payload)
         self.subscriber.pull_messages_and_acknowledge()
 
@@ -247,7 +250,7 @@ class TestPostCiV1:
 
         ci_response_data = ci_response.json()
         assert ci_response_data == {
-            "message": "Validation has failed",
+            "message": "Invalid Classifier",
             "status": "error",
         }
 
