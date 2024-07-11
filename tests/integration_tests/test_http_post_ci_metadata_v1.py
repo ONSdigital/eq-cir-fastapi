@@ -250,7 +250,7 @@ class TestPostCiV1:
 
         ci_response_data = ci_response.json()
         assert ci_response_data == {
-            "message": "Invalid Classifier",
+            "message": "Invalid classifier",
             "status": "error",
         }
 
