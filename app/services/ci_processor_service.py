@@ -35,8 +35,10 @@ class CiProcessorService:
 
         ci = post_data.__dict__
 
+        # Get classifier type and value from ci
         classifier_type = CiClassifierService.get_classifier_type(ci)
         classifier_value = CiClassifierService.get_classifier_value(ci, classifier_type)
+        # Clean up unused classifier fields in ci
         ci = CiClassifierService.clean_ci_unused_classifier(ci, classifier_type)
 
         next_version_ci_metadata = self.build_next_version_ci_metadata(
