@@ -116,7 +116,7 @@ class GetCiSchemaV2Params:
     )
 
 
-class PostCiSchemaV1PostData(BaseModel):
+class PostCiSchemaV1Data(BaseModel):
     """
     Model for `post_ci_schema_v1` request post data
 

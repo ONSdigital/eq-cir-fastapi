@@ -2,7 +2,7 @@ import app.exception.exceptions as exceptions
 from app.config import logging, settings
 from app.events.publisher import publisher
 from app.models.events import PostCIEvent
-from app.models.requests import PostCiSchemaV1PostData
+from app.models.requests import PostCiSchemaV1Data
 from app.models.responses import CiMetadata, CiStatus
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from app.services.ci_classifier_service import CiClassifierService
@@ -21,13 +21,13 @@ class CiProcessorService:
     # Posts new CI metadata to Firestore
     def process_raw_ci(
         self,
-        post_data: PostCiSchemaV1PostData,
+        post_data: PostCiSchemaV1Data,
     ) -> CiMetadata:
         """
         Processes incoming ci
 
         Parameters:
-        post_data (PostCiSchemaV1PostData): incoming CI metadata
+        post_data (PostCiSchemaV1Data): incoming CI metadata
         """
 
         # Generate new uid
