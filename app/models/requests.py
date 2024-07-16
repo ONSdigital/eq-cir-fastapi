@@ -116,9 +116,9 @@ class GetCiSchemaV2Params:
     )
 
 
-class PostCiMetadataV1PostData(BaseModel):
+class PostCiSchemaV1PostData(BaseModel):
     """
-    Model for `post_ci_metadata_v1` request post data
+    Model for `post_ci_schema_v1` request post data
 
     This is the entire CI JSON object that you would like to publish. The example below illustrates
     the required attributes to put into the request body. The POST will fail if these are not
@@ -134,7 +134,7 @@ class PostCiMetadataV1PostData(BaseModel):
     description: str
     # Optional fields (classifiers)
     form_type: str | SkipJsonSchema[None] = None
-    # Optional fields
+    # Optional fields (others)
     legal_basis: str | SkipJsonSchema[None] = ""
     metadata: list | SkipJsonSchema[None] = None
     mime_type: str | SkipJsonSchema[None] = ""

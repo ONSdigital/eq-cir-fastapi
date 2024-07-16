@@ -14,7 +14,7 @@ from app.models.requests import (
     GetCiMetadataV2Params,
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
-    PostCiMetadataV1PostData,
+    PostCiSchemaV1PostData,
     PutStatusV1Params,
     Status,
 )
@@ -334,8 +334,8 @@ async def http_get_ci_schema_v2(
         },
     },
 )
-async def http_post_ci_metadata_v1(
-    post_data: PostCiMetadataV1PostData,
+async def http_post_ci_schema_v1(
+    post_data: PostCiSchemaV1PostData,
     ci_processor_service: CiProcessorService = Depends(),
 ):
     """

@@ -1,6 +1,6 @@
 import pytest
 
-from app.models.requests import GetCiMetadataV2Params, PostCiMetadataV1PostData
+from app.models.requests import GetCiMetadataV2Params, PostCiSchemaV1PostData
 from app.models.responses import CiStatus
 
 mock_classifier_type = "form_type"
@@ -61,8 +61,8 @@ class TestGetCiMetadataV2Params:
         assert self.query_params.params_not_none(self.query_params.__dict__.keys()) is False
 
 
-class TestPostCiMetadataV1PostData:
-    """Tests for the `PostCiMetadataV1PostData` Pydantic data model"""
+class TestPostCiSchemaV1PostData:
+    """Tests for the `PostCiSchemaV1PostData` Pydantic data model"""
 
     post_data = {
         "data_version": "1",
@@ -76,10 +76,10 @@ class TestPostCiMetadataV1PostData:
 
     def test_data_model_instantiates_with_valid_post_data(self):
         """
-        `PostCiMetadataV1PostData` data model should instantiate successfully if provided with the
+        `PostCiSchemaV1PostData` data model should instantiate successfully if provided with the
         minimum valid input data
         """
-        post_data_model = PostCiMetadataV1PostData(**self.post_data)
+        post_data_model = PostCiSchemaV1PostData(**self.post_data)
         # Dictionary returned from data model should contain the original input data
         assert self.post_data.items() <= post_data_model.model_dump().items()
 
@@ -97,14 +97,14 @@ class TestPostCiMetadataV1PostData:
     )
     def test_data_model_raises_value_error_if_required_field_is_none(self, input_param):
         """
-        `PostCiMetadataV1PostData` data model should raise `ValueError` on init if any required
+        `PostCiSchemaV1PostData` data model should raise `ValueError` on init if any required
         field is `None`
         """
         # update `post_data` to contain `None` value for `input_param` field
         self.post_data.update({input_param: None})
 
         with pytest.raises(ValueError):
-            PostCiMetadataV1PostData(**self.post_data)
+            PostCiSchemaV1PostData(**self.post_data)
 
     @pytest.mark.parametrize(
         "input_param",
@@ -120,14 +120,14 @@ class TestPostCiMetadataV1PostData:
     )
     def test_data_model_raises_value_error_if_required_field_is_empty_string(self, input_param):
         """
-        `PostCiMetadataV1PostData` data model should raise `ValueError` on init if any required
+        `PostCiSchemaV1PostData` data model should raise `ValueError` on init if any required
         field is an empty string
         """
         # update `post_data` to contain an empty string value for `input_param` field
         self.post_data.update({input_param: ""})
 
         with pytest.raises(ValueError):
-            PostCiMetadataV1PostData(**self.post_data)
+            PostCiSchemaV1PostData(**self.post_data)
 
     @pytest.mark.parametrize(
         "input_param",
@@ -142,11 +142,11 @@ class TestPostCiMetadataV1PostData:
     )
     def test_data_model_raises_value_error_if_required_field_is_whitespace(self, input_param):
         """
-        `PostCiMetadataV1PostData` data model should raise `ValueError` on init if any required
+        `PostCiSchemaV1PostData` data model should raise `ValueError` on init if any required
         field is whitespace
         """
         # update `post_data` to contain a whitespace value for `input_param` field
         self.post_data.update({input_param: " "})
 
         with pytest.raises(ValueError):
-            PostCiMetadataV1PostData(**self.post_data)
+            PostCiSchemaV1PostData(**self.post_data)
