@@ -2,7 +2,7 @@ import uuid
 
 from app.config import Settings
 from app.models.classifier import Classifiers
-from app.models.requests import PostCiMetadataV1PostData, PostCiSchemaV1Data
+from app.models.requests import PostCiSchemaV1Data
 from app.models.responses import CiMetadata
 
 settings = Settings()

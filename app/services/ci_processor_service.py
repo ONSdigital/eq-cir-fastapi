@@ -2,7 +2,7 @@ import app.exception.exceptions as exceptions
 from app.config import logging, settings
 from app.events.publisher import publisher
 from app.models.events import PostCIEvent
-from app.models.requests import PostCiMetadataV1PostData, PostCiSchemaV1Data
+from app.models.requests import PostCiSchemaV1Data
 from app.models.responses import CiMetadata
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from app.services.ci_classifier_service import CiClassifierService

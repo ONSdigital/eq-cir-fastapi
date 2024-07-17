@@ -14,8 +14,7 @@ from app.models.requests import (
     GetCiMetadataV2Params,
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
-    PostCiMetadataV1PostData,
-    PostCiSchemaV1Data
+    PostCiSchemaV1Data,
 )
 from app.models.responses import CiMetadata
 from app.repositories.buckets.ci_schema_bucket_repository import (
