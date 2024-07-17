@@ -2,9 +2,10 @@ import app.exception.exceptions as exceptions
 from app.config import logging, settings
 from app.events.publisher import publisher
 from app.models.events import PostCIEvent
-from app.models.requests import PostCiMetadataV1PostData
+from app.models.requests import PostCiSchemaV1Data
 from app.models.responses import CiMetadata, CiStatus
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
+from app.services.ci_classifier_service import CiClassifierService
 from app.services.ci_schema_location_service import CiSchemaLocationService
 from app.services.create_guid_service import CreateGuidService
 from app.services.datetime_service import DatetimeService
@@ -18,12 +19,15 @@ class CiProcessorService:
         self.ci_firebase_repository = CiFirebaseRepository()
 
     # Posts new CI metadata to Firestore
-    def process_raw_ci(self, post_data: PostCiMetadataV1PostData) -> CiMetadata:
+    def process_raw_ci(
+        self,
+        post_data: PostCiSchemaV1Data,
+    ) -> CiMetadata:
         """
         Processes incoming ci
 
         Parameters:
-        post_data (PostCiMetadataV1PostData): incoming CI metadata
+        post_data (PostCiSchemaV1Data): incoming CI metadata
         """
 
         # Generate new uid
@@ -31,11 +35,17 @@ class CiProcessorService:
 
         ci = post_data.__dict__
 
+        # Get classifier type and value from ci
+        classifier_type = CiClassifierService.get_classifier_type(ci)
+        classifier_value = CiClassifierService.get_classifier_value(ci, classifier_type)
+        # Clean up unused classifier fields in ci
+        ci = CiClassifierService.clean_ci_unused_classifier(ci, classifier_type)
+
         next_version_ci_metadata = self.build_next_version_ci_metadata(
             ci_id,
+            classifier_type,
+            classifier_value,
             post_data.survey_id,
-            post_data.classifier_type,
-            post_data.classifier_value,
             post_data.language,
             post_data.data_version,
             post_data.schema_version,
@@ -102,9 +112,9 @@ class CiProcessorService:
     def build_next_version_ci_metadata(
         self,
         ci_id: str,
-        survey_id: str,
         classifier_type: str,
         classifier_value: str,
+        survey_id: str,
         language: str,
         data_version: str,
         schema_version: str,

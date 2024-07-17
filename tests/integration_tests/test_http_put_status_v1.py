@@ -3,6 +3,7 @@ from urllib.parse import urlencode
 from fastapi import status
 
 from app.events.subscriber import Subscriber
+from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request
 
 
@@ -30,8 +31,8 @@ class TestPutStatusV1:
         the response in JSON
         """
         survey_id = setup_payload["survey_id"]
-        classifier_type = setup_payload["classifier_type"]
-        classifier_value = setup_payload["classifier_value"]
+        classifier_type = CiClassifierService.get_classifier_type(setup_payload)
+        classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)
         language = setup_payload["language"]
         querystring = urlencode(
             {

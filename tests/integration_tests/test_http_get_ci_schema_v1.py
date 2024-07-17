@@ -5,6 +5,7 @@ from fastapi import status
 
 from app.events.subscriber import Subscriber
 from app.models.requests import GetCiSchemaV1Params
+from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request
 
 
@@ -44,10 +45,13 @@ class TestHttpGetCiSchemaV1:
         `http_get_ci_schema_v1` should return `HTTP_404_NOT_FOUND` status if a valid query is
         made via a GET request but a corresponding ci schema is not found on the db
         """
+        classifier_type = CiClassifierService.get_classifier_type(setup_payload)
+        classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)
+
         # Construct a valid querystring using `setup_payload` data
         query_params = GetCiSchemaV1Params(
-            classifier_type=setup_payload["classifier_type"],
-            classifier_value=setup_payload["classifier_value"],
+            classifier_type=classifier_type,
+            classifier_value=classifier_value,
             language=setup_payload["language"],
             survey_id=setup_payload["survey_id"],
         )
@@ -66,10 +70,13 @@ class TestHttpGetCiSchemaV1:
         # Use `post_ci_v1` to create ci metadata and schema on the db
         make_iap_request("POST", f"{self.post_url}", json=setup_payload)
 
+        classifier_type = CiClassifierService.get_classifier_type(setup_payload)
+        classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)
+
         # Construct the querystring to retrieve newly created ci schema
         query_params = GetCiSchemaV1Params(
-            classifier_type=setup_payload["classifier_type"],
-            classifier_value=setup_payload["classifier_value"],
+            classifier_type=classifier_type,
+            classifier_value=classifier_value,
             language=setup_payload["language"],
             survey_id=setup_payload["survey_id"],
         )
@@ -83,9 +90,12 @@ class TestHttpGetCiSchemaV1:
         What am I testing:
         http_get_ci_schema_v1 should return a 401 unauthorized error if the endpoint is requested with an unauthorized token.
         """
+        classifier_type = CiClassifierService.get_classifier_type(setup_payload)
+        classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)
+
         query_params = GetCiSchemaV1Params(
-            classifier_type=setup_payload["classifier_type"],
-            classifier_value=setup_payload["classifier_value"],
+            classifier_type=classifier_type,
+            classifier_value=classifier_value,
             language=setup_payload["language"],
             survey_id=setup_payload["survey_id"],
         )

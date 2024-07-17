@@ -2,7 +2,7 @@ import uuid
 
 from app.config import Settings
 from app.models.classifier import Classifiers
-from app.models.requests import PostCiMetadataV1PostData
+from app.models.requests import PostCiSchemaV1Data
 from app.models.responses import CiMetadata, CiStatus
 
 settings = Settings()
@@ -23,11 +23,10 @@ mock_title = "test_title"
 mock_description = "test_description"
 mock_published_at = "2023-04-20T12:00:00.000000Z"
 
-mock_post_ci_schema = PostCiMetadataV1PostData(
+mock_post_ci_schema = PostCiSchemaV1Data(
     survey_id=mock_survey_id,
     language=mock_language,
-    classifier_type=mock_classifier_type,
-    classifier_value=mock_classifier_value,
+    form_type=mock_classifier_value,
     title=mock_title,
     schema_version=mock_schema_version,
     data_version=mock_data_version,
@@ -35,7 +34,7 @@ mock_post_ci_schema = PostCiMetadataV1PostData(
     description=mock_description,
 )
 
-mock_post_ci_schema_without_sds_schema = PostCiMetadataV1PostData(
+mock_post_ci_schema_without_sds_schema = PostCiSchemaV1Data(
     survey_id=mock_survey_id,
     classifier_type=mock_classifier_type,
     classifier_value=mock_classifier_value,
@@ -46,7 +45,7 @@ mock_post_ci_schema_without_sds_schema = PostCiMetadataV1PostData(
     description=mock_description,
 )
 
-mock_post_ci_schema_with_sds_schema = PostCiMetadataV1PostData(
+mock_post_ci_schema_with_sds_schema = PostCiSchemaV1Data(
     survey_id=mock_survey_id,
     language=mock_language,
     classifier_type=mock_classifier_type,
