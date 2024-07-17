@@ -6,8 +6,6 @@ from pydantic.json_schema import SkipJsonSchema
 
 from app.models.classifier import Classifiers
 
-# from enum import Enum
-
 
 @dataclass
 class DeleteCiV1Params:
