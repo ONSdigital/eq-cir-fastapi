@@ -16,8 +16,8 @@ from tests.test_data.ci_test_data import (
 client = TestClient(app)
 
 
-class TestPostCiMetadata:
-    """Tests for the `post_ci_metadata` firestore method"""
+class TestPostCiSchema:
+    """Tests for the `post_ci_schema` firestore method"""
 
     url = "/v1/publish_collection_instrument"
 
@@ -32,7 +32,7 @@ class TestPostCiMetadata:
         mock_firestore_collection,
     ):
         """
-        `post_ci_metadata` should create a new ci metadata record on firestore if provided with valid data
+        `post_ci_schema` should create a new ci metadata record on firestore if provided with valid data
         """
         # Mocked `get_latest_ci_metadata` should return None for this test, indicating no previous version of metadata is found
         mocked_get_latest_ci_metadata.return_value = None

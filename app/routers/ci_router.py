@@ -15,6 +15,7 @@ from app.models.requests import (
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
     PostCiMetadataV1PostData,
+    PostCiSchemaV1Data
 )
 from app.models.responses import CiMetadata
 from app.repositories.buckets.ci_schema_bucket_repository import (
@@ -332,8 +333,8 @@ async def http_get_ci_schema_v2(
         },
     },
 )
-async def http_post_ci_metadata_v1(
-    post_data: PostCiMetadataV1PostData,
+async def http_post_ci_schema_v1(
+    post_data: PostCiSchemaV1Data,
     ci_processor_service: CiProcessorService = Depends(),
 ):
     """
@@ -341,9 +342,6 @@ async def http_post_ci_metadata_v1(
     the whole request body to a Google Cloud Bucket.
     """
     logger.info("Posting ci schema via v1 endpoint")
-
-    if not Classifiers.has_member_key(post_data.classifier_type):
-        raise exceptions.ExceptionInvalidClassifier
 
     ci_metadata = ci_processor_service.process_raw_ci(post_data)
 

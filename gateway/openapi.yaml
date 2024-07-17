@@ -55,7 +55,9 @@ components:
       title: CiMetadata
       type: object
     Classifiers:
-      const: form_type
+      enum:
+      - form_type
+      - default
       title: Classifiers
       type: string
     DeploymentStatus:
@@ -105,16 +107,14 @@ components:
 
         included.'
       properties:
-        classifier_type:
-          $ref: '#/components/schemas/Classifiers'
-        classifier_value:
-          title: Classifier Value
-          type: string
         data_version:
           title: Data Version
           type: string
         description:
           title: Description
+          type: string
+        form_type:
+          title: Form Type
           type: string
         language:
           title: Language
@@ -166,8 +166,6 @@ components:
           type: string
       required:
       - data_version
-      - classifier_type
-      - classifier_value
       - language
       - survey_id
       - title

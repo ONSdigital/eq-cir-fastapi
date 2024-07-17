@@ -110,9 +110,9 @@ class GetCiSchemaV2Params:
     )
 
 
-class PostCiMetadataV1PostData(BaseModel):
+class PostCiSchemaV1Data(BaseModel):
     """
-    Model for `post_ci_metadata_v1` request post data
+    Model for `post_ci_schema_v1` request post data
 
     This is the entire CI JSON object that you would like to publish. The example below illustrates
     the required attributes to put into the request body. The POST will fail if these are not
@@ -121,14 +121,14 @@ class PostCiMetadataV1PostData(BaseModel):
 
     # Required fields
     data_version: str
-    classifier_type: Classifiers
-    classifier_value: str
     language: str
     survey_id: str
     title: str
     schema_version: str
     description: str
-    # Optional fields
+    # Optional fields (classifiers)
+    form_type: str | SkipJsonSchema[None] = None
+    # Optional fields (others)
     legal_basis: str | SkipJsonSchema[None] = ""
     metadata: list | SkipJsonSchema[None] = None
     mime_type: str | SkipJsonSchema[None] = ""
@@ -140,7 +140,7 @@ class PostCiMetadataV1PostData(BaseModel):
     submission: dict | SkipJsonSchema[None] = None
     theme: str | SkipJsonSchema[None] = ""
 
-    @field_validator("data_version", "classifier_type", "classifier_value", "language", "survey_id", "title", "schema_version")
+    @field_validator("data_version", "language", "survey_id", "title", "schema_version")
     @classmethod
     def check_not_empty_string(cls, value: str, info: ValidationInfo) -> str:
         """Raise `ValueError` if input `value` is an empty string or whitespace"""
