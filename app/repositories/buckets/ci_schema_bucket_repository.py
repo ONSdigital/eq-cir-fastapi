@@ -33,7 +33,7 @@ class CiSchemaBucketRepository:
         Get the CI schema from the ci schema bucket using the filename provided.
 
         Parameters:
-        blob_name (str): filename of the retreived json schema
+        blob_name (str): filename of the retrieved json schema
         """
         logger.info("attempting to get schema")
         logger.debug(f"get_schema blob_name: {blob_name}")

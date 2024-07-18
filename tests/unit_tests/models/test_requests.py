@@ -1,12 +1,10 @@
 import pytest
 
 from app.models.requests import GetCiMetadataV2Params, PostCiSchemaV1Data
-from app.models.responses import CiStatus
 
 mock_classifier_type = "form_type"
 mock_classifier_value = "0005"
 mock_language = "en"
-mock_status = CiStatus.DRAFT.value
 mock_survey_id = "123"
 mock_description = "Version of CI is for March 2023 – APPROVED"
 

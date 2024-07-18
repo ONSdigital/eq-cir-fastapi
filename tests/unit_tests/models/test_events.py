@@ -3,7 +3,6 @@ import uuid
 
 from app.config import Settings
 from app.models.events import PostCIEvent
-from app.models.responses import CiStatus
 
 settings = Settings()
 
@@ -18,7 +17,6 @@ mock_language = "em"
 mock_published_at = datetime.datetime.utcnow().strftime(settings.PUBLISHED_AT_FORMAT)
 mock_schema_version = "12"
 mock_sds_schema = "my test schema"
-mock_status = CiStatus.DRAFT.value
 mock_survey_id = "12124141"
 mock_title = "test"
 mock_description = "description"
@@ -42,7 +40,6 @@ class TestPostCIEvent:
             published_at=mock_published_at,
             schema_version=mock_schema_version,
             sds_schema=mock_sds_schema,
-            status=mock_status,
             survey_id=mock_survey_id,
             title=mock_title,
             description=mock_description,
@@ -67,7 +64,6 @@ class TestPostCIEvent:
             language=mock_language,
             published_at=mock_published_at,
             schema_version=mock_schema_version,
-            status=mock_status,
             survey_id=mock_survey_id,
             title=mock_title,
             description=mock_description,
@@ -92,7 +88,6 @@ class TestPostCIEvent:
             language=mock_language,
             published_at=mock_published_at,
             schema_version=mock_schema_version,
-            status=mock_status,
             survey_id=mock_survey_id,
             title=mock_title,
             description=mock_description,
