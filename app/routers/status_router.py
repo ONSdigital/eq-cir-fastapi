@@ -4,8 +4,8 @@ from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 
 import app.exception.exception_response_models as erm
-import app.exception.exceptions as exceptions
 from app.config import Settings
+from app.exception import exceptions
 from app.exception.exception_response_models import ExceptionResponseModel
 from app.models.responses import DeploymentStatus
 
@@ -27,8 +27,7 @@ settings = Settings()
     },
 )
 async def http_get_status():
-    """
-    GET method that returns `CIR_APPLICATION_VERSION` if the deployment is successful
+    """GET method that returns `CIR_APPLICATION_VERSION` if the deployment is successful
     """
     application_version = settings.CIR_APPLICATION_VERSION
     if application_version:

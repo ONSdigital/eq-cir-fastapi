@@ -18,14 +18,15 @@ class DeleteCiV1Params:
 class GetCiMetadataV1Params:
     """Model for `get_ci_metadata_v1` request query params"""
 
-    classifier_type: Classifiers = Query(default=None, description="Classifier type used by the CI", example="form_type")
+    classifier_type: Classifiers = Query(
+        default=None, description="Classifier type used by the CI", example="form_type"
+    )
     classifier_value: str = Query(default=None, description="Classifier value used by the CI", example="0001")
     language: str = Query(default=None, description="The language of the CI", example="en")
     survey_id: str = Query(default=None, description="The survey ID of the CI", example="123")
 
     def params_not_none(self, keys):
-        """
-        Loops through each input `keys` and checks if associated class param is `None`
+        """Loops through each input `keys` and checks if associated class param is `None`
 
         If all param values are not `None` return `True`, otherwise return `False`
         """
@@ -39,19 +40,19 @@ class GetCiMetadataV1Params:
 
 @dataclass
 class GetCiMetadataV2Params:
-    """
-    Model for `get_ci_metadata_v2` request query params
+    """Model for `get_ci_metadata_v2` request query params
     All parameters are optional
     """
 
-    classifier_type: Classifiers = Query(default=None, description="Classifier type used by the CI", example="form_type")
+    classifier_type: Classifiers = Query(
+        default=None, description="Classifier type used by the CI", example="form_type"
+    )
     classifier_value: str = Query(default=None, description="Classifier value used by the CI", example="0001")
     language: str = Query(default=None, description="language to get", example="en")
     survey_id: str = Query(default=None, description="survey id to get", example="123")
 
     def params_not_none(self, keys):
-        """
-        Loops through each input `keys` and checks if associated class param is `None`
+        """Loops through each input `keys` and checks if associated class param is `None`
 
         If all param values are not `None` return `True`, otherwise return `False`
         """
@@ -63,8 +64,7 @@ class GetCiMetadataV2Params:
         return True
 
     def params_all_none(self, keys):
-        """
-        Loops through each input `keys` and checks if associated class param is `None`
+        """Loops through each input `keys` and checks if associated class param is `None`
 
         If all param values are `None` return `True`, otherwise return `False`
         """
@@ -80,14 +80,15 @@ class GetCiMetadataV2Params:
 class GetCiSchemaV1Params:
     """Model for `get_ci_schema_v1` request query params"""
 
-    classifier_type: Classifiers = Query(default=None, description="Classifier type used by the CI", example="form_type")
+    classifier_type: Classifiers = Query(
+        default=None, description="Classifier type used by the CI", example="form_type"
+    )
     classifier_value: str = Query(default=None, description="Classifier value used by the CI", example="0001")
     language: str = Query(default=None, description="The language of the CI", example="en")
     survey_id: str = Query(default=None, description="The survey ID of the CI", example="123")
 
     def params_not_none(self, *args):
-        """
-        Loops through each input `arg` and checks if associated class param is `None`
+        """Loops through each input `arg` and checks if associated class param is `None`
 
         If all param values are not `None` return `True`, otherwise return `False`
         """
@@ -111,8 +112,7 @@ class GetCiSchemaV2Params:
 
 
 class PostCiSchemaV1Data(BaseModel):
-    """
-    Model for `post_ci_schema_v1` request post data
+    """Model for `post_ci_schema_v1` request post data
 
     This is the entire CI JSON object that you would like to publish. The example below illustrates
     the required attributes to put into the request body. The POST will fail if these are not

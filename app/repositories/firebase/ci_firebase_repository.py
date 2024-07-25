@@ -16,8 +16,7 @@ class CiFirebaseRepository:
     """Provides methods to perform actions on firestore using the google firestore client"""
 
     def __init__(self):
-        """
-        Initialises the google firestore client and sets the target collection based on
+        """Initialises the google firestore client and sets the target collection based on
         `settings.PROJECT_ID`, `settings.FIRESTORE_DB_NAME` and `settings.CI_FIRESTORE_COLLECTION_NAME`
         """
         self.client = firebase_loader.get_client()
@@ -25,8 +24,7 @@ class CiFirebaseRepository:
         self.ci_bucket_repository = CiSchemaBucketRepository()
 
     def get_latest_ci_metadata(self, survey_id, classifier_type, classifier_value, language) -> CiMetadata | None:
-        """
-        Get metadata of latest CI version.
+        """Get metadata of latest CI version.
 
         Parameters:
         survey_id (str): the survey id of the CI metadata.
@@ -56,8 +54,7 @@ class CiFirebaseRepository:
         ci: dict,
         stored_ci_filename: str,
     ) -> None:
-        """
-        A transactional function that wrap CI creation and CI storage processes
+        """A transactional function that wrap CI creation and CI storage processes
 
         Parameters:
         ci_id (str): The unique id of the new CI.
@@ -65,7 +62,6 @@ class CiFirebaseRepository:
         ci (dict): The CI being stored.
         stored_ci_filename (str): Filename of uploaded json CI.
         """
-
         # A stipulation of the @firestore.transactional decorator is the first parameter HAS
         # to be 'transaction', but since we're using classes the first parameter is always
         # 'self'. Encapsulating the transaction within this function circumvents the issue.
@@ -83,8 +79,7 @@ class CiFirebaseRepository:
         ci_id: str,
         ci_metadata: CiMetadata,
     ) -> None:
-        """
-        Creates a new CI metadata entry in firestore.
+        """Creates a new CI metadata entry in firestore.
 
         Parameters:
         ci_id (str): The unique id of the new CI.
@@ -99,9 +94,10 @@ class CiFirebaseRepository:
             merge=True,
         )
 
-    def get_ci_metadata_collection(self, survey_id: str, classifier_type, classifier_value, language: str) -> list[CiMetadata]:
-        """
-        Gets the collection of CI metadata with a specific survey_id, form_type, language.
+    def get_ci_metadata_collection(
+        self, survey_id: str, classifier_type, classifier_value, language: str
+    ) -> list[CiMetadata]:
+        """Gets the collection of CI metadata with a specific survey_id, form_type, language.
 
         Parameters:
         survey_id (str): The survey id of the CI metadata being collected.
@@ -125,8 +121,7 @@ class CiFirebaseRepository:
         return ci_metadata_list
 
     def get_all_ci_metadata_collection(self) -> list[CiMetadata]:
-        """
-        Gets the collection of all CI metadata.
+        """Gets the collection of all CI metadata.
         """
         returned_ci_metadata = self.ci_collection.order_by(
             "ci_version",
@@ -141,8 +136,7 @@ class CiFirebaseRepository:
         return ci_metadata_list
 
     def get_ci_metadata_with_id(self, guid: str) -> CiMetadata | None:
-        """
-        Gets CI metadata using guid
+        """Gets CI metadata using guid
 
         Parameters:
         guid (str): The guid of the CI metadata being collected.
@@ -156,14 +150,15 @@ class CiFirebaseRepository:
         return ci_metadata
 
     def get_ci_metadata_collection_with_survey_id(self, survey_id: str) -> list[CiMetadata]:
-        """
-        Gets the collection of CI metadata using survey_id
+        """Gets the collection of CI metadata using survey_id
 
         Parameters:
         survey_id (str): The survey id of the CI metadata being collected.
         """
         returned_ci_metadata = (
-            self.ci_collection.where("survey_id", "==", survey_id).order_by("ci_version", direction=Query.DESCENDING).stream()
+            self.ci_collection.where("survey_id", "==", survey_id)
+            .order_by("ci_version", direction=Query.DESCENDING)
+            .stream()
         )
 
         ci_metadata_list: list[CiMetadata] = []
@@ -174,8 +169,7 @@ class CiFirebaseRepository:
         return ci_metadata_list
 
     def perform_delete_ci_transaction(self, ci_metadata_collection: list[CiMetadata]) -> None:
-        """
-        A transactional function that wrap CI deletion and schema deletion processes
+        """A transactional function that wrap CI deletion and schema deletion processes
 
         Parameters:
         ci_metadata_collection (list[CiMetadata]): The CI metadata collection being deleted.
@@ -197,8 +191,7 @@ class CiFirebaseRepository:
             delete_ci_transaction_run(self.client.transaction(), ci_metadata)
 
     def delete_ci_metadata_collection_in_transaction(self, transaction: Transaction, ci_metadata: CiMetadata):
-        """
-        For internal use only - deletes document from remote firestore database
+        """For internal use only - deletes document from remote firestore database
 
         Parameters:
         transaction (Transaction): The transaction object.

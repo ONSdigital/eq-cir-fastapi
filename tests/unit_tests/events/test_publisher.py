@@ -74,7 +74,9 @@ class TestPublisher:
         publisher = Publisher()
         result = publisher._verify_topic_exists()
 
-        mocked_publisher_client.return_value.get_topic.assert_called_once_with(request={"topic": "project_id/topics/topic_id"})
+        mocked_publisher_client.return_value.get_topic.assert_called_once_with(
+            request={"topic": "project_id/topics/topic_id"}
+        )
         assert result is None
 
     def test_topic_exists_failure(self, mocked_publisher_client):

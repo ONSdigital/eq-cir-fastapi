@@ -32,8 +32,7 @@ optional_keys = [
 
 
 def load_ci_from_path(path_to_json):
-    """
-    This function loads CIs from the specified path and return ci_list and json file names
+    """This function loads CIs from the specified path and return ci_list and json file names
     """
     ci_list = []
     json_files = [pos_json for pos_json in os.listdir(path_to_json)]
@@ -45,8 +44,7 @@ def load_ci_from_path(path_to_json):
 
 
 def publish_ci_file(ci, file_name, log_file, total_errors_found):
-    """
-    This function publishes ci and upon publish following things will be logged for each collection instrument
+    """This function publishes ci and upon publish following things will be logged for each collection instrument
     to be published:
        1. File name.
        2. Response recieved.
@@ -78,8 +76,7 @@ def publish_ci_file(ci, file_name, log_file, total_errors_found):
 
 
 def process_ci_files(ci_list, json_files):
-    """
-    This function creates a log file which is used in storing responses in `publish_ci_file` function and provide
+    """This function creates a log file which is used in storing responses in `publish_ci_file` function and provide
     consolidated count of json files to be published and errors found is provdied at the end of the log file
     """
     total_errors_found = 0

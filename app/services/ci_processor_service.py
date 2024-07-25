@@ -1,6 +1,6 @@
-import app.exception.exceptions as exceptions
 from app.config import logging, settings
 from app.events.publisher import publisher
+from app.exception import exceptions
 from app.models.events import PostCIEvent
 from app.models.requests import PostCiSchemaV1Data
 from app.models.responses import CiMetadata
@@ -23,13 +23,11 @@ class CiProcessorService:
         self,
         post_data: PostCiSchemaV1Data,
     ) -> CiMetadata:
-        """
-        Processes incoming ci
+        """Processes incoming ci
 
         Parameters:
         post_data (PostCiSchemaV1Data): incoming CI metadata
         """
-
         # Generate new uid
         ci_id = CreateGuidService.create_guid()
 
@@ -86,8 +84,7 @@ class CiProcessorService:
         ci: dict,
         stored_ci_filename: str,
     ):
-        """
-        Process the new CI by calling a transactional function that wrap the procedures
+        """Process the new CI by calling a transactional function that wrap the procedures
         Commit if the function is sucessful, rolling back otherwise.
 
         Parameters:
@@ -98,7 +95,9 @@ class CiProcessorService:
         """
         try:
             logger.info("Beginning CI transaction...")
-            self.ci_firebase_repository.perform_new_ci_transaction(ci_id, next_version_ci_metadata, ci, stored_ci_filename)
+            self.ci_firebase_repository.perform_new_ci_transaction(
+                ci_id, next_version_ci_metadata, ci, stored_ci_filename
+            )
 
             logger.info("CI transaction committed successfully.")
             return next_version_ci_metadata
@@ -121,8 +120,7 @@ class CiProcessorService:
         title: str,
         description: str,
     ) -> CiMetadata:
-        """
-        Builds the next version of CI metadata.
+        """Builds the next version of CI metadata.
 
         Parameters:
         ci_id (str): the guid of the metadata.
@@ -156,13 +154,11 @@ class CiProcessorService:
         return next_version_ci_metadata
 
     def calculate_next_ci_version(self, survey_id: str, classifier_type, classifier_value, language: str) -> int:
-        """
-        Calculates the next schema version for the metadata being built.
+        """Calculates the next schema version for the metadata being built.
 
         Parameters:
         survey_id (str): the survey id of the schema.
         """
-
         current_version_metadata = self.ci_firebase_repository.get_latest_ci_metadata(
             survey_id, classifier_type, classifier_value, language
         )
@@ -170,8 +166,7 @@ class CiProcessorService:
         return DocumentVersionService.calculate_ci_version(current_version_metadata)
 
     def try_publish_ci_metadata_to_topic(self, post_ci_event: PostCIEvent) -> None:
-        """
-        Publish CI metadata to pubsub topic
+        """Publish CI metadata to pubsub topic
 
         Parameters:
         next_version_ci_metadata (CiMetadata): the CI metadata of the newly published CI
@@ -186,9 +181,10 @@ class CiProcessorService:
             logger.error("Error publishing CI metadata to topic.")
             raise exceptions.GlobalException
 
-    def get_ci_metadata_collection(self, survey_id: str, classifier_type, classifier_value, language: str) -> list[CiMetadata]:
-        """
-        Get a list of CI metadata
+    def get_ci_metadata_collection(
+        self, survey_id: str, classifier_type, classifier_value, language: str
+    ) -> list[CiMetadata]:
+        """Get a list of CI metadata
 
         Parameters:
         survey_id (str): the survey id of the schemas.
@@ -208,8 +204,7 @@ class CiProcessorService:
         return ci_metadata_collection
 
     def get_all_ci_metadata_collection(self) -> list[CiMetadata]:
-        """
-        Get a list of all CI metadata
+        """Get a list of all CI metadata
 
         Returns:
         List of CiMetadata: the list CI metadata of all CI
@@ -223,8 +218,7 @@ class CiProcessorService:
     def get_latest_ci_metadata(
         self, survey_id: str, classifier_type: str, classifier_value: str, language: str
     ) -> CiMetadata | None:
-        """
-        Get the latest CI metadata
+        """Get the latest CI metadata
 
         Parameters:
         survey_id (str): the survey id of the schemas.
@@ -243,8 +237,7 @@ class CiProcessorService:
         return latest_ci_metadata
 
     def get_ci_metadata_with_id(self, guid: str) -> CiMetadata | None:
-        """
-        Get a CI metadata with id
+        """Get a CI metadata with id
 
         Parameters:
         query_params (GetCiSchemaV2Params): incoming CI metadata query parameters
@@ -259,8 +252,7 @@ class CiProcessorService:
         return ci_metadata
 
     def get_ci_metadata_collection_with_survey_id(self, survey_id: str) -> list[CiMetadata]:
-        """
-        Get CI metadata collection with survey_id
+        """Get CI metadata collection with survey_id
 
         Parameters:
         survey_id (str): the survey id of the schemas.
@@ -275,8 +267,7 @@ class CiProcessorService:
         return ci_metadata_collection
 
     def delete_ci_in_transaction(self, ci_metadata_collection: list[CiMetadata]) -> None:
-        """
-        Delete CI by calling a transactional function that wrap the procedures
+        """Delete CI by calling a transactional function that wrap the procedures
 
         Parameters:
         ci_metadata_collection (list[CiMetadata]): The CI metadata being deleted.

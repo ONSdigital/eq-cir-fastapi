@@ -6,8 +6,7 @@ class CiSchemaLocationService:
     def get_ci_schema_location(
         ci_metadata: CiMetadata,
     ) -> str:
-        """
-        Generate the ci schema location for the metadata being processed.
+        """Generate the ci schema location for the metadata being processed.
 
         Parameters:
         ci_metadata (CiMetadata): the metadata being processed.

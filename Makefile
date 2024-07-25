@@ -18,7 +18,7 @@ unit-tests:
 	export CONF=unit && \
 	export CI_STORAGE_BUCKET_NAME='the-ci-schema-bucket' && \
 	export PROJECT_ID='$(PROJECT_ID)' && \
-	python -m pytest --cov=app --cov-fail-under=90 --cov-report term-missing --cov-config=.coveragerc_unit -vv ./tests/unit_tests/ -W ignore::DeprecationWarning
+	poetry run pytest --cov=app --cov-fail-under=90 --cov-report term-missing --cov-config=.coveragerc_unit -vv ./tests/unit_tests/ -W ignore::DeprecationWarning
 
 integration-tests-sandbox:
 	export PROJECT_ID='$(PROJECT_ID)' && \
@@ -29,7 +29,7 @@ integration-tests-sandbox:
 	export URL_SCHEME='https' && \
 	export OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID} && \
 	export PYTHONPATH=app && \
-	python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
+	poetry run pytest tests/integration_tests -vv -W ignore::DeprecationWarning
 
 #For use only by automated cloudbuild, is not intended to work locally.
 integration-tests-cloudbuild:
@@ -49,21 +49,60 @@ generate-spec:
 	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
 	python -m scripts.generate_openapi
 
-lint:
-	python -m black --line-length 127 .
-	python -m flake8 --max-line-length=127 --exclude=./scripts,env,.venv
-	python -m isort . --profile black --skip env --skip .venv
-
-lint-check:
-	python -m black . --check --line-length 127
-	python -m flake8 --max-line-length=127 --exclude=./scripts,env,.venv
-	python -m isort . --check-only --profile black --skip env --skip .venv
-
-lint-fix:
-	black . --line-length 127
-
-audit:
-	python -m pip_audit
-
 publish-multiple-ci:
 	python -m scripts.publish_multiple_ci
+
+
+
+.PHONY: all
+all: ## Show the available make targets.
+	@echo "Usage: make <target>"
+	@echo ""
+	@echo "Targets:"
+	@fgrep "##" Makefile | fgrep -v fgrep
+
+.PHONY: clean
+clean: ## Clean the temporary files.
+	rm -rf .pytest_cache
+	rm -rf .mypy_cache
+	rm -rf .coverage
+	rm -rf .ruff_cache
+	rm -rf megalinter-reports
+
+.PHONY: format
+format:  ## Format the code.
+	poetry run black .
+	poetry run ruff check . --fix
+
+.PHONY: poetry-lint
+poetry-lint:  ## Run all linters (black/ruff/pylint/mypy).
+	poetry run black --check .
+	poetry run ruff check .
+	make mypy
+
+.PHONY: test
+test:  ## Run the tests and check coverage.
+    export CONF=unit && \
+    export CI_STORAGE_BUCKET_NAME='the-ci-schema-bucket' && \
+    export PROJECT_ID='$(PROJECT_ID)' && \
+	poetry run pytest --cov=app --cov-fail-under=90 --cov-report term-missing --cov-config=.coveragerc_unit -vv ./tests/unit_tests/ -W ignore::DeprecationWarning
+
+
+.PHONY: mypy
+mypy:  ## Run mypy.
+	poetry run mypy app
+
+.PHONY: install
+install:  ## Install the dependencies excluding dev.
+	poetry install --only main --no-root
+
+.PHONY: install-dev
+install-dev:  ## Install the dependencies including dev.
+	poetry install --no-root
+
+.PHONY: megalint
+megalint:  ## Run the mega-linter.
+	docker run --platform linux/amd64 --rm \
+		-v /var/run/docker.sock:/var/run/docker.sock:rw \
+		-v $(shell pwd):/tmp/lint:rw \
+		oxsecurity/megalinter:v7

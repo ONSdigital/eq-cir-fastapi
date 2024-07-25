@@ -24,7 +24,6 @@ class Subscriber:
 
     def create_subscription(self) -> None:
         """Creates a subscription using `self.subscription_path`"""
-
         subscription = self.client.create_subscription(
             request={
                 "name": self.subscription_path,
@@ -64,7 +63,9 @@ class Subscriber:
 
             # Acknowledges the received messages so they will not be sent again.
             self.client.acknowledge(request={"subscription": self.subscription_path, "ack_ids": ack_ids})
-            logger.info(f"Received and acknowledged {len(response.received_messages)} messages from {self.subscription_path}.")
+            logger.info(
+                f"Received and acknowledged {len(response.received_messages)} messages from {self.subscription_path}."
+            )
 
         else:
             logger.debug("No messages received")

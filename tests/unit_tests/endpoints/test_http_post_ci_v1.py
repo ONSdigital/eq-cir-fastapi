@@ -33,8 +33,7 @@ CONTENT_TYPE = "application/json"
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_latest_ci_metadata")
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.perform_new_ci_transaction")
 class TestHttpPostCiV1:
-    """
-    Tests for the `http_post_ci_v1` endpoint
+    """Tests for the `http_post_ci_v1` endpoint
     """
 
     url = "/v1/publish_collection_instrument"
@@ -46,8 +45,7 @@ class TestHttpPostCiV1:
         mocked_publish_message,
         mocked_create_guid,
     ):
-        """
-        Endpoint should return `HTTP_200_OK` and serialized ci metadata as part of the response if new ci is created
+        """Endpoint should return `HTTP_200_OK` and serialized ci metadata as part of the response if new ci is created
         successfully. Assert mocked functions are called with the correct arguments.
         """
         # Update mocked function to return `None` indicating no previous version of metadata is found
@@ -84,8 +82,7 @@ class TestHttpPostCiV1:
         mocked_publish_message,
         mocked_create_guid,
     ):
-        """
-        Endpoint should return `HTTP_200_OK` and serialized ci metadata with updated version
+        """Endpoint should return `HTTP_200_OK` and serialized ci metadata with updated version
         as part of the response if new version of ci is created.
         Assert mocked functions are called with the correct arguments.
         """
@@ -123,8 +120,7 @@ class TestHttpPostCiV1:
         mocked_publish_message,
         mocked_create_guid,
     ):
-        """
-        Endpoint should return `HTTP_400_BAD_REQUEST` if empty or incomplete post data is posted
+        """Endpoint should return `HTTP_400_BAD_REQUEST` if empty or incomplete post data is posted
         as part of the request
         """
         # Make request to base url without any post data
@@ -151,8 +147,7 @@ class TestHttpPostCiV1:
         mocked_create_guid,
         input_param,
     ):
-        """
-        Endpoint should return `HTTP_400_BAD_REQUEST` if any required field in post data is `None`
+        """Endpoint should return `HTTP_400_BAD_REQUEST` if any required field in post data is `None`
         """
         # update `post_data` to contain `None` value for `input_param` field
         edited_mock_post_ci_schema = mock_post_ci_schema.model_copy()
@@ -174,8 +169,7 @@ class TestHttpPostCiV1:
         mocked_publish_message,
         mocked_create_guid,
     ):
-        """
-        Endpoint should return `HTTP_200_OK` and serialized ci metadata as part of the response if new ci is created
+        """Endpoint should return `HTTP_200_OK` and serialized ci metadata as part of the response if new ci is created
         successfully. Assert mocked functions are called with the correct arguments.
         """
         # Update mocked function to return `None` indicating no previous version of metadata is found
@@ -209,8 +203,7 @@ class TestHttpPostCiV1:
         mocked_create_guid,
         input_param,
     ):
-        """
-        Endpoint should return `HTTP_400_BAD_REQUEST` if any required field in post data is an
+        """Endpoint should return `HTTP_400_BAD_REQUEST` if any required field in post data is an
         empty string
         """
         # update `post_data` to contain empty string value for `input_param` field
@@ -244,8 +237,7 @@ class TestHttpPostCiV1:
         mocked_create_guid,
         input_param,
     ):
-        """
-        Endpoint should return `HTTP_400_BAD_REQUEST` if any required field in post data is
+        """Endpoint should return `HTTP_400_BAD_REQUEST` if any required field in post data is
         whitespace
         """
         # update `post_data` to contain whitespace value for `input_param` field
@@ -268,8 +260,7 @@ class TestHttpPostCiV1:
         mocked_publish_message,
         mocked_create_guid,
     ):
-        """
-        Endpoint should return `HTTP_500_INTERNAL_SERVER_ERROR` as part of the response if ci metadata is created
+        """Endpoint should return `HTTP_500_INTERNAL_SERVER_ERROR` as part of the response if ci metadata is created
         but not processed due to an error in transaction
         """
         # Update mocked function to return `None` indicating no previous version of metadata is found
@@ -295,8 +286,7 @@ class TestHttpPostCiV1:
         mocked_publish_message,
         mocked_create_guid,
     ):
-        """
-        Endpoint should return `HTTP_500_INTERNAL_SERVER_ERROR` as part of the response if ci metadata is created
+        """Endpoint should return `HTTP_500_INTERNAL_SERVER_ERROR` as part of the response if ci metadata is created
         but not processed due to an error in publish message
         """
         # Update mocked function to return `None` indicating no previous version of metadata is found

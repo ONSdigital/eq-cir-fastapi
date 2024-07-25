@@ -19,7 +19,6 @@ class Publisher:
 
     def publish_message(self, event_msg: PostCIEvent) -> None:
         """Publishes an event message to a Pub/Sub topic."""
-
         # Verify if the topic exists - if not, raise an exception
         self._verify_topic_exists()
 
@@ -39,8 +38,7 @@ class Publisher:
             logger.debug(e)
 
     def _verify_topic_exists(self) -> None:
-        """
-        If the topic does not exist raises 500 global error.
+        """If the topic does not exist raises 500 global error.
         """
         try:
             self.publisher.get_topic(request={"topic": self.topic_path})
