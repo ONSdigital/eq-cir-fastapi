@@ -16,6 +16,14 @@ steps:
     args: [ "install", "Poetry"]
 
   - name: python:3.11
+    id: "Poetry install"
+    entrypoint: sh
+    args:
+      - "-c"
+      - |
+      - make install-dev
+
+  - name: python:3.11
     id: "Run unit tests"
     entrypoint: sh
     args:
