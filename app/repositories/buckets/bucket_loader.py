@@ -9,8 +9,7 @@ class BucketLoader:
         self.ci_schema_bucket = self._initialise_bucket(settings.CI_STORAGE_BUCKET_NAME)
 
     def get_ci_schema_bucket(self) -> storage.Bucket:
-        """Get the ci schema bucket from Google cloud
-        """
+        """Get the ci schema bucket from Google cloud"""
         return self.ci_schema_bucket
 
     def _initialise_bucket(self, bucket_name) -> storage.Bucket:

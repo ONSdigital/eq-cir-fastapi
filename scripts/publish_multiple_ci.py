@@ -32,8 +32,7 @@ optional_keys = [
 
 
 def load_ci_from_path(path_to_json):
-    """This function loads CIs from the specified path and return ci_list and json file names
-    """
+    """This function loads CIs from the specified path and return ci_list and json file names"""
     ci_list = []
     json_files = [pos_json for pos_json in os.listdir(path_to_json)]
     for json_file in json_files:

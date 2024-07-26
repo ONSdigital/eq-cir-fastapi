@@ -33,8 +33,7 @@ CONTENT_TYPE = "application/json"
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_latest_ci_metadata")
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.perform_new_ci_transaction")
 class TestHttpPostCiV1:
-    """Tests for the `http_post_ci_v1` endpoint
-    """
+    """Tests for the `http_post_ci_v1` endpoint"""
 
     url = "/v1/publish_collection_instrument"
 
@@ -147,8 +146,7 @@ class TestHttpPostCiV1:
         mocked_create_guid,
         input_param,
     ):
-        """Endpoint should return `HTTP_400_BAD_REQUEST` if any required field in post data is `None`
-        """
+        """Endpoint should return `HTTP_400_BAD_REQUEST` if any required field in post data is `None`"""
         # update `post_data` to contain `None` value for `input_param` field
         edited_mock_post_ci_schema = mock_post_ci_schema.model_copy()
         setattr(edited_mock_post_ci_schema, input_param, None)

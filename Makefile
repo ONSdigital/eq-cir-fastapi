@@ -53,7 +53,6 @@ publish-multiple-ci:
 	python -m scripts.publish_multiple_ci
 
 
-
 .PHONY: all
 all: ## Show the available make targets.
 	@echo "Usage: make <target>"

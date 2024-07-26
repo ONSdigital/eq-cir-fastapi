@@ -31,8 +31,7 @@ class TestPostCiSchema:
         mocked_publish_message,
         mock_firestore_collection,
     ):
-        """`post_ci_schema` should create a new ci metadata record on firestore if provided with valid data
-        """
+        """`post_ci_schema` should create a new ci metadata record on firestore if provided with valid data"""
         # Mocked `get_latest_ci_metadata` should return None for this test, indicating no previous version of metadata is found
         mocked_get_latest_ci_metadata.return_value = None
         # Call the post ci endpoint

@@ -38,8 +38,7 @@ class Publisher:
             logger.debug(e)
 
     def _verify_topic_exists(self) -> None:
-        """If the topic does not exist raises 500 global error.
-        """
+        """If the topic does not exist raises 500 global error."""
         try:
             self.publisher.get_topic(request={"topic": self.topic_path})
         except Exception:

@@ -27,8 +27,7 @@ settings = Settings()
     },
 )
 async def http_get_status():
-    """GET method that returns `CIR_APPLICATION_VERSION` if the deployment is successful
-    """
+    """GET method that returns `CIR_APPLICATION_VERSION` if the deployment is successful"""
     application_version = settings.CIR_APPLICATION_VERSION
     if application_version:
         response_content = DeploymentStatus(version=settings.CIR_APPLICATION_VERSION)

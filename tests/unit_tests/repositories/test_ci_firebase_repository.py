@@ -89,8 +89,7 @@ class TestCiFirebaseRepository:
         assert latest_ci_metadata is None
 
     def test_query_latest_ci_version_id_returns_latest_id(self, mock_firestore_collection):
-        """`get_latest_ci_metadata` should return the latest ci metadata for a given survey_id, form_type, and language
-        """
+        """`get_latest_ci_metadata` should return the latest ci metadata for a given survey_id, form_type, and language"""
         firestore_client = CiFirebaseRepository()
 
         # Create multiple ci in the db
@@ -104,8 +103,7 @@ class TestCiFirebaseRepository:
         assert latest_ci_metadata.guid == mock_next_version_id
 
     def test_query_latest_ci_version_id_returns_none(self, mock_firestore_collection):
-        """`get_latest_ci_metadata` should return None if no ci metadata is found for a given query parameters
-        """
+        """`get_latest_ci_metadata` should return None if no ci metadata is found for a given query parameters"""
         firestore_client = CiFirebaseRepository()
 
         # Create multiple ci in the db
@@ -119,8 +117,7 @@ class TestCiFirebaseRepository:
         assert latest_ci_metadata is None
 
     def test_get_query_ci_metadata_with_guid_returns_ci(self, mock_firestore_collection):
-        """`get_ci_metadata_with_id` should return the ci metadata with the input `guid`
-        """
+        """`get_ci_metadata_with_id` should return the ci metadata with the input `guid`"""
         firestore_client = CiFirebaseRepository()
 
         # Create multiple ci in the db
@@ -132,8 +129,7 @@ class TestCiFirebaseRepository:
         assert ci_metadata == mock_ci_metadata
 
     def test_get_query_ci_metadata_with_guid_returns_none(self, mock_firestore_collection):
-        """`get_ci_metadata_with_id` should return None if no ci metadata is found with the input `guid`
-        """
+        """`get_ci_metadata_with_id` should return None if no ci metadata is found with the input `guid`"""
         firestore_client = CiFirebaseRepository()
 
         # Create a single ci in the db

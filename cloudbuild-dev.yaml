@@ -14,7 +14,7 @@ steps:
     args:
       - "-c"
       - |
-        make lint-check
+        make poetry-lint
 
   - name: python:3.11
     id: "Run unit tests"

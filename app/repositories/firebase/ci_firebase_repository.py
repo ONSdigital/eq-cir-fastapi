@@ -121,8 +121,7 @@ class CiFirebaseRepository:
         return ci_metadata_list
 
     def get_all_ci_metadata_collection(self) -> list[CiMetadata]:
-        """Gets the collection of all CI metadata.
-        """
+        """Gets the collection of all CI metadata."""
         returned_ci_metadata = self.ci_collection.order_by(
             "ci_version",
             direction=Query.DESCENDING,
