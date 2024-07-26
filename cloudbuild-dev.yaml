@@ -9,19 +9,10 @@ steps:
     entrypoint: pip
     args: ["install", "-r", "requirements.txt", "--user"]
 
-
   - name: python:3.11
     id: "Install Poetry"
     entrypoint: pip
     args: [ "install", "Poetry"]
-
-  - name: python:3.11
-    id: "Poetry install"
-    entrypoint: sh
-    args:
-      - "-c"
-      - |
-      - make install-dev
 
   - name: python:3.11
     id: "Run unit tests"
@@ -29,6 +20,7 @@ steps:
     args:
       - "-c"
       - |
+        source $HOME/.poetry/env
         export CI_STORAGE_BUCKET_NAME=${_CI_STORAGE_BUCKET_NAME}
         export FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}
         export PROJECT_ID=${PROJECT_ID}
