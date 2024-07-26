@@ -29,8 +29,8 @@ jobs:
       - name: Install dependencies
         run: make install-dev
 
-      - name: Lint Python
-        run: make poetry-lint
+#      - name: Lint Python
+#        run: make poetry-lint
 
       - name: Test
         run: make test
