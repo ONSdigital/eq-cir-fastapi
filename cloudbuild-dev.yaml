@@ -20,7 +20,7 @@ steps:
     args:
       - "-c"
       - |
-        source $HOME/.poetry/env
+        source /.poetry/env
         export CI_STORAGE_BUCKET_NAME=${_CI_STORAGE_BUCKET_NAME}
         export FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}
         export PROJECT_ID=${PROJECT_ID}
