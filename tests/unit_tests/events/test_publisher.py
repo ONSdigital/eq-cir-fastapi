@@ -28,7 +28,7 @@ mock_event_message = PostCIEvent(
 )
 
 
-@patch("app.events.publisher.PublisherClient")
+@patch("app.events.publisher.Publisher._init_client")
 class TestPublisher:
     def test_publish_message_success(self, mocked_publisher_client, mocker):
         mocker.patch("app.config.settings.PROJECT_ID", "project_id")
@@ -72,7 +72,7 @@ class TestPublisher:
         mocked_publisher_client.return_value.topic_path.return_value = "project_id/topics/topic_id"
 
         publisher = Publisher()
-        result = publisher._verify_topic_exists()
+        result = publisher._verify_topic_exists("project_id/topics/topic_id")
 
         mocked_publisher_client.return_value.get_topic.assert_called_once_with(
             request={"topic": "project_id/topics/topic_id"}
@@ -85,4 +85,4 @@ class TestPublisher:
         publisher = Publisher()
 
         with pytest.raises(ExceptionTopicNotFound):
-            publisher._verify_topic_exists()
+            publisher._verify_topic_exists("")
