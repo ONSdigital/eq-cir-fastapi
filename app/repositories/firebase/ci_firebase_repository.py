@@ -2,7 +2,7 @@ from firebase_admin import firestore
 from google.cloud.firestore import Query, Transaction
 
 from app.config import logging
-from app.models.responses import CiMetadata
+from app.models.responses import CiMetadata, CiStatus
 from app.repositories.buckets.ci_schema_bucket_repository import (
     CiSchemaBucketRepository,
 )
@@ -99,9 +99,11 @@ class CiFirebaseRepository:
             merge=True,
         )
 
-    def get_ci_metadata_collection(self, survey_id: str, classifier_type, classifier_value, language: str) -> list[CiMetadata]:
+    def get_ci_metadata_collection_without_status(
+        self, survey_id: str, classifier_type, classifier_value, language: str
+    ) -> list[CiMetadata]:
         """
-        Gets the collection of CI metadata with a specific survey_id, form_type, language.
+        Gets the collection of CI metadata with a specific survey_id, form_type, language, and status.
 
         Parameters:
         survey_id (str): The survey id of the CI metadata being collected.
@@ -113,6 +115,56 @@ class CiFirebaseRepository:
             .where("classifier_type", "==", classifier_type)
             .where("classifier_value", "==", classifier_value)
             .where("language", "==", language)
+            .order_by("ci_version", direction=Query.DESCENDING)
+            .stream()
+        )
+
+        ci_metadata_list: list[CiMetadata] = []
+        for ci_metadata in returned_ci_metadata:
+            metadata = CiMetadata(**ci_metadata.to_dict())
+            ci_metadata_list.append(metadata)
+
+        return ci_metadata_list
+
+    def get_ci_metadata_collection_with_status(
+        self, survey_id: str, classifier_type: str, classifier_value: str, language: str, status: str
+    ) -> list[CiMetadata]:
+        """
+        Gets the collection of CI metadata with a specific survey_id, form_type, language, and status.
+
+        Parameters:
+        survey_id (str): The survey id of the CI metadata being collected.
+        classifier_type (str): the CI classifier type.
+        classifier_type (str): the CI classifier value.
+        language (str): The language of the CI metadata being collected.
+        status (str): The status of the CI metadata being collected.
+        """
+        returned_ci_metadata = (
+            self.ci_collection.where("survey_id", "==", survey_id)
+            .where("classifier_type", "==", classifier_type)
+            .where("classifier_value", "==", classifier_value)
+            .where("language", "==", language)
+            .where("status", "==", status.upper())
+            .order_by("ci_version", direction=Query.DESCENDING)
+            .stream()
+        )
+
+        ci_metadata_list: list[CiMetadata] = []
+        for ci_metadata in returned_ci_metadata:
+            metadata = CiMetadata(**ci_metadata.to_dict())
+            ci_metadata_list.append(metadata)
+
+        return ci_metadata_list
+
+    def get_ci_metadata_collection_only_with_status(self, status: str) -> list[CiMetadata]:
+        """
+        Gets the collection of CI metadata with a specific status.
+
+        Parameters:
+        status (str): The status of the CI metadata being collected.
+        """
+        returned_ci_metadata = (
+            self.ci_collection.where("status", "==", status.upper())
             .order_by("ci_version", direction=Query.DESCENDING)
             .stream()
         )
@@ -172,6 +224,12 @@ class CiFirebaseRepository:
             ci_metadata_list.append(metadata)
 
         return ci_metadata_list
+
+    def update_ci_metadata_status_to_published_with_id(self, guid: str) -> None:
+        """
+        Updates CI status to published using guid
+        """
+        self.ci_collection.document(guid).update({"status": CiStatus.PUBLISHED.value})
 
     def perform_delete_ci_transaction(self, ci_metadata_collection: list[CiMetadata]) -> None:
         """

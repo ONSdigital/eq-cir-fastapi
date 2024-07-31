@@ -1,10 +1,16 @@
 from dataclasses import dataclass
+from enum import Enum
 
 from fastapi import Query
 from pydantic import BaseModel, ValidationInfo, field_validator
 from pydantic.json_schema import SkipJsonSchema
 
 from app.models.classifier import Classifiers
+
+
+class Status(Enum):
+    DRAFT = "DRAFT"
+    PUBLISHED = "PUBLISHED"
 
 
 @dataclass
@@ -147,3 +153,16 @@ class PostCiSchemaV1Data(BaseModel):
         if value == "" or value.isspace():
             raise ValueError(f"{info.field_name} can't be empty or null")
         return value
+
+
+@dataclass
+class PutStatusV1Params:
+    """
+    Model for `put_status_v1` request params
+    """
+
+    guid: str = Query(
+        default=None,
+        description="The global unique ID of the CI Metadata to be updated to 'PUBLISH'.",
+        example="428ae4d1-8e7f-4a9d-8bef-05a266bf81e7",
+    )

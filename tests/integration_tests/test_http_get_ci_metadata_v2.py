@@ -81,6 +81,7 @@ class TestGetCiMetadataV2:
             "classifier_type": classifier_type,
             "classifier_value": classifier_value,
             "language": setup_payload["language"],
+            "status": setup_payload["status"],
             "survey_id": setup_payload["survey_id"],
         }
         querystring = urlencode(get_ci_metadata_v2_payload)
@@ -103,6 +104,7 @@ class TestGetCiMetadataV2:
             "classifier_type": classifier_type,
             "classifier_value": classifier_value,
             "language": setup_payload["language"],
+            "status": setup_payload["status"],
             "survey_id": setup_payload["survey_id"],
         }
         querystring = urlencode(get_ci_metadata_v2_payload)

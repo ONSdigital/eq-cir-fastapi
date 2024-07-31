@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 from fastapi import status
 
 from app.events.subscriber import Subscriber
-from app.models.responses import CiMetadata
+from app.models.responses import CiMetadata, CiStatus
 from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request
 
@@ -69,6 +69,7 @@ class TestPostCiV1:
             language=setup_payload["language"],
             published_at=check_ci_in_db_data[0]["published_at"],
             schema_version=setup_payload["schema_version"],
+            status=setup_payload["status"],
             survey_id=setup_payload["survey_id"],
             title=setup_payload["title"],
             description=setup_payload["description"],
@@ -127,6 +128,7 @@ class TestPostCiV1:
             published_at=check_ci_in_db_data[0]["published_at"],
             schema_version=setup_payload["schema_version"],
             sds_schema=setup_payload["sds_schema"],
+            status=setup_payload["status"],
             survey_id=setup_payload["survey_id"],
             title=setup_payload["title"],
             description=setup_payload["description"],
@@ -179,6 +181,7 @@ class TestPostCiV1:
             language=setup_publish_ci_return_payload["language"],
             published_at=check_ci_in_db_data[0]["published_at"],
             schema_version=setup_publish_ci_return_payload["schema_version"],
+            status=CiStatus.DRAFT.value,
             survey_id=setup_publish_ci_return_payload["survey_id"],
             title=setup_publish_ci_return_payload["title"],
             description=setup_publish_ci_return_payload["description"],

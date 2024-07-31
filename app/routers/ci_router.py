@@ -15,6 +15,8 @@ from app.models.requests import (
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
     PostCiSchemaV1Data,
+    PutStatusV1Params,
+    Status,
 )
 from app.models.responses import CiMetadata
 from app.repositories.buckets.ci_schema_bucket_repository import (
@@ -59,7 +61,7 @@ async def http_delete_ci_v1(
     if query_params.survey_id is None:
         raise exceptions.ExceptionIncorrectKeyNames
 
-    ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_with_survey_id(query_params.survey_id)
+    ci_metadata_collection = ci_processor_service.get_ci_metadata_colleciton_with_survey_id(query_params.survey_id)
 
     if not ci_metadata_collection:
         logger.error(f"delete_ci_v1: exception raised - No collection instrument found: {asdict(query_params)}")
@@ -105,7 +107,7 @@ async def http_get_ci_metadata_v1(
     if not Classifiers.has_member_key(query_params.classifier_type):
         raise exceptions.ExceptionInvalidClassifier
 
-    ci_metadata_collection = ci_processor_service.get_ci_metadata_collection(
+    ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_without_status(
         query_params.survey_id, query_params.classifier_type, query_params.classifier_value, query_params.language
     )
 
@@ -165,7 +167,7 @@ async def http_get_ci_metadata_v2(
         if not Classifiers.has_member_key(query_params.classifier_type):
             raise exceptions.ExceptionInvalidClassifier
         else:
-            ci_metadata_collection = ci_processor_service.get_ci_metadata_collection(
+            ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_without_status(
                 query_params.survey_id, query_params.classifier_type, query_params.classifier_value, query_params.language
             )
 
@@ -346,3 +348,58 @@ async def http_post_ci_schema_v1(
 
     logger.info("CI schema posted successfully")
     return ci_metadata.model_dump()
+
+
+@router.put(
+    "/v1/update_status",
+    responses={
+        200: {
+            "model": CiMetadata,
+            "description": "Successfully set CI status to PUBLISHED OR CI status already set to PUBLISHED so no change",
+        },
+        500: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_500_global_exception}},
+        },
+        404: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_404_no_ci_metadata_exception}},
+        },
+        400: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
+        },
+    },
+)
+async def http_put_status_v1(
+    query_params: PutStatusV1Params = Depends(),
+    ci_processor_service: CiProcessorService = Depends(),
+):
+    """
+    PUT method that sets the status of a CI's metadata in Firestore to 'PUBLISH'.
+    """
+    logger.info("Updating ci status via v1 endpoint")
+
+    if query_params.guid is None:
+        raise exceptions.ExceptionIncorrectKeyNames
+
+    ci_metadata = ci_processor_service.get_ci_metadata_with_id(query_params.guid)
+
+    if not ci_metadata:
+        error_message = "put_status_v1: exception raised - No collection instrument metadata found"
+        logger.error(error_message)
+        logger.debug(f"{error_message}:{query_params.guid}")
+        raise exceptions.ExceptionNoCIMetadata
+
+    if ci_metadata.status == Status.PUBLISHED.value:
+        success_message = "put_status_v1: CI status has already been changed to PUBLISHED"
+        logger.info(success_message)
+        logger.debug(f"{success_message}:{query_params.guid}")
+        return JSONResponse(status_code=status.HTTP_200_OK, content=success_message)
+
+    ci_processor_service.update_ci_status_with_id(query_params.guid)
+
+    success_message = "put_status_v1: CI status has been changed to PUBLISHED"
+    logger.info(success_message)
+    logger.debug(f"{success_message}:{query_params.guid}")
+    return JSONResponse(status_code=status.HTTP_200_OK, content=success_message)

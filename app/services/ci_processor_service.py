@@ -3,7 +3,7 @@ from app.config import logging, settings
 from app.events.publisher import publisher
 from app.models.events import PostCIEvent
 from app.models.requests import PostCiSchemaV1Data
-from app.models.responses import CiMetadata
+from app.models.responses import CiMetadata, CiStatus
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from app.services.ci_classifier_service import CiClassifierService
 from app.services.ci_schema_location_service import CiSchemaLocationService
@@ -69,6 +69,7 @@ class CiProcessorService:
             language=next_version_ci_metadata.language,
             published_at=next_version_ci_metadata.published_at,
             schema_version=next_version_ci_metadata.schema_version,
+            status=next_version_ci_metadata.status,
             sds_schema=next_version_ci_metadata.sds_schema,
             survey_id=next_version_ci_metadata.survey_id,
             title=next_version_ci_metadata.title,
@@ -149,6 +150,7 @@ class CiProcessorService:
             published_at=str(DatetimeService.get_current_date_and_time().strftime(settings.PUBLISHED_AT_FORMAT)),
             schema_version=schema_version,
             sds_schema=sds_schema,
+            status=CiStatus.DRAFT.value,
             survey_id=survey_id,
             title=title,
             description=description,
@@ -186,9 +188,11 @@ class CiProcessorService:
             logger.error("Error publishing CI metadata to topic.")
             raise exceptions.GlobalException
 
-    def get_ci_metadata_collection(self, survey_id: str, classifier_type, classifier_value, language: str) -> list[CiMetadata]:
+    def get_ci_metadata_collection_without_status(
+        self, survey_id: str, classifier_type, classifier_value, language: str
+    ) -> list[CiMetadata]:
         """
-        Get a list of CI metadata
+        Get a list of CI metadata without status
 
         Parameters:
         survey_id (str): the survey id of the schemas.
@@ -199,11 +203,51 @@ class CiProcessorService:
         Returns:
         List of CiMetadata: the list CI metadata of the requested CI
         """
-        logger.info("Retrieving CI metadata...")
+        logger.info("Retrieving CI metadata without status...")
 
-        ci_metadata_collection = self.ci_firebase_repository.get_ci_metadata_collection(
+        ci_metadata_collection = self.ci_firebase_repository.get_ci_metadata_collection_without_status(
             survey_id, classifier_type, classifier_value, language
         )
+
+        return ci_metadata_collection
+
+    def get_ci_metadata_collection_with_status(
+        self, survey_id: str, classifier_value: str, classifier_type: str, language: str, status: str
+    ) -> list[CiMetadata]:
+        """
+        Get a list of CI metadata with status
+
+        Parameters:
+        survey_id (str): the survey id of the schemas.
+        classifier_type (str): the classifier type.
+        classifier_type (str): the classifier value.
+        language (str): the language of the schemas.
+        status (str): the status of the schemas.
+
+        Returns:
+        List of CiMetadata: the list CI metadata of the requested CI
+        """
+        logger.info("Retrieving CI metadata with status...")
+
+        ci_metadata_collection = self.ci_firebase_repository.get_ci_metadata_collection_with_status(
+            survey_id, classifier_value, classifier_type, language, status
+        )
+
+        return ci_metadata_collection
+
+    def get_ci_metadata_collection_only_with_status(self, status: str) -> list[CiMetadata]:
+        """
+        Get a list of CI metadata only with status
+
+        Parameters:
+        status (str): the status of the schemas.
+
+        Returns:
+        List of CiMetadata: the list CI metadata of the requested CI
+        """
+        logger.info("Retrieving CI metadata only with status...")
+
+        ci_metadata_collection = self.ci_firebase_repository.get_ci_metadata_collection_only_with_status(status)
 
         return ci_metadata_collection
 
@@ -258,7 +302,17 @@ class CiProcessorService:
 
         return ci_metadata
 
-    def get_ci_metadata_collection_with_survey_id(self, survey_id: str) -> list[CiMetadata]:
+    def update_ci_status_with_id(self, guid: str) -> None:
+        """
+        HANDLER for UPDATE STATUS OF Collection Instrument
+
+        Parameters:
+        """
+        logger.info("Updating CI status with id...")
+
+        self.ci_firebase_repository.update_ci_metadata_status_to_published_with_id(guid)
+
+    def get_ci_metadata_colleciton_with_survey_id(self, survey_id: str) -> list[CiMetadata]:
         """
         Get CI metadata collection with survey_id
 

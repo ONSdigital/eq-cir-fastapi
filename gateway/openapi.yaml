@@ -34,6 +34,9 @@ components:
           default: ''
           title: Sds Schema
           type: string
+        status:
+          title: Status
+          type: string
         survey_id:
           title: Survey Id
           type: string
@@ -49,6 +52,7 @@ components:
       - language
       - published_at
       - schema_version
+      - status
       - survey_id
       - title
       - description
@@ -482,6 +486,63 @@ paths:
                 $ref: '#/components/schemas/ExceptionResponseModel'
           description: Internal Server Error
       summary: Http Get Ci Schema V1
+  /v1/update_status:
+    put:
+      description: PUT method that sets the status of a CI's metadata in Firestore
+        to 'PUBLISH'.
+      operationId: http_put_status_v1_v1_update_status_put
+      parameters:
+      - description: The global unique ID of the CI Metadata to be updated to 'PUBLISH'.
+        example: 428ae4d1-8e7f-4a9d-8bef-05a266bf81e7
+        in: query
+        name: guid
+        required: false
+        schema:
+          description: The global unique ID of the CI Metadata to be updated to 'PUBLISH'.
+          title: Guid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CiMetadata'
+          description: Successfully set CI status to PUBLISHED OR CI status already
+            set to PUBLISHED so no change
+        '400':
+          content:
+            application/json:
+              example:
+                message: Invalid search parameters provided
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              example:
+                message: No schema metadata to update
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Not Found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+        '500':
+          content:
+            application/json:
+              example:
+                message: Unable to process request
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+      summary: Http Put Status V1
   /v2/ci_metadata:
     get:
       description: 'GET method that returns any metadata objects from Firestore that

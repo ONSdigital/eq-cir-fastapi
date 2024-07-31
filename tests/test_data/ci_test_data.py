@@ -3,7 +3,7 @@ import uuid
 from app.config import Settings
 from app.models.classifier import Classifiers
 from app.models.requests import PostCiSchemaV1Data
-from app.models.responses import CiMetadata
+from app.models.responses import CiMetadata, CiStatus
 
 settings = Settings()
 
@@ -17,6 +17,7 @@ mock_next_version_id = str(uuid.uuid4())
 mock_language = "test_language"
 mock_schema_version = "test_schema_version"
 mock_sds_schema = ""
+mock_status = "DRAFT"
 mock_survey_id = "test_survey_id"
 mock_title = "test_title"
 mock_description = "test_description"
@@ -76,6 +77,7 @@ mock_ci_metadata = CiMetadata(
     published_at=mock_published_at,
     schema_version=mock_schema_version,
     sds_schema=mock_sds_schema,
+    status=CiStatus.DRAFT.value,
     survey_id=mock_survey_id,
     title=mock_title,
     description=mock_description,
@@ -106,6 +108,7 @@ mock_next_version_ci_metadata = CiMetadata(
     published_at=mock_published_at,
     schema_version=mock_schema_version,
     sds_schema=mock_sds_schema,
+    status=CiStatus.DRAFT.value,
     survey_id=mock_survey_id,
     title=mock_title,
     description=mock_description,
@@ -122,6 +125,7 @@ mock_ci_metadata_list = [
         published_at=mock_published_at,
         schema_version=mock_schema_version,
         sds_schema=mock_sds_schema,
+        status=CiStatus.DRAFT.value,
         survey_id=mock_survey_id,
         title="test_1",
         description=mock_description,
@@ -136,6 +140,7 @@ mock_ci_metadata_list = [
         published_at=mock_published_at,
         schema_version=mock_schema_version,
         sds_schema=mock_sds_schema,
+        status=CiStatus.DRAFT.value,
         survey_id=mock_survey_id,
         title="test_2",
         description=mock_description,
@@ -152,6 +157,7 @@ mock_ci_published_metadata = CiMetadata(
     published_at=mock_published_at,
     schema_version=mock_schema_version,
     sds_schema=mock_sds_schema,
+    status=CiStatus.PUBLISHED.value,
     survey_id=mock_survey_id,
     title=mock_title,
     description=mock_description,
