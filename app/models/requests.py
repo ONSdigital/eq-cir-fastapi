@@ -125,10 +125,10 @@ class PostCiSchemaV1Data(BaseModel):
     survey_id: str
     title: str
     schema_version: str
-    description: str
     # Optional fields (classifiers)
     form_type: str | SkipJsonSchema[None] = None
     # Optional fields (others)
+    description: str | SkipJsonSchema[None] = ""
     legal_basis: str | SkipJsonSchema[None] = ""
     metadata: list | SkipJsonSchema[None] = None
     mime_type: str | SkipJsonSchema[None] = ""
