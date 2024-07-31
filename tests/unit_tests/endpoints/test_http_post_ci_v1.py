@@ -13,12 +13,14 @@ from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepositor
 from app.services.ci_schema_location_service import CiSchemaLocationService
 from tests.test_data.ci_test_data import (
     mock_ci_metadata,
+    mock_ci_metadata_without_description,
     mock_classifier_type,
     mock_classifier_value,
     mock_id,
     mock_next_version_ci_metadata,
     mock_next_version_id,
     mock_post_ci_schema,
+    mock_post_ci_schema_without_description,
 )
 
 client = TestClient(app)
@@ -76,6 +78,44 @@ class TestHttpPostCiV1:
             CiSchemaLocationService.get_ci_schema_location(mock_ci_metadata),
         )
         Publisher.publish_message.assert_called_once_with(PostCIEvent(**mock_ci_metadata.model_dump()))
+
+    def test_endpoint_returns_200_if_ci_created_successfully_without_description(
+        self,
+        mocked_perform_new_ci_transaction,
+        mocked_get_latest_ci_metadata,
+        mocked_publish_message,
+        mocked_create_guid,
+    ):
+        """
+        Endpoint should return `HTTP_200_OK` and serialized ci metadata as part of the response if new ci is created
+        successfully. Assert mocked functions are called with the correct arguments.
+        """
+        # Update mocked function to return `None` indicating no previous version of metadata is found
+        mocked_get_latest_ci_metadata.return_value = None
+        # Update mocked function to return a valid guid
+        mocked_create_guid.return_value = mock_id
+
+        response = client.post(
+            self.url,
+            headers={"ContentType": CONTENT_TYPE},
+            json=mock_post_ci_schema_without_description.model_dump(),
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json() == mock_ci_metadata_without_description.model_dump()
+        CiFirebaseRepository.get_latest_ci_metadata.assert_called_once_with(
+            mock_post_ci_schema_without_description.survey_id,
+            mock_classifier_type,
+            mock_classifier_value,
+            mock_post_ci_schema_without_description.language,
+        )
+        CiFirebaseRepository.perform_new_ci_transaction.assert_called_once_with(
+            mock_id,
+            mock_ci_metadata_without_description,
+            mock_post_ci_schema_without_description.model_dump(),
+            CiSchemaLocationService.get_ci_schema_location(mock_ci_metadata_without_description),
+        )
+        Publisher.publish_message.assert_called_once_with(PostCIEvent(**mock_ci_metadata_without_description.model_dump()))
 
     def test_endpoint_returns_200_if_ci_next_version_created_successfully(
         self,

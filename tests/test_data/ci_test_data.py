@@ -33,6 +33,16 @@ mock_post_ci_schema = PostCiSchemaV1Data(
     description=mock_description,
 )
 
+mock_post_ci_schema_without_description = PostCiSchemaV1Data(
+    survey_id=mock_survey_id,
+    language=mock_language,
+    form_type=mock_classifier_value,
+    title=mock_title,
+    schema_version=mock_schema_version,
+    data_version=mock_data_version,
+    sds_schema=mock_sds_schema,
+)
+
 mock_post_ci_schema_without_sds_schema = PostCiSchemaV1Data(
     survey_id=mock_survey_id,
     classifier_type=mock_classifier_type,
@@ -69,6 +79,21 @@ mock_ci_metadata = CiMetadata(
     survey_id=mock_survey_id,
     title=mock_title,
     description=mock_description,
+)
+
+mock_ci_metadata_without_description = CiMetadata(
+    ci_version=1,
+    data_version=mock_data_version,
+    classifier_type=mock_classifier_type,
+    classifier_value=mock_classifier_value,
+    guid=mock_id,
+    language=mock_language,
+    published_at=mock_published_at,
+    schema_version=mock_schema_version,
+    sds_schema=mock_sds_schema,
+    survey_id=mock_survey_id,
+    title=mock_title,
+    description="",
 )
 
 mock_next_version_ci_metadata = CiMetadata(
