@@ -20,16 +20,14 @@ class TestPostCiV1:
     # acknowledges the messages that are published to a topic
 
     def teardown_method(self):
-        """
-        This function deletes the test CI with survey_id:3456 at the end of each integration test to ensure it
+        """This function deletes the test CI with survey_id:3456 at the end of each integration test to ensure it
         is not reflected in the firestore and schemas.
         """
         querystring = urlencode({"survey_id": 3456})
         make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
 
     def test_can_publish_valid_ci(self, setup_payload):
-        """
-        What am I testing:
+        """What am I testing:
         AC-1.1 - The ability to submit a CI (well-formed) to the API endpoint,
         and the correct response is returned with the version.
         AC-1.3 - When a CI is published in the response the datetime
@@ -82,8 +80,7 @@ class TestPostCiV1:
         assert expected_ci.model_dump() in decoded_received_messages
 
     def test_can_publish_valid_ci_with_sds_schema(self, setup_payload):
-        """
-        What am I testing:
+        """What am I testing:
         AC-1.1 - The ability to submit a CI (well-formed) which has a sds_schema to the API endpoint,
         and the correct response is returned with the version.
         AC-1.3 - When a CI is published in the response the datetime
@@ -143,8 +140,7 @@ class TestPostCiV1:
         self,
         setup_publish_ci_return_payload,
     ):
-        """
-        What am I testing:
+        """What am I testing:
         Where the same CI is submitted(survey_id),
         then a new version is returned based on the survey_id
         """
@@ -196,9 +192,8 @@ class TestPostCiV1:
         self,
         setup_payload,
     ):
-        """
-        What am I testing:
-            If a metadata field is missing <survey_id>, then the correct response is returned.
+        """What am I testing:
+        If a metadata field is missing <survey_id>, then the correct response is returned.
         """
         payload = setup_payload
         payload["survey_id"] = " "
@@ -214,8 +209,7 @@ class TestPostCiV1:
         }
 
     def test_cannot_publish_ci_missing_language(self, setup_payload):
-        """
-        What am I testing:
+        """What am I testing:
         AC-3.2	If a metadata field is missing <language>, then the correct response is returned.
         """
         payload = setup_payload
@@ -232,8 +226,7 @@ class TestPostCiV1:
         }
 
     def test_cannot_publish_ci_missing_classifier_type(self, setup_payload):
-        """
-        What am I testing:
+        """What am I testing:
         AC-3.3	If a metadata field is missing a classifier, then the correct response is returned.
         """
         payload = setup_payload
@@ -252,8 +245,7 @@ class TestPostCiV1:
         }
 
     def test_cannot_publish_ci_missing_title(self, setup_payload):
-        """
-        What am I testing:
+        """What am I testing:
         AC-3.4	If a metadata field is missing <title>, then the correct response is returned.
         """
         payload = setup_payload
@@ -270,8 +262,7 @@ class TestPostCiV1:
         }
 
     def test_cannot_publish_ci_missing_schema_version(self, setup_payload):
-        """
-        What am I testing:
+        """What am I testing:
         AC-3.5	If a metadata field is missing <schema_version>, then the correct response is returned.
         """
         payload = setup_payload
@@ -288,8 +279,7 @@ class TestPostCiV1:
         }
 
     def test_cannot_publish_ci_missing_data_version(self, setup_payload):
-        """
-        What am I testing:
+        """What am I testing:
         AC-3.6	If a metadata field is missing <data_version>, then the correct response is returned.
         """
         payload = setup_payload
@@ -306,8 +296,7 @@ class TestPostCiV1:
         }
 
     def test_publish_ci_returns_unauthorized_request(self, setup_payload):
-        """
-        What am I testing:
+        """What am I testing:
         http_post_ci_metadata_v1 should return a 401 unauthorized error if the endpoint is
         requested with an unauthorized token.
         """

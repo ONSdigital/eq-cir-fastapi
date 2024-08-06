@@ -26,8 +26,7 @@ class TestCiMetadata:
     """Testsfor the `CiMetadata` response model"""
 
     def test_model_dump_includes_sds_schema_if_filled(self):
-        """
-        Overidden `model_dump` method should return a dictionary including `sds_schema` field as a
+        """Overidden `model_dump` method should return a dictionary including `sds_schema` field as a
         key/value pair if model is initiatised with this field as a valid string
         """
         ci_metadata = CiMetadata(
@@ -51,8 +50,7 @@ class TestCiMetadata:
         assert model_dict["sds_schema"] == mock_sds_schema
 
     def test_model_dump_excludes_sds_schema_if_not_filled(self):
-        """
-        Overidden `model_dump` method should return a dictionary excluding `sds_schema` field as a
+        """Overidden `model_dump` method should return a dictionary excluding `sds_schema` field as a
         key/value pair if model is initiatised without this field
         """
         ci_metadata = CiMetadata(
@@ -74,8 +72,7 @@ class TestCiMetadata:
         assert "sds_schema" not in model_dict.keys()
 
     def test_model_dump_excludes_additional_fields_if_required(self):
-        """
-        Overidden `model_dump` method should return a dictionary excluding `sds_schema` field as a
+        """Overidden `model_dump` method should return a dictionary excluding `sds_schema` field as a
         key/value pair if model is initiatised without this field. It should also be able to
         exclude additional fields if called with the `exclude` kwarg.
         """

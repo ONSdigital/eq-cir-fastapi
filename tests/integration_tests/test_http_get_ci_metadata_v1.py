@@ -15,8 +15,7 @@ class TestGetCiMetadataV1:
     subscriber = Subscriber()
 
     def teardown_method(self):
-        """
-        This function deletes the test CI with survey_id:3456 at the end of each integration test to ensure it
+        """This function deletes the test CI with survey_id:3456 at the end of each integration test to ensure it
         is not reflected in the firestore and schemas.
         """
         # Need to pull and acknowledge messages in any test where post_ci_v1 is called so the subscription doesn't get clogged
@@ -25,8 +24,7 @@ class TestGetCiMetadataV1:
         make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
 
     def test_post_3_ci_with_same_metadata_query_ci_returns_3(self, setup_payload):
-        """
-        What am I testing:
+        """What am I testing:
         http_get_ci_metadata_v1 should return three ci_versions if the same ci is posted thrice.
         """
         # post 3 ci with the same data
@@ -55,8 +53,7 @@ class TestGetCiMetadataV1:
         assert query_ci_response_data[0]["ci_version"] == 3
 
     def test_post_ci_with_different_language_only_returns_1(self, setup_payload):
-        """
-        What am I testing:
+        """What am I testing:
         http_get_ci_metadata_v1 should return appropriate ci if language is different
         """
         # post 3 ci with the same data
@@ -99,8 +96,7 @@ class TestGetCiMetadataV1:
         assert new_language_query_ci_response_data[0]["language"] == "English"
 
     def test_post_ci_with_same_metadata_query_ci_returns_with_new_keys_sds_schema_description(self, setup_payload):
-        """
-        What am I testing:
+        """What am I testing:
         http_get_ci_metadata_v1 should return ci with new keys sds_schema and description when queried.
         """
         # post 3 ci with the same data
@@ -127,8 +123,7 @@ class TestGetCiMetadataV1:
         assert query_ci_response_json[0]["description"] == setup_payload["description"]
 
     def test_metadata_query_ci_returns_404(self, setup_payload):
-        """
-        What am I testing:
+        """What am I testing:
         http_get_ci metadata_v1 should return 404 status code if ci is not found.
         """
         survey_id = setup_payload["survey_id"]
@@ -151,8 +146,7 @@ class TestGetCiMetadataV1:
         assert query_ci_response["status"] == "error"
 
     def test_metadata_query_ci_returns_400(self, setup_payload):
-        """
-        What am I testing:
+        """What am I testing:
         http_get_ci metadata_v1 should return 400 status code if incorrect args are provided.
         """
         survey_id = setup_payload["survey_id"]
@@ -175,8 +169,7 @@ class TestGetCiMetadataV1:
         assert response_json["status"] == "error"
 
     def test_metadata_query_ci_returns_unauthorized_request(self, setup_payload):
-        """
-        What am I testing:
+        """What am I testing:
         http_get_ci metadata_v1 should return a 401 unauthorized error if the endpoint is requested with an unauthorized token.
         """
         survey_id = setup_payload["survey_id"]

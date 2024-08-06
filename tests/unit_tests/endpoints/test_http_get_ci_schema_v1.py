@@ -40,8 +40,7 @@ class TestHttpGetCiSchemaV1:
     )
 
     def test_endpoint_returns_200_if_ci_schema_found(self, mocked_retrieve_ci_schema, mocked_get_latest_ci_metadata):
-        """
-        Endpoint should return `HTTP_200_OK` and ci schema as part of the response if ci schema is found.
+        """Endpoint should return `HTTP_200_OK` and ci schema as part of the response if ci schema is found.
         Assert the mocked function is called with the correct params.
         """
         # mocked function to return valid ci metadata, indicating latest version of ci metadata is found
@@ -58,8 +57,7 @@ class TestHttpGetCiSchemaV1:
         )
 
     def test_endpoint_returns_404_if_metadata_not_found(self, mocked_retrieve_ci_schema, mocked_get_latest_ci_metadata):
-        """
-        Endpoint should return `HTTP_404_NOT_FOUND` and a string as part of the response if metadata is not
+        """Endpoint should return `HTTP_404_NOT_FOUND` and a string as part of the response if metadata is not
         found
         """
         # mocked function to return valid ci metadata, indicating latest version of ci metadata is not found
@@ -71,8 +69,7 @@ class TestHttpGetCiSchemaV1:
         assert response.json()["message"] == "No CI found"
 
     def test_endpoint_returns_404_if_schema_not_found(self, mocked_retrieve_ci_schema, mocked_get_latest_ci_metadata):
-        """
-        Endpoint should return `HTTP_404_NOT_FOUND` and a string as part of the response if schema is not
+        """Endpoint should return `HTTP_404_NOT_FOUND` and a string as part of the response if schema is not
         found
         """
         # mocked function to return valid ci metadata, indicating latest version of ci metadata is found
@@ -88,8 +85,7 @@ class TestHttpGetCiSchemaV1:
     def test_endpoint_returns_400_if_query_parameters_are_not_present(
         self, mocked_retrieve_ci_schema, mocked_get_latest_ci_metadata
     ):
-        """
-        Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `form_type`,
+        """Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `form_type`,
         `language` and/or `survey_id` are not part of the querystring parameters
         """
         # Make request to base url without any query params
@@ -100,8 +96,7 @@ class TestHttpGetCiSchemaV1:
     def test_endpoint_returns_400_if_invalid_classifier_present(
         self, mocked_retrieve_ci_schema, mocked_get_latest_ci_metadata
     ):
-        """
-        Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `form_type`,
+        """Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `form_type`,
         `language` and/or `survey_id` are not part of the querystring parameters
         """
         # Make request to base url without any query params

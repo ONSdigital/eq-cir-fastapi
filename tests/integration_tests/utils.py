@@ -8,8 +8,7 @@ settings = Settings()
 
 
 def make_iap_request(method, path, **kwargs):
-    """
-    Makes a request to an application protected by Identity-Aware Proxy.
+    """Makes a request to an application protected by Identity-Aware Proxy.
 
     Args:
         method: The request method to use
@@ -22,7 +21,6 @@ def make_iap_request(method, path, **kwargs):
     Returns:
         The page body, or raises an exception if the page couldn't be retrieved.
     """
-
     # Set the default timeout, if missing
     if "timeout" not in kwargs:
         kwargs["timeout"] = 60

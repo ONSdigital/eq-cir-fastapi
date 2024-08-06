@@ -20,23 +20,20 @@ class TestGetCiMetadataV2Params:
     )
 
     def test_params_not_none_returns_true_when_all_params_not_none(self):
-        """
-        `params_not_none` class method should return `True` if all param name strings as input
+        """`params_not_none` class method should return `True` if all param name strings as input
         arguments have a corresponding non-none class attribute value
         """
         assert self.query_params.params_not_none(self.query_params.__dict__.keys()) is True
 
     def test_params_all_none_returns_false_when_all_params_none(self):
-        """
-        `params_not_none` class method should return `False` if all param name strings as input
+        """`params_not_none` class method should return `False` if all param name strings as input
         arguments have a corresponding non-none class attribute value
         """
         assert self.query_params.params_all_none(self.query_params.__dict__.keys()) is False
 
     @pytest.mark.parametrize("input_param", ["classifier_type", "classifier_value", "language", "status", "survey_id"])
     def test_params_not_none_returns_false_when_single_param_none(self, input_param):
-        """
-        `params_not_none` class method should return `False` if any of param name strings as input
+        """`params_not_none` class method should return `False` if any of param name strings as input
         arguments have a corresponding class attribute value of `None`
         """
         # Update `query_params` to contain a single `None` value
@@ -45,8 +42,7 @@ class TestGetCiMetadataV2Params:
         assert self.query_params.params_not_none(self.query_params.__dict__.keys()) is False
 
     def test_params_not_none_returns_false_when_all_params_none(self):
-        """
-        `params_not_none` class method should return `False` if all param name strings as input
+        """`params_not_none` class method should return `False` if all param name strings as input
         arguments have a corresponding class attribute value of `None`
         """
         # Update `query_params` to contain `None` values
@@ -73,8 +69,7 @@ class TestPostCiSchemaV1Data:
     }
 
     def test_data_model_instantiates_with_valid_post_data(self):
-        """
-        `PostCiSchemaV1Data` data model should instantiate successfully if provided with the
+        """`PostCiSchemaV1Data` data model should instantiate successfully if provided with the
         minimum valid input data
         """
         post_data_model = PostCiSchemaV1Data(**self.post_data)
@@ -94,8 +89,7 @@ class TestPostCiSchemaV1Data:
         ],
     )
     def test_data_model_raises_value_error_if_required_field_is_none(self, input_param):
-        """
-        `PostCiSchemaV1Data` data model should raise `ValueError` on init if any required
+        """`PostCiSchemaV1Data` data model should raise `ValueError` on init if any required
         field is `None`
         """
         # update `post_data` to contain `None` value for `input_param` field
@@ -117,8 +111,7 @@ class TestPostCiSchemaV1Data:
         ],
     )
     def test_data_model_raises_value_error_if_required_field_is_empty_string(self, input_param):
-        """
-        `PostCiSchemaV1Data` data model should raise `ValueError` on init if any required
+        """`PostCiSchemaV1Data` data model should raise `ValueError` on init if any required
         field is an empty string
         """
         # update `post_data` to contain an empty string value for `input_param` field
@@ -139,8 +132,7 @@ class TestPostCiSchemaV1Data:
         ],
     )
     def test_data_model_raises_value_error_if_required_field_is_whitespace(self, input_param):
-        """
-        `PostCiSchemaV1Data` data model should raise `ValueError` on init if any required
+        """`PostCiSchemaV1Data` data model should raise `ValueError` on init if any required
         field is whitespace
         """
         # update `post_data` to contain a whitespace value for `input_param` field

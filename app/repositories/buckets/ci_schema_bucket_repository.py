@@ -11,8 +11,7 @@ class CiSchemaBucketRepository:
         self.bucket = bucket_loader.get_ci_schema_bucket()
 
     def store_ci_schema(self, blob_name: str, schema: dict) -> None:
-        """
-        Stores ci schema in google bucket as json.
+        """Stores ci schema in google bucket as json.
 
         Parameters:
         blob_name (str): filename of uploaded json schema.
@@ -29,8 +28,7 @@ class CiSchemaBucketRepository:
         logger.info(f"successfully stored: {blob_name}")
 
     def retrieve_ci_schema(self, blob_name: str) -> dict | None:
-        """
-        Get the CI schema from the ci schema bucket using the filename provided.
+        """Get the CI schema from the ci schema bucket using the filename provided.
 
         Parameters:
         blob_name (str): filename of the retrieved json schema

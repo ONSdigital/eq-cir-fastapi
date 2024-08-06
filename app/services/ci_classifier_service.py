@@ -1,12 +1,11 @@
-import app.exception.exceptions as exceptions
+from app.exception import exceptions
 from app.models.classifier import Classifiers
 
 
 class CiClassifierService:
     @staticmethod
     def get_classifier_type(ci: dict) -> str:
-        """
-        This method fetch the classifier type from the ci dictionary
+        """This method fetch the classifier type from the ci dictionary
         Throw exception if no classifier type can be found
 
         Parameters:
@@ -23,8 +22,7 @@ class CiClassifierService:
 
     @staticmethod
     def get_classifier_value(ci: dict, key: str) -> str:
-        """
-        This method get the classifier value from the ci dictionary
+        """This method get the classifier value from the ci dictionary
 
         Parameters:
         ci: The ci dictionary
@@ -37,8 +35,7 @@ class CiClassifierService:
 
     @staticmethod
     def clean_ci_unused_classifier(ci: dict, classifier_type: str) -> dict:
-        """
-        This method remove unused classifier from the ci dictionary
+        """This method remove unused classifier from the ci dictionary
         FastAPI pydantic model will auto create the specified optional classifier
         fields with None value if not provided. This method will remove those fields
 

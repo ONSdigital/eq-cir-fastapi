@@ -6,8 +6,7 @@ class DocumentVersionService:
     def calculate_ci_version(
         document_current_version: CiMetadata | None,
     ) -> int:
-        """
-        Calculates the next version number of a document based on a version key, returning 1 by default if no document exists.
+        """Calculates the next version number of a document based on a version key, returning 1 by default if no document exists.
 
         Parameters:
         document_current_version: document that the version is being calculated from

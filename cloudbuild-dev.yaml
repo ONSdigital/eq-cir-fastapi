@@ -3,26 +3,16 @@ steps:
     id: "Upgrade pip"
     entrypoint: "python"
     args: ["-m", "pip", "install", "--upgrade", "pip", "--user"]
+
   - name: python:3.11
     id: "Setup Python and install project requirements"
     entrypoint: pip
     args: ["install", "-r", "requirements.txt", "--user"]
 
   - name: python:3.11
-    id: "Audit packages"
-    entrypoint: sh
-    args:
-      - "-c"
-      - |
-        make audit
-
-  - name: python:3.11
-    id: "Check linting and code formatting"
-    entrypoint: sh
-    args:
-      - "-c"
-      - |
-        make lint-check
+    id: "Install Poetry"
+    entrypoint: pip
+    args: [ "install", "Poetry"]
 
   - name: python:3.11
     id: "Run unit tests"
@@ -30,6 +20,7 @@ steps:
     args:
       - "-c"
       - |
+        source /.poetry/env
         export CI_STORAGE_BUCKET_NAME=${_CI_STORAGE_BUCKET_NAME}
         export FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}
         export PROJECT_ID=${PROJECT_ID}

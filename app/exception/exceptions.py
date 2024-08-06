@@ -1,5 +1,4 @@
-"""
-These are the custom exceptions that require
+"""These are the custom exceptions that require
 pairing with respective exception handling
 functions to be raised properly
 """

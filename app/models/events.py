@@ -21,14 +21,12 @@ class PostCIEvent(BaseModel):
     sds_schema: str | SkipJsonSchema[None] = ""
 
     def model_dump(self, *args, **kwargs) -> dict[str, Any]:
-        """
-        Override default `model_dump` to return a dictionary of data suitable for posting to
+        """Override default `model_dump` to return a dictionary of data suitable for posting to
         pub/sub:
         * If `sds_schema` field is filled, include this as a key in the returned dictionary
         * If `sds_schema` field is not filled or a default value, do not include this as a key in
           the returned dictionary
         """
-
         if not self.sds_schema:
             # Get any additional exclude fields from input `kwargs` or return empty set
             exclude_fields = kwargs.get("exclude", set())

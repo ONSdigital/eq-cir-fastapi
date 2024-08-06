@@ -73,8 +73,7 @@ class TestHttpGetCiMetadataV2:
         mocked_get_all_ci_metadata_collection,
         mocked_get_ci_metadata_collection,
     ):
-        """
-        Endpoint should return `HTTP_200_OK` and ci metadata collection as part of the response if ci metadata is found if
+        """Endpoint should return `HTTP_200_OK` and ci metadata collection as part of the response if ci metadata is found if
         queried with params. Assert description is in response ci metadata.
         Assert the mocked function is called with the correct params.
         """
@@ -98,8 +97,7 @@ class TestHttpGetCiMetadataV2:
         mocked_get_all_ci_metadata_collection,
         mocked_get_ci_metadata_collection,
     ):
-        """
-        Endpoint should return `HTTP_200_OK` and ci metadata collection as part of the response if ci metadata is found if
+        """Endpoint should return `HTTP_200_OK` and ci metadata collection as part of the response if ci metadata is found if
         queried with params without status. Assert description is in response ci metadata.
         Assert the mocked function is called with the correct params.
         """
@@ -123,8 +121,7 @@ class TestHttpGetCiMetadataV2:
         mocked_get_all_ci_metadata_collection,
         mocked_get_ci_metadata_collection,
     ):
-        """
-        Endpoint should return `HTTP_200_OK` and ci metadata collection as part of the response if ci metadata is found with
+        """Endpoint should return `HTTP_200_OK` and ci metadata collection as part of the response if ci metadata is found with
         empty query params. An empty request is still valid for this endpoint. Assert description is in response ci metadata.
         Assert the mocked function is called.
         """
@@ -146,8 +143,7 @@ class TestHttpGetCiMetadataV2:
         mocked_get_all_ci_metadata_collection,
         mocked_get_ci_metadata_collection,
     ):
-        """
-        Endpoint should return `HTTP_404_NOT_FOUND` and a string indicating a bad request
+        """Endpoint should return `HTTP_404_NOT_FOUND` and a string indicating a bad request
         as part of the response if ci metadata is not found
         """
         # Update mocked function to return `None` showing ci metadata is not found
@@ -163,8 +159,7 @@ class TestHttpGetCiMetadataV2:
         mocked_get_all_ci_metadata_collection,
         mocked_get_ci_metadata_collection,
     ):
-        """
-        Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `classifier_type`, `classifier_value`
+        """Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `classifier_type`, `classifier_value`
         `language` and/or `survey_id` are not part of the query string parameters
         """
         # Make request to base url without any query params

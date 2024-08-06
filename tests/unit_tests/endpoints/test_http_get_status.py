@@ -16,9 +16,7 @@ class TestHttpGetStatus:
 
     @patch("app.routers.status_router.settings")
     def test_endpoint_returns_200_and_right_message_if_deployment_successful(self, mocked_settings):
-        """
-        Endpoint should return the right response if the deployment is successful
-        """
+        """Endpoint should return the right response if the deployment is successful"""
         mocked_settings.CIR_APPLICATION_VERSION = "dev-048783a4"
         response = client.get(self.base_url)
         expected_message = '{"version":"dev-048783a4","status":"OK"}'
@@ -27,8 +25,7 @@ class TestHttpGetStatus:
 
     @patch("app.routers.status_router.settings")
     def test_endpoint_returns_500_if_deployment_unsuccessful(self, mocked_settings):
-        """
-        Endpoint should return `HTTP_500_INTERNAL_SERVER_ERROR` if the env var is
+        """Endpoint should return `HTTP_500_INTERNAL_SERVER_ERROR` if the env var is
         None due to a unsuccessful deployment
         """
         mocked_settings.CIR_APPLICATION_VERSION = None

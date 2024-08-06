@@ -15,7 +15,9 @@ test_500_client = TestClient(app, raise_server_exceptions=False)
 settings = Settings()
 
 
-@patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_collection_with_survey_id")
+@patch(
+    "app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_collection_with_survey_id"
+)
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.perform_delete_ci_transaction")
 class TestHttpDeleteCiV1:
     """Tests for the `http_delete_ci_v1` endpoint"""
@@ -29,8 +31,7 @@ class TestHttpDeleteCiV1:
         mocked_perform_delete_ci_transaction,
         mocked_get_ci_metadata_collection_with_survey_id,
     ):
-        """
-        Endpoint should return `HTTP_200_OK` and a return confirmation string as part of the response
+        """Endpoint should return `HTTP_200_OK` and a return confirmation string as part of the response
         if ci is found and deleted. Assert that the correct methods are called with the correct arguments
         """
         # Update mocked function to return a list of valid ci metadata
@@ -49,8 +50,7 @@ class TestHttpDeleteCiV1:
         mocked_perform_delete_ci_transaction,
         mocked_get_ci_metadata_collection_with_survey_id,
     ):
-        """
-        Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `
+        """Endpoint should return `HTTP_400_BAD_REQUEST` as part of the response if `
         `survey_id` are not part of the querystring parameters
         """
         # Make request to base url without any query params
@@ -64,8 +64,7 @@ class TestHttpDeleteCiV1:
         mocked_perform_delete_ci_transaction,
         mocked_get_ci_metadata_collection_with_survey_id,
     ):
-        """
-        Endpoint should return `HTTP_404_NOT_FOUND` and a string indicating a bad request
+        """Endpoint should return `HTTP_404_NOT_FOUND` and a string indicating a bad request
         as part of the response if no ci is found to delete
         """
         # Update mocked function to return `None` showing ci metadata is not found
@@ -81,8 +80,7 @@ class TestHttpDeleteCiV1:
         mocked_perform_delete_ci_transaction,
         mocked_get_ci_metadata_collection_with_survey_id,
     ):
-        """
-        Endpoint should return `HTTP_500_INTERNAL_SERVER_ERROR` as part of the response if ci is
+        """Endpoint should return `HTTP_500_INTERNAL_SERVER_ERROR` as part of the response if ci is
         found but not deleted due to an error in transaction
         """
         # Update mocked function to return a list of valid ci metadata to indicate ci is found

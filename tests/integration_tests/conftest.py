@@ -10,8 +10,7 @@ firestore_client = CiFirebaseRepository()
 
 @pytest.fixture
 def setup_publish_ci_return_payload():
-    """
-    checks if document(survey_id="3456") exists (ci_exists is a positive number),
+    """Checks if document(survey_id="3456") exists (ci_exists is a positive number),
     and deletes if it does makes post request to API
 
     Returns:

@@ -1,8 +1,8 @@
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 
-import app.exception.exceptions as exceptions
 from app.config import Settings, logging
+from app.exception import exceptions
 from app.exception.exception_interceptor import ExceptionInterceptor
 from app.routers import ci_router, status_router
 
@@ -57,8 +57,7 @@ app.add_exception_handler(
 
 @app.exception_handler(500)
 async def internal_exception_handler(request: Request, exc: Exception):
-    """
-    Override the global exception handler (500 internal server error) in
+    """Override the global exception handler (500 internal server error) in
     FastAPI and throw error in JSON format
     """
     return ExceptionInterceptor.throw_500_global_exception(request, exc)
@@ -66,8 +65,7 @@ async def internal_exception_handler(request: Request, exc: Exception):
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    """
-    When a request contains invalid data, FastAPI internally raises a
+    """When a request contains invalid data, FastAPI internally raises a
     RequestValidationError. This function override the default
     validation exception handler to return 400 instead of 422
     """

@@ -34,6 +34,35 @@ To install dependencies and configure the project for first use, follow the inst
 
 The project is now ready for development or to use for deployments.
 
+### Using Poetry
+1. Ensure you have pyenv installed - easiest way is through brew more info here 
+
+   `brew install pyenv`
+
+2. Once installed its important to correctly setup shell to use pyenv (this is different depending on shell you use)
+
+   `https://github.com/pyenv/pyenv?tab=readme-ov-file#set-up-your-shell-environment-for-pyenv`
+
+3. Once pyenv is configured you can go to project path and install python
+
+   if you have a `.python-version` file `pyenv install` should grab that file and install the specified version
+
+4. Install Poetry using pip 
+   `pip install poetry`
+
+5. Install project
+   `make install`
+
+   
+
+
+
+
+
+python3 -m venv env
+env/bin/pip install -U pip setuptools
+env/bin/pip install poetry
+
 ### Setting up GPG Key
 
 - For signing commits to the git repository, create a new GPG key if you don't have an existing key. Follow the [link](https://docs.github.com/en/authentication/managing-commit-signature-verification/generating-a-new-gpg-key) for creating a new GPG Key
