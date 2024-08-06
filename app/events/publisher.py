@@ -43,17 +43,11 @@ class Publisher:
         If the topic does not exist raises 500 global error.
         """
         try:
-            self.create_topic()
+
             self.publisher.get_topic(request={"topic": self.topic_path})
         except Exception:
             logger.debug("Error getting topic")
             raise ExceptionTopicNotFound
-
-    def create_topic(self) -> None:
-        """Create a new Pub/Sub topic."""
-        logger.debug("create_topic")
-        topic = self.publisher.create_topic(request={"name": self.topic_path})
-        logger.debug(f"Created topic: {topic.name}")
 
 
 publisher = Publisher()
