@@ -50,17 +50,13 @@ generate-spec:
 	python -m scripts.generate_openapi
 
 lint:
-	python -m black --line-length 127 .
-	python -m flake8 --max-line-length=127 --exclude=./scripts,env,.venv
-	python -m isort . --profile black --skip env --skip .venv
+	python -m ruff check .
 
 lint-check:
-	python -m black . --check --line-length 127
-	python -m flake8 --max-line-length=127 --exclude=./scripts,env,.venv
-	python -m isort . --check-only --profile black --skip env --skip .venv
+	python -m ruff check .
 
 lint-fix:
-	black . --line-length 127
+	python -m ruff check --fix .
 
 audit:
 	python -m pip_audit
