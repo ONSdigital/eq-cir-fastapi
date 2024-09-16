@@ -56,6 +56,7 @@ ignore = [
     "PLR0913",
     # For loops replacable with return all
     "SIM110",
+    "S113",
 ]
 
 [tool.ruff.lint.pydocstyle]
