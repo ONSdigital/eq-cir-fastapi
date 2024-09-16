@@ -31,7 +31,7 @@ class TestHttpGetDeploymentStatus:
         assert status_response["version"] == settings.CIR_APPLICATION_VERSION
 
         # Assert that the status in the response is "Ok"
-        assert status_response["status"] == "Ok"
+        assert status_response["status"] == "OK"
 
     def test_endpoint_returns_unauthorized_request(self):
         """
