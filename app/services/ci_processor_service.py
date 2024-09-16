@@ -1,6 +1,6 @@
-import app.exception.exceptions as exceptions
 from app.config import logging, settings
 from app.events.publisher import publisher
+from app.exception import exceptions
 from app.models.events import PostCIEvent
 from app.models.requests import PostCiSchemaV1Data
 from app.models.responses import CiMetadata

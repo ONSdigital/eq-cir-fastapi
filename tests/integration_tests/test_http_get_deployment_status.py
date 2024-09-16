@@ -20,14 +20,18 @@ class TestHttpGetDeploymentStatus:
 
     def test_endpoint_returns_right_response_if_deployment_successful(self):
         """
-        Endpoint should return return the right response if the deployment is successful
+        Endpoint should return the right response if the deployment is successful
         """
         # mocked `get_ci_schema_v2` to return valid ci metadata
 
         status_response = make_iap_request("GET", self.deployment_status_url)
         status_response = status_response.json()
-        status_response["version"] == settings.CIR_APPLICATION_VERSION
-        status_response["status"] == "Ok"
+
+        # Assert that the version in the response matches the expected version
+        assert status_response["version"] == settings.CIR_APPLICATION_VERSION
+
+        # Assert that the status in the response is "Ok"
+        assert status_response["status"] == "Ok"
 
     def test_endpoint_returns_unauthorized_request(self):
         """

@@ -1,4 +1,4 @@
-import app.exception.exceptions as exceptions
+from app.exception import exceptions
 from app.models.classifier import Classifiers
 
 
@@ -16,9 +16,8 @@ class CiClassifierService:
         The classifier type found
         """
         for key in Classifiers:
-            if key.value in ci:
-                if ci[key.value] is not None:
-                    return key.value
+            if key.value in ci and ci[key.value] is not None:
+                return key.value
         raise exceptions.ExceptionInvalidClassifier
 
     @staticmethod

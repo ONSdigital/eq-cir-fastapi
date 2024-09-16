@@ -1,8 +1,8 @@
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 
-import app.exception.exceptions as exceptions
 from app.config import Settings, logging
+from app.exception import exceptions
 from app.exception.exception_interceptor import ExceptionInterceptor
 from app.routers import ci_router, status_router
 

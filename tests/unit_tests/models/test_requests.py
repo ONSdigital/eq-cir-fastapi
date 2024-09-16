@@ -6,7 +6,7 @@ mock_classifier_type = "form_type"
 mock_classifier_value = "0005"
 mock_language = "en"
 mock_survey_id = "123"
-mock_description = "Version of CI is for March 2023 – APPROVED"
+mock_description = "Version of CI is for March 2023 - APPROVED"
 
 
 class TestGetCiMetadataV2Params:

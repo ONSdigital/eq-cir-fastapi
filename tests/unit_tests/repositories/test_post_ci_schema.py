@@ -92,7 +92,7 @@ class TestPostCiSchema:
         for ci in ci_metadata_query:
             # ci should contain doc
             # `sds_schema` should not be present in created document keys
-            assert "sds_schema" not in ci._doc.keys()
+            assert "sds_schema" not in ci._doc
 
     @patch("app.events.publisher.Publisher.publish_message")
     @patch("app.repositories.buckets.ci_schema_bucket_repository.CiSchemaBucketRepository.store_ci_schema")
@@ -130,5 +130,5 @@ class TestPostCiSchema:
         # Confirm the ci returned as part of the query contains the `sds_schema` field
         for ci in ci_metadata_query:
             # ci should contain doc and `sds_schema` should be present in created document keys
-            assert "sds_schema" in ci._doc.keys()
+            assert "sds_schema" in ci._doc
             assert ci._doc["sds_schema"] == mock_post_ci_schema_with_sds_schema.sds_schema
