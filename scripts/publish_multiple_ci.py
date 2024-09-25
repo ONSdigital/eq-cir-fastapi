@@ -36,7 +36,7 @@ def load_ci_from_path(path_to_json):
     This function loads CIs from the specified path and return ci_list and json file names
     """
     ci_list = []
-    json_files = list(os.listdir(path_to_json))
+    json_files = os.listdir(path_to_json)
     for json_file in json_files:
         with open(f"{path_to_json}/{json_file}") as content:
             ci = json.load(content)
