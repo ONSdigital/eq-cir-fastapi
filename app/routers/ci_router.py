@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 
 import app.exception.exception_response_models as erm
-import app.exception.exceptions as exceptions
 from app.config import Settings, logging
+from app.exception import exceptions
 from app.exception.exception_response_models import ExceptionResponseModel
 from app.models.classifier import Classifiers
 from app.models.requests import (

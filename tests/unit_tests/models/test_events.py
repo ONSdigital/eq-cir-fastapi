@@ -47,7 +47,7 @@ class TestPostCIEvent:
 
         model_dict = ci_event.model_dump()
 
-        assert "sds_schema" in model_dict.keys()
+        assert "sds_schema" in model_dict
         assert model_dict["sds_schema"] == mock_sds_schema
 
     def test_model_dump_excludes_sds_schema_if_not_filled(self):
@@ -71,7 +71,7 @@ class TestPostCIEvent:
 
         model_dict = ci_event.model_dump()
 
-        assert "sds_schema" not in model_dict.keys()
+        assert "sds_schema" not in model_dict
 
     def test_model_dump_excludes_additional_fields_if_required(self):
         """
@@ -95,5 +95,5 @@ class TestPostCIEvent:
         # Include additional `published_at` exclude field
         model_dict = ci_event.model_dump(exclude={"published_at"})
 
-        assert "sds_schema" not in model_dict.keys()
-        assert "published_at" not in model_dict.keys()
+        assert "sds_schema" not in model_dict
+        assert "published_at" not in model_dict
