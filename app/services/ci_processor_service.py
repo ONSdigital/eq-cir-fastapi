@@ -102,13 +102,6 @@ class CiProcessorService:
             logger.error("Rolling back CI transaction")
             raise exceptions.GlobalException from e
 
-            # survey_id: str,
-            # language: str,
-            # data_version: str,
-            # schema_version: str,
-            # sds_schema: str | None,
-            # title: str,
-            # description: str,
 
     def build_next_version_ci_metadata(
         self,
