@@ -42,7 +42,7 @@ ignore = [
     # CIR SPECIFIC BELOW THIS LINE
     # Class attribute is mutable when should be immutable
     # RUF009
-    "RUF009",
+#    "RUF009",
     # Possible hardcoded password (not actually a password in our case)
     "S105",
     # Too many arguments in function definition
@@ -56,6 +56,7 @@ ignore = [
 extend-immutable-calls = [
     # Whitelisted default arguments
     "fastapi.Depends",
+    "fastapi.Query",
 ]
 
 [tool.ruff.lint.pydocstyle]
