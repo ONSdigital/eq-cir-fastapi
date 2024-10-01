@@ -10,6 +10,8 @@ from tests.test_data.ci_test_data import (
     mock_survey_id,
 )
 
+CI_VERSION_TWO = 2
+
 
 class TestCiFirebaseRepository:
     """
@@ -76,7 +78,7 @@ class TestCiFirebaseRepository:
             mock_language,
         )
 
-        assert latest_ci_metadata.ci_version == 2
+        assert latest_ci_metadata.ci_version == CI_VERSION_TWO
 
     def test_query_latest_ci_version_returns_0(self, mock_firestore_collection):
         """

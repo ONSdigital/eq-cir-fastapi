@@ -6,6 +6,11 @@ from app.events.subscriber import Subscriber
 from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request
 
+UNIT_ONE = 1
+UNIT_TWO = 2
+UNIT_THREE = 3
+UNIT_DATA_LENGTH = 3
+
 
 class TestGetCiMetadataV1:
     """Tests for the `http_get_ci_metadata_v1` endpoint"""
@@ -49,10 +54,10 @@ class TestGetCiMetadataV1:
         query_ci_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         query_ci_response_data = query_ci_response.json()
 
-        assert len(query_ci_response_data) == 3
-        assert query_ci_response_data[2]["ci_version"] == 1
-        assert query_ci_response_data[1]["ci_version"] == 2
-        assert query_ci_response_data[0]["ci_version"] == 3
+        assert len(query_ci_response_data) == UNIT_DATA_LENGTH
+        assert query_ci_response_data[2]["ci_version"] == UNIT_ONE
+        assert query_ci_response_data[1]["ci_version"] == UNIT_TWO
+        assert query_ci_response_data[0]["ci_version"] == UNIT_THREE
 
     def test_post_ci_with_different_language_only_returns_1(self, setup_payload):
         """
@@ -94,8 +99,8 @@ class TestGetCiMetadataV1:
         new_language_query_ci_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         new_language_query_ci_response_data = new_language_query_ci_response.json()
 
-        assert len(query_ci_response_data) == 3
-        assert len(new_language_query_ci_response_data) == 1
+        assert len(query_ci_response_data) == UNIT_DATA_LENGTH
+        assert len(new_language_query_ci_response_data) == UNIT_ONE
         assert new_language_query_ci_response_data[0]["language"] == "English"
 
     def test_post_ci_with_same_metadata_query_ci_returns_with_new_keys_sds_schema_description(self, setup_payload):

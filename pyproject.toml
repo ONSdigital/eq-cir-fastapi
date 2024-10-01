@@ -40,10 +40,8 @@ ignore = [
     "W191",
     
     # CIR SPECIFIC BELOW THIS LINE
-    # Exception raise not from original exception
-#    "B904",
     # Unnamed numerical constant value in comparison
-    "PLR2004",
+#    "PLR2004",
     # Class attribute is mutable when should be immutable
     "RUF012",
     # RUF009
