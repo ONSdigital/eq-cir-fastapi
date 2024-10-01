@@ -43,8 +43,7 @@ ignore = [
     # Possible hardcoded password (not actually a password in our case)
     "S105",
     # For loops replacable with return all
-#    "SIM110",
-    "S113",
+#    "S113",
 ]
 
 [tool.ruff.lint.flake8-bugbear]
