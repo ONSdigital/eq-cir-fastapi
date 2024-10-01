@@ -106,7 +106,7 @@ class CiProcessorService:
         except Exception as e:
             logger.error(f"Performing CI transaction: exception raised: {e}")
             logger.error("Rolling back CI transaction")
-            raise exceptions.GlobalException
+            raise exceptions.GlobalException from e
 
     def build_next_version_ci_metadata(
         self,
@@ -184,7 +184,7 @@ class CiProcessorService:
         except Exception as e:
             logger.debug(f"CI metadata {post_ci_event} failed to publish to topic with error {e}")
             logger.error("Error publishing CI metadata to topic.")
-            raise exceptions.GlobalException
+            raise exceptions.GlobalException from e
 
     def get_ci_metadata_collection(self, survey_id: str, classifier_type, classifier_value, language: str) -> list[CiMetadata]:
         """
@@ -287,7 +287,6 @@ class CiProcessorService:
 
             logger.info("Delete CI transaction committed successfully.")
 
-        except Exception as e:
-            logger.error(f"Performing delete CI transaction: exception raised: {e}")
+        except Exception as exc:
             logger.error("Rolling back CI transaction")
-            raise exceptions.GlobalException
+            raise exceptions.GlobalException from exc
