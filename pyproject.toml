@@ -42,10 +42,8 @@ ignore = [
     # CIR SPECIFIC BELOW THIS LINE
     # Possible hardcoded password (not actually a password in our case)
     "S105",
-    # Too many arguments in function definition
-#    "PLR0913",
     # For loops replacable with return all
-    "SIM110",
+#    "SIM110",
     "S113",
 ]
 
