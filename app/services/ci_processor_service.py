@@ -45,13 +45,7 @@ class CiProcessorService:
             ci_id,
             classifier_type,
             classifier_value,
-            post_data.survey_id,
-            post_data.language,
-            post_data.data_version,
-            post_data.schema_version,
-            post_data.sds_schema,
-            post_data.title,
-            post_data.description,
+            post_data,
         )
 
         stored_ci_filename = CiSchemaLocationService.get_ci_schema_location(next_version_ci_metadata)
@@ -108,18 +102,20 @@ class CiProcessorService:
             logger.error("Rolling back CI transaction")
             raise exceptions.GlobalException from e
 
+            # survey_id: str,
+            # language: str,
+            # data_version: str,
+            # schema_version: str,
+            # sds_schema: str | None,
+            # title: str,
+            # description: str,
+
     def build_next_version_ci_metadata(
         self,
         ci_id: str,
         classifier_type: str,
         classifier_value: str,
-        survey_id: str,
-        language: str,
-        data_version: str,
-        schema_version: str,
-        sds_schema: str | None,
-        title: str,
-        description: str,
+        post_data: PostCiSchemaV1Data
     ) -> CiMetadata:
         """
         Builds the next version of CI metadata.
@@ -141,17 +137,17 @@ class CiProcessorService:
         """
         next_version_ci_metadata = CiMetadata(
             guid=ci_id,
-            ci_version=self.calculate_next_ci_version(survey_id, classifier_type, classifier_value, language),
-            data_version=data_version,
+            ci_version=self.calculate_next_ci_version(post_data.survey_id, classifier_type, classifier_value, post_data.language),
+            data_version=post_data.data_version,
             classifier_type=classifier_type,
             classifier_value=classifier_value,
-            language=language,
+            language=post_data.language,
             published_at=str(DatetimeService.get_current_date_and_time().strftime(settings.PUBLISHED_AT_FORMAT)),
-            schema_version=schema_version,
-            sds_schema=sds_schema,
-            survey_id=survey_id,
-            title=title,
-            description=description,
+            schema_version=post_data.schema_version,
+            sds_schema=post_data.sds_schema,
+            survey_id=post_data.survey_id,
+            title=post_data.title,
+            description=post_data.description,
         )
         return next_version_ci_metadata
 
