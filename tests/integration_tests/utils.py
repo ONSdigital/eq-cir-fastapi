@@ -45,4 +45,4 @@ def make_iap_request(method, path, **kwargs):
     # Fetch the Identity-Aware Proxy-protected URL, including an
     # Authorization header containing "Bearer " followed by a
     # Google-issued OpenID Connect token for the service account.
-    return requests.request(method, url, headers=headers, **kwargs, timeout=180)
+    return requests.request(method, url, headers=headers, **kwargs, timeout=1800)

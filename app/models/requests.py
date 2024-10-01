@@ -61,8 +61,6 @@ class GetCiMetadataV2Params:
         return all(not getattr(self, key) for key in keys)
 
 
-
-
 @dataclass
 class GetCiSchemaV1Params:
     """Model for `get_ci_schema_v1` request query params"""
