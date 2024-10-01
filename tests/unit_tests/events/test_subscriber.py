@@ -3,6 +3,7 @@ from unittest.mock import Mock, patch
 from google.pubsub_v1.types import PubsubMessage, PullResponse, ReceivedMessage
 
 from app.events.subscriber import Subscriber
+from tests.test_data.ci_test_data import message_data
 
 MAX_MESSAGES = 5
 
@@ -16,19 +17,6 @@ class TestSubscriber:
     """
 
     # Representative `PubsubMessage` data returned by `Publisher.pull()`
-    message_data = {
-        "ci_version": 2,
-        "data_version": "1",
-        "classifier_type": "form_type",
-        "classifier_value": "business",
-        "id": "ca9c5b88-0700-4e87-a90e-0d3e05ae37d5",
-        "language": "welsh",
-        "published_at": "2023-06-14T08:54:27.722250Z",
-        "schema_version": "1",
-        "status": "DRAFT",
-        "survey_id": "3456",
-        "title": "NotDune",
-    }
 
     def test_init_sets_max_messages_to_five(self, _):
         """
@@ -122,7 +110,7 @@ class TestSubscriber:
 
         # Configure `mocked_subscriber_client.pull` to return representative `PullResponse`
         mocked_pubsub_message = Mock(spec=PubsubMessage)
-        mocked_pubsub_message.data = self.message_data
+        mocked_pubsub_message.data = message_data
         mocked_received_message = Mock(spec=ReceivedMessage)
         mocked_received_message.message = mocked_pubsub_message
         mocked_received_message.ack_id = 1
@@ -136,7 +124,7 @@ class TestSubscriber:
         messages = subscriber.pull_messages_and_acknowledge()
 
         # Returned messages should be a list of message data
-        assert messages == [self.message_data]
+        assert messages == [message_data]
 
     def test_pull_messages_and_acknowledge_acknowledges_messages(self, mocked_subscriber_client):
         """
@@ -147,7 +135,7 @@ class TestSubscriber:
 
         # Configure `mocked_subscriber_client.pull` to return representative `PullResponse`
         mocked_pubsub_message = Mock(spec=PubsubMessage)
-        mocked_pubsub_message.data = self.message_data
+        mocked_pubsub_message.data = message_data
         mocked_received_message = Mock(spec=ReceivedMessage)
         mocked_received_message.message = mocked_pubsub_message
         mocked_received_message.ack_id = 1

@@ -1,6 +1,7 @@
 import pytest
 
 from app.models.requests import GetCiMetadataV2Params, PostCiSchemaV1Data
+from tests.test_data.ci_test_data import post_data
 
 mock_classifier_type = "form_type"
 mock_classifier_value = "0005"
@@ -62,24 +63,14 @@ class TestGetCiMetadataV2Params:
 class TestPostCiSchemaV1Data:
     """Tests for the `PostCiSchemaV1Data` Pydantic data model"""
 
-    post_data = {
-        "data_version": "1",
-        "form_type": mock_classifier_value,
-        "language": mock_language,
-        "survey_id": mock_survey_id,
-        "title": "test",
-        "schema_version": "1",
-        "description": mock_description,
-    }
-
     def test_data_model_instantiates_with_valid_post_data(self):
         """
         `PostCiSchemaV1Data` data model should instantiate successfully if provided with the
         minimum valid input data
         """
-        post_data_model = PostCiSchemaV1Data(**self.post_data)
+        post_data_model = PostCiSchemaV1Data(**post_data)
         # Dictionary returned from data model should contain the original input data
-        assert self.post_data.items() <= post_data_model.model_dump().items()
+        assert post_data.items() <= post_data_model.model_dump().items()
 
     @pytest.mark.parametrize(
         "input_param",
@@ -99,10 +90,10 @@ class TestPostCiSchemaV1Data:
         field is `None`
         """
         # update `post_data` to contain `None` value for `input_param` field
-        self.post_data.update({input_param: None})
+        post_data.update({input_param: None})
 
         with pytest.raises(ValueError):
-            PostCiSchemaV1Data(**self.post_data)
+            PostCiSchemaV1Data(**post_data)
 
     @pytest.mark.parametrize(
         "input_param",
@@ -122,10 +113,10 @@ class TestPostCiSchemaV1Data:
         field is an empty string
         """
         # update `post_data` to contain an empty string value for `input_param` field
-        self.post_data.update({input_param: ""})
+        post_data.update({input_param: ""})
 
         with pytest.raises(ValueError):
-            PostCiSchemaV1Data(**self.post_data)
+            PostCiSchemaV1Data(**post_data)
 
     @pytest.mark.parametrize(
         "input_param",
@@ -144,7 +135,7 @@ class TestPostCiSchemaV1Data:
         field is whitespace
         """
         # update `post_data` to contain a whitespace value for `input_param` field
-        self.post_data.update({input_param: " "})
+        post_data.update({input_param: " "})
 
         with pytest.raises(ValueError):
-            PostCiSchemaV1Data(**self.post_data)
+            PostCiSchemaV1Data(**post_data)

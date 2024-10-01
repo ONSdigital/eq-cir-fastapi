@@ -40,10 +40,7 @@ ignore = [
     "W191",
     
     # CIR SPECIFIC BELOW THIS LINE
-    # Unnamed numerical constant value in comparison
-#    "PLR2004",
     # Class attribute is mutable when should be immutable
-    "RUF012",
     # RUF009
     "RUF009",
     # Possible hardcoded password (not actually a password in our case)
