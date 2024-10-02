@@ -38,8 +38,6 @@ ignore = [
     "E501",
     # indentation contains tabs
     "W191",
-
-    # CIR SPECIFIC BELOW THIS LINE
 ]
 
 [tool.ruff.lint.flake8-bugbear]
