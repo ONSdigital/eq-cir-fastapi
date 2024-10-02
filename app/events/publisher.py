@@ -46,7 +46,7 @@ class Publisher:
 
             self.publisher.get_topic(request={"topic": self.topic_path})
         except Exception as exc:
-            logger.debug("Error getting topic {}")
+            logger.debug("Error getting topic")
             raise ExceptionTopicNotFound from exc
 
 
