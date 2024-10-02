@@ -97,10 +97,10 @@ class CiProcessorService:
             logger.info("CI transaction committed successfully.")
             return next_version_ci_metadata
 
-        except Exception as e:
-            logger.error(f"Performing CI transaction: exception raised: {e}")
+        except Exception as exc:
+            logger.error(f"Performing CI transaction: exception raised: {exc}")
             logger.error("Rolling back CI transaction")
-            raise exceptions.GlobalException from e
+            raise exceptions.GlobalException from exc
 
 
     def build_next_version_ci_metadata(
@@ -170,10 +170,10 @@ class CiProcessorService:
             publisher.publish_message(post_ci_event)
             logger.debug(f"CI metadata {post_ci_event} published to topic")
             logger.info("CI metadata published successfully.")
-        except Exception as e:
-            logger.debug(f"CI metadata {post_ci_event} failed to publish to topic with error {e}")
+        except Exception as exc:
+            logger.debug(f"CI metadata {post_ci_event} failed to publish to topic with error {exc}")
             logger.error("Error publishing CI metadata to topic.")
-            raise exceptions.GlobalException from e
+            raise exceptions.GlobalException from exc
 
     def get_ci_metadata_collection(self, survey_id: str, classifier_type, classifier_value, language: str) -> list[CiMetadata]:
         """
