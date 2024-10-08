@@ -6,11 +6,6 @@ from app.events.subscriber import Subscriber
 from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request
 
-UNIT_ONE = 1
-UNIT_TWO = 2
-UNIT_THREE = 3
-UNIT_DATA_LENGTH = 3
-
 
 class TestGetCiMetadataV2:
     """Tests for the `http_get_ci_metadata_v2` endpoint."""
@@ -54,10 +49,10 @@ class TestGetCiMetadataV2:
         get_ci_metadata_v2_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         get_ci_metadata_v2_response_data = get_ci_metadata_v2_response.json()
 
-        assert len(get_ci_metadata_v2_response_data) == UNIT_DATA_LENGTH
-        assert get_ci_metadata_v2_response_data[2]["ci_version"] == UNIT_ONE
-        assert get_ci_metadata_v2_response_data[1]["ci_version"] == UNIT_TWO
-        assert get_ci_metadata_v2_response_data[0]["ci_version"] == UNIT_THREE
+        assert len(get_ci_metadata_v2_response_data) == 3
+        assert get_ci_metadata_v2_response_data[2]["ci_version"] == 1
+        assert get_ci_metadata_v2_response_data[1]["ci_version"] == 2
+        assert get_ci_metadata_v2_response_data[0]["ci_version"] == 3
 
     def test_get_ci_metadata_v2_returns_all_metadata(self):
         """

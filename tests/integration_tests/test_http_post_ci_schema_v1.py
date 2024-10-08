@@ -8,12 +8,6 @@ from app.models.responses import CiMetadata
 from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request
 
-CI_VERSION_ONE = 1
-CI_VERSION_TWO = 2
-UNIT_TWO = 2
-UNIT_THREE = 3
-UNIT_DATA_LENGTH = 3
-
 
 class TestPostCiV1:
     """Tests for the `http_post_ci_v1` endpoint."""
@@ -191,12 +185,12 @@ class TestPostCiV1:
         )
 
         assert ci_response.status_code == status.HTTP_200_OK
-        assert ci_response_data["ci_version"] == CI_VERSION_TWO
+        assert ci_response_data["ci_version"] == 2
         # database assertions
-        assert len(check_ci_in_db_data) == CI_VERSION_TWO
+        assert len(check_ci_in_db_data) == 2
         assert check_ci_in_db_data[0] == expected_ci.model_dump()
-        assert check_ci_in_db_data[1]["ci_version"] == CI_VERSION_ONE
-        assert check_ci_in_db_data[0]["ci_version"] == CI_VERSION_TWO
+        assert check_ci_in_db_data[1]["ci_version"] == 1
+        assert check_ci_in_db_data[0]["ci_version"] == 2
 
     def test_cannot_publish_ci_missing_survey_id(
         self,

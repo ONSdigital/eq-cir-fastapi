@@ -5,8 +5,6 @@ from google.pubsub_v1.types import PubsubMessage, PullResponse, ReceivedMessage
 from app.events.subscriber import Subscriber
 from tests.test_data.ci_test_data import message_data
 
-MAX_MESSAGES = 5
-
 
 @patch("app.events.subscriber.SubscriberClient")
 class TestSubscriber:
@@ -25,7 +23,7 @@ class TestSubscriber:
         """
 
         subscriber = Subscriber()
-        assert subscriber.max_messages == MAX_MESSAGES
+        assert subscriber.max_messages == 5
 
     def test_init_sets_subscription_path(self, mocked_subscriber_client):
         """
