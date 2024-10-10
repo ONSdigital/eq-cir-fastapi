@@ -56,7 +56,7 @@ class TestHttpGetCiMetadataV2:
     ):
         response = client.get(self.missing_all_query_param)
 
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_200_OK
 
     def test_endpoint_returns_400_when_one_param_is_missing(
         self,
@@ -65,7 +65,7 @@ class TestHttpGetCiMetadataV2:
     ):
         response = client.get(self.missing_one_query_param)
 
-        assert response.status_code == 400
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert response.json()["message"] == "Invalid search parameters provided"
 
     def test_endpoint_returns_200_if_ci_metadata_found_with_query(
