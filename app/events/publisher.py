@@ -51,11 +51,10 @@ class Publisher:
         If the topic does not exist raises 500 global error.
         """
         try:
-            self.publisher_client.get_topic(request={"topic": topic_path})
-            return True
-        except Exception:
+            self.publisher.get_topic(request={"topic": self.topic_path})
+        except Exception as exc:
             logger.debug("Error getting topic")
-            raise ExceptionTopicNotFound
+            raise ExceptionTopicNotFound from exc
 
 
 publisher = Publisher()

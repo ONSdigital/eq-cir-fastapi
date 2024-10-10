@@ -29,12 +29,7 @@ class GetCiMetadataV1Params:
 
         If all param values are not `None` return `True`, otherwise return `False`
         """
-        for key in keys:
-            # If value is `None`, return `False` and break out of loop
-            if not getattr(self, key):
-                return False
-
-        return True
+        return all(getattr(self, key) for key in keys)
 
 
 @dataclass
@@ -55,12 +50,7 @@ class GetCiMetadataV2Params:
 
         If all param values are not `None` return `True`, otherwise return `False`
         """
-        for key in keys:
-            # If value is `None`, return `False` and break out of loop
-            if not getattr(self, key):
-                return False
-
-        return True
+        return all(getattr(self, key) for key in keys)
 
     def params_all_none(self, keys):
         """
@@ -68,12 +58,7 @@ class GetCiMetadataV2Params:
 
         If all param values are `None` return `True`, otherwise return `False`
         """
-        for key in keys:
-            # If value is `None`, return `False` and break out of loop
-            if getattr(self, key):
-                return False
-
-        return True
+        return all(not getattr(self, key) for key in keys)
 
 
 @dataclass
@@ -91,12 +76,7 @@ class GetCiSchemaV1Params:
 
         If all param values are not `None` return `True`, otherwise return `False`
         """
-        for arg in args:
-            # If value is `None`, return `False` and break out of loop
-            if not getattr(self, arg):
-                return False
-
-        return True
+        return all(getattr(self, arg) for arg in args)
 
 
 @dataclass

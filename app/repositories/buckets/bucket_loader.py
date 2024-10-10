@@ -1,3 +1,5 @@
+from typing import Any
+
 from google.cloud import exceptions, storage
 
 from app.config import settings
@@ -14,7 +16,7 @@ class BucketLoader:
         """
         return self.ci_schema_bucket
 
-    def _initialise_bucket(self, bucket_name) -> storage.Bucket:
+    def _initialise_bucket(self, bucket_name) -> Any | None:
         """
         Connect to google cloud storage client using PROJECT_ID
         If bucket does not exists, then create the bucket
@@ -31,8 +33,8 @@ class BucketLoader:
             bucket = __storage_client.get_bucket(
                 bucket_name,
             )
-        except exceptions.NotFound:
-            raise ExceptionBucketNotFound
+        except exceptions.NotFound as exc:
+            raise ExceptionBucketNotFound from exc
 
         return bucket
 

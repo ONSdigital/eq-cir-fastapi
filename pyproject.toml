@@ -1,7 +1,7 @@
 [tool.ruff]
 line-length = 120
 indent-width = 4
-exclude = ["src/integration_tests", "src/unit_tests", "src/test_data"]
+exclude = ["tests/integration_tests", "tests/unit_tests", "tests/test_data"]
 
 [tool.ruff.lint]
 select = [
@@ -38,26 +38,17 @@ ignore = [
     "E501",
     # indentation contains tabs
     "W191",
-    
-    # SDS SPECIFIC BELOW THIS LINE
-    # Function call as default argument
-    "B008",
-    # Exception raise not from original exception
-    "B904",
-    # Unnamed numerical constant value in comparison
-    "PLR2004",
-    # Class attribute is mutable when should be immutable
-    "RUF012",
-    # RUF009
-    "RUF009",
-    # Possible hardcoded password (not actually a password in our case)
-    "S105",
-    # Too many arguments in function definition
-    "PLR0913",
-    # For loops replacable with return all
-    "SIM110",
-    "S113",
 ]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = [
+    # Whitelisted default arguments
+    "fastapi.Depends",
+    "fastapi.Query",
+]
+
+[tool.ruff.lint.pylint]
+max-args = 6
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
@@ -66,6 +57,10 @@ convention = "google"
 "tests/*" = [
     # Allow use of assert statements in tests
     "S101",
+    # Allow use of auth_token - false positive for hardcoded password
+    "S105",
+    # Default timeout is added to kwargs
+    "S113",
 ]
 
 [tool.ruff.format]
