@@ -159,11 +159,10 @@ will be generated with timstamp once all the CIs are published.Before running, m
 You will have to add code to create a topic adding the following snippet to publisher.py and calling it in function _verify_topic_exists.
 Remember not to accidentally commit.
 
-
 ```python
 def create_topic(self) -> None:
-    """Create a new Pub/Sub topic."""
-    logger.debug("create_topic")
-    topic = self.publisher.create_topic(request={"name": self.topic_path})
-    logger.debug(f"Created topic: {topic.name}")
+   """Create a new Pub/Sub topic."""
+   logger.debug("create_topic")
+   topic = self.publisher_client.create_topic(request={"name": self.topic_path})
+   logger.debug(f"Created topic: {topic.name}")
 ```
