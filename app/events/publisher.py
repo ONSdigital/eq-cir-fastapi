@@ -27,7 +27,7 @@ class Publisher:
         """Publishes an event message to a Pub/Sub topic."""
 
         # Get the topic path
-        topic_path = self.publisher_client.topic_path(settings.PROJECT_ID, settings.TOPIC_ID)
+        topic_path = self.publisher_client.topic_path(settings.PROJECT_ID, settings.PUBLISH_CI_TOPIC_ID)
         # Verify if the topic exists - if not, raise an exception
         self._verify_topic_exists(topic_path)
 

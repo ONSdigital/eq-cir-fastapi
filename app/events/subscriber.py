@@ -20,7 +20,7 @@ class Subscriber:
         self.client = SubscriberClient()
         self.max_messages = 5
         self.subscription_path = self.client.subscription_path(settings.PROJECT_ID, settings.SUBSCRIPTION_ID)
-        self.topic_path = self.client.topic_path(settings.PROJECT_ID, settings.TOPIC_ID)
+        self.topic_path = self.client.topic_path(settings.PROJECT_ID, settings.PUBLISH_CI_TOPIC_ID)
 
     def create_subscription(self) -> None:
         """Creates a subscription using `self.subscription_path`"""
