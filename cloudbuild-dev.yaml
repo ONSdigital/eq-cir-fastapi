@@ -128,7 +128,7 @@ steps:
         OAUTH_CLIENT_NAME=$(cat /workspace/oauth_client_name)
         export INT_OAUTH_CLIENT_ID=${OAUTH_CLIENT_NAME##*/}
         export INT_PROJECT_ID=${PROJECT_ID}
-        export INT_TOPIC_ID=${_TOPIC_ID}
+        export INT_PUBLISH_CI_TOPIC_ID=${_PUBLISH_CI_TOPIC_ID}
         export INT_URL_SCHEME=https
         make integration-tests-cloudbuild
 options:

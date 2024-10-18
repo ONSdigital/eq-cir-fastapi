@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     PUBSUB_EMULATOR_HOST: str = "only required for development environment"
     STORAGE_EMULATOR_HOST: str = "only required for development environment"
     SUBSCRIPTION_ID: str = "ons-cir-publish-events-subscription-cir"
-    TOPIC_ID: str = "ons-cir-publish-ci"
+    PUBLISH_CI_TOPIC_ID: str = "ons-cir-publish-ci"
     URL_SCHEME: str = "only required for integration tests"
     CIR_APPLICATION_VERSION: str = "development"
 

@@ -32,7 +32,7 @@ mock_event_message = PostCIEvent(
 class TestPublisher:
     def test_publish_message_success(self, mocked_publisher_client, mocker):
         mocker.patch("app.config.settings.PROJECT_ID", "project_id")
-        mocker.patch("app.config.settings.TOPIC_ID", "topic_id")
+        mocker.patch("app.config.settings.PUBLISH_CI_TOPIC_ID", "topic_id")
 
         mock_topic_exists = mocker.patch("app.events.publisher.Publisher._verify_topic_exists")
         mock_logger = mocker.patch("logging.Logger.debug")
