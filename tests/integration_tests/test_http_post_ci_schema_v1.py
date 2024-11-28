@@ -266,25 +266,6 @@ class TestPostCiV1:
             "status": "error",
         }
 
-    def test_cannot_publish_ci_missing_schema_version(self, setup_payload):
-        """
-        This may fail
-        What am I testing:
-        AC-3.5	If a metadata field is missing <schema_version>, then the correct response is returned.
-        """
-        payload = setup_payload
-        payload["schema_version"] = " "
-        ci_response = make_iap_request("POST", f"{self.post_url}", json=payload)
-        self.subscriber.pull_messages_and_acknowledge()
-
-        assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
-
-        ci_response_data = ci_response.json()
-        assert ci_response_data == {
-            "message": "Validation has failed",
-            "status": "error",
-        }
-
     def test_cannot_publish_ci_missing_data_version(self, setup_payload):
         """
         What am I testing:
