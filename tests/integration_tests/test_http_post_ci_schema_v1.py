@@ -68,7 +68,6 @@ class TestPostCiV1:
             guid=check_ci_in_db_data[0]["guid"],
             language=setup_payload["language"],
             published_at=check_ci_in_db_data[0]["published_at"],
-            schema_version=setup_payload["schema_version"],
             survey_id=setup_payload["survey_id"],
             title=setup_payload["title"],
             description=setup_payload["description"],
@@ -125,7 +124,6 @@ class TestPostCiV1:
             guid=check_ci_in_db_data[0]["guid"],
             language=setup_payload["language"],
             published_at=check_ci_in_db_data[0]["published_at"],
-            schema_version=setup_payload["schema_version"],
             sds_schema=setup_payload["sds_schema"],
             survey_id=setup_payload["survey_id"],
             title=setup_payload["title"],
@@ -178,7 +176,6 @@ class TestPostCiV1:
             guid=check_ci_in_db_data[0]["guid"],
             language=setup_publish_ci_return_payload["language"],
             published_at=check_ci_in_db_data[0]["published_at"],
-            schema_version=setup_publish_ci_return_payload["schema_version"],
             survey_id=setup_publish_ci_return_payload["survey_id"],
             title=setup_publish_ci_return_payload["title"],
             description=setup_publish_ci_return_payload["description"],
@@ -271,6 +268,7 @@ class TestPostCiV1:
 
     def test_cannot_publish_ci_missing_schema_version(self, setup_payload):
         """
+        This may fail
         What am I testing:
         AC-3.5	If a metadata field is missing <schema_version>, then the correct response is returned.
         """

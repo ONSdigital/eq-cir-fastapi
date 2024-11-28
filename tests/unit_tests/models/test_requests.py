@@ -81,7 +81,6 @@ class TestPostCiSchemaV1Data:
             "language",
             "survey_id",
             "title",
-            "schema_version",
         ],
     )
     def test_data_model_raises_value_error_if_required_field_is_none(self, input_param):
@@ -104,7 +103,6 @@ class TestPostCiSchemaV1Data:
             "language",
             "survey_id",
             "title",
-            "schema_version",
         ],
     )
     def test_data_model_raises_value_error_if_required_field_is_empty_string(self, input_param):
@@ -126,7 +124,6 @@ class TestPostCiSchemaV1Data:
             "classifier_value" "language",
             "survey_id",
             "title",
-            "schema_version",
         ],
     )
     def test_data_model_raises_value_error_if_required_field_is_whitespace(self, input_param):

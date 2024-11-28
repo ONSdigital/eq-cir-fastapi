@@ -180,7 +180,6 @@ class TestHttpPostCiV1:
             "language",
             "survey_id",
             "title",
-            "schema_version",
         ],
     )
     def test_endpoint_returns_400_if_required_field_none(
@@ -238,7 +237,6 @@ class TestHttpPostCiV1:
             "language",
             "survey_id",
             "title",
-            "schema_version",
         ],
     )
     def test_endpoint_returns_400_if_required_field_empty_string(
@@ -273,7 +271,6 @@ class TestHttpPostCiV1:
             "language",
             "survey_id",
             "title",
-            "schema_version",
         ],
     )
     def test_endpoint_returns_400_if_required_field_whitespace(

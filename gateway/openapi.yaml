@@ -27,9 +27,6 @@ components:
         published_at:
           title: Published At
           type: string
-        schema_version:
-          title: Schema Version
-          type: string
         sds_schema:
           default: ''
           title: Sds Schema
@@ -48,7 +45,6 @@ components:
       - guid
       - language
       - published_at
-      - schema_version
       - survey_id
       - title
       - description
@@ -140,9 +136,6 @@ components:
         questionnaire_flow:
           title: Questionnaire Flow
           type: object
-        schema_version:
-          title: Schema Version
-          type: string
         sds_schema:
           default: ''
           title: Sds Schema
@@ -169,7 +162,6 @@ components:
       - language
       - survey_id
       - title
-      - schema_version
       - description
       title: PostCiMetadataV1PostData
       type: object

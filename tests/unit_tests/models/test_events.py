@@ -15,7 +15,6 @@ mock_classifier_value = "t"
 mock_id = str(uuid.uuid4())
 mock_language = "em"
 mock_published_at = datetime.datetime.utcnow().strftime(settings.PUBLISHED_AT_FORMAT)
-mock_schema_version = "12"
 mock_sds_schema = "my test schema"
 mock_survey_id = "12124141"
 mock_title = "test"
@@ -38,7 +37,6 @@ class TestPostCIEvent:
             guid=mock_id,
             language=mock_language,
             published_at=mock_published_at,
-            schema_version=mock_schema_version,
             sds_schema=mock_sds_schema,
             survey_id=mock_survey_id,
             title=mock_title,
@@ -63,7 +61,6 @@ class TestPostCIEvent:
             guid=mock_id,
             language=mock_language,
             published_at=mock_published_at,
-            schema_version=mock_schema_version,
             survey_id=mock_survey_id,
             title=mock_title,
             description=mock_description,
@@ -87,7 +84,6 @@ class TestPostCIEvent:
             guid=mock_id,
             language=mock_language,
             published_at=mock_published_at,
-            schema_version=mock_schema_version,
             survey_id=mock_survey_id,
             title=mock_title,
             description=mock_description,

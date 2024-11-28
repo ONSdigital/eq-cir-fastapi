@@ -104,7 +104,6 @@ class PostCiSchemaV1Data(BaseModel):
     language: str
     survey_id: str
     title: str
-    schema_version: str
     # Optional fields (classifiers)
     form_type: str | SkipJsonSchema[None] = None
     # Optional fields (others)
@@ -120,7 +119,7 @@ class PostCiSchemaV1Data(BaseModel):
     submission: dict | SkipJsonSchema[None] = None
     theme: str | SkipJsonSchema[None] = ""
 
-    @field_validator("data_version", "language", "survey_id", "title", "schema_version")
+    @field_validator("data_version", "language", "survey_id", "title")
     @classmethod
     def check_not_empty_string(cls, value: str, info: ValidationInfo) -> str:
         """Raise `ValueError` if input `value` is an empty string or whitespace"""

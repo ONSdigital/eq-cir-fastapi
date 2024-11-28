@@ -15,7 +15,6 @@ mock_classifier_value = "ft"
 mock_id = str(uuid.uuid4())
 mock_language = "en-US"
 mock_published_at = datetime.datetime.utcnow().strftime(settings.PUBLISHED_AT_FORMAT)
-mock_schema_version = "1"
 mock_sds_schema = "my test schema"
 mock_survey_id = "123"
 mock_title = "My test survey"
@@ -38,7 +37,6 @@ class TestCiMetadata:
             guid=mock_id,
             language=mock_language,
             published_at=mock_published_at,
-            schema_version=mock_schema_version,
             sds_schema=mock_sds_schema,
             survey_id=mock_survey_id,
             title=mock_title,
@@ -63,7 +61,6 @@ class TestCiMetadata:
             guid=mock_id,
             language=mock_language,
             published_at=mock_published_at,
-            schema_version=mock_schema_version,
             survey_id=mock_survey_id,
             title=mock_title,
             description=mock_description,
@@ -87,7 +84,6 @@ class TestCiMetadata:
             guid=mock_id,
             language=mock_language,
             published_at=mock_published_at,
-            schema_version=mock_schema_version,
             survey_id=mock_survey_id,
             title=mock_title,
             description=mock_description,
