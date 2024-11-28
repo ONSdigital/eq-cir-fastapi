@@ -65,7 +65,6 @@ class CiProcessorService:
             sds_schema=next_version_ci_metadata.sds_schema,
             survey_id=next_version_ci_metadata.survey_id,
             title=next_version_ci_metadata.title,
-            description=next_version_ci_metadata.description,
         )
 
         self.try_publish_ci_metadata_to_topic(event_message)
@@ -121,7 +120,6 @@ class CiProcessorService:
         data_version (str): the data version of the schema.
         sds_schema (str): the sds schema of the schema.
         title (str): the title of the schema.
-        description (str): the description of the schema.
 
         Returns:
         CiMetadata: the next version of CI metadata.
@@ -137,7 +135,6 @@ class CiProcessorService:
             sds_schema=post_data.sds_schema,
             survey_id=post_data.survey_id,
             title=post_data.title,
-            description=post_data.description,
         )
         return next_version_ci_metadata
 

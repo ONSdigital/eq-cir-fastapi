@@ -16,7 +16,6 @@ class PostCIEvent(BaseModel):
     published_at: str
     survey_id: str
     title: str
-    description: str
     sds_schema: str | SkipJsonSchema[None] = ""
 
     def model_dump(self, *args, **kwargs) -> dict[str, Any]:

@@ -40,9 +40,9 @@ class TestHttpGetCiMetadataV1:
 
     def test_endpoint_returns_200_if_ci_metadata_found(self, mocked_get_ci_metadata_collection):
         """
+        this may fail
         Endpoint should return `HTTP_200_OK` and ci metadata collection as part of the response
         if ci metadata is found. Assert that the correct methods are called with the correct arguments.
-        Assert description is in the response of ci metadata.
         """
         # Update mocked function to return a list of valid ci metadata
         mocked_get_ci_metadata_collection.return_value = [mock_ci_metadata]
@@ -54,7 +54,6 @@ class TestHttpGetCiMetadataV1:
         CiFirebaseRepository.get_ci_metadata_collection.assert_called_once_with(
             mock_survey_id, mock_classifier_type, mock_classifier_value, mock_language
         )
-        assert "description" in response.json()[0]
 
     def test_endpoint_returns_400_if_query_parameters_are_not_present(self, mocked_get_ci_metadata_collection):
         """

@@ -15,9 +15,6 @@ components:
         data_version:
           title: Data Version
           type: string
-        description:
-          title: Description
-          type: string
         guid:
           title: Guid
           type: string
@@ -47,7 +44,6 @@ components:
       - published_at
       - survey_id
       - title
-      - description
       title: CiMetadata
       type: object
     Classifiers:
@@ -106,9 +102,6 @@ components:
         data_version:
           title: Data Version
           type: string
-        description:
-          title: Description
-          type: string
         form_type:
           title: Form Type
           type: string
@@ -162,7 +155,6 @@ components:
       - language
       - survey_id
       - title
-      - description
       title: PostCiMetadataV1PostData
       type: object
     ValidationError:

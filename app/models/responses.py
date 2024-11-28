@@ -30,7 +30,6 @@ class CiMetadata(BaseModel):
     published_at: str
     survey_id: str
     title: str
-    description: str
     # Optional fields
     sds_schema: str | SkipJsonSchema[None] = ""
 

@@ -98,10 +98,11 @@ class TestGetCiMetadataV1:
         assert len(new_language_query_ci_response_data) == 1
         assert new_language_query_ci_response_data[0]["language"] == "English"
 
-    def test_post_ci_with_same_metadata_query_ci_returns_with_new_keys_sds_schema_description(self, setup_payload):
+    def test_post_ci_with_same_metadata_query_ci_returns_with_new_keys_sds_schema(self, setup_payload):
         """
+        this may fail
         What am I testing:
-        http_get_ci_metadata_v1 should return ci with new keys sds_schema and description when queried.
+        http_get_ci_metadata_v1 should return ci with new keys sds_schema when queried.
         """
         # post 3 ci with the same data
         setup_payload["sds_schema"] = "xx-ytr-1234-856"
@@ -122,9 +123,7 @@ class TestGetCiMetadataV1:
         # sends request to http_query_ci endpoint for data
         query_ci_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         query_ci_response_json = query_ci_response.json()
-        assert "description" in query_ci_response_json[0]
         assert query_ci_response_json[0]["sds_schema"] == "xx-ytr-1234-856"
-        assert query_ci_response_json[0]["description"] == setup_payload["description"]
 
     def test_metadata_query_ci_returns_404(self, setup_payload):
         """

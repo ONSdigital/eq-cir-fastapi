@@ -70,7 +70,6 @@ class TestPostCiV1:
             published_at=check_ci_in_db_data[0]["published_at"],
             survey_id=setup_payload["survey_id"],
             title=setup_payload["title"],
-            description=setup_payload["description"],
         )
 
         assert "published_at" in ci_response_data
@@ -127,7 +126,6 @@ class TestPostCiV1:
             sds_schema=setup_payload["sds_schema"],
             survey_id=setup_payload["survey_id"],
             title=setup_payload["title"],
-            description=setup_payload["description"],
         )
 
         assert "published_at" in ci_response_data

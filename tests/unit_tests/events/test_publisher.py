@@ -23,7 +23,6 @@ mock_event_message = PostCIEvent(
     status="DRAFT",
     survey_id="345",
     title="survey",
-    description="Version of CI is for March 2023 - APPROVED",
 )
 
 

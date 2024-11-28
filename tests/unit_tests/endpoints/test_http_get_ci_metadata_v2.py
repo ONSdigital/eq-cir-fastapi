@@ -75,7 +75,7 @@ class TestHttpGetCiMetadataV2:
     ):
         """
         Endpoint should return `HTTP_200_OK` and ci metadata collection as part of the response if ci metadata is found if
-        queried with params. Assert description is in response ci metadata.
+        queried with params.
         Assert the mocked function is called with the correct params.
         """
         # Update mocked function to return a list of valid ci metadata
@@ -87,7 +87,6 @@ class TestHttpGetCiMetadataV2:
         assert len(response.json()) == mock_ci_metadata_list.__len__()
         for i in range(len(response.json())):
             assert response.json()[i] == mock_ci_metadata_list[i].model_dump()
-            assert "description" in response.json()[i]
 
         CiFirebaseRepository.get_ci_metadata_collection.assert_called_once_with(
             mock_survey_id, mock_classifier_type, mock_classifier_value, mock_language
@@ -100,7 +99,7 @@ class TestHttpGetCiMetadataV2:
     ):
         """
         Endpoint should return `HTTP_200_OK` and ci metadata collection as part of the response if ci metadata is found if
-        queried with params without status. Assert description is in response ci metadata.
+        queried with params without status.
         Assert the mocked function is called with the correct params.
         """
         # Update mocked function to return a list of valid ci metadata
@@ -112,7 +111,6 @@ class TestHttpGetCiMetadataV2:
         assert len(response.json()) == mock_ci_metadata_list.__len__()
         for i in range(len(response.json())):
             assert response.json()[i] == mock_ci_metadata_list[i].model_dump()
-            assert "description" in response.json()[i]
 
         CiFirebaseRepository.get_ci_metadata_collection.assert_called_once_with(
             mock_survey_id, mock_classifier_type, mock_classifier_value, mock_language
@@ -125,7 +123,7 @@ class TestHttpGetCiMetadataV2:
     ):
         """
         Endpoint should return `HTTP_200_OK` and ci metadata collection as part of the response if ci metadata is found with
-        empty query params. An empty request is still valid for this endpoint. Assert description is in response ci metadata.
+        empty query params. An empty request is still valid for this endpoint.
         Assert the mocked function is called.
         """
         # Update mocked function to return a list of valid ci metadata
@@ -137,7 +135,6 @@ class TestHttpGetCiMetadataV2:
         assert len(response.json()) == mock_ci_metadata_list.__len__()
         for i in range(len(response.json())):
             assert response.json()[i] == mock_ci_metadata_list[i].model_dump()
-            assert "description" in response.json()[i]
 
         CiFirebaseRepository.get_all_ci_metadata_collection.assert_called_once()
 
