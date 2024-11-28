@@ -176,7 +176,6 @@ class TestPostCiV1:
             published_at=check_ci_in_db_data[0]["published_at"],
             survey_id=setup_publish_ci_return_payload["survey_id"],
             title=setup_publish_ci_return_payload["title"],
-            description=setup_publish_ci_return_payload["description"],
         )
 
         assert ci_response.status_code == status.HTTP_200_OK
