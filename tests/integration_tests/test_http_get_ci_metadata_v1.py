@@ -100,7 +100,6 @@ class TestGetCiMetadataV1:
 
     def test_post_ci_with_same_metadata_query_ci_returns_with_new_keys_sds_schema(self, setup_payload):
         """
-        this may fail
         What am I testing:
         http_get_ci_metadata_v1 should return ci with new keys sds_schema when queried.
         """

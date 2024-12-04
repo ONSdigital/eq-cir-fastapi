@@ -40,7 +40,6 @@ class TestHttpGetCiMetadataV1:
 
     def test_endpoint_returns_200_if_ci_metadata_found(self, mocked_get_ci_metadata_collection):
         """
-        this may fail
         Endpoint should return `HTTP_200_OK` and ci metadata collection as part of the response
         if ci metadata is found. Assert that the correct methods are called with the correct arguments.
         """
