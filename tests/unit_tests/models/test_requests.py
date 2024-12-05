@@ -7,7 +7,6 @@ mock_classifier_type = "form_type"
 mock_classifier_value = "0005"
 mock_language = "en"
 mock_survey_id = "123"
-mock_description = "Version of CI is for March 2023 - APPROVED"
 
 
 class TestGetCiMetadataV2Params:
@@ -81,7 +80,6 @@ class TestPostCiSchemaV1Data:
             "language",
             "survey_id",
             "title",
-            "schema_version",
         ],
     )
     def test_data_model_raises_value_error_if_required_field_is_none(self, input_param):
@@ -104,7 +102,6 @@ class TestPostCiSchemaV1Data:
             "language",
             "survey_id",
             "title",
-            "schema_version",
         ],
     )
     def test_data_model_raises_value_error_if_required_field_is_empty_string(self, input_param):
@@ -126,7 +123,6 @@ class TestPostCiSchemaV1Data:
             "classifier_value" "language",
             "survey_id",
             "title",
-            "schema_version",
         ],
     )
     def test_data_model_raises_value_error_if_required_field_is_whitespace(self, input_param):

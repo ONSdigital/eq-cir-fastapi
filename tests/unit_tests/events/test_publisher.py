@@ -19,12 +19,10 @@ mock_event_message = PostCIEvent(
     guid="202020",
     language="en",
     published_at="timestamp",
-    schema_version="1",
     sds_schema="",
     status="DRAFT",
     survey_id="345",
     title="survey",
-    description="Version of CI is for March 2023 - APPROVED",
 )
 
 

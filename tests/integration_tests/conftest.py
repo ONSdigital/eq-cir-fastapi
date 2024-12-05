@@ -29,9 +29,7 @@ def setup_publish_ci_return_payload():
         "language": "welsh",
         "form_type": "business",
         "title": "NotDune",
-        "schema_version": "1",
         "data_version": "1",
-        "description": "Version of CI is for March 2023",
     }
     make_iap_request("POST", "/v1/publish_collection_instrument", json=payload)
     return payload
@@ -48,8 +46,6 @@ def setup_payload():
         "language": "welsh",
         "form_type": "business",
         "title": "NotDune",
-        "schema_version": "1",
         "data_version": "1",
-        "description": "Version of CI is for March 2023",
     }
     return payload

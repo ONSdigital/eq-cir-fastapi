@@ -14,8 +14,6 @@ mandatory_keys = [
     "language",
     "survey_id",
     "title",
-    "schema_version",
-    "description",
 ]
 optional_keys = [
     "legal_basis",

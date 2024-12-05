@@ -62,11 +62,9 @@ class CiProcessorService:
             guid=next_version_ci_metadata.guid,
             language=next_version_ci_metadata.language,
             published_at=next_version_ci_metadata.published_at,
-            schema_version=next_version_ci_metadata.schema_version,
             sds_schema=next_version_ci_metadata.sds_schema,
             survey_id=next_version_ci_metadata.survey_id,
             title=next_version_ci_metadata.title,
-            description=next_version_ci_metadata.description,
         )
 
         self.try_publish_ci_metadata_to_topic(event_message)
@@ -120,10 +118,8 @@ class CiProcessorService:
         classifier_value (str): the classier value
         language (str): the language of the schema.
         data_version (str): the data version of the schema.
-        schema_version (str): the schema version of the schema.
         sds_schema (str): the sds schema of the schema.
         title (str): the title of the schema.
-        description (str): the description of the schema.
 
         Returns:
         CiMetadata: the next version of CI metadata.
@@ -136,11 +132,9 @@ class CiProcessorService:
             classifier_value=classifier_value,
             language=post_data.language,
             published_at=str(DatetimeService.get_current_date_and_time().strftime(settings.PUBLISHED_AT_FORMAT)),
-            schema_version=post_data.schema_version,
             sds_schema=post_data.sds_schema,
             survey_id=post_data.survey_id,
             title=post_data.title,
-            description=post_data.description,
         )
         return next_version_ci_metadata
 

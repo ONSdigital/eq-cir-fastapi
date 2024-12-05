@@ -1,12 +1,10 @@
 {
   "language": "en",
   "mime_type": "application/json/ons/eq",
-  "schema_version": "0.0.1",
   "data_version": "0.0.1",
   "survey_id": "134",
   "invalid_classifier": "0005",
   "legal_basis": "Notice is given under section 1 of the Statistics of Trade Act 1947.",
-  "description": "My description",
   "title": "Monthly Wages and Salaries Survey",
   "questionnaire_flow": {
     "type": "Hub",
