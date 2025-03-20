@@ -5,9 +5,9 @@ steps:
     args:
       - "-c"
       - |
-        docker build -t "europe-west2-docker.pkg.dev/ons-sds-dns/cir/${PROJECT_ID}:latest" -t "europe-west2-docker.pkg.dev/ons-sds-dns/cir/${PROJECT_ID}:${TAG_NAME}" .
-        docker push "europe-west2-docker.pkg.dev/ons-sds-dns/cir/${PROJECT_ID}:latest"
-        docker push "europe-west2-docker.pkg.dev/ons-sds-dns/cir/${PROJECT_ID}:${TAG_NAME}"
+        docker build -t "europe-west2-docker.pkg.dev/ons-sds-ci/cir-perm/${PROJECT_ID}:latest" -t "europe-west2-docker.pkg.dev/ons-sds-ci/cir-perm/${PROJECT_ID}:${TAG_NAME}" .
+        docker push "europe-west2-docker.pkg.dev/ons-sds-ci/cir-perm/${PROJECT_ID}:latest"
+        docker push "europe-west2-docker.pkg.dev/ons-sds-ci/cir-perm/${PROJECT_ID}:${TAG_NAME}"
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     id: "Deploy docker image to cloud run"
@@ -18,7 +18,7 @@ steps:
         "deploy",
         "cir",
         "--image",
-        "europe-west2-docker.pkg.dev/ons-sds-dns/cir/${PROJECT_ID}:latest",
+        "europe-west2-docker.pkg.dev/ons-sds-ci/cir-perm/${PROJECT_ID}:latest",
         "--region",
         "europe-west2",
         "--allow-unauthenticated",
@@ -33,5 +33,5 @@ options:
 
 # Store images in Google Artifact Registry
 images:
-  - europe-west2-docker.pkg.dev/ons-sds-dns/cir/${PROJECT_ID}:${TAG_NAME}
-  - europe-west2-docker.pkg.dev/ons-sds-dns/cir/${PROJECT_ID}:latest
+  - europe-west2-docker.pkg.dev/ons-sds-ci/cir-perm/${PROJECT_ID}:${TAG_NAME}
+  - europe-west2-docker.pkg.dev/ons-sds-ci/cir-perm/${PROJECT_ID}:latest
