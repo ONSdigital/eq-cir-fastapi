@@ -50,7 +50,7 @@ pip_audit==2.6.1
 platformdirs==3.10.0
 pluggy==1.2.0
 proto-plus==1.22.3
-protobuf==4.23.4
+protobuf==4.25.8
 py-serializable==0.11.1
 pyaml==23.7.0
 pyasn1==0.5.0
