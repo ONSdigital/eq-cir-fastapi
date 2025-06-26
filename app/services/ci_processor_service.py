@@ -20,8 +20,9 @@ class CiProcessorService:
 
     # Posts new CI metadata to Firestore
     def process_raw_ci(
-        self,
-        post_data: PostCiSchemaV1Data,
+            self,
+            post_data: PostCiSchemaV1Data,
+            validator_version: str = None,
     ) -> CiMetadata:
         """
         Processes incoming ci
@@ -43,6 +44,7 @@ class CiProcessorService:
 
         next_version_ci_metadata = self.build_next_version_ci_metadata(
             ci_id,
+            validator_version,
             classifier_type,
             classifier_value,
             post_data,
@@ -56,6 +58,7 @@ class CiProcessorService:
         # create event message
         event_message = PostCIEvent(
             ci_version=next_version_ci_metadata.ci_version,
+            validator_version=validator_version,
             data_version=next_version_ci_metadata.data_version,
             classifier_type=next_version_ci_metadata.classifier_type,
             classifier_value=next_version_ci_metadata.classifier_value,
@@ -72,11 +75,11 @@ class CiProcessorService:
         return next_version_ci_metadata
 
     def process_raw_ci_in_transaction(
-        self,
-        ci_id: str,
-        next_version_ci_metadata: CiMetadata,
-        ci: dict,
-        stored_ci_filename: str,
+            self,
+            ci_id: str,
+            next_version_ci_metadata: CiMetadata,
+            ci: dict,
+            stored_ci_filename: str,
     ):
         """
         Process the new CI by calling a transactional function that wrap the procedures
@@ -90,7 +93,8 @@ class CiProcessorService:
         """
         try:
             logger.info("Beginning CI transaction...")
-            self.ci_firebase_repository.perform_new_ci_transaction(ci_id, next_version_ci_metadata, ci, stored_ci_filename)
+            self.ci_firebase_repository.perform_new_ci_transaction(ci_id, next_version_ci_metadata, ci,
+                                                                   stored_ci_filename)
 
             logger.info("CI transaction committed successfully.")
             return next_version_ci_metadata
@@ -100,33 +104,32 @@ class CiProcessorService:
             logger.error("Rolling back CI transaction")
             raise exceptions.GlobalException from exc
 
-
     def build_next_version_ci_metadata(
-        self,
-        ci_id: str,
-        classifier_type: str,
-        classifier_value: str,
-        post_data: PostCiSchemaV1Data
+            self,
+            ci_id: str,
+            validator_version: str,
+            classifier_type: str,
+            classifier_value: str,
+            post_data: PostCiSchemaV1Data
     ) -> CiMetadata:
         """
         Builds the next version of CI metadata.
 
         Parameters:
         ci_id (str): the guid of the metadata.
-        survey_id (str): the survey id of the schema.
+        validator_version (str): vaidator version of schema
         classifier_type (str): the classifier type used.
         classifier_value (str): the classier value
-        language (str): the language of the schema.
-        data_version (str): the data version of the schema.
-        sds_schema (str): the sds schema of the schema.
-        title (str): the title of the schema.
+        post_data (PostCiSchemaV1Data): the sds schema of the schema.
 
         Returns:
         CiMetadata: the next version of CI metadata.
         """
         next_version_ci_metadata = CiMetadata(
             guid=ci_id,
-            ci_version=self.calculate_next_ci_version(post_data.survey_id, classifier_type, classifier_value, post_data.language),
+            ci_version=self.calculate_next_ci_version(post_data.survey_id, classifier_type, classifier_value,
+                                                      post_data.language),
+            validator_version=validator_version,
             data_version=post_data.data_version,
             classifier_type=classifier_type,
             classifier_value=classifier_value,
@@ -161,7 +164,7 @@ class CiProcessorService:
         """
         try:
             logger.info("Publishing CI metadata to topic...")
-            publisher.publish_message(post_ci_event)
+            # publisher.publish_message(post_ci_event)
             logger.debug(f"CI metadata {post_ci_event} published to topic")
             logger.info("CI metadata published successfully.")
         except Exception as exc:
@@ -169,7 +172,8 @@ class CiProcessorService:
             logger.error("Error publishing CI metadata to topic.")
             raise exceptions.GlobalException from exc
 
-    def get_ci_metadata_collection(self, survey_id: str, classifier_type, classifier_value, language: str) -> list[CiMetadata]:
+    def get_ci_metadata_collection(self, survey_id: str, classifier_type, classifier_value,
+                                   language: str) -> list[CiMetadata]:
         """
         Get a list of CI metadata
 
@@ -204,7 +208,7 @@ class CiProcessorService:
         return ci_metadata_collection
 
     def get_latest_ci_metadata(
-        self, survey_id: str, classifier_type: str, classifier_value: str, language: str
+            self, survey_id: str, classifier_type: str, classifier_value: str, language: str
     ) -> CiMetadata | None:
         """
         Get the latest CI metadata

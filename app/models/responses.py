@@ -31,6 +31,7 @@ class CiMetadata(BaseModel):
     survey_id: str
     title: str
     # Optional fields
+    validator_version: str | SkipJsonSchema[None] = ""
     sds_schema: str | SkipJsonSchema[None] = ""
 
     def model_dump(self, *args, **kwargs) -> dict[str, Any]:
