@@ -360,6 +360,10 @@ async def http_post_ci_schema_v1(
                     "metadata of the CI. "
             ),
         },
+        400: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
+        },
         500: {
             "model": ExceptionResponseModel,
             "content": {"application/json": {"example": erm.erm_500_global_exception}},
@@ -367,8 +371,8 @@ async def http_post_ci_schema_v1(
     },
 )
 async def http_post_ci_schema_v2(
-        validator_version: str,
         post_data: PostCiSchemaV1Data,
+        validator_version: str = None,
         ci_processor_service: CiProcessorService = Depends(),
 ):
     """
@@ -376,6 +380,11 @@ async def http_post_ci_schema_v2(
     the whole request body to a Google Cloud Bucket.
     """
     logger.info("Posting CI schema via v2 endpoint")
+
+    if validator_version == "" or validator_version is None:
+        message = "No validation version supplied"
+        logger.debug(f"{message}")
+        raise exceptions.ExceptionNoValidator
 
     ci_metadata = ci_processor_service.process_raw_ci(post_data, validator_version)
 
