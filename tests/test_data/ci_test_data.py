@@ -10,6 +10,8 @@ settings = Settings()
 
 # Mock data for all tests
 mock_data_version = "test_data_version"
+mock_validator_version_v1 = ""
+mock_validator_version_v2 = "0.0.1"
 mock_classifier_type = Classifiers.FORM_TYPE
 mock_classifier_value = "test_form_type"
 mock_id = str(uuid.uuid4())
@@ -28,7 +30,6 @@ mock_post_ci_schema = PostCiSchemaV1Data(
     data_version=mock_data_version,
     sds_schema=mock_sds_schema,
 )
-
 
 mock_post_ci_schema_without_sds_schema = PostCiSchemaV1Data(
     survey_id=mock_survey_id,
@@ -51,6 +52,21 @@ mock_post_ci_schema_with_sds_schema = PostCiSchemaV1Data(
 
 mock_ci_metadata = CiMetadata(
     ci_version=1,
+    validator_verion=None,
+    data_version=mock_data_version,
+    classifier_type=mock_classifier_type,
+    classifier_value=mock_classifier_value,
+    guid=mock_id,
+    language=mock_language,
+    published_at=mock_published_at,
+    sds_schema=mock_sds_schema,
+    survey_id=mock_survey_id,
+    title=mock_title,
+)
+
+mock_ci_metadata_v2 = CiMetadata(
+    ci_version=1,
+    validator_verion=mock_validator_version_v2,
     data_version=mock_data_version,
     classifier_type=mock_classifier_type,
     classifier_value=mock_classifier_value,
@@ -64,6 +80,21 @@ mock_ci_metadata = CiMetadata(
 
 mock_next_version_ci_metadata = CiMetadata(
     ci_version=2,
+    validator_verion=mock_validator_version_v1,
+    data_version=mock_data_version,
+    classifier_type=mock_classifier_type,
+    classifier_value=mock_classifier_value,
+    guid=mock_next_version_id,
+    language=mock_language,
+    published_at=mock_published_at,
+    sds_schema=mock_sds_schema,
+    survey_id=mock_survey_id,
+    title=mock_title,
+)
+
+mock_next_version_ci_metadata_v2 = CiMetadata(
+    ci_version=2,
+    validator_verion=mock_validator_version_v2,
     data_version=mock_data_version,
     classifier_type=mock_classifier_type,
     classifier_value=mock_classifier_value,
@@ -78,6 +109,7 @@ mock_next_version_ci_metadata = CiMetadata(
 mock_ci_metadata_list = [
     CiMetadata(
         ci_version=1,
+        validator_verion=mock_validator_version_v1,
         data_version=mock_data_version,
         classifier_type=mock_classifier_type,
         classifier_value=mock_classifier_value,
@@ -90,6 +122,7 @@ mock_ci_metadata_list = [
     ),
     CiMetadata(
         ci_version=2,
+        validator_verion=mock_validator_version_v1,
         data_version=mock_data_version,
         classifier_type=mock_classifier_type,
         classifier_value=mock_classifier_value,
@@ -104,6 +137,7 @@ mock_ci_metadata_list = [
 
 mock_ci_published_metadata = CiMetadata(
     ci_version=1,
+    validator_verion=mock_validator_version_v1,
     data_version=mock_data_version,
     classifier_type=mock_classifier_type,
     classifier_value=mock_classifier_value,
@@ -118,6 +152,7 @@ mock_ci_published_metadata = CiMetadata(
 # Representative `PubsubMessage` data returned by `Publisher.pull()`
 message_data = {
     "ci_version": 2,
+    "validator_version": "",
     "data_version": "1",
     "classifier_type": "form_type",
     "classifier_value": "business",

@@ -14,8 +14,7 @@ from app.models.requests import (
     GetCiMetadataV2Params,
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
-    PostCiSchemaV1Data,
-
+    PostCiSchemaV1Data, PostCiSchemaV2Params,
 )
 from app.models.responses import CiMetadata
 from app.repositories.buckets.ci_schema_bucket_repository import (
@@ -48,8 +47,8 @@ settings = Settings()
     },
 )
 async def http_delete_ci_v1(
-        query_params: DeleteCiV1Params = Depends(),
-        ci_processor_service: CiProcessorService = Depends(),
+    query_params: DeleteCiV1Params = Depends(),
+    ci_processor_service: CiProcessorService = Depends(),
 ):
     """
     DELETE method that deletes the CI schema from the bucket as well as the CI metadata from Firestore.
@@ -92,8 +91,8 @@ async def http_delete_ci_v1(
     },
 )
 async def http_get_ci_metadata_v1(
-        query_params: GetCiMetadataV1Params = Depends(),
-        ci_processor_service: CiProcessorService = Depends(),
+    query_params: GetCiMetadataV1Params = Depends(),
+    ci_processor_service: CiProcessorService = Depends(),
 ):
     """
     GET method that returns any metadata objects from Firestore that match the parameters passed.
@@ -144,8 +143,8 @@ async def http_get_ci_metadata_v1(
     },
 )
 async def http_get_ci_metadata_v2(
-        query_params: GetCiMetadataV2Params = Depends(),
-        ci_processor_service: CiProcessorService = Depends(),
+    query_params: GetCiMetadataV2Params = Depends(),
+    ci_processor_service: CiProcessorService = Depends(),
 ):
     """
     GET method that returns any metadata objects from Firestore that match the parameters passed.
@@ -372,7 +371,7 @@ async def http_post_ci_schema_v1(
 )
 async def http_post_ci_schema_v2(
         post_data: PostCiSchemaV1Data,
-        validator_version: str = None,
+        query_params: PostCiSchemaV2Params,
         ci_processor_service: CiProcessorService = Depends(),
 ):
     """
@@ -381,12 +380,12 @@ async def http_post_ci_schema_v2(
     """
     logger.info("Posting CI schema via v2 endpoint")
 
-    if validator_version == "" or validator_version is None:
+    if query_params.validator_version == "" or query_params.validator_version is None:
         message = "No validation version supplied"
         logger.debug(f"{message}")
         raise exceptions.ExceptionNoValidator
 
-    ci_metadata = ci_processor_service.process_raw_ci(post_data, validator_version)
+    ci_metadata = ci_processor_service.process_raw_ci(post_data, query_params.validator_version)
 
     logger.info("CI schema posted successfully")
 

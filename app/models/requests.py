@@ -1,10 +1,16 @@
 from dataclasses import dataclass
+from typing import Final
 
 from fastapi import Query
 from pydantic import BaseModel, ValidationInfo, field_validator
 from pydantic.json_schema import SkipJsonSchema
 
 from app.models.classifier import Classifiers
+
+CLASSIFIER_TYPE_DESC: Final[str] = "classifier_type used by the CI"
+CLASSIFIER_VALUE_DESC: Final[str] = "classifier_value used by the CI"
+LANG_DESC: Final[str] = "The language of the CI"
+SURVEY_ID_DESC: Final[str] = "The survey_id of the CI"
 
 
 @dataclass
@@ -18,11 +24,10 @@ class DeleteCiV1Params:
 class GetCiMetadataV1Params:
     """Model for `get_ci_metadata_v1` request query params"""
 
-    classifier_type: Classifiers = Query(default=None, description="Classifier type used by the CI",
-                                         example="form_type")
-    classifier_value: str = Query(default=None, description="Classifier value used by the CI", example="0001")
-    language: str = Query(default=None, description="The language of the CI", example="en")
-    survey_id: str = Query(default=None, description="The survey ID of the CI", example="123")
+    classifier_type: Classifiers = Query(default=None, description=CLASSIFIER_TYPE_DESC, example="form_type")
+    classifier_value: str = Query(default=None, description=CLASSIFIER_VALUE_DESC, example="0001")
+    language: str = Query(default=None, description=LANG_DESC, example="en")
+    survey_id: str = Query(default=None, description=SURVEY_ID_DESC, example="123")
 
     def params_not_none(self, keys):
         """
@@ -40,11 +45,10 @@ class GetCiMetadataV2Params:
     All parameters are optional
     """
 
-    classifier_type: Classifiers = Query(default=None, description="Classifier type used by the CI",
-                                         example="form_type")
-    classifier_value: str = Query(default=None, description="Classifier value used by the CI", example="0001")
-    language: str = Query(default=None, description="language to get", example="en")
-    survey_id: str = Query(default=None, description="survey id to get", example="123")
+    classifier_type: Classifiers = Query(default=None, description=CLASSIFIER_TYPE_DESC, example="form_type")
+    classifier_value: str = Query(default=None, description=CLASSIFIER_VALUE_DESC, example="0001")
+    language: str = Query(default=None, description=LANG_DESC, example="en")
+    survey_id: str = Query(default=None, description=SURVEY_ID_DESC, example="123")
 
     def params_not_none(self, keys):
         """
@@ -67,11 +71,10 @@ class GetCiMetadataV2Params:
 class GetCiSchemaV1Params:
     """Model for `get_ci_schema_v1` request query params"""
 
-    classifier_type: Classifiers = Query(default=None, description="Classifier type used by the CI",
-                                         example="form_type")
-    classifier_value: str = Query(default=None, description="Classifier value used by the CI", example="0001")
-    language: str = Query(default=None, description="The language of the CI", example="en")
-    survey_id: str = Query(default=None, description="The survey ID of the CI", example="123")
+    classifier_type: Classifiers = Query(default=None, description=CLASSIFIER_TYPE_DESC, example="form_type")
+    classifier_value: str = Query(default=None, description=CLASSIFIER_VALUE_DESC, example="0001")
+    language: str = Query(default=None, description=LANG_DESC, example="en")
+    survey_id: str = Query(default=None, description=SURVEY_ID_DESC, example="123")
 
     def params_not_none(self, *args):
         """
@@ -128,3 +131,10 @@ class PostCiSchemaV1Data(BaseModel):
         if value == "" or value.isspace():
             raise ValueError(f"{info.field_name} can't be empty or null")
         return value
+
+
+@dataclass
+class PostCiSchemaV2Params:
+    """Model for `post_ci_schema_v2` request query params"""
+
+    validator_version: str = Query(default=None, description="Validator version of CI schema", example="0.0.1")

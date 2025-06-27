@@ -23,12 +23,6 @@ class Publisher:
         else:
             return PublisherClient()
 
-    def create_topic(self, topic_path) -> None:
-        """Create a new Pub/Sub topic."""
-        logger.debug("create_topic")
-        topic = self.publisher_client.create_topic(request={"name": topic_path})
-        logger.debug(f"Created topic: {topic.name}")
-
     def publish_message(self, event_msg: PostCIEvent) -> None:
         """Publishes an event message to a Pub/Sub topic."""
 
@@ -47,7 +41,7 @@ class Publisher:
         # Publishes a message
         try:
             future = self.publisher_client.publish(topic_path, data=data)
-            result = future.result()  # Verify the publishing succeeded
+            result = future.result()  # Verify the publish succeeded
             logger.debug(f"Message published. {result}")
         except Exception as e:
             logger.debug(e)
@@ -56,7 +50,6 @@ class Publisher:
         """
         If the topic does not exist raises 500 global error.
         """
-        create_topic(topic_path)
         try:
             self.publisher_client.get_topic(request={"topic": topic_path})
             return True

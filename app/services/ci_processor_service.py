@@ -22,7 +22,7 @@ class CiProcessorService:
     def process_raw_ci(
             self,
             post_data: PostCiSchemaV1Data,
-            validator_version: str = None,
+            validator_version: str = "",
     ) -> CiMetadata:
         """
         Processes incoming ci
@@ -164,7 +164,7 @@ class CiProcessorService:
         """
         try:
             logger.info("Publishing CI metadata to topic...")
-            # publisher.publish_message(post_ci_event)
+            publisher.publish_message(post_ci_event)
             logger.debug(f"CI metadata {post_ci_event} published to topic")
             logger.info("CI metadata published successfully.")
         except Exception as exc:
