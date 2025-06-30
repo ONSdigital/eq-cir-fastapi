@@ -152,7 +152,7 @@ mock_ci_published_metadata = CiMetadata(
 # Representative `PubsubMessage` data returned by `Publisher.pull()`
 message_data = {
     "ci_version": 2,
-    "validator_version": "",
+    "validator_version": "0.0.1",
     "data_version": "1",
     "classifier_type": "form_type",
     "classifier_value": "business",

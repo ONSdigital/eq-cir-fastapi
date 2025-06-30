@@ -14,6 +14,7 @@ settings = Settings()
 mock_event_message = PostCIEvent(
     ci_version=1,
     data_version="0.1",
+    validator_version="0.0.1",
     classifier_type="form_type",
     classifier_value="005",
     guid="202020",

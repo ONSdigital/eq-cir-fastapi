@@ -10,6 +10,7 @@ settings = Settings()
 # Mock data for all tests
 mock_ci_version = "1"
 mock_data_version = "1"
+mock_validator_version = "0.0.1"
 mock_classifier_type = "form_type"
 mock_classifier_value = "t"
 mock_id = str(uuid.uuid4())
@@ -30,6 +31,7 @@ class TestPostCIEvent:
         """
         ci_event = PostCIEvent(
             ci_version=mock_ci_version,
+            validator_version=mock_validator_version,
             data_version=mock_data_version,
             classifier_type=mock_classifier_type,
             classifier_value=mock_classifier_value,
@@ -53,6 +55,7 @@ class TestPostCIEvent:
         """
         ci_event = PostCIEvent(
             ci_version=mock_ci_version,
+            validator_version=mock_validator_version,
             data_version=mock_data_version,
             classifier_type=mock_classifier_type,
             classifier_value=mock_classifier_value,
@@ -75,6 +78,7 @@ class TestPostCIEvent:
         """
         ci_event = PostCIEvent(
             ci_version=mock_ci_version,
+            validator_version=mock_validator_version,
             data_version=mock_data_version,
             classifier_type=mock_classifier_type,
             classifier_value=mock_classifier_value,
