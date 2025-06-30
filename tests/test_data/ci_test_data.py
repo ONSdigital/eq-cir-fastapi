@@ -52,7 +52,7 @@ mock_post_ci_schema_with_sds_schema = PostCiSchemaV1Data(
 
 mock_ci_metadata = CiMetadata(
     ci_version=1,
-    validator_verion=None,
+    validator_version="",
     data_version=mock_data_version,
     classifier_type=mock_classifier_type,
     classifier_value=mock_classifier_value,
@@ -66,7 +66,7 @@ mock_ci_metadata = CiMetadata(
 
 mock_ci_metadata_v2 = CiMetadata(
     ci_version=1,
-    validator_verion=mock_validator_version_v2,
+    validator_version=mock_validator_version_v2,
     data_version=mock_data_version,
     classifier_type=mock_classifier_type,
     classifier_value=mock_classifier_value,
@@ -80,7 +80,7 @@ mock_ci_metadata_v2 = CiMetadata(
 
 mock_next_version_ci_metadata = CiMetadata(
     ci_version=2,
-    validator_verion=mock_validator_version_v1,
+    validator_version=mock_validator_version_v1,
     data_version=mock_data_version,
     classifier_type=mock_classifier_type,
     classifier_value=mock_classifier_value,
@@ -94,7 +94,7 @@ mock_next_version_ci_metadata = CiMetadata(
 
 mock_next_version_ci_metadata_v2 = CiMetadata(
     ci_version=2,
-    validator_verion=mock_validator_version_v2,
+    validator_version=mock_validator_version_v2,
     data_version=mock_data_version,
     classifier_type=mock_classifier_type,
     classifier_value=mock_classifier_value,
@@ -109,7 +109,7 @@ mock_next_version_ci_metadata_v2 = CiMetadata(
 mock_ci_metadata_list = [
     CiMetadata(
         ci_version=1,
-        validator_verion=mock_validator_version_v1,
+        validator_version=mock_validator_version_v1,
         data_version=mock_data_version,
         classifier_type=mock_classifier_type,
         classifier_value=mock_classifier_value,
@@ -122,7 +122,7 @@ mock_ci_metadata_list = [
     ),
     CiMetadata(
         ci_version=2,
-        validator_verion=mock_validator_version_v1,
+        validator_version=mock_validator_version_v1,
         data_version=mock_data_version,
         classifier_type=mock_classifier_type,
         classifier_value=mock_classifier_value,
@@ -137,7 +137,7 @@ mock_ci_metadata_list = [
 
 mock_ci_published_metadata = CiMetadata(
     ci_version=1,
-    validator_verion=mock_validator_version_v1,
+    validator_version=mock_validator_version_v1,
     data_version=mock_data_version,
     classifier_type=mock_classifier_type,
     classifier_value=mock_classifier_value,
