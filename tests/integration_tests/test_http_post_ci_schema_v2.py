@@ -17,7 +17,7 @@ class TestPostCiV2:
     get_metadata_url = "/v1/ci_metadata"
     # Initialise the subscriber client
     subscriber = Subscriber()
-    # NOTE: Anytime a happy path for post_ci_v1 is called, make sure to add in a line that pulls &
+    # NOTE: Anytime a happy path for post_ci_v2 is called, make sure to add in a line that pulls &
     # acknowledges the messages that are published to a topic
 
     def teardown_method(self):
@@ -111,7 +111,7 @@ class TestPostCiV2:
         # sends request to http_query_ci endpoint for data
         check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
-        # Need to pull and acknowledge messages in any test where post_ci_v1 is called so the subscription doesn't get clogged
+        # Need to pull and acknowledge messages to clear subscription
         received_messages = self.subscriber.pull_messages_and_acknowledge()
 
         decoded_received_messages = [x.decode("utf-8") for x in received_messages]
@@ -150,7 +150,7 @@ class TestPostCiV2:
         ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_publish_ci_return_payload)
         ci_response_data = ci_response.json()
 
-        # Need to pull and acknowledge messages in any test where post_ci_v1 is called so the subscription doesn't get clogged
+        # Need to pull and acknowledge messages to clear subscription
         self.subscriber.pull_messages_and_acknowledge()
 
         survey_id = setup_publish_ci_return_payload["survey_id"]
