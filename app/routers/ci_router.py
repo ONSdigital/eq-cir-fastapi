@@ -371,7 +371,7 @@ async def http_post_ci_schema_v1(
 )
 async def http_post_ci_schema_v2(
         post_data: PostCiSchemaV1Data,
-        query_params: PostCiSchemaV2Params,
+        query_params: PostCiSchemaV2Params = Depends(),
         ci_processor_service: CiProcessorService = Depends(),
 ):
     """
