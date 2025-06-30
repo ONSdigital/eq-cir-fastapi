@@ -8,6 +8,7 @@ class PostCIEvent(BaseModel):
     """Defines the data structure required to publish an event when a new CI has been created."""
 
     ci_version: int
+    validation_version: str
     data_version: str
     classifier_type: str
     classifier_value: str
