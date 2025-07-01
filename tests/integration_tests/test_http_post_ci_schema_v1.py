@@ -63,6 +63,7 @@ class TestPostCiV1:
         expected_ci = CiMetadata(
             ci_version=1,
             data_version=setup_payload["data_version"],
+            validator_version="",
             classifier_type=classifier_type,
             classifier_value=classifier_value,
             guid=check_ci_in_db_data[0]["guid"],
@@ -118,6 +119,7 @@ class TestPostCiV1:
         expected_ci = CiMetadata(
             ci_version=1,
             data_version=setup_payload["data_version"],
+            validator_version="",
             classifier_type=classifier_type,
             classifier_value=classifier_value,
             guid=check_ci_in_db_data[0]["guid"],
@@ -168,6 +170,7 @@ class TestPostCiV1:
 
         expected_ci = CiMetadata(
             ci_version=2,
+            validator_version="",
             data_version=setup_publish_ci_return_payload["data_version"],
             classifier_type=classifier_type,
             classifier_value=classifier_value,
