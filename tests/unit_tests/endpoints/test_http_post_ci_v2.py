@@ -323,7 +323,7 @@ class TestHttpPostCiV2:
         assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
         assert response.json()["message"] == "Unable to process request"
 
-    def test_endpoint_returns_500_if_validator_version_missing(
+    def test_endpoint_returns_400_if_validator_version_missing(
             self,
             mocked_perform_new_ci_transaction,
             mocked_get_latest_ci_metadata,

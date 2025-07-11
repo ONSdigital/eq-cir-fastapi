@@ -93,7 +93,9 @@ class CiProcessorService:
         """
         try:
             logger.info("Beginning CI transaction...")
-            self.ci_firebase_repository.perform_new_ci_transaction(ci_id, next_version_ci_metadata, ci,
+            self.ci_firebase_repository.perform_new_ci_transaction(ci_id,
+                                                                   next_version_ci_metadata,
+                                                                   ci,
                                                                    stored_ci_filename)
 
             logger.info("CI transaction committed successfully.")
@@ -127,7 +129,9 @@ class CiProcessorService:
         """
         next_version_ci_metadata = CiMetadata(
             guid=ci_id,
-            ci_version=self.calculate_next_ci_version(post_data.survey_id, classifier_type, classifier_value,
+            ci_version=self.calculate_next_ci_version(post_data.survey_id,
+                                                      classifier_type,
+                                                      classifier_value,
                                                       post_data.language),
             validator_version=validator_version,
             data_version=post_data.data_version,
@@ -172,7 +176,10 @@ class CiProcessorService:
             logger.error("Error publishing CI metadata to topic.")
             raise exceptions.GlobalException from exc
 
-    def get_ci_metadata_collection(self, survey_id: str, classifier_type, classifier_value,
+    def get_ci_metadata_collection(self,
+                                   survey_id: str,
+                                   classifier_type,
+                                   classifier_value,
                                    language: str) -> list[CiMetadata]:
         """
         Get a list of CI metadata

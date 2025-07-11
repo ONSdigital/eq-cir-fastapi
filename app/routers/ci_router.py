@@ -377,7 +377,7 @@ async def http_post_ci_schema_v2(
 ):
     """
     POST method that creates a Collection Instrument. This will post the metadata to Firestore and
-    the whole request body to a Google Cloud Bucket.
+    the whole request body to a Google Cloud Bucket. Validator version required param.
     """
     logger.info("Posting CI schema via v2 endpoint")
 
