@@ -15,6 +15,7 @@ from app.models.requests import (
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
     PostCiSchemaV1Data,
+    PostCiSchemaV2Params,
 )
 from app.models.responses import CiMetadata
 from app.repositories.buckets.ci_schema_bucket_repository import (
@@ -166,7 +167,8 @@ async def http_get_ci_metadata_v2(
             raise exceptions.ExceptionInvalidClassifier
         else:
             ci_metadata_collection = ci_processor_service.get_ci_metadata_collection(
-                query_params.survey_id, query_params.classifier_type, query_params.classifier_value, query_params.language
+                query_params.survey_id, query_params.classifier_type, query_params.classifier_value,
+                query_params.language
             )
 
     if not ci_metadata_collection:
@@ -192,7 +194,7 @@ async def http_get_ci_metadata_v2(
         200: {
             "model": CiMetadata,
             "description": (
-                "Successfully retrieved the CI schema. This is illustrated by returning the CI schema to the user."
+                    "Successfully retrieved the CI schema. This is illustrated by returning the CI schema to the user."
             ),
         },
         500: {
@@ -210,9 +212,9 @@ async def http_get_ci_metadata_v2(
     },
 )
 async def http_get_ci_schema_v1(
-    query_params: GetCiSchemaV1Params = Depends(),
-    ci_processor_service: CiProcessorService = Depends(),
-    ci_schema_bucket_repository: CiSchemaBucketRepository = Depends(),
+        query_params: GetCiSchemaV1Params = Depends(),
+        ci_processor_service: CiProcessorService = Depends(),
+        ci_schema_bucket_repository: CiSchemaBucketRepository = Depends(),
 ):
     """
     GET method that fetches a CI schema by survey_id, form_type and language.
@@ -260,7 +262,7 @@ async def http_get_ci_schema_v1(
         200: {
             "model": CiMetadata,
             "description": (
-                "Successfully Queried a CI. This is illustrated with the returned response containing the schema of the CI."
+                    "Successfully Queried a CI. This is illustrated with the returned response containing the schema of the CI."
             ),
         },
         500: {
@@ -278,9 +280,9 @@ async def http_get_ci_schema_v1(
     },
 )
 async def http_get_ci_schema_v2(
-    query_params: GetCiSchemaV2Params = Depends(),
-    ci_processor_service: CiProcessorService = Depends(),
-    ci_schema_bucket_repository: CiSchemaBucketRepository = Depends(),
+        query_params: GetCiSchemaV2Params = Depends(),
+        ci_processor_service: CiProcessorService = Depends(),
+        ci_schema_bucket_repository: CiSchemaBucketRepository = Depends(),
 ):
     """
     GET method that fetches a CI schema by GUID.
@@ -323,7 +325,7 @@ async def http_get_ci_schema_v2(
         200: {
             "model": CiMetadata,
             "description": (
-                "Successfully created a CI. This is illustrated with the returned response containing the metadata of the CI."
+                    "Successfully created a CI. This is illustrated with the returned response containing the metadata of the CI."
             ),
         },
         500: {
@@ -333,8 +335,8 @@ async def http_get_ci_schema_v2(
     },
 )
 async def http_post_ci_schema_v1(
-    post_data: PostCiSchemaV1Data,
-    ci_processor_service: CiProcessorService = Depends(),
+        post_data: PostCiSchemaV1Data,
+        ci_processor_service: CiProcessorService = Depends(),
 ):
     """
     POST method that creates a Collection Instrument. This will post the metadata to Firestore and
@@ -345,4 +347,47 @@ async def http_post_ci_schema_v1(
     ci_metadata = ci_processor_service.process_raw_ci(post_data)
 
     logger.info("CI schema posted successfully")
+    return ci_metadata.model_dump()
+
+
+@router.post(
+    "/v2/publish_collection_instrument",
+    responses={
+        200: {
+            "model": CiMetadata,
+            "description": (
+                    "Successfully created a CI. This is illustrated with the returned response containing the "
+                    "metadata of the CI. "
+            ),
+        },
+        400: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
+        },
+        500: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_500_global_exception}},
+        },
+    },
+)
+async def http_post_ci_schema_v2(
+        post_data: PostCiSchemaV1Data,
+        query_params: PostCiSchemaV2Params = Depends(),
+        ci_processor_service: CiProcessorService = Depends(),
+):
+    """
+    POST method that creates a Collection Instrument. This will post the metadata to Firestore and
+    the whole request body to a Google Cloud Bucket. Validator version required param.
+    """
+    logger.info("Posting CI schema via v2 endpoint")
+
+    if query_params.validator_version == "" or query_params.validator_version is None:
+        message = "No validation version supplied"
+        logger.debug(f"{message}")
+        raise exceptions.ExceptionNoValidator
+
+    ci_metadata = ci_processor_service.process_raw_ci(post_data, query_params.validator_version)
+
+    logger.info("CI schema posted successfully")
+
     return ci_metadata.model_dump()

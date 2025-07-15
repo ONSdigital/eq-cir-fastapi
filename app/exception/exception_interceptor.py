@@ -27,6 +27,13 @@ class ExceptionInterceptor:
         er = ExceptionResponder(status.HTTP_404_NOT_FOUND, erm.erm_404_no_results_exception)
         return er.throw_er_with_json()
 
+    def throw_400_no_validator_provided_exception(request: Request, exc: Exception) -> JSONResponse:
+        """
+        When there is no validator version provided a 400 HTTP response is returned.
+        """
+        er = ExceptionResponder(status.HTTP_400_BAD_REQUEST, erm.erm_400_no_validator_version_exception)
+        return er.throw_er_with_json()
+
     def throw_404_no_ci_to_delete(request: Request, exc: Exception) -> JSONResponse:
         """
         When there is No CI found and a 404 HTTP response is returned

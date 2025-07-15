@@ -34,9 +34,13 @@ components:
         title:
           title: Title
           type: string
+        validator_version:
+          title: Validator Version
+          type: string
       required:
       - ci_version
       - data_version
+      - validator_version
       - classifier_type
       - classifier_value
       - guid
@@ -121,12 +125,15 @@ components:
           title: Mime Type
           type: string
         navigation:
+          additionalProperties: true
           title: Navigation
           type: object
         post_submission:
+          additionalProperties: true
           title: Post Submission
           type: object
         questionnaire_flow:
+          additionalProperties: true
           title: Questionnaire Flow
           type: object
         sds_schema:
@@ -138,6 +145,7 @@ components:
           title: Sections
           type: array
         submission:
+          additionalProperties: true
           title: Submission
           type: object
         survey_id:
@@ -212,23 +220,21 @@ paths:
         match the parameters passed.
       operationId: http_get_ci_metadata_v1_v1_ci_metadata_get
       parameters:
-      - description: Classifier type used by the CI
+      - description: classifier_type used by the CI
         example: form_type
         in: query
         name: classifier_type
         required: false
         schema:
-          allOf:
-          - $ref: '#/components/schemas/Classifiers'
-          description: Classifier type used by the CI
-          title: Classifier Type
-      - description: Classifier value used by the CI
+          $ref: '#/components/schemas/Classifiers'
+          description: classifier_type used by the CI
+      - description: classifier_value used by the CI
         example: '0001'
         in: query
         name: classifier_value
         required: false
         schema:
-          description: Classifier value used by the CI
+          description: classifier_value used by the CI
           title: Classifier Value
           type: string
       - description: The language of the CI
@@ -240,13 +246,13 @@ paths:
           description: The language of the CI
           title: Language
           type: string
-      - description: The survey ID of the CI
+      - description: The survey_id of the CI
         example: '123'
         in: query
         name: survey_id
         required: false
         schema:
-          description: The survey ID of the CI
+          description: The survey_id of the CI
           title: Survey Id
           type: string
       responses:
@@ -387,23 +393,21 @@ paths:
         language.
       operationId: http_get_ci_schema_v1_v1_retrieve_collection_instrument_get
       parameters:
-      - description: Classifier type used by the CI
+      - description: classifier_type used by the CI
         example: form_type
         in: query
         name: classifier_type
         required: false
         schema:
-          allOf:
-          - $ref: '#/components/schemas/Classifiers'
-          description: Classifier type used by the CI
-          title: Classifier Type
-      - description: Classifier value used by the CI
+          $ref: '#/components/schemas/Classifiers'
+          description: classifier_type used by the CI
+      - description: classifier_value used by the CI
         example: '0001'
         in: query
         name: classifier_value
         required: false
         schema:
-          description: Classifier value used by the CI
+          description: classifier_value used by the CI
           title: Classifier Value
           type: string
       - description: The language of the CI
@@ -415,13 +419,13 @@ paths:
           description: The language of the CI
           title: Language
           type: string
-      - description: The survey ID of the CI
+      - description: The survey_id of the CI
         example: '123'
         in: query
         name: survey_id
         required: false
         schema:
-          description: The survey ID of the CI
+          description: The survey_id of the CI
           title: Survey Id
           type: string
       responses:
@@ -478,41 +482,39 @@ paths:
         2. Provide no parameters.'
       operationId: http_get_ci_metadata_v2_v2_ci_metadata_get
       parameters:
-      - description: Classifier type used by the CI
+      - description: classifier_type used by the CI
         example: form_type
         in: query
         name: classifier_type
         required: false
         schema:
-          allOf:
-          - $ref: '#/components/schemas/Classifiers'
-          description: Classifier type used by the CI
-          title: Classifier Type
-      - description: Classifier value used by the CI
+          $ref: '#/components/schemas/Classifiers'
+          description: classifier_type used by the CI
+      - description: classifier_value used by the CI
         example: '0001'
         in: query
         name: classifier_value
         required: false
         schema:
-          description: Classifier value used by the CI
+          description: classifier_value used by the CI
           title: Classifier Value
           type: string
-      - description: language to get
+      - description: The language of the CI
         example: en
         in: query
         name: language
         required: false
         schema:
-          description: language to get
+          description: The language of the CI
           title: Language
           type: string
-      - description: survey id to get
+      - description: The survey_id of the CI
         example: '123'
         in: query
         name: survey_id
         required: false
         schema:
-          description: survey id to get
+          description: The survey_id of the CI
           title: Survey Id
           type: string
       responses:
@@ -555,6 +557,62 @@ paths:
                 $ref: '#/components/schemas/ExceptionResponseModel'
           description: Internal Server Error
       summary: Http Get Ci Metadata V2
+  /v2/publish_collection_instrument:
+    post:
+      description: 'POST method that creates a Collection Instrument. This will post
+        the metadata to Firestore and
+
+        the whole request body to a Google Cloud Bucket.'
+      operationId: http_post_ci_schema_v2_v2_publish_collection_instrument_post
+      parameters:
+      - description: Validator version of CI schema
+        example: 0.0.1
+        in: query
+        name: validator_version
+        required: false
+        schema:
+          description: Validator version of CI schema
+          title: Validator Version
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCiSchemaV1Data'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CiMetadata'
+          description: 'Successfully created a CI. This is illustrated with the returned
+            response containing the metadata of the CI. '
+        '400':
+          content:
+            application/json:
+              example:
+                message: Invalid search parameters provided
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+        '500':
+          content:
+            application/json:
+              example:
+                message: Unable to process request
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+      summary: Http Post Ci Schema V2
   /v2/retrieve_collection_instrument:
     get:
       description: GET method that fetches a CI schema by GUID.

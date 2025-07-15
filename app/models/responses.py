@@ -23,6 +23,7 @@ class CiMetadata(BaseModel):
     # Required fields
     ci_version: int
     data_version: str
+    validator_version: str
     classifier_type: str
     classifier_value: str
     guid: str

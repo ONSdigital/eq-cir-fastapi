@@ -16,7 +16,10 @@ app.openapi_version = "3.0.1"
 app.title = "Collection Instrumentation Register"
 app.version = "1.0.0"
 
-
+app.add_exception_handler(
+    exceptions.ExceptionNoValidator,
+    ExceptionInterceptor.throw_400_no_validator_provided_exception,
+)
 app.add_exception_handler(
     exceptions.ExceptionNoCIMetadata,
     ExceptionInterceptor.throw_404_no_ci_metadata_exception,

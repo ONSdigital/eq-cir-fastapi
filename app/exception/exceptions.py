@@ -4,6 +4,9 @@ pairing with respective exception handling
 functions to be raised properly
 """
 
+class ExceptionNoValidator(Exception):
+    pass
+
 
 class ExceptionNoCIFound(Exception):
     pass

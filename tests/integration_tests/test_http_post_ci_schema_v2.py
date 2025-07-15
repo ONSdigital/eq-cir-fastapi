@@ -9,14 +9,15 @@ from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request
 
 
-class TestPostCiV1:
-    """Tests for the `http_post_ci_v1` endpoint."""
+class TestPostCiV2:
+    """Tests for the `http_post_ci_v2` endpoint."""
 
-    post_url = "/v1/publish_collection_instrument"
-    get_matadata_url = "/v1/ci_metadata"
+    post_url = "/v2/publish_collection_instrument?validator_version=0.0.1"
+    post_url_no_validator = "/v2/publish_collection_instrument"
+    get_metadata_url = "/v1/ci_metadata"
     # Initialise the subscriber client
     subscriber = Subscriber()
-    # NOTE: Anytime a happy path for post_ci_v1 is called, make sure to add in a line that pulls &
+    # NOTE: Anytime a happy path for post_ci_v2 is called, make sure to add in a line that pulls &
     # acknowledges the messages that are published to a topic
 
     def teardown_method(self):
@@ -36,7 +37,7 @@ class TestPostCiV1:
         field is present with an ISO8601 value. (2023-01-24T13:56:38Z)
         """
         # Creates a CI in the database, essentially running post_ci_v1 from handler folder
-        ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_payload)
+        ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_payload,)
         ci_response_data = ci_response.json()
         survey_id = setup_payload["survey_id"]
         classifier_type = CiClassifierService.get_classifier_type(setup_payload)
@@ -52,7 +53,7 @@ class TestPostCiV1:
             }
         )
         # sends request to http_query_ci endpoint for data
-        check_ci_in_db = make_iap_request("GET", f"{self.get_matadata_url}?{querystring}")
+        check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
 
         received_messages = self.subscriber.pull_messages_and_acknowledge()
@@ -62,8 +63,8 @@ class TestPostCiV1:
 
         expected_ci = CiMetadata(
             ci_version=1,
+            validator_version="0.0.1",
             data_version=setup_payload["data_version"],
-            validator_version="",
             classifier_type=classifier_type,
             classifier_value=classifier_value,
             guid=check_ci_in_db_data[0]["guid"],
@@ -108,9 +109,9 @@ class TestPostCiV1:
             }
         )
         # sends request to http_query_ci endpoint for data
-        check_ci_in_db = make_iap_request("GET", f"{self.get_matadata_url}?{querystring}")
+        check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
-        # Need to pull and acknowledge messages in any test where post_ci_v1 is called so the subscription doesn't get clogged
+        # Need to pull and acknowledge messages to clear subscription
         received_messages = self.subscriber.pull_messages_and_acknowledge()
 
         decoded_received_messages = [x.decode("utf-8") for x in received_messages]
@@ -118,8 +119,8 @@ class TestPostCiV1:
 
         expected_ci = CiMetadata(
             ci_version=1,
+            validator_version="0.0.1",
             data_version=setup_payload["data_version"],
-            validator_version="",
             classifier_type=classifier_type,
             classifier_value=classifier_value,
             guid=check_ci_in_db_data[0]["guid"],
@@ -149,7 +150,7 @@ class TestPostCiV1:
         ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_publish_ci_return_payload)
         ci_response_data = ci_response.json()
 
-        # Need to pull and acknowledge messages in any test where post_ci_v1 is called so the subscription doesn't get clogged
+        # Need to pull and acknowledge messages to clear subscription
         self.subscriber.pull_messages_and_acknowledge()
 
         survey_id = setup_publish_ci_return_payload["survey_id"]
@@ -165,12 +166,12 @@ class TestPostCiV1:
             }
         )
         # sends request to http_query_ci endpoint for data
-        check_ci_in_db = make_iap_request("GET", f"{self.get_matadata_url}?{querystring}")
+        check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
 
         expected_ci = CiMetadata(
             ci_version=2,
-            validator_version="",
+            validator_version="0.0.1",
             data_version=setup_publish_ci_return_payload["data_version"],
             classifier_type=classifier_type,
             classifier_value=classifier_value,
@@ -294,3 +295,18 @@ class TestPostCiV1:
         ci_response = make_iap_request("POST", f"{self.post_url}", json=payload, unauthenticated=True)
 
         assert ci_response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_publish_ci_fails_missing_validator_version(self, setup_payload):
+        """
+        What am I testing:
+        http_post_ci_metadata_v1 should return a 400 bad request if no validator version provided
+        """
+        ci_response = make_iap_request("POST", f"{self.post_url_no_validator}", json=setup_payload, )
+
+        assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
+
+        ci_response_data = ci_response.json()
+        assert ci_response_data == {
+            "message": "No validator version provided",
+            "status": "error",
+        }

@@ -19,8 +19,6 @@ class CiSchemaBucketRepository:
         schema (Schema): ci schema being stored.
         """
         logger.info("attempting to store schema")
-        logger.debug(f"{blob_name} {schema}")
-
         blob = self.bucket.blob(blob_name)
         blob.upload_from_string(
             json.dumps(schema, indent=2),
@@ -46,7 +44,7 @@ class CiSchemaBucketRepository:
         return json.loads(data)
 
     def delete_ci_schema(self, blob_name: str) -> None:
-        """ "
+        """
         Deletes the CI schema from the ci schema bucket using the filename provided.
 
         Parameters:
