@@ -24,6 +24,16 @@ class CiFirebaseRepository:
         self.ci_collection = firebase_loader.get_ci_collection()
         self.ci_bucket_repository = CiSchemaBucketRepository()
 
+    def update_ci_metadata(self, guid: str, metadata: CiMetadata):
+        """
+        Updates metadata of CI.
+
+        Parameters:
+        guid (str): identifier of metadata.
+        metadata (CiMetadata): metadata for schema
+        """
+        self.ci_collection.document(guid).update(metadata)
+
     def get_latest_ci_metadata(self, survey_id, classifier_type, classifier_value, language) -> CiMetadata | None:
         """
         Get metadata of latest CI version.
