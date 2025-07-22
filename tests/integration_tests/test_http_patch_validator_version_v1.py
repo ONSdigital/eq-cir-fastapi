@@ -1,13 +1,14 @@
 from urllib.parse import urlencode
 
 from app.models.requests import PatchValidatorVersionV1Params
+from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request
 
 
 class TestPatchValidatorVersionV1:
-
     post_url = "/v2/publish_collection_instrument?validator_version=0.0.1"
     update_validator = "/v1/update_validator_version"
+    get_metadata_url = "/v1/ci_metadata"
 
     def teardown_method(self):
         """
@@ -36,7 +37,21 @@ class TestPatchValidatorVersionV1:
             validator_version=updated_validator_version
 
         )
-        ci_update_response = make_iap_request("PATCH", f"{self.update_validator}?{urlencode(query_params.__dict__)}")
-        ci_update_data = ci_update_response.json()
+        make_iap_request("PATCH", f"{self.update_validator}?{urlencode(query_params.__dict__)}")
 
-        assert ci_update_data["validator_version"] == updated_validator_version
+        survey_id = setup_payload["survey_id"]
+        classifier_type = CiClassifierService.get_classifier_type(setup_payload)
+        classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)
+        language = setup_payload["language"]
+
+        querystring = urlencode(
+            {
+                "classifier_type": classifier_type,
+                "classifier_value": classifier_value,
+                "language": language,
+                "survey_id": survey_id,
+            }
+        )
+        # sends request to http_query_ci endpoint for data
+        check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
+        assert check_ci_in_db["validator_version"] == updated_validator_version
