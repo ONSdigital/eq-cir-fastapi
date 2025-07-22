@@ -7,7 +7,7 @@ from tests.integration_tests.utils import make_iap_request
 class TestPatchValidatorVersionV1:
 
     post_url = "/v2/publish_collection_instrument?validator_version=0.0.1"
-    update_validator = "/v1/update_validator_version/"
+    update_validator = "/v1/update_validator_version"
 
     def teardown_method(self):
         """
@@ -17,7 +17,7 @@ class TestPatchValidatorVersionV1:
         querystring = urlencode({"survey_id": 3456})
         make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
 
-    def test_can_publish_valid_ci(self, setup_payload):
+    def test_update_validator_version(self, setup_payload):
         """
         What am I testing:
         AC-1.1 - The ability to submit a CI (well-formed) to the API endpoint,
