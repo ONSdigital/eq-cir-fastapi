@@ -1,6 +1,7 @@
 from urllib.parse import urlencode
 
 from app.models.requests import PatchValidatorVersionV1Params
+from app.models.responses import CiMetadata
 from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request
 
@@ -54,4 +55,21 @@ class TestPatchValidatorVersionV1:
         )
         # sends request to http_query_ci endpoint for data
         check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
-        assert check_ci_in_db["validator_version"] == updated_validator_version
+        check_ci_in_db_data = check_ci_in_db.json()
+
+        expected_ci = CiMetadata(
+            ci_version=1,
+            data_version=setup_payload["data_version"],
+            validator_version=updated_validator_version,
+            classifier_type=classifier_type,
+            classifier_value=classifier_value,
+            guid=check_ci_in_db_data[0]["guid"],
+            language=setup_payload["language"],
+            published_at=check_ci_in_db_data[0]["published_at"],
+            sds_schema=setup_payload["sds_schema"],
+            survey_id=setup_payload["survey_id"],
+            title=setup_payload["title"],
+        )
+
+        assert check_ci_in_db_data == [expected_ci.model_dump()]
+        assert check_ci_in_db_data["validator_version"] == updated_validator_version
