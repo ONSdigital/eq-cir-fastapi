@@ -70,5 +70,7 @@ class TestPatchValidatorVersionV1:
             title=setup_payload["title"],
         )
 
+        print(check_ci_in_db_data)
+
         assert [expected_ci.model_dump()] in check_ci_in_db_data
         assert check_ci_in_db_data["validator_version"] == updated_validator_version
