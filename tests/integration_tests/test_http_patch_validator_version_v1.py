@@ -57,20 +57,22 @@ class TestPatchValidatorVersionV1:
         check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
 
-        expected_ci = CiMetadata(
-            ci_version=1,
-            data_version=setup_payload["data_version"],
-            validator_version=updated_validator_version,
-            classifier_type=classifier_type,
-            classifier_value=classifier_value,
-            guid=check_ci_in_db_data[0]["guid"],
-            language=setup_payload["language"],
-            published_at=check_ci_in_db_data[0]["published_at"],
-            survey_id=setup_payload["survey_id"],
-            title=setup_payload["title"],
-        )
+        expected_ci = {'ci_version': 1,
+                       'data_version': '1',
+                       'validator_version': '0.0.2',
+                       'classifier_type': 'form_type',
+                       'classifier_value': 'business',
+                       'guid': check_ci_in_db_data[0]["guid"],
+                       'language': 'welsh',
+                       'published_at': check_ci_in_db_data[0]["published_at"],
+                       'survey_id': '3456',
+                       'title': 'NotDune'
+                       }
 
+        print("expected")
+        print(expected_ci)
+        print("actual")
         print(check_ci_in_db_data)
 
-        assert [expected_ci.model_dump()] in check_ci_in_db_data
+        assert [expected_ci] in check_ci_in_db_data
         assert check_ci_in_db_data["validator_version"] == updated_validator_version
