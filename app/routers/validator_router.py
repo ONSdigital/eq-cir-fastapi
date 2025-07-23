@@ -63,7 +63,7 @@ async def http_patch_ci_validator_version_v1(
         logger.debug(f"{error_message}:{query_params.guid}")
         raise exceptions.ExceptionNoCIMetadata
 
-    ci_metadata["validator_version"] = query_params.validator_version
+    ci_metadata.validator_version = query_params.validator_version
 
     ci_processor_service.update_ci_validator_version(query_params.guid, ci_metadata)
 
