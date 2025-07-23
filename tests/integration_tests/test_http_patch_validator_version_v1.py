@@ -74,5 +74,5 @@ class TestPatchValidatorVersionV1:
         print("actual")
         print(check_ci_in_db_data)
 
-        assert [expected_ci] in check_ci_in_db_data
+        assert [expected_ci] == check_ci_in_db_data
         assert check_ci_in_db_data["validator_version"] == updated_validator_version
