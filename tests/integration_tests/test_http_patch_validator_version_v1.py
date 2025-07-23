@@ -66,7 +66,6 @@ class TestPatchValidatorVersionV1:
             guid=check_ci_in_db_data[0]["guid"],
             language=setup_payload["language"],
             published_at=check_ci_in_db_data[0]["published_at"],
-            sds_schema=setup_payload["sds_schema"],
             survey_id=setup_payload["survey_id"],
             title=setup_payload["title"],
         )
