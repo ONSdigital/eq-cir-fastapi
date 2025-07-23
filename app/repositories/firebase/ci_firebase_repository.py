@@ -32,7 +32,7 @@ class CiFirebaseRepository:
         guid (str): identifier of metadata.
         metadata (CiMetadata): metadata for schema
         """
-        self.ci_collection.document(guid).update(metadata)
+        self.ci_collection.document(guid).update(metadata.model_dump())
 
     def get_latest_ci_metadata(self, survey_id, classifier_type, classifier_value, language) -> CiMetadata | None:
         """
