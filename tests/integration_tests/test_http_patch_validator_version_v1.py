@@ -69,10 +69,4 @@ class TestPatchValidatorVersionV1:
                        'title': 'NotDune'
                        }
 
-        print("expected")
-        print(expected_ci)
-        print("actual")
-        print(check_ci_in_db_data)
-
         assert [expected_ci] == check_ci_in_db_data
-        assert check_ci_in_db_data["validator_version"] == updated_validator_version
