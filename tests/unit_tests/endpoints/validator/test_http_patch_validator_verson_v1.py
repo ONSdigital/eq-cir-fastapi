@@ -35,9 +35,9 @@ class TestHttpPatchValidatorVersionV1:
     missing_guid = f"{base_url}?validator_version={query_params.validator_version}"
 
     def test_endpoint_returns_200(self,
-                                  mocked_get_ci_metadata_with_id,
+                                  mocked_update_ci_metadata,
                                   mocked_retrieve_ci_schema,
-                                  mocked_update_ci_metadata):
+                                  mocked_get_ci_metadata_with_id):
         # mocked function to return valid ci metadata, indicating ci metadata is found
         mocked_get_ci_metadata_with_id.return_value = mock_ci_metadata_v2
         # mocked function to return valid ci schema, indicating ci schema is found from bucket
