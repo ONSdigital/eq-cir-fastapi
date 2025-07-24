@@ -1,6 +1,5 @@
 
-from fastapi import APIRouter, Depends, status
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Depends
 
 import app.exception.exception_response_models as erm
 from app.config import Settings, logging
