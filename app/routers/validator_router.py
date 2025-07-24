@@ -25,7 +25,7 @@ settings = Settings()
         200: {
             "model": CiMetadata,
             "description": (
-                    "Successfully Queried a CI. This is illustrated with the returned response containing the schema of the CI."
+                    "Successfully updated validator version"
             ),
         },
         500: {
@@ -50,7 +50,7 @@ async def http_patch_ci_validator_version_v1(
     PATCH method that updates validator_version by Guid.
     """
     logger.info("Patching validator_version")
-    logger.info(f"Input data: query_params={query_params.__dict__}")
+    logger.debug(f"Input data: query_params={query_params.__dict__}")
 
     if not query_params.params_not_none(query_params.__dict__.keys()):
         raise exceptions.ExceptionIncorrectKeyNames
@@ -71,4 +71,4 @@ async def http_patch_ci_validator_version_v1(
     logger.debug("Metadata {%1} successfully updated with validator_version: {%2}",
                  [query_params.guid, query_params.validator_version])
 
-    return JSONResponse(status_code=status.HTTP_200_OK, content="")
+    return ci_metadata.model_dump()

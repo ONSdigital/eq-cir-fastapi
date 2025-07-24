@@ -30,8 +30,6 @@ class TestHttpPatchValidatorVersionV1:
     )
     url = f"{base_url}?{urlencode(query_params.__dict__)}"
 
-    missing_all_query_param = f"{base_url}"
-
     missing_validator_version = f"{base_url}?guid={query_params.guid}"
 
     missing_guid = f"{base_url}?validator_version={query_params.validator_version}"
@@ -45,9 +43,13 @@ class TestHttpPatchValidatorVersionV1:
         # mocked function to return valid ci schema, indicating ci schema is found from bucket
         mocked_retrieve_ci_schema.return_value = mock_ci_metadata_v2.__dict__
 
-        # Make request to base url without any query params
         response = client.patch(self.url)
         assert response.status_code == status.HTTP_200_OK
+        print("mockdata")
+        print(mock_ci_metadata_v2.model_dump())
+        print("response")
+        print(response.json())
+        assert response.json() == mock_ci_metadata_v2.model_dump()
 
     def test_endpoint_metadata_not_found(self,
                                          mocked_get_ci_metadata_with_id,

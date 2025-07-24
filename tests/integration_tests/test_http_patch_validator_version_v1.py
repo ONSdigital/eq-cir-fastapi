@@ -1,5 +1,7 @@
 from urllib.parse import urlencode
 
+from starlette import status
+
 from app.models.requests import PatchValidatorVersionV1Params
 from app.models.responses import CiMetadata
 from app.services.ci_classifier_service import CiClassifierService
@@ -38,7 +40,9 @@ class TestPatchValidatorVersionV1:
             validator_version=updated_validator_version
 
         )
-        make_iap_request("PATCH", f"{self.update_validator}?{urlencode(query_params.__dict__)}")
+        patch_response = make_iap_request("PATCH", f"{self.update_validator}?{urlencode(query_params.__dict__)}")
+
+        assert patch_response.status_code == status.HTTP_200_OK
 
         survey_id = setup_payload["survey_id"]
         classifier_type = CiClassifierService.get_classifier_type(setup_payload)
@@ -57,16 +61,17 @@ class TestPatchValidatorVersionV1:
         check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
 
-        expected_ci = {'ci_version': 1,
-                       'data_version': '1',
-                       'validator_version': '0.0.2',
-                       'classifier_type': 'form_type',
-                       'classifier_value': 'business',
-                       'guid': check_ci_in_db_data[0]["guid"],
-                       'language': 'welsh',
-                       'published_at': check_ci_in_db_data[0]["published_at"],
-                       'survey_id': '3456',
-                       'title': 'NotDune'
-                       }
+        expected_ci = CiMetadata(
+            ci_version=1,
+            data_version='1',
+            validator_version=updated_validator_version,
+            classifier_type=classifier_type,
+            classifier_value=classifier_value,
+            guid=ci_guid,
+            language=language,
+            published_at=check_ci_in_db_data[0]["published_at"],
+            survey_id=survey_id,
+            title=setup_payload["title"]
+        )
 
-        assert [expected_ci] == check_ci_in_db_data
+        assert expected_ci.model_dump() == check_ci_in_db_data[0]
