@@ -63,6 +63,7 @@ async def http_patch_ci_validator_version_v1(
         raise exceptions.ExceptionNoCIMetadata
 
     if ci_metadata.validator_version == query_params.validator_version:
+        logger.info("No change to validator_version")
         return ci_metadata.model_dump()
 
     ci_metadata.validator_version = query_params.validator_version
