@@ -144,10 +144,10 @@ class CiFirebaseRepository:
         """
         Gets the collection of all CI validator metadata.
         """
-        returned_ci_validator_metadata = (self.ci_collection.order_by(
+        returned_ci_validator_metadata = self.ci_collection.order_by(
             "ci_version",
             direction=Query.DESCENDING,
-        ).stream())
+        ).stream()
 
         ci_validator_metadata_list: list[CiValidatorMetadata] = []
         for ci_validator_metadata in returned_ci_validator_metadata:

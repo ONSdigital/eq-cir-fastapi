@@ -11,7 +11,7 @@ class TestHttpGetCiValidatorMetadataV1(unittest.TestCase):
     post_url_v2 = "/v2/publish_collection_instrument"
     subscriber = Subscriber()
 
-    def teardown_method(self):
+    def tearDown(self):
         """
         This function deletes the test CI with survey_id:3456 at the end of each integration test to ensure it
         is not reflected in the firestore and schemas.
