@@ -53,9 +53,18 @@ class CiMetadata(BaseModel):
         return super().model_dump(*args, **kwargs)
 
 
+class CiValidatorMetadata(BaseModel):
+    """Model for collection instrument validator metadata"""
+    survey_id: str
+    classifier_type: str
+    classifier_value: str
+    guid: str
+    ci_version: int
+    validator_version: str
+
+
 @dataclass
 class DeploymentStatus:
     """Model for Successful deployment response"""
-
     version: str
     status: str = "OK"

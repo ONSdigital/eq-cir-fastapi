@@ -2,7 +2,7 @@ from firebase_admin import firestore
 from google.cloud.firestore import Query, Transaction
 
 from app.config import logging
-from app.models.responses import CiMetadata
+from app.models.responses import CiMetadata, CiValidatorMetadata
 from app.repositories.buckets.ci_schema_bucket_repository import (
     CiSchemaBucketRepository,
 )
@@ -139,6 +139,22 @@ class CiFirebaseRepository:
             ci_metadata_list.append(metadata)
 
         return ci_metadata_list
+
+    def get_ci_validator_metadata_collection(self) -> list[CiValidatorMetadata]:
+        """
+        Gets the collection of all CI validator metadata.
+        """
+        returned_ci_validator_metadata = (self.ci_collection.order_by(
+            "ci_version",
+            direction=Query.DESCENDING,
+        ).stream())
+
+        ci_validator_metadata_list: list[CiValidatorMetadata] = []
+        for ci_validator_metadata in returned_ci_validator_metadata:
+            metadata = CiValidatorMetadata(**ci_validator_metadata.to_dict())
+            ci_validator_metadata_list.append(metadata)
+
+        return ci_validator_metadata_list
 
     def get_ci_metadata_with_id(self, guid: str) -> CiMetadata | None:
         """

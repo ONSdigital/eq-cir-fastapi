@@ -1,3 +1,4 @@
+from app.models.responses import CiValidatorMetadata
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from tests.test_data.ci_test_data import (
     mock_ci_metadata,
@@ -152,3 +153,29 @@ class TestCiFirebaseRepository:
         ci_metadata = firestore_client.get_ci_metadata_with_id("wrong_guid")
 
         assert ci_metadata is None
+
+    def test_get_query_ci_validator_metadata(self, mock_firestore_collection):
+        """
+        `get_ci_validator_metadata` should return all ci validator metadata
+        """
+        firestore_client = CiFirebaseRepository()
+
+        # Create 2 ci metadata in the db
+        mock_firestore_collection.document(mock_id).set(mock_ci_metadata.__dict__)
+        mock_firestore_collection.document(mock_next_version_id).set(mock_next_version_ci_metadata.__dict__)
+
+        ci_validator_metadata_list = firestore_client.get_ci_validator_metadata_collection()
+
+        assert CiValidatorMetadata(**mock_ci_metadata.model_dump()) in ci_validator_metadata_list
+        assert CiValidatorMetadata(**mock_next_version_ci_metadata.model_dump()) in ci_validator_metadata_list
+        assert len(ci_validator_metadata_list) == 2
+
+    def test_get_query_ci_validator_metadata_empty(self, mock_firestore_collection):
+        """
+        `get_ci_validator_metadata` should return an empty list if no ci metadata is found
+        """
+        firestore_client = CiFirebaseRepository()
+
+        ci_validator_metadata_list = firestore_client.get_ci_validator_metadata_collection()
+
+        assert ci_validator_metadata_list == []

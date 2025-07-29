@@ -25,6 +25,10 @@ app.add_exception_handler(
     ExceptionInterceptor.throw_404_no_ci_metadata_exception,
 )
 app.add_exception_handler(
+    exceptions.ExceptionNoCIValidatorMetadata,
+    ExceptionInterceptor.throw_404_no_ci_validator_metadata_exception,
+)
+app.add_exception_handler(
     exceptions.ExceptionNoCIToDelete,
     ExceptionInterceptor.throw_404_no_ci_to_delete,
 )
