@@ -1,17 +1,16 @@
-import unittest
 from urllib.parse import urlencode
 
 from app.events.subscriber import Subscriber
 from tests.integration_tests.utils import make_iap_request
 
 
-class TestHttpGetCiValidatorMetadataV1(unittest.TestCase):
+class TestHttpGetCiValidatorMetadataV1:
     base_url = "/v1/ci_validator_metadata"
     post_url_v1 = "/v1/publish_collection_instrument"
     post_url_v2 = "/v2/publish_collection_instrument"
     subscriber = Subscriber()
 
-    def tearDown(self):
+    def teardown_method(self):
         """
         This function deletes the test CI with survey_id:3456 at the end of each integration test to ensure it
         is not reflected in the firestore and schemas.
