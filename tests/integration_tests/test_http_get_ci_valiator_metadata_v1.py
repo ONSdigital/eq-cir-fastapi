@@ -1,6 +1,8 @@
 from urllib.parse import urlencode
 
 from app.events.subscriber import Subscriber
+from app.models.responses import CiValidatorMetadata
+from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request
 
 
@@ -39,11 +41,19 @@ class TestHttpGetCiValidatorMetadataV1:
         # Retrieve all CI validator metadata
         response = make_iap_request("GET", f"{self.base_url}")
 
+        # Get classifier type and value for assertions
+        classifier_type = CiClassifierService.get_classifier_type(setup_payload)
+        classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)
+
         assert response.status_code == 200
         assert len(response.json()) == 3
         for i, ci_validator_metadata in enumerate(response.json()):
-            assert ci_validator_metadata == setup_payload
+            assert ci_validator_metadata["survey_id"] == setup_payload["survey_id"]
+            assert ci_validator_metadata["classifier_type"] == classifier_type
+            assert ci_validator_metadata["classifier_value"] == classifier_value
+            assert ci_validator_metadata["ci_version"] == [3, 2, 1][i]
             assert ci_validator_metadata["validator_version"] == ["v0.0.2", "v0.0.1", ""][i]
+            assert isinstance(CiValidatorMetadata(**ci_validator_metadata), CiValidatorMetadata)
 
     def test_return_404_if_no_ci_validator_metadata(self):
         """
