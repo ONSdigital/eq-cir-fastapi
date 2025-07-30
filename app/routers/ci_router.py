@@ -402,15 +402,11 @@ async def http_post_ci_schema_v2(
         },
         404: {
             "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_404_no_ci_exception}},
-        },
-        400: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
+            "content": {"application/json": {"example": erm.erm_404_no_ci_validator_metadata_exception}},
         },
     },
 )
-async def http_get_ci_validator_metadata(
+async def http_get_ci_validator_metadata_v1(
     ci_processor_service: CiProcessorService = Depends(),
 ) -> list[CiValidatorMetadata]:
     """
