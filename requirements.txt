@@ -14,6 +14,7 @@ pytest==7.4.0
 pytest-mock==3.11.1
 pytest-cov==4.0.0
 coverage==7.2.2
+gcp-storage-emulator==2024.8.3
 ruff==0.12.7
 mypy==1.4.1
 mypy-extensions==1.0.0
