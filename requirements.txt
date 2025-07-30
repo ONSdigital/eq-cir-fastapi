@@ -18,4 +18,5 @@ ruff==0.12.7
 mypy==1.4.1
 mypy-extensions==1.0.0
 
+setuptools==80.9.0
 pip_audit==2.6.1
