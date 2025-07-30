@@ -1,0 +1,77 @@
+from urllib.parse import urlencode
+
+from starlette import status
+
+from app.models.requests import PatchValidatorVersionV1Params
+from app.models.responses import CiMetadata
+from app.services.ci_classifier_service import CiClassifierService
+from tests.integration_tests.utils import make_iap_request
+
+
+class TestPatchValidatorVersionV1:
+    post_url = "/v2/publish_collection_instrument?validator_version=0.0.1"
+    update_validator = "/v1/update_validator_version"
+    get_metadata_url = "/v1/ci_metadata"
+
+    def teardown_method(self):
+        """
+        This function deletes the test CI with survey_id:3456 at the end of each integration test to ensure it
+        is not reflected in the firestore and schemas.
+        """
+        querystring = urlencode({"survey_id": 3456})
+        make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
+
+    def test_update_validator_version(self, setup_payload):
+        """
+        What am I testing:
+        AC-1.1 - The ability to submit a CI (well-formed) to the API endpoint,
+        and the correct response is returned with the version.
+        AC-1.3 - When a CI is published in the response the datetime
+        field is present with an ISO8601 value. (2023-01-24T13:56:38Z)
+        """
+        # Creates a CI in the database, essentially running post_ci_v1 from handler folder
+        ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_payload)
+        ci_response_data = ci_response.json()
+        ci_guid = ci_response_data["guid"]
+        updated_validator_version = "0.0.2"
+
+        query_params = PatchValidatorVersionV1Params(
+            guid=ci_guid,
+            validator_version=updated_validator_version
+
+        )
+        patch_response = make_iap_request("PATCH", f"{self.update_validator}?{urlencode(query_params.__dict__)}")
+
+        assert patch_response.status_code == status.HTTP_200_OK
+
+        survey_id = setup_payload["survey_id"]
+        classifier_type = CiClassifierService.get_classifier_type(setup_payload)
+        classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)
+        language = setup_payload["language"]
+
+        querystring = urlencode(
+            {
+                "classifier_type": classifier_type,
+                "classifier_value": classifier_value,
+                "language": language,
+                "survey_id": survey_id,
+            }
+        )
+        # sends request to http_query_ci endpoint for data
+        check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
+        check_ci_in_db_data = check_ci_in_db.json()
+
+        expected_ci = CiMetadata(
+            ci_version=1,
+            data_version='1',
+            validator_version=updated_validator_version,
+            classifier_type=classifier_type,
+            classifier_value=classifier_value,
+            guid=ci_guid,
+            language=language,
+            published_at=check_ci_in_db_data[0]["published_at"],
+            survey_id=survey_id,
+            title=setup_payload["title"]
+        )
+
+        assert expected_ci.model_dump() == check_ci_in_db_data[0]
