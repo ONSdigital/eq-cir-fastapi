@@ -2,7 +2,7 @@ from firebase_admin import firestore
 from google.cloud.firestore import Query, Transaction
 
 from app.config import logging
-from app.models.responses import CiMetadata, CiValidatorMetadata
+from app.models.responses import CiMetadata
 from app.repositories.buckets.ci_schema_bucket_repository import (
     CiSchemaBucketRepository,
 )
