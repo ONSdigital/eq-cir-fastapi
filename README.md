@@ -32,6 +32,9 @@ To install dependencies and configure the project for first use, follow the inst
 
    `$ pip install --upgrade pip && pip install -r requirements.txt`
 
+python3 -m venv env && source env/bin/activate
+pip install --upgrade pip && pip install -r requirements.txt
+
 The project is now ready for development or to use for deployments.
 
 ### Setting up GPG Key
