@@ -142,7 +142,7 @@ mock_ci_validator_metadata_list =[
         classifier_value=mock_classifier_value,
         guid=mock_id,
         ci_version=1,
-        validator_version=mock_validator_version_v2,
+        validator_version=mock_validator_version_v1,
     ),
     CiValidatorMetadata(
         survey_id=mock_survey_id,
@@ -150,7 +150,7 @@ mock_ci_validator_metadata_list =[
         classifier_value=mock_classifier_value,
         guid=mock_id,
         ci_version=2,
-        validator_version=mock_validator_version_v2,
+        validator_version=mock_validator_version_v1,
     ),
 ]
 

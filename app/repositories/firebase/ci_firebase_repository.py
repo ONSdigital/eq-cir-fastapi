@@ -150,29 +150,6 @@ class CiFirebaseRepository:
 
         return ci_metadata_list
 
-    def get_ci_validator_metadata_collection(self) -> list[CiValidatorMetadata]:
-        """
-        Gets the collection of all CI validator metadata.
-        """
-        returned_ci_validator_metadata = self.ci_collection.order_by(
-            "ci_version",
-            direction=Query.DESCENDING,
-        ).stream()
-
-        ci_validator_metadata_list: list[CiValidatorMetadata] = []
-        for ci_validator_metadata in returned_ci_validator_metadata:
-
-            ci_validator_metadata_dict: dict = ci_validator_metadata.to_dict()
-
-            # Default validator_version to empty string if not present
-            if "validator_version" not in ci_validator_metadata_dict:
-                ci_validator_metadata_dict["validator_version"] = ""
-
-            metadata: CiValidatorMetadata = CiValidatorMetadata(**ci_validator_metadata_dict)
-            ci_validator_metadata_list.append(metadata)
-
-        return ci_validator_metadata_list
-
     def get_ci_metadata_with_id(self, guid: str) -> CiMetadata | None:
         """
         Gets CI metadata using guid

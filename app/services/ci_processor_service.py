@@ -223,9 +223,15 @@ class CiProcessorService:
         """
         logger.info("Retrieving all CI validator metadata...")
 
-        ci_validator_metadata_collection = self.ci_firebase_repository.get_ci_validator_metadata_collection()
+        ci_metadata_list: list[CiMetadata] = self.ci_firebase_repository.get_all_ci_metadata_collection()
 
-        return ci_validator_metadata_collection
+        # Cast CiMetadata to CiValidatorMetadata
+        ci_validator_metadata_list: list[CiValidatorMetadata] = []
+        for ci_metadata in ci_metadata_list:
+            metadata = CiValidatorMetadata(**ci_metadata.model_dump())
+            ci_validator_metadata_list.append(metadata)
+
+        return ci_validator_metadata_list
 
     def get_latest_ci_metadata(
             self, survey_id: str, classifier_type: str, classifier_value: str, language: str
