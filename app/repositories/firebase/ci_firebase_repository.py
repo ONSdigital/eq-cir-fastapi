@@ -151,7 +151,14 @@ class CiFirebaseRepository:
 
         ci_validator_metadata_list: list[CiValidatorMetadata] = []
         for ci_validator_metadata in returned_ci_validator_metadata:
-            metadata = CiValidatorMetadata(**ci_validator_metadata.to_dict())
+
+            ci_validator_metadata_dict: dict = ci_validator_metadata.to_dict()
+
+            # Default validator_version to empty string if not present
+            if "validator_version" not in ci_validator_metadata_dict:
+                ci_validator_metadata_dict["validator_version"] = ""
+
+            metadata: CiValidatorMetadata = CiValidatorMetadata(**ci_validator_metadata_dict)
             ci_validator_metadata_list.append(metadata)
 
         return ci_validator_metadata_list

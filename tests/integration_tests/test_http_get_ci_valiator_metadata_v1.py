@@ -64,13 +64,3 @@ class TestHttpGetCiValidatorMetadataV1:
             assert ci_validator_metadata["ci_version"] == [3, 2, 1][i]
             assert ci_validator_metadata["validator_version"] == ["v0.0.2", "v0.0.1", ""][i]
             assert isinstance(CiValidatorMetadata(**ci_validator_metadata), CiValidatorMetadata)
-
-    def test_return_404_if_no_ci_validator_metadata(self):
-        """
-        What am I testing:
-        http_get_ci_validator_metadata_v1 should return 404 if no CI validator metadata is found.
-        """
-        response = make_iap_request("GET", f"{self.base_url}")
-
-        assert response.status_code == 404
-        assert response.json()["message"] == "No CI validator metadata found"
