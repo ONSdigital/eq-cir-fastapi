@@ -297,3 +297,13 @@ class CiProcessorService:
         except Exception as exc:
             logger.error("Rolling back CI transaction")
             raise exceptions.GlobalException from exc
+
+    def update_ci_validator_version(self, guid: str, metadata: CiMetadata):
+        """
+                Updates CI
+
+                Parameters:
+                guid (str): identifier for ci
+                metadata (CiMetadata): Schema metadata
+                """
+        self.ci_firebase_repository.update_ci_metadata(guid, metadata)
