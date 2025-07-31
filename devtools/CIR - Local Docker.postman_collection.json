@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "3c58d107-104f-4803-b276-65e4e2368fd8",
+		"_postman_id": "17d5bcbe-5eac-49a1-b588-cff1542c472f",
 		"name": "CIR - Local Docker",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "19111771"
+		"_exporter_id": "27074658"
 	},
 	"item": [
 		{
@@ -102,7 +102,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://0.0.0.0:3030/v1/retrieve_collection_instrument?classifier_type=form_type&classifier_value=0005&language=en&survey_id=123",
+					"raw": "http://0.0.0.0:3030/v1/retrieve_collection_instrument?classifier_type=form_type&classifier_value=0005&language=en&survey_id=134",
 					"protocol": "http",
 					"host": [
 						"0",
@@ -133,7 +133,7 @@
 						},
 						{
 							"key": "survey_id",
-							"value": "123",
+							"value": "134",
 							"description": "The survey id of the CI"
 						}
 					]
@@ -320,6 +320,29 @@
 							"key": "survey_id",
 							"value": "134"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Http Get CiValidator Metadata V1",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://0.0.0.0:3030/v1/ci_validator_metadata",
+					"protocol": "http",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "3030",
+					"path": [
+						"v1",
+						"ci_validator_metadata"
 					]
 				}
 			},
