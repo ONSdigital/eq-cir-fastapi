@@ -3,7 +3,7 @@ from app.events.publisher import publisher
 from app.exception import exceptions
 from app.models.events import PostCIEvent
 from app.models.requests import PostCiSchemaV1Data
-from app.models.responses import CiMetadata
+from app.models.responses import CiMetadata, CiValidatorMetadata
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from app.services.ci_classifier_service import CiClassifierService
 from app.services.ci_schema_location_service import CiSchemaLocationService
@@ -213,6 +213,25 @@ class CiProcessorService:
         ci_metadata_collection = self.ci_firebase_repository.get_all_ci_metadata_collection()
 
         return ci_metadata_collection
+
+    def get_ci_validator_metadata_collection(self) -> list[CiValidatorMetadata]:
+        """
+        Get a list of all CI validator metadata
+
+        Returns:
+        List of CiMetadata: the list CI metadata of all CI validators
+        """
+        logger.info("Retrieving all CI validator metadata...")
+
+        ci_metadata_list: list[CiMetadata] = self.ci_firebase_repository.get_all_ci_metadata_collection()
+
+        # Cast CiMetadata to CiValidatorMetadata
+        ci_validator_metadata_list: list[CiValidatorMetadata] = []
+        for ci_metadata in ci_metadata_list:
+            metadata = CiValidatorMetadata(**ci_metadata.model_dump())
+            ci_validator_metadata_list.append(metadata)
+
+        return ci_validator_metadata_list
 
     def get_latest_ci_metadata(
             self, survey_id: str, classifier_type: str, classifier_value: str, language: str

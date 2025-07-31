@@ -20,6 +20,10 @@ class ExceptionNoCIMetadata(Exception):
     pass
 
 
+class ExceptionNoCIValidatorMetadata(Exception):
+    pass
+
+
 class ExceptionIncorrectKeyNames(Exception):
     pass
 

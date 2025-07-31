@@ -27,6 +27,13 @@ class ExceptionInterceptor:
         er = ExceptionResponder(status.HTTP_404_NOT_FOUND, erm.erm_404_no_results_exception)
         return er.throw_er_with_json()
 
+    def throw_404_no_ci_validator_metadata_exception(request: Request, exc: Exception) -> JSONResponse:
+        """
+        When there is no CI validator metadata and a 404 HTTP response is returned.
+        """
+        er = ExceptionResponder(status.HTTP_404_NOT_FOUND, erm.erm_404_no_ci_validator_metadata_exception)
+        return er.throw_er_with_json()
+
     def throw_400_no_validator_provided_exception(request: Request, exc: Exception) -> JSONResponse:
         """
         When there is no validator version provided a 400 HTTP response is returned.

@@ -3,7 +3,7 @@ import uuid
 from app.config import Settings
 from app.models.classifier import Classifiers
 from app.models.requests import PostCiSchemaV1Data
-from app.models.responses import CiMetadata
+from app.models.responses import CiMetadata, CiValidatorMetadata
 
 settings = Settings()
 
@@ -132,6 +132,25 @@ mock_ci_metadata_list = [
         sds_schema=mock_sds_schema,
         survey_id=mock_survey_id,
         title="test_2",
+    ),
+]
+
+mock_ci_validator_metadata_list =[
+    CiValidatorMetadata(
+        survey_id=mock_survey_id,
+        classifier_type=mock_classifier_type,
+        classifier_value=mock_classifier_value,
+        guid=mock_id,
+        ci_version=1,
+        validator_version=mock_validator_version_v1,
+    ),
+    CiValidatorMetadata(
+        survey_id=mock_survey_id,
+        classifier_type=mock_classifier_type,
+        classifier_value=mock_classifier_value,
+        guid=mock_id,
+        ci_version=2,
+        validator_version=mock_validator_version_v1,
     ),
 ]
 
