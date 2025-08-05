@@ -50,6 +50,36 @@ components:
       - title
       title: CiMetadata
       type: object
+    CiValidatorMetadata:
+      description: Model for collection instrument validator metadata
+      properties:
+        ci_version:
+          title: Ci Version
+          type: integer
+        classifier_type:
+          title: Classifier Type
+          type: string
+        classifier_value:
+          title: Classifier Value
+          type: string
+        guid:
+          title: Guid
+          type: string
+        survey_id:
+          title: Survey Id
+          type: string
+        validator_version:
+          title: Validator Version
+          type: string
+      required:
+      - survey_id
+      - classifier_type
+      - classifier_value
+      - guid
+      - ci_version
+      - validator_version
+      title: CiValidatorMetadata
+      type: object
     Classifiers:
       enum:
       - form_type
@@ -293,6 +323,40 @@ paths:
                 $ref: '#/components/schemas/ExceptionResponseModel'
           description: Internal Server Error
       summary: Http Get Ci Metadata V1
+  /v1/ci_validator_metadata:
+    get:
+      description: GET method that returns the validator metadata for a CI schema.
+      operationId: http_get_ci_validator_metadata_v1_ci_validator_metadata_get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CiValidatorMetadata'
+                title: Response Http Get Ci Validator Metadata V1 Ci Validator Metadata
+                  Get
+                type: array
+          description: Successful Response
+        '404':
+          content:
+            application/json:
+              example:
+                message: No CI found
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Not Found
+        '500':
+          content:
+            application/json:
+              example:
+                message: Unable to process request
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+      summary: Http Get Ci Validator Metadata
   /v1/dev/teardown:
     delete:
       description: DELETE method that deletes the CI schema from the bucket as well

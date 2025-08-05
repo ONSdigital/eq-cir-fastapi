@@ -15,3 +15,6 @@ erm_404_no_ci_exception = ExceptionResponseModel(status="error", message="No CI 
 erm_400_invalid_classifier = ExceptionResponseModel(status="error", message="Invalid classifier")
 erm_404_no_ci_metadata_exception = ExceptionResponseModel(status="error", message="No schema metadata to update")
 erm_404_no_ci_to_delete = ExceptionResponseModel(status="error", message="No CI to delete")
+erm_404_no_ci_validator_metadata_exception = ExceptionResponseModel(
+    status="error", message="No CI validator metadata found"
+)
