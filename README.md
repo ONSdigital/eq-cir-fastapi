@@ -130,7 +130,7 @@ If you want to test posting data to these functions using Postman or similar, yo
 In this configuration, the integration test uses the CIR API service running in Cloud Run of your test/dev GCP project. Please note that the CIR is not the updated version unless run after either executing the deploy script or creating a PR and gone through the pipeline. These services both talk to Firestore and Cloud Storage running on the same project.
 
 ```bash
-PROJECT_NAME=ons-sds-ci
+PROJECT_NAME=ons-sds-sandbox-01
 gcloud auth login
 gcloud config set project $PROJECT_NAME
 

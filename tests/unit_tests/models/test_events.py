@@ -2,7 +2,7 @@ import datetime
 import uuid
 
 from app.config import Settings
-from app.models.events import PostCIEvent
+from app.models.responses import CiMetadata
 
 settings = Settings()
 
@@ -29,7 +29,7 @@ class TestPostCIEvent:
         Overidden `model_dump` method should return a dictionary including `sds_schema` field as a
         key/value pair if model is initiatised with this field as a valid string
         """
-        ci_event = PostCIEvent(
+        ci_event = CiMetadata(
             ci_version=mock_ci_version,
             validator_version=mock_validator_version,
             data_version=mock_data_version,
@@ -53,7 +53,7 @@ class TestPostCIEvent:
         Overidden `model_dump` method should return a dictionary excluding `sds_schema` field as a
         key/value pair if model is initiatised without this field
         """
-        ci_event = PostCIEvent(
+        ci_event = CiMetadata(
             ci_version=mock_ci_version,
             validator_version=mock_validator_version,
             data_version=mock_data_version,
@@ -76,7 +76,7 @@ class TestPostCIEvent:
         key/value pair if model is initiatised without this field. It should also be able to
         exclude additional fields if called with the `exclude` kwarg.
         """
-        ci_event = PostCIEvent(
+        ci_event = CiMetadata(
             ci_version=mock_ci_version,
             validator_version=mock_validator_version,
             data_version=mock_data_version,
