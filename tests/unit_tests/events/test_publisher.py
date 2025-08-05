@@ -6,12 +6,12 @@ import pytest
 from app.config import Settings
 from app.events.publisher import Publisher
 from app.exception.exceptions import ExceptionTopicNotFound
-from app.models.events import PostCIEvent
+from app.models.responses import CiMetadata
 
 settings = Settings()
 
 
-mock_event_message = PostCIEvent(
+mock_event_message = CiMetadata(
     ci_version=1,
     data_version="0.1",
     validator_version="0.0.1",

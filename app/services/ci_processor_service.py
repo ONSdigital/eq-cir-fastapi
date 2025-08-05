@@ -1,7 +1,6 @@
 from app.config import logging, settings
 from app.events.publisher import publisher
 from app.exception import exceptions
-from app.models.events import PostCIEvent
 from app.models.requests import PostCiSchemaV1Data
 from app.models.responses import CiMetadata, CiValidatorMetadata
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
@@ -56,7 +55,7 @@ class CiProcessorService:
         logger.debug(f"New CI created: {next_version_ci_metadata.model_dump()}")
 
         # create event message
-        event_message = PostCIEvent(
+        event_message = CiMetadata(
             ci_version=next_version_ci_metadata.ci_version,
             validator_version=validator_version,
             data_version=next_version_ci_metadata.data_version,
@@ -159,7 +158,7 @@ class CiProcessorService:
 
         return DocumentVersionService.calculate_ci_version(current_version_metadata)
 
-    def try_publish_ci_metadata_to_topic(self, post_ci_event: PostCIEvent) -> None:
+    def try_publish_ci_metadata_to_topic(self, post_ci_event: CiMetadata) -> None:
         """
         Publish CI metadata to pubsub topic
 
