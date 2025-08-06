@@ -1,10 +1,8 @@
 import json
-import time
 
 from google.cloud.pubsub_v1 import PublisherClient
 
 from app.config import Settings, logging
-from app.events.subscriber import Subscriber
 from app.exception.exceptions import ExceptionTopicNotFound
 from app.models.events import PostCIEvent
 
