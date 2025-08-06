@@ -1,4 +1,5 @@
 import logging
+import os
 
 from google.cloud.pubsub_v1 import SubscriberClient
 
@@ -21,6 +22,10 @@ class Subscriber:
         self.max_messages = 5
         self.subscription_path = self.client.subscription_path(settings.PROJECT_ID, settings.SUBSCRIPTION_ID)
         self.topic_path = self.client.topic_path(settings.PROJECT_ID, settings.PUBLISH_CI_TOPIC_ID)
+        # If running in local docker, we create the subscription if it does not exist
+        if settings.CONF == "local-docker":
+            if not self.subscription_exists():
+                self.create_subscription()
 
     def create_subscription(self) -> None:
         """Creates a subscription using `self.subscription_path`"""

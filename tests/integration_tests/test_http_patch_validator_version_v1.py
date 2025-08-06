@@ -2,9 +2,12 @@ from urllib.parse import urlencode
 
 from starlette import status
 
+from app.config import settings
 from app.models.requests import PatchValidatorVersionV1Params
 from app.models.responses import CiMetadata
 from app.services.ci_classifier_service import CiClassifierService
+from tests.integration_tests.helpers.integration_helpers import pubsub_teardown
+from tests.integration_tests.helpers.pubsub_helper import ci_pubsub_helper
 from tests.integration_tests.utils import make_iap_request
 
 
@@ -12,6 +15,10 @@ class TestPatchValidatorVersionV1:
     post_url = "/v2/publish_collection_instrument?validator_version=0.0.1"
     update_validator = "/v1/update_validator_version"
     get_metadata_url = "/v1/ci_metadata"
+
+    @classmethod
+    def setup_class(cls) -> None:
+        pubsub_teardown(ci_pubsub_helper, settings.SUBSCRIPTION_ID)
 
     def teardown_method(self):
         """

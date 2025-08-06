@@ -1,4 +1,5 @@
 # Global Variables
+LOCAL_URL=localhost:3030
 GOOGLE_APPLICATION_CREDENTIALS=sandbox-key.json
 PROJECT_ID = $(shell gcloud config get project)
 OAUTH_BRAND_NAME = $(shell gcloud iap oauth-brands list --format='value(name)' --limit=1 --project=$(PROJECT_ID))
@@ -20,6 +21,19 @@ unit-tests:
 	export PROJECT_ID='$(PROJECT_ID)' && \
 	python -m pytest --cov=app --cov-fail-under=90 --cov-report term-missing --cov-config=.coveragerc_unit -vv ./tests/unit_tests/ -W ignore::DeprecationWarning
 
+integration-tests-local:
+	export CONF=local-int-tests && \
+	export PROJECT_ID='mock-project-id' && \
+	export CI_STORAGE_BUCKET_NAME='ci-bucket' && \
+	export DEFAULT_HOSTNAME=${LOCAL_URL} && \
+	export URL_SCHEME='http' && \
+	export OAUTH_CLIENT_ID=${LOCAL_URL} && \
+	export PYTHONPATH=app && \
+	export PUBSUB_EMULATOR_HOST=localhost:8086 && \
+	export FIRESTORE_EMULATOR_HOST=localhost:8200 && \
+	export STORAGE_EMULATOR_HOST=http://localhost:9026 && \
+	python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
+
 integration-tests-sandbox:
 	export PROJECT_ID='$(PROJECT_ID)' && \
 	export FIRESTORE_DB_NAME='$(PROJECT_ID)-cir' && \
@@ -34,7 +48,7 @@ integration-tests-sandbox:
 #For use only by automated cloudbuild, is not intended to work locally.
 integration-tests-cloudbuild:
 	export PROJECT_ID=${INT_PROJECT_ID} && \
-	export FIRESTORE_DB_NAME=${INT_FIRESTORE_DB_NAME} \
+	export FIRESTORE_DB_NAME=${INT_FIRESTORE_DB_NAME} && \
 	export CI_STORAGE_BUCKET_NAME=${INT_CI_STORAGE_BUCKET_NAME} && \
 	export DEFAULT_HOSTNAME=${INT_DEFAULT_HOSTNAME} && \
 	export URL_SCHEME=${INT_URL_SCHEME} && \

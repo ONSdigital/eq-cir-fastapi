@@ -1,8 +1,10 @@
 import json
+import time
 
 from google.cloud.pubsub_v1 import PublisherClient
 
 from app.config import Settings, logging
+from app.events.subscriber import Subscriber
 from app.exception.exceptions import ExceptionTopicNotFound
 from app.models.events import PostCIEvent
 
@@ -15,6 +17,10 @@ class Publisher:
 
     def __init__(self) -> None:
         self.publisher_client = self._init_client()
+        # In local docker, we create the topic if it does not exist
+        if settings.CONF == "local-docker":
+            topic_path = self.publisher_client.topic_path(settings.PROJECT_ID, settings.PUBLISH_CI_TOPIC_ID)
+            self._verify_topic_exists(topic_path)
 
     def _init_client(self) -> None | PublisherClient:
         """Initializes the Pub/Sub client."""
@@ -55,7 +61,21 @@ class Publisher:
             return True
         except Exception as exc:
             logger.debug("Error getting topic")
+
+            if settings.CONF == "local-docker":
+                # In local docker, we assume the topic does not exist and create it
+                self._create_topic(topic_path)
+                return True
+
             raise ExceptionTopicNotFound from exc
+
+    def _create_topic(self, topic_path: str) -> None:
+        """Creates a Pub/Sub topic."""
+        try:
+            self.publisher_client.create_topic(request={"name": topic_path})
+            logger.debug(f"Topic created: {topic_path}")
+        except Exception as exc:
+            raise Exception("Error creating topic") from exc
 
 
 publisher = Publisher()

@@ -155,12 +155,15 @@ components:
           title: Mime Type
           type: string
         navigation:
+          additionalProperties: true
           title: Navigation
           type: object
         post_submission:
+          additionalProperties: true
           title: Post Submission
           type: object
         questionnaire_flow:
+          additionalProperties: true
           title: Questionnaire Flow
           type: object
         sds_schema:
@@ -172,6 +175,7 @@ components:
           title: Sections
           type: array
         submission:
+          additionalProperties: true
           title: Submission
           type: object
         survey_id:
@@ -252,10 +256,8 @@ paths:
         name: classifier_type
         required: false
         schema:
-          allOf:
-          - $ref: '#/components/schemas/Classifiers'
+          $ref: '#/components/schemas/Classifiers'
           description: classifier_type used by the CI
-          title: Classifier Type
       - description: classifier_value used by the CI
         example: '0001'
         in: query
@@ -461,10 +463,8 @@ paths:
         name: classifier_type
         required: false
         schema:
-          allOf:
-          - $ref: '#/components/schemas/Classifiers'
+          $ref: '#/components/schemas/Classifiers'
           description: classifier_type used by the CI
-          title: Classifier Type
       - description: classifier_value used by the CI
         example: '0001'
         in: query
@@ -615,10 +615,8 @@ paths:
         name: classifier_type
         required: false
         schema:
-          allOf:
-          - $ref: '#/components/schemas/Classifiers'
+          $ref: '#/components/schemas/Classifiers'
           description: classifier_type used by the CI
-          title: Classifier Type
       - description: classifier_value used by the CI
         example: '0001'
         in: query

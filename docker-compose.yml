@@ -5,7 +5,7 @@ services:
     environment:
       - PORT=9026
     ports:
-      - 9026:9023
+      - 9026:9026
     volumes:
       - ./devtools/gcp-storage-emulator/data:/storage
     container_name: storage-cir
@@ -14,7 +14,7 @@ services:
     ports:
       - 8200:8200
       - 5050:5050
-      - 8086:8085
+      - 8086:8086
     environment:
       - PROJECT_NAME=mock-project-id
       - ENABLE_UI=true
@@ -29,6 +29,7 @@ services:
     ports:
       - 3030:3030
     environment:
+      - CONF=local-docker
       - CI_FIRESTORE_COLLECTION_NAME=ons-firestore-collection
       - CI_STORAGE_BUCKET_NAME=ci-bucket
       - FIRESTORE_EMULATOR_HOST=firestore:8200
@@ -36,6 +37,7 @@ services:
       - PORT=3030
       - PROJECT_ID=mock-project-id
       - PUBSUB_EMULATOR_HOST=firestore:8086
+      - PUBSUB_PROJECT_ID=mock-project-id
       - SERVICE_ACCOUNT_JSON_FILE=test
       - STORAGE_EMULATOR_HOST=http://storage:9026
     volumes:

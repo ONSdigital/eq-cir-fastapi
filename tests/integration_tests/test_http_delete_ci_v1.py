@@ -1,9 +1,13 @@
 import json
 from urllib.parse import urlencode
 
+import pytest
 from fastapi import status
 
+from app.config import settings
 from app.events.subscriber import Subscriber
+from tests.integration_tests.helpers.integration_helpers import pubsub_setup, pubsub_teardown
+from tests.integration_tests.helpers.pubsub_helper import ci_pubsub_helper
 from tests.integration_tests.utils import make_iap_request
 
 
@@ -12,7 +16,10 @@ class TestDeleteCiV1:
 
     base_url = "/v1/dev/teardown"
     post_url = "/v1/publish_collection_instrument"
-    subscriber = Subscriber()
+
+    @classmethod
+    def setup_class(cls) -> None:
+        pubsub_teardown(ci_pubsub_helper, settings.SUBSCRIPTION_ID)
 
     def test_can_delete_ci_returns_200(self, setup_payload):
         """
@@ -25,8 +32,7 @@ class TestDeleteCiV1:
         # Create a CI to delete later and confirm it worked
         response = make_iap_request("POST", f"{self.post_url}", json=setup_payload)
         assert response.status_code == status.HTTP_200_OK
-        # Need to pull and acknowledge messages in any test where post_ci_v1 is called so the subscription doesn't get clogged
-        self.subscriber.pull_messages_and_acknowledge()
+
         # Send request to http_delete_ci endpoint
         response = make_iap_request("DELETE", f"{self.base_url}?{querystring}")
         assert response.text == json.dumps(f"CI metadata and schema successfully deleted for {survey_id}.")
@@ -61,6 +67,9 @@ class TestDeleteCiV1:
         What am I testing:
         http_delete_ci should return a 401 unauthorized error if the endpoint is requested with an unauthorized token.
         """
+        if settings.CONF == "local-int-tests":
+            pytest.skip("Skipping test_delete_ci_returns_unauthorized_request on local environment")
+
         survey_id = setup_payload["survey_id"]
         querystring = urlencode({"survey_id": survey_id})
         response = make_iap_request("DELETE", f"{self.base_url}?{querystring}", unauthenticated=True)
