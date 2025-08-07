@@ -1,3 +1,4 @@
+import pytest
 from fastapi import status
 
 from app.config import Settings
@@ -37,5 +38,8 @@ class TestHttpGetDeploymentStatus:
         """
         Endpoint should return a 401 unauthorized error if the endpoint is requested with an unauthorized token.
         """
+        if settings.CONF == "local-int-tests":
+            pytest.skip("Skipping test_endpoint_returns_unauthorized_request on local environment")
+
         status_response = make_iap_request("GET", self.deployment_status_url, unauthenticated=True)
         assert status_response.status_code == status.HTTP_401_UNAUTHORIZED

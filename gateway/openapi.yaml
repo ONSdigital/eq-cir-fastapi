@@ -155,12 +155,15 @@ components:
           title: Mime Type
           type: string
         navigation:
+          additionalProperties: true
           title: Navigation
           type: object
         post_submission:
+          additionalProperties: true
           title: Post Submission
           type: object
         questionnaire_flow:
+          additionalProperties: true
           title: Questionnaire Flow
           type: object
         sds_schema:
@@ -172,6 +175,7 @@ components:
           title: Sections
           type: array
         submission:
+          additionalProperties: true
           title: Submission
           type: object
         survey_id:
@@ -252,10 +256,8 @@ paths:
         name: classifier_type
         required: false
         schema:
-          allOf:
-          - $ref: '#/components/schemas/Classifiers'
+          $ref: '#/components/schemas/Classifiers'
           description: classifier_type used by the CI
-          title: Classifier Type
       - description: classifier_value used by the CI
         example: '0001'
         in: query
@@ -326,7 +328,7 @@ paths:
   /v1/ci_validator_metadata:
     get:
       description: GET method that returns the validator metadata for a CI schema.
-      operationId: http_get_ci_validator_metadata_v1_ci_validator_metadata_get
+      operationId: http_get_ci_validator_metadata_v1_v1_ci_validator_metadata_get
       responses:
         '200':
           content:
@@ -334,15 +336,15 @@ paths:
               schema:
                 items:
                   $ref: '#/components/schemas/CiValidatorMetadata'
-                title: Response Http Get Ci Validator Metadata V1 Ci Validator Metadata
-                  Get
+                title: Response Http Get Ci Validator Metadata V1 V1 Ci Validator
+                  Metadata Get
                 type: array
           description: Successful Response
         '404':
           content:
             application/json:
               example:
-                message: No CI found
+                message: No CI validator metadata found
                 status: error
               schema:
                 $ref: '#/components/schemas/ExceptionResponseModel'
@@ -356,7 +358,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ExceptionResponseModel'
           description: Internal Server Error
-      summary: Http Get Ci Validator Metadata
+      summary: Http Get Ci Validator Metadata V1
   /v1/dev/teardown:
     delete:
       description: DELETE method that deletes the CI schema from the bucket as well
@@ -461,10 +463,8 @@ paths:
         name: classifier_type
         required: false
         schema:
-          allOf:
-          - $ref: '#/components/schemas/Classifiers'
+          $ref: '#/components/schemas/Classifiers'
           description: classifier_type used by the CI
-          title: Classifier Type
       - description: classifier_value used by the CI
         example: '0001'
         in: query
@@ -615,10 +615,8 @@ paths:
         name: classifier_type
         required: false
         schema:
-          allOf:
-          - $ref: '#/components/schemas/Classifiers'
+          $ref: '#/components/schemas/Classifiers'
           description: classifier_type used by the CI
-          title: Classifier Type
       - description: classifier_value used by the CI
         example: '0001'
         in: query
