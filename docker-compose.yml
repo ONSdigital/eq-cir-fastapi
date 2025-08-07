@@ -16,7 +16,7 @@ services:
       - 5050:5050
       - 8086:8086
     environment:
-      - PROJECT_NAME=mock-project-id
+      - GCP_PROJECT=mock-project-id
       - ENABLE_UI=true
     volumes:
       - ./devtools/firebase-emulator:/firebase
@@ -30,14 +30,15 @@ services:
       - 3030:3030
     environment:
       - CONF=local-docker
-      - CI_FIRESTORE_COLLECTION_NAME=ons-firestore-collection
+      - PROJECT_ID=mock-project-id
       - CI_STORAGE_BUCKET_NAME=ci-bucket
-      - FIRESTORE_EMULATOR_HOST=firestore:8200
+      - PUBLISH_CI_TOPIC_ID=mock-cir-topic
       - LOG_LEVEL=DEBUG
       - PORT=3030
-      - PROJECT_ID=mock-project-id
       - PUBSUB_EMULATOR_HOST=firestore:8086
       - PUBSUB_PROJECT_ID=mock-project-id
+      - FIRESTORE_EMULATOR_HOST=firestore:8200
+      - FIRESTORE_PROJECT_ID=mock-project-id
       - SERVICE_ACCOUNT_JSON_FILE=test
       - STORAGE_EMULATOR_HOST=http://storage:9026
     volumes:

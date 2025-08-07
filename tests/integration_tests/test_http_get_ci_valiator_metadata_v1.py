@@ -1,7 +1,6 @@
 from urllib.parse import urlencode
 
 from app.config import settings
-from app.events.subscriber import Subscriber
 from app.models.responses import CiValidatorMetadata
 from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.helpers.integration_helpers import pubsub_teardown

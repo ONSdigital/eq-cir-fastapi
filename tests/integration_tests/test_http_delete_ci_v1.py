@@ -5,8 +5,7 @@ import pytest
 from fastapi import status
 
 from app.config import settings
-from app.events.subscriber import Subscriber
-from tests.integration_tests.helpers.integration_helpers import pubsub_setup, pubsub_teardown
+from tests.integration_tests.helpers.integration_helpers import pubsub_teardown
 from tests.integration_tests.helpers.pubsub_helper import ci_pubsub_helper
 from tests.integration_tests.utils import make_iap_request
 

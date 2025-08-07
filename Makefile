@@ -16,15 +16,16 @@ start-cloud-dev:
 	python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 3030
 
 unit-tests:
-	export CONF=unit && \
+	export CONF='unit' && \
 	export CI_STORAGE_BUCKET_NAME='the-ci-schema-bucket' && \
 	export PROJECT_ID='$(PROJECT_ID)' && \
 	python -m pytest --cov=app --cov-fail-under=90 --cov-report term-missing --cov-config=.coveragerc_unit -vv ./tests/unit_tests/ -W ignore::DeprecationWarning
 
 integration-tests-local:
-	export CONF=local-int-tests && \
+	export CONF='local-int-tests' && \
 	export PROJECT_ID='mock-project-id' && \
 	export CI_STORAGE_BUCKET_NAME='ci-bucket' && \
+	export PUBLISH_CI_TOPIC_ID='mock-cir-topic' && \
 	export DEFAULT_HOSTNAME=${LOCAL_URL} && \
 	export URL_SCHEME='http' && \
 	export OAUTH_CLIENT_ID=${LOCAL_URL} && \
