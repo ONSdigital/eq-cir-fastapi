@@ -1,11 +1,10 @@
-import json
 from urllib.parse import urlencode
 
 import pytest
 from fastapi import status
 
 from app.config import settings
-from tests.integration_tests.helpers.integration_helpers import pubsub_setup, pubsub_purge_messages, pubsub_teardown
+from tests.integration_tests.helpers.integration_helpers import pubsub_setup, pubsub_teardown, inject_wait_time
 from tests.integration_tests.helpers.pubsub_helper import ci_pubsub_helper
 from app.models.responses import CiMetadata
 from app.services.ci_classifier_service import CiClassifierService
@@ -25,9 +24,11 @@ class TestPostCiV1:
     def setup_class(cls) -> None:
         pubsub_teardown(ci_pubsub_helper, settings.SUBSCRIPTION_ID)
         pubsub_setup(ci_pubsub_helper, settings.SUBSCRIPTION_ID)
+        inject_wait_time(3)  # Allow pubsub topic to be created
 
     @classmethod
     def teardown_class(cls) -> None:
+        inject_wait_time(3)  # Allow time for messages to be pulled
         pubsub_teardown(ci_pubsub_helper, settings.SUBSCRIPTION_ID)
 
     def teardown_method(self):
@@ -37,7 +38,7 @@ class TestPostCiV1:
         """
         querystring = urlencode({"survey_id": 3456})
         make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
-        #pubsub_purge_messages(ci_pubsub_helper, settings.SUBSCRIPTION_ID)
+        # pubsub_purge_messages(ci_pubsub_helper, settings.SUBSCRIPTION_ID)
 
     def test_can_publish_valid_ci(self, setup_payload):
         """
@@ -144,8 +145,8 @@ class TestPostCiV1:
         assert expected_ci.model_dump() == received_messages[0]
 
     def test_can_append_version_to_existing_ci(
-        self,
-        setup_publish_ci_return_payload,
+            self,
+            setup_publish_ci_return_payload,
     ):
         """
         What am I testing:
@@ -195,8 +196,8 @@ class TestPostCiV1:
         ci_pubsub_helper.pull_and_acknowledge_messages(settings.SUBSCRIPTION_ID)
 
     def test_cannot_publish_ci_missing_survey_id(
-        self,
-        setup_payload,
+            self,
+            setup_payload,
     ):
         """
         What am I testing:

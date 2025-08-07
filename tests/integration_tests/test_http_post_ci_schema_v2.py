@@ -6,7 +6,7 @@ from fastapi import status
 from app.config import settings
 from app.models.responses import CiMetadata
 from app.services.ci_classifier_service import CiClassifierService
-from tests.integration_tests.helpers.integration_helpers import pubsub_teardown, pubsub_setup
+from tests.integration_tests.helpers.integration_helpers import pubsub_teardown, pubsub_setup, inject_wait_time
 from tests.integration_tests.helpers.pubsub_helper import ci_pubsub_helper
 from tests.integration_tests.utils import make_iap_request
 
@@ -22,9 +22,11 @@ class TestPostCiV2:
     def setup_class(cls) -> None:
         pubsub_teardown(ci_pubsub_helper, settings.SUBSCRIPTION_ID)
         pubsub_setup(ci_pubsub_helper, settings.SUBSCRIPTION_ID)
+        inject_wait_time(3)  # Allow pubsub topic to be created
 
     @classmethod
     def teardown_class(cls) -> None:
+        inject_wait_time(3)  # Allow time for messages to be pulled
         pubsub_teardown(ci_pubsub_helper, settings.SUBSCRIPTION_ID)
 
     def teardown_method(self):
