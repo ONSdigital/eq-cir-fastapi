@@ -17,6 +17,7 @@ def pubsub_purge_messages(pubsub_helper: PubSubHelper, subscriber_id: str) -> No
     """Purge any messages that may have been sent to a subscriber"""
     pubsub_helper.purge_messages(subscriber_id)
 
+
 def inject_wait_time(seconds: int) -> None:
     """
     Method to inject a wait time into the test to allow resources properly spin up and tear down.

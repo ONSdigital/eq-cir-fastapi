@@ -22,7 +22,6 @@ class TestPostCiV1:
 
     @classmethod
     def setup_class(cls) -> None:
-        pubsub_teardown(ci_pubsub_helper, settings.SUBSCRIPTION_ID)
         pubsub_setup(ci_pubsub_helper, settings.SUBSCRIPTION_ID)
         inject_wait_time(3)  # Allow pubsub topic to be created
 
@@ -30,6 +29,7 @@ class TestPostCiV1:
     def teardown_class(cls) -> None:
         inject_wait_time(3)  # Allow time for messages to be pulled
         pubsub_teardown(ci_pubsub_helper, settings.SUBSCRIPTION_ID)
+        inject_wait_time(3)  # Allow pubsub subscription to be deleted (subscription lingers after 200 response)
 
     def teardown_method(self):
         """
