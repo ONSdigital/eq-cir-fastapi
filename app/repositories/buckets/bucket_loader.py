@@ -34,7 +34,12 @@ class BucketLoader:
                 bucket_name,
             )
         except exceptions.NotFound as exc:
-            raise ExceptionBucketNotFound from exc
+            if settings.CONF != "local-docker":
+                raise ExceptionBucketNotFound from exc
+
+            bucket = __storage_client.create_bucket(
+                bucket_name,
+            )
 
         return bucket
 

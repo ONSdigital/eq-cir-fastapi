@@ -31,7 +31,7 @@ services:
     environment:
       - CONF=local-docker
       - PROJECT_ID=mock-project-id
-      - CI_STORAGE_BUCKET_NAME=ci-bucket
+      - CI_STORAGE_BUCKET_NAME=mock-ci-bucket
       - PUBLISH_CI_TOPIC_ID=mock-cir-topic
       - LOG_LEVEL=DEBUG
       - PORT=3030
