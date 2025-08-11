@@ -4,7 +4,7 @@ from google.cloud.pubsub_v1 import PublisherClient
 
 from app.config import Settings, logging
 from app.exception.exceptions import ExceptionTopicNotFound
-from app.models.events import PostCIEvent
+from app.models.responses import CiMetadata
 
 logger = logging.getLogger(__name__)
 settings = Settings()
@@ -23,7 +23,7 @@ class Publisher:
         else:
             return PublisherClient()
 
-    def publish_message(self, event_msg: PostCIEvent) -> None:
+    def publish_message(self, event_msg: CiMetadata) -> None:
         """Publishes an event message to a Pub/Sub topic."""
 
         # Get the topic path
