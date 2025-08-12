@@ -58,7 +58,8 @@ class TestPublisher:
         mocked_publisher_client.publish.side_effect = RuntimeError("Error publishing message")
 
         publisher = Publisher(mocked_publisher_client)
-        publisher.publish_message(mock_event_message)
+        with pytest.raises(Exception):
+            publisher.publish_message(mock_event_message)
 
         # Assert that the logger were called
         mock_logger.assert_called_once()
