@@ -6,6 +6,7 @@ from app.config import Settings
 from app.events.publisher import Publisher
 from app.exception.exceptions import ExceptionTopicNotFound
 from app.models.events import PostCIEvent
+from google.cloud import exceptions
 
 settings = Settings()
 
@@ -54,7 +55,7 @@ class TestPublisher:
         mocked_publisher_client = mocker.Mock()
         mock_logger = mocker.patch("app.config.logging.Logger.debug")
         # Mock the create_topic method to raise an exception
-        mocked_publisher_client.publish.side_effect = Exception("Error publishing message")
+        mocked_publisher_client.publish.side_effect = RuntimeError("Error publishing message")
 
         publisher = Publisher(mocked_publisher_client)
         publisher.publish_message(mock_event_message)
@@ -79,7 +80,7 @@ class TestPublisher:
 
     def test_topic_exists_failure(self, mocker):
         mocked_publisher_client = mocker.Mock()
-        mocked_publisher_client.get_topic.side_effect = Exception
+        mocked_publisher_client.get_topic.side_effect = exceptions.NotFound("Topic not found")
 
         publisher = Publisher(mocked_publisher_client)
 

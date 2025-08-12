@@ -1,17 +1,19 @@
 import json
 
+from google.cloud import exceptions
 from google.cloud.pubsub_v1 import PublisherClient
+from google.cloud.pubsub_v1.publisher import exceptions as pubsub_exceptions
 
-from app.config import Settings, logging
+from app.config import logging, settings
 from app.exception.exceptions import ExceptionTopicNotFound
 from app.models.events import PostCIEvent
 
 logger = logging.getLogger(__name__)
-settings = Settings()
 
 
 class Publisher:
     """Methods to publish pub/sub messages using the `pubsub_v1.PublisherClient()`"""
+    publisher_client: PublisherClient
 
     def __init__(self, publisher_client: PublisherClient) -> None:
         self.publisher_client = publisher_client
@@ -45,8 +47,8 @@ class Publisher:
             future = self.publisher_client.publish(topic_path, data=data)
             result = future.result()  # Verify the publishing succeeded
             logger.debug(f"Message published. {result}")
-        except Exception as e:
-            logger.debug(e)
+        except (RuntimeError, pubsub_exceptions.MessageTooLargeError) as exc:
+            logger.debug(exc)
 
     def _verify_topic_exists(self, topic_path: str) -> bool:
         """
@@ -55,7 +57,7 @@ class Publisher:
         try:
             self.publisher_client.get_topic(request={"topic": topic_path})
             return True
-        except Exception as exc:
+        except exceptions.NotFound as exc:
             logger.debug("Error getting topic")
 
             if settings.CONF == "local-docker":
@@ -68,7 +70,7 @@ class Publisher:
         try:
             self.publisher_client.create_topic(request={"name": topic_path})
             logger.debug(f"Topic created: {topic_path}")
-        except Exception as exc:
+        except exceptions.Conflict as exc:
             raise Exception("Error creating topic") from exc
 
 
