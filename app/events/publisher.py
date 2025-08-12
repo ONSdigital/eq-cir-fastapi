@@ -50,7 +50,7 @@ class Publisher:
         except (RuntimeError, pubsub_exceptions.MessageTooLargeError) as exc:
             logger.debug(exc)
 
-            raise Exception("Error publishing message") from exc
+            raise RuntimeError("Error publishing message") from exc
 
     def _verify_topic_exists(self, topic_path: str) -> bool:
         """
@@ -69,11 +69,8 @@ class Publisher:
 
     def _create_topic(self, topic_path: str) -> None:
         """Creates a Pub/Sub topic."""
-        try:
-            self.publisher_client.create_topic(request={"name": topic_path})
-            logger.debug(f"Topic created: {topic_path}")
-        except exceptions.Conflict as exc:
-            raise Exception("Error creating topic") from exc
+        self.publisher_client.create_topic(request={"name": topic_path})
+        logger.debug(f"Topic created: {topic_path}")
 
 
 publisher = Publisher(PublisherClient())
