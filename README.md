@@ -128,7 +128,7 @@ If you want to test posting data to these functions using Postman or similar, yo
 ### Everything running locally
 
 In this configuration, the integration test uses the CIR API service running in Docker. Please make sure that the Docker containers are running before executing the integration tests. The CIR service talks to the PubSub, Firestore, and Cloud Storage emulators running in Docker.
-Tests on unauthorised access to endpoints are skipped in this configuration.
+Tests on unauthorised access to endpoints are skipped in this configuration as IAP is not present in a local environment to test the endpoints access authorisation behaviour.
 
 ```bash
 make integration-tests-local

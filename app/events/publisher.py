@@ -13,19 +13,17 @@ settings = Settings()
 class Publisher:
     """Methods to publish pub/sub messages using the `pubsub_v1.PublisherClient()`"""
 
-    def __init__(self) -> None:
-        self.publisher_client = self._init_client()
-        # In local docker, we create the topic if it does not exist
-        if settings.CONF == "local-docker":
-            topic_path = self.publisher_client.topic_path(settings.PROJECT_ID, settings.PUBLISH_CI_TOPIC_ID)
-            self._verify_topic_exists(topic_path)
+    def __init__(self, publisher_client: PublisherClient) -> None:
+        self.publisher_client = publisher_client
 
-    def _init_client(self) -> None | PublisherClient:
-        """Initializes the Pub/Sub client."""
         if settings.CONF == "unit":
-            return None
-        else:
-            return PublisherClient()
+            return
+
+        topic_path = self.publisher_client.topic_path(settings.PROJECT_ID, settings.PUBLISH_CI_TOPIC_ID)
+
+        # In local docker, we create the topic if it does not exist
+        if settings.CONF == "local-docker" and not self._verify_topic_exists(topic_path):
+            self._create_topic(topic_path)
 
     def publish_message(self, event_msg: PostCIEvent) -> None:
         """Publishes an event message to a Pub/Sub topic."""
@@ -45,7 +43,7 @@ class Publisher:
         # Publishes a message
         try:
             future = self.publisher_client.publish(topic_path, data=data)
-            result = future.result()  # Verify the publish succeeded
+            result = future.result()  # Verify the publishing succeeded
             logger.debug(f"Message published. {result}")
         except Exception as e:
             logger.debug(e)
@@ -61,9 +59,7 @@ class Publisher:
             logger.debug("Error getting topic")
 
             if settings.CONF == "local-docker":
-                # In local docker, we assume the topic does not exist and create it
-                self._create_topic(topic_path)
-                return True
+                return False
 
             raise ExceptionTopicNotFound from exc
 
@@ -76,4 +72,4 @@ class Publisher:
             raise Exception("Error creating topic") from exc
 
 
-publisher = Publisher()
+publisher = Publisher(PublisherClient())

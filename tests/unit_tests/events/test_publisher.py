@@ -1,5 +1,4 @@
 import json
-from unittest.mock import patch
 
 import pytest
 
@@ -21,42 +20,43 @@ mock_event_message = PostCIEvent(
     language="en",
     published_at="timestamp",
     sds_schema="",
-    status="DRAFT",
     survey_id="345",
     title="survey",
 )
 
 
-@patch("app.events.publisher.Publisher._init_client")
 class TestPublisher:
-    def test_publish_message_success(self, mocked_publisher_client, mocker):
+
+    def test_publish_message_success(self, mocker):
+        mocked_publisher_client = mocker.Mock()
         mocker.patch("app.config.settings.PROJECT_ID", "project_id")
         mocker.patch("app.config.settings.PUBLISH_CI_TOPIC_ID", "topic_id")
 
         mock_topic_exists = mocker.patch("app.events.publisher.Publisher._verify_topic_exists")
         mock_logger = mocker.patch("logging.Logger.debug")
-        mock_future = mocked_publisher_client.return_value.publish.return_value
+        mock_future = mocked_publisher_client.publish.return_value
         mock_future.result.return_value = "success"
-        mocked_publisher_client.return_value.topic_path.return_value = "project_id/topics/topic_id"
+        mocked_publisher_client.topic_path.return_value = "project_id/topics/topic_id"
 
         data_str = json.dumps(mock_event_message.model_dump())
         data = data_str.encode("utf-8")
 
-        publisher = Publisher()
+        publisher = Publisher(mocked_publisher_client)
         publisher.publish_message(mock_event_message)
         mock_topic_exists.assert_called_once()
-        mocked_publisher_client.return_value.publish.assert_called_once_with("project_id/topics/topic_id", data=data)
+        mocked_publisher_client.publish.assert_called_once_with("project_id/topics/topic_id", data=data)
         mock_future.result.assert_called_once()
         expected_message = "Message published. success"
         actual_message = mock_logger.call_args[0][0]
         assert actual_message == expected_message
 
-    def test_publish_message_failure(self, mocked_publisher_client, mocker):
+    def test_publish_message_failure(self, mocker):
+        mocked_publisher_client = mocker.Mock()
         mock_logger = mocker.patch("app.config.logging.Logger.debug")
         # Mock the create_topic method to raise an exception
-        mocked_publisher_client.return_value.publish.side_effect = Exception("Error publishing message")
+        mocked_publisher_client.publish.side_effect = Exception("Error publishing message")
 
-        publisher = Publisher()
+        publisher = Publisher(mocked_publisher_client)
         publisher.publish_message(mock_event_message)
 
         # Assert that the logger were called
@@ -67,19 +67,21 @@ class TestPublisher:
         actual_error_message = str(mock_logger.call_args[0][0].args[0])
         assert actual_error_message == expected_error_message
 
-    def test_topic_exists_success(self, mocked_publisher_client):
-        mocked_publisher_client.return_value.topic_path.return_value = "project_id/topics/topic_id"
+    def test_topic_exists_success(self, mocker):
+        mocked_publisher_client = mocker.Mock()
+        mocked_publisher_client.topic_path.return_value = "project_id/topics/topic_id"
 
-        publisher = Publisher()
+        publisher = Publisher(mocked_publisher_client)
         result = publisher._verify_topic_exists("project_id/topics/topic_id")
 
-        mocked_publisher_client.return_value.get_topic.assert_called_once_with(request={"topic": "project_id/topics/topic_id"})
+        mocked_publisher_client.get_topic.assert_called_once_with(request={"topic": "project_id/topics/topic_id"})
         assert result
 
-    def test_topic_exists_failure(self, mocked_publisher_client):
-        mocked_publisher_client.return_value.get_topic.side_effect = Exception
+    def test_topic_exists_failure(self, mocker):
+        mocked_publisher_client = mocker.Mock()
+        mocked_publisher_client.get_topic.side_effect = Exception
 
-        publisher = Publisher()
+        publisher = Publisher(mocked_publisher_client)
 
         with pytest.raises(ExceptionTopicNotFound):
             publisher._verify_topic_exists("")
