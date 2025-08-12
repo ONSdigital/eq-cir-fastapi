@@ -1,15 +1,15 @@
-import time
+import datetime
 
 from app.config import settings
 from tests.integration_tests.helpers.pubsub_helper import PubSubHelper
 
 
-def pubsub_setup(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
+def subscriber_setup(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
     """Creates any subscribers that may be used in tests"""
     pubsub_helper.try_create_subscriber(subscriber_id)
 
 
-def pubsub_teardown(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
+def subscriber_teardown(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
     """Deletes subscribers that may have been used in tests"""
     pubsub_helper.try_delete_subscriber(subscriber_id)
 
@@ -19,18 +19,7 @@ def pubsub_purge_messages(pubsub_helper: PubSubHelper, subscriber_id: str) -> No
     pubsub_helper.purge_messages(subscriber_id)
 
 
-def inject_wait_time(seconds: int) -> None:
-    """
-    Method to inject a wait time into the test to allow resources properly spin up and tear down.
-
-    Parameters:
-        seconds: the number of seconds to wait
-
-    Returns:
-        None
-    """
-    # Wait time is not required for local integration tests as resources are created instantly
-    if settings.CONF == "local-int-tests":
-        return
-
-    time.sleep(seconds)
+def generate_subscriber_id() -> str:
+    """Generates a unique subscriber id for each test"""
+    suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
+    return f"{settings.SUBSCRIPTION_ID}-{suffix}"

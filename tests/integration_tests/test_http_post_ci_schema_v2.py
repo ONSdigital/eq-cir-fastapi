@@ -6,9 +6,12 @@ from fastapi import status
 from app.config import settings
 from app.models.responses import CiMetadata
 from app.services.ci_classifier_service import CiClassifierService
-from tests.integration_tests.helpers.integration_helpers import pubsub_teardown, pubsub_setup, inject_wait_time
-from tests.integration_tests.helpers.pubsub_helper import ci_pubsub_helper
+from tests.integration_tests.helpers.integration_helpers import subscriber_teardown, subscriber_setup, \
+    generate_subscriber_id
+from tests.integration_tests.helpers.pubsub_helper import PubSubHelper
 from tests.integration_tests.utils import make_iap_request
+
+ci_pubsub_helper = PubSubHelper(settings.PUBLISH_CI_TOPIC_ID)
 
 
 class TestPostCiV2:
@@ -17,17 +20,15 @@ class TestPostCiV2:
     post_url = "/v2/publish_collection_instrument?validator_version=0.0.1"
     post_url_no_validator = "/v2/publish_collection_instrument"
     get_metadata_url = "/v1/ci_metadata"
+    subscription_id = generate_subscriber_id()
 
     @classmethod
     def setup_class(cls) -> None:
-        pubsub_setup(ci_pubsub_helper, settings.SUBSCRIPTION_ID)
-        inject_wait_time(3)  # Allow pubsub subscription to be created
+        subscriber_setup(ci_pubsub_helper, cls.subscription_id)
 
     @classmethod
     def teardown_class(cls) -> None:
-        inject_wait_time(3)  # Allow time for messages to be pulled
-        pubsub_teardown(ci_pubsub_helper, settings.SUBSCRIPTION_ID)
-        inject_wait_time(3)  # Allow pubsub subscription to be deleted (subscription lingers after 200 response)
+        subscriber_teardown(ci_pubsub_helper, cls.subscription_id)
 
     def teardown_method(self):
         """
@@ -65,7 +66,7 @@ class TestPostCiV2:
         check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
 
-        received_messages = ci_pubsub_helper.pull_and_acknowledge_messages(settings.SUBSCRIPTION_ID)
+        received_messages = ci_pubsub_helper.pull_and_acknowledge_messages(self.subscription_id)
 
         expected_ci = CiMetadata(
             ci_version=1,
@@ -118,7 +119,7 @@ class TestPostCiV2:
         check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
 
-        received_messages = ci_pubsub_helper.pull_and_acknowledge_messages(settings.SUBSCRIPTION_ID)
+        received_messages = ci_pubsub_helper.pull_and_acknowledge_messages(self.subscription_id)
 
         expected_ci = CiMetadata(
             ci_version=1,
@@ -152,9 +153,6 @@ class TestPostCiV2:
         """
         ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_publish_ci_return_payload)
         ci_response_data = ci_response.json()
-
-        # Need to pull and acknowledge messages to clear subscription
-        ci_pubsub_helper.pull_and_acknowledge_messages(settings.SUBSCRIPTION_ID)
 
         survey_id = setup_publish_ci_return_payload["survey_id"]
         classifier_type = CiClassifierService.get_classifier_type(setup_publish_ci_return_payload)
@@ -192,6 +190,9 @@ class TestPostCiV2:
         assert check_ci_in_db_data[0] == expected_ci.model_dump()
         assert check_ci_in_db_data[1]["ci_version"] == 1
         assert check_ci_in_db_data[0]["ci_version"] == 2
+
+        # Need to pull and acknowledge messages to clear subscription
+        ci_pubsub_helper.pull_and_acknowledge_messages(self.subscription_id)
 
     def test_cannot_publish_ci_missing_survey_id(
         self,

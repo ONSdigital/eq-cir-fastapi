@@ -7,8 +7,6 @@ from fastapi import status
 from app.config import settings
 from app.models.requests import GetCiSchemaV1Params
 from app.services.ci_classifier_service import CiClassifierService
-from tests.integration_tests.helpers.integration_helpers import pubsub_teardown
-from tests.integration_tests.helpers.pubsub_helper import ci_pubsub_helper
 from tests.integration_tests.utils import make_iap_request
 
 
@@ -17,10 +15,6 @@ class TestHttpGetCiSchemaV1:
 
     url = "/v1/retrieve_collection_instrument"
     post_url = "/v1/publish_collection_instrument"
-
-    @classmethod
-    def setup_class(cls) -> None:
-        pubsub_teardown(ci_pubsub_helper, settings.SUBSCRIPTION_ID)
 
     def teardown_method(self):
         """

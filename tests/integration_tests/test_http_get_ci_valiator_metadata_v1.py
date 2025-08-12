@@ -3,8 +3,6 @@ from urllib.parse import urlencode
 from app.config import settings
 from app.models.responses import CiValidatorMetadata
 from app.services.ci_classifier_service import CiClassifierService
-from tests.integration_tests.helpers.integration_helpers import pubsub_teardown
-from tests.integration_tests.helpers.pubsub_helper import ci_pubsub_helper
 from tests.integration_tests.utils import make_iap_request
 
 
@@ -13,10 +11,6 @@ class TestHttpGetCiValidatorMetadataV1:
     base_url = "/v1/ci_validator_metadata"
     post_url_v1 = "/v1/publish_collection_instrument"
     post_url_v2 = "/v2/publish_collection_instrument"
-
-    @classmethod
-    def setup_class(cls) -> None:
-        pubsub_teardown(ci_pubsub_helper, settings.SUBSCRIPTION_ID)
 
     def teardown_method(self):
         """

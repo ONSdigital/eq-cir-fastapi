@@ -1,9 +1,12 @@
 import json
 import time
 
-from google.cloud import pubsub_v1
+from google.cloud import pubsub_v1, exceptions
+from google.pubsub_v1.types.pubsub import SeekRequest, SeekResponse
 
-from app.config import settings
+from app.config import settings, logging
+
+logger = logging.getLogger(__name__)
 
 
 class PubSubHelper:
@@ -81,7 +84,7 @@ class PubSubHelper:
 
         return messages
 
-    def purge_messages(self, subscriber_id: str) -> None:
+    def purge_messages(self, subscriber_id: str) -> SeekResponse:
         """
         Purges all messages published to a subscriber by seeking through future timestamp.
 
@@ -92,9 +95,17 @@ class PubSubHelper:
             self.project_id, subscriber_id
         )
 
-        self.subscriber_client.seek(
-            request={"subscription": subscription_path, "time": "2999-01-01T00:00:00Z"}
+        request = SeekRequest(
+            subscription=subscription_path,
+            time="2999-01-01T00:00:00Z"  # Seek to a future timestamp to purge messages
         )
+
+        response: SeekResponse = self.subscriber_client.seek(
+            #request={"subscription": subscription_path, "time": "2999-01-01T00:00:00Z"}
+            request=request
+        )
+
+        return response
 
     def format_received_message_data(self, received_message) -> dict:
         """
@@ -141,8 +152,10 @@ class PubSubHelper:
             self.subscriber_client.get_subscription(
                 request={"subscription": subscription_path}
             )
+            logger.debug("Subscription found")
             return True
-        except Exception:
+        except exceptions.NotFound:
+            logger.debug("Subscription not found")
             return False
 
     def _wait_and_check_subscription_exists(

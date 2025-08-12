@@ -5,8 +5,6 @@ import pytest
 from fastapi import status
 
 from app.config import settings
-from tests.integration_tests.helpers.integration_helpers import pubsub_teardown
-from tests.integration_tests.helpers.pubsub_helper import ci_pubsub_helper
 from tests.integration_tests.utils import make_iap_request
 
 
@@ -15,10 +13,6 @@ class TestDeleteCiV1:
 
     base_url = "/v1/dev/teardown"
     post_url = "/v1/publish_collection_instrument"
-
-    @classmethod
-    def setup_class(cls) -> None:
-        pubsub_teardown(ci_pubsub_helper, settings.SUBSCRIPTION_ID)
 
     def test_can_delete_ci_returns_200(self, setup_payload):
         """

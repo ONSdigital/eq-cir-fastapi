@@ -4,32 +4,33 @@ import pytest
 from fastapi import status
 
 from app.config import settings
-from tests.integration_tests.helpers.integration_helpers import pubsub_setup, pubsub_teardown, inject_wait_time
-from tests.integration_tests.helpers.pubsub_helper import ci_pubsub_helper
+from tests.integration_tests.helpers.integration_helpers import subscriber_teardown, subscriber_setup, \
+    generate_subscriber_id
+from tests.integration_tests.helpers.pubsub_helper import PubSubHelper
 from app.models.responses import CiMetadata
 from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request
+
+ci_pubsub_helper = PubSubHelper(settings.PUBLISH_CI_TOPIC_ID)
 
 
 class TestPostCiV1:
     """Tests for the `http_post_ci_v1` endpoint."""
 
     post_url = "/v1/publish_collection_instrument"
-    get_matadata_url = "/v1/ci_metadata"
+    get_metadata_url = "/v1/ci_metadata"
+    subscription_id = generate_subscriber_id()
 
     # NOTE: Anytime a happy path for post_ci_v1 is called, make sure to add in a line that pulls &
     # acknowledges the messages that are published to a topic
 
     @classmethod
     def setup_class(cls) -> None:
-        pubsub_setup(ci_pubsub_helper, settings.SUBSCRIPTION_ID)
-        inject_wait_time(3)  # Allow pubsub topic to be created
+        subscriber_setup(ci_pubsub_helper, cls.subscription_id)
 
     @classmethod
     def teardown_class(cls) -> None:
-        inject_wait_time(3)  # Allow time for messages to be pulled
-        pubsub_teardown(ci_pubsub_helper, settings.SUBSCRIPTION_ID)
-        inject_wait_time(5)  # Allow pubsub subscription to be deleted (subscription lingers after 200 response)
+        subscriber_teardown(ci_pubsub_helper, cls.subscription_id)
 
     def teardown_method(self):
         """
@@ -65,10 +66,10 @@ class TestPostCiV1:
             }
         )
         # sends request to http_query_ci endpoint for data
-        check_ci_in_db = make_iap_request("GET", f"{self.get_matadata_url}?{querystring}")
+        check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
 
-        received_messages = ci_pubsub_helper.pull_and_acknowledge_messages(settings.SUBSCRIPTION_ID)
+        received_messages = ci_pubsub_helper.pull_and_acknowledge_messages(self.subscription_id)
 
         expected_ci = CiMetadata(
             ci_version=1,
@@ -118,10 +119,10 @@ class TestPostCiV1:
             }
         )
         # sends request to http_query_ci endpoint for data
-        check_ci_in_db = make_iap_request("GET", f"{self.get_matadata_url}?{querystring}")
+        check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
 
-        received_messages = ci_pubsub_helper.pull_and_acknowledge_messages(settings.SUBSCRIPTION_ID)
+        received_messages = ci_pubsub_helper.pull_and_acknowledge_messages(self.subscription_id)
 
         expected_ci = CiMetadata(
             ci_version=1,
@@ -169,7 +170,7 @@ class TestPostCiV1:
             }
         )
         # sends request to http_query_ci endpoint for data
-        check_ci_in_db = make_iap_request("GET", f"{self.get_matadata_url}?{querystring}")
+        check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
 
         expected_ci = CiMetadata(
@@ -193,7 +194,7 @@ class TestPostCiV1:
         assert check_ci_in_db_data[1]["ci_version"] == 1
         assert check_ci_in_db_data[0]["ci_version"] == 2
 
-        ci_pubsub_helper.pull_and_acknowledge_messages(settings.SUBSCRIPTION_ID)
+        ci_pubsub_helper.pull_and_acknowledge_messages(self.subscription_id)
 
     def test_cannot_publish_ci_missing_survey_id(
             self,
