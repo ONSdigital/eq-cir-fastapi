@@ -50,6 +50,8 @@ class Publisher:
         except (RuntimeError, pubsub_exceptions.MessageTooLargeError) as exc:
             logger.debug(exc)
 
+            raise Exception("Error publishing message") from exc
+
     def _verify_topic_exists(self, topic_path: str) -> bool:
         """
         If the topic does not exist raises 500 global error.

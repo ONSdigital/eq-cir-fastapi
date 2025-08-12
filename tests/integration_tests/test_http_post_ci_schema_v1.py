@@ -29,7 +29,7 @@ class TestPostCiV1:
     def teardown_class(cls) -> None:
         inject_wait_time(3)  # Allow time for messages to be pulled
         pubsub_teardown(ci_pubsub_helper, settings.SUBSCRIPTION_ID)
-        inject_wait_time(3)  # Allow pubsub subscription to be deleted (subscription lingers after 200 response)
+        inject_wait_time(5)  # Allow pubsub subscription to be deleted (subscription lingers after 200 response)
 
     def teardown_method(self):
         """

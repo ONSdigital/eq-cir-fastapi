@@ -14,30 +14,7 @@ class PubSubHelper:
             self.project_id = settings.PROJECT_ID
 
         self.subscriber_client = pubsub_v1.SubscriberClient()
-        self.publisher_client = pubsub_v1.PublisherClient()
         self.topic_id = topic_id
-
-    def _try_create_topic(self) -> None:
-        """
-        Try to create a topic for publisher if not exists
-        """
-        topic_path = self.publisher_client.topic_path(self.project_id, self.topic_id)
-
-        try:
-            if not self._topic_exists(topic_path):
-                self.publisher_client.create_topic(request={"name": topic_path})
-        except Exception as e:
-            print(f"Fail to create topic. Topic path: {topic_path} Error: {e}")
-
-    def _topic_exists(self, topic_path: str) -> bool:
-        """
-        Returns True if the topic exists otherwise returns False.
-        """
-        try:
-            self.publisher_client.get_topic(request={"topic": topic_path})
-            return True
-        except Exception:
-            return False
 
     def try_create_subscriber(self, subscriber_id: str) -> None:
         """
@@ -46,25 +23,28 @@ class PubSubHelper:
         Parameters:
         subscriber_id: the unique id of the subscriber being created.
         """
-        topic_path = self.publisher_client.topic_path(self.project_id, self.topic_id)
+        topic_path = self.subscriber_client.topic_path(self.project_id, self.topic_id)
 
         subscription_path = self.subscriber_client.subscription_path(
             self.project_id, subscriber_id
         )
 
-        if not self._subscription_exists(subscriber_id):
-            self.subscriber_client.create_subscription(
-                request={
-                    "name": subscription_path,
-                    "topic": topic_path,
-                    "enable_message_ordering": True,
-                }
-            )
+        try:
+            if not self._subscription_exists(subscriber_id):
+                self.subscriber_client.create_subscription(
+                    request={
+                        "name": subscription_path,
+                        "topic": topic_path,
+                        "enable_message_ordering": True,
+                    }
+                )
 
-        if self._wait_and_check_subscription_exists(subscriber_id):
-            return
+            if self._wait_and_check_subscription_exists(subscriber_id):
+                return
 
-        print(f"Fail to create subscriber. Subscription path: {subscription_path}")
+        except Exception as exc:
+            print(f"Error creating subscriber. Subscription path: {subscription_path}")
+            raise Exception("Error creating subscriber") from exc
 
     def pull_and_acknowledge_messages(self, subscriber_id: str) -> list[dict] | None:
         """

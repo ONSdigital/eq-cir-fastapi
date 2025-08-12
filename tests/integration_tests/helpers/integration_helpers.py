@@ -1,5 +1,6 @@
 import time
 
+from app.config import settings
 from tests.integration_tests.helpers.pubsub_helper import PubSubHelper
 
 
@@ -28,4 +29,8 @@ def inject_wait_time(seconds: int) -> None:
     Returns:
         None
     """
+    # Wait time is not required for local integration tests as resources are created instantly
+    if settings.CONF == "local-int-tests":
+        return
+
     time.sleep(seconds)
