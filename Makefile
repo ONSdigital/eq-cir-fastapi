@@ -23,9 +23,9 @@ unit-tests:
 
 integration-tests-local:
 	export CONF='local-int-tests' && \
-	export PROJECT_ID='mock-project-id' && \
-	export CI_STORAGE_BUCKET_NAME='mock-ci-bucket' && \
-	export PUBLISH_CI_TOPIC_ID='mock-cir-topic' && \
+	export PROJECT_ID='emulated-project-id' && \
+	export CI_STORAGE_BUCKET_NAME='emulated-ci-bucket' && \
+	export PUBLISH_CI_TOPIC_ID='emulated-cir-topic' && \
 	export DEFAULT_HOSTNAME=${LOCAL_URL} && \
 	export URL_SCHEME='http' && \
 	export OAUTH_CLIENT_ID=${LOCAL_URL} && \

@@ -19,7 +19,7 @@ class TestPostCiV1:
 
     post_url = "/v1/publish_collection_instrument"
     get_metadata_url = "/v1/ci_metadata"
-    subscription_id = generate_subscriber_id()
+    subscription_id = generate_subscriber_id()  # Unique subscription ID to avoid conflicts and GCP errors
 
     # NOTE: Anytime a happy path for post_ci_v1 is called, make sure to add in a line that pulls &
     # acknowledges the messages that are published to a topic

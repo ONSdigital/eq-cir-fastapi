@@ -20,7 +20,7 @@ class TestPostCiV2:
     post_url = "/v2/publish_collection_instrument?validator_version=0.0.1"
     post_url_no_validator = "/v2/publish_collection_instrument"
     get_metadata_url = "/v1/ci_metadata"
-    subscription_id = generate_subscriber_id()
+    subscription_id = generate_subscriber_id()  # Unique subscription ID to avoid conflicts and GCP errors
 
     @classmethod
     def setup_class(cls) -> None:
