@@ -7,7 +7,7 @@ from app.config import settings
 from app.models.responses import CiMetadata
 from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.helpers.integration_helpers import subscriber_teardown, subscriber_setup, \
-    generate_subscriber_id
+    generate_subscriber_id, inject_wait_time
 from tests.integration_tests.helpers.pubsub_helper import PubSubHelper
 from tests.integration_tests.utils import make_iap_request
 
@@ -25,10 +25,12 @@ class TestPostCiV2:
     @classmethod
     def setup_class(cls) -> None:
         subscriber_setup(ci_pubsub_helper, cls.subscription_id)
+        inject_wait_time(3)
 
     @classmethod
     def teardown_class(cls) -> None:
         subscriber_teardown(ci_pubsub_helper, cls.subscription_id)
+        inject_wait_time(3)
 
     def teardown_method(self):
         """
@@ -66,7 +68,7 @@ class TestPostCiV2:
         check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
 
-        received_messages = ci_pubsub_helper.pull_and_acknowledge_messages(self.subscription_id)
+        received_messages = ci_pubsub_helper.try_pull_and_acknowledge_messages(self.subscription_id)
 
         expected_ci = CiMetadata(
             ci_version=1,
@@ -119,7 +121,7 @@ class TestPostCiV2:
         check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
 
-        received_messages = ci_pubsub_helper.pull_and_acknowledge_messages(self.subscription_id)
+        received_messages = ci_pubsub_helper.try_pull_and_acknowledge_messages(self.subscription_id)
 
         expected_ci = CiMetadata(
             ci_version=1,
@@ -192,7 +194,7 @@ class TestPostCiV2:
         assert check_ci_in_db_data[0]["ci_version"] == 2
 
         # Need to pull and acknowledge messages to clear subscription
-        ci_pubsub_helper.pull_and_acknowledge_messages(self.subscription_id)
+        ci_pubsub_helper.try_pull_and_acknowledge_messages(self.subscription_id)
 
     def test_cannot_publish_ci_missing_survey_id(
         self,

@@ -1,4 +1,6 @@
 import datetime
+import random
+import time
 
 from app.config import settings
 from tests.integration_tests.helpers.pubsub_helper import PubSubHelper
@@ -14,12 +16,15 @@ def subscriber_teardown(pubsub_helper: PubSubHelper, subscriber_id: str) -> None
     pubsub_helper.try_delete_subscriber(subscriber_id)
 
 
-def pubsub_purge_messages(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
-    """Purge any messages that may have been sent to a subscriber"""
-    pubsub_helper.purge_messages(subscriber_id)
-
-
 def generate_subscriber_id() -> str:
-    """Generates a unique subscriber id for each test"""
-    suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
+    """Generates a random subscriber id for each test"""
+    chars_list = random.choices("abcdefghijklmnopqrstuvwxyz", k=4)
+    suffix = "".join(chars_list)
     return f"{settings.SUBSCRIPTION_ID}-{suffix}"
+
+
+def inject_wait_time(seconds: int) -> None:
+    if settings.CONF == 'local-int-tests':
+        return
+
+    time.sleep(seconds)

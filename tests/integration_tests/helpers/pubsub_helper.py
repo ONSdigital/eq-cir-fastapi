@@ -2,11 +2,8 @@ import json
 import time
 
 from google.cloud import pubsub_v1, exceptions
-from google.pubsub_v1.types.pubsub import SeekRequest, SeekResponse
 
-from app.config import settings, logging
-
-logger = logging.getLogger(__name__)
+from app.config import settings
 
 
 class PubSubHelper:
@@ -47,9 +44,33 @@ class PubSubHelper:
 
         except Exception as exc:
             print(f"Error creating subscriber. Subscription path: {subscription_path}")
-            raise Exception("Error creating subscriber") from exc
+            raise RuntimeError(f"Error creating subscriber. Subscription path: {subscription_path}") from exc
 
-    def pull_and_acknowledge_messages(self, subscriber_id: str) -> list[dict] | None:
+    def try_delete_subscriber(self, subscriber_id: str) -> None:
+        subscriber = pubsub_v1.SubscriberClient()
+        subscription_path = self.subscriber_client.subscription_path(
+            self.project_id, subscriber_id
+        )
+
+        try:
+            if self._subscription_exists(subscriber_id):
+                with subscriber:
+                    subscriber.delete_subscription(
+                        request={"subscription": subscription_path}
+                    )
+
+            if self._wait_and_check_subscription_deleted(subscriber_id):
+                return
+
+        except Exception as exc:
+            print(f"Error deleting subscriber. Subscription path: {subscription_path}")
+            raise RuntimeError(f"Error deleting subscriber. Subscription path: {subscription_path}") from exc
+
+    def try_pull_and_acknowledge_messages(self,
+                                          subscriber_id: str,
+                                          num_messages: int = 5,
+                                          attempts: int = 5,
+                                          backoff: float = 0.5) -> list[dict] | None:
         """
         Pulls all messages published to a topic via a subscriber.
 
@@ -59,55 +80,40 @@ class PubSubHelper:
         subscription_path = self.subscriber_client.subscription_path(
             self.project_id, subscriber_id
         )
-        NUM_MESSAGES = 5
 
-        response = self.subscriber_client.pull(
-            request={"subscription": subscription_path, "max_messages": NUM_MESSAGES},
-        )
+        while attempts != 0:
+            try:
+                response = self.subscriber_client.pull(
+                    request={"subscription": subscription_path, "max_messages": num_messages},
+                )
 
-        message_count = len(response.received_messages)
+                message_count = len(response.received_messages)
 
-        if message_count == 0:
-            print("No messages found in the response")
-            return None
+                if message_count == 0:
+                    print("No messages found in the response")
+                    return None
 
-        messages = []
-        ack_ids = []
+                messages = []
+                ack_ids = []
 
-        for received_message in response.received_messages:
-            messages.append(self.format_received_message_data(received_message))
-            ack_ids.append(received_message.ack_id)
+                for received_message in response.received_messages:
+                    messages.append(self._format_received_message_data(received_message))
+                    ack_ids.append(received_message.ack_id)
 
-        self.subscriber_client.acknowledge(
-            request={"subscription": subscription_path, "ack_ids": ack_ids}
-        )
+                self.subscriber_client.acknowledge(
+                    request={"subscription": subscription_path, "ack_ids": ack_ids}
+                )
 
-        return messages
+                return messages
 
-    def purge_messages(self, subscriber_id: str) -> SeekResponse:
-        """
-        Purges all messages published to a subscriber by seeking through future timestamp.
+            except exceptions.NotFound:
+                attempts -= 1
+                time.sleep(backoff)
+                backoff += backoff
 
-        Parameters:
-        subscriber_id: the unique id of the subscriber being created.
-        """
-        subscription_path = self.subscriber_client.subscription_path(
-            self.project_id, subscriber_id
-        )
+        raise RuntimeError("Failed to pull messages after multiple attempts")
 
-        request = SeekRequest(
-            subscription=subscription_path,
-            time="2999-01-01T00:00:00Z"  # Seek to a future timestamp to purge messages
-        )
-
-        response: SeekResponse = self.subscriber_client.seek(
-            #request={"subscription": subscription_path, "time": "2999-01-01T00:00:00Z"}
-            request=request
-        )
-
-        return response
-
-    def format_received_message_data(self, received_message) -> dict:
+    def _format_received_message_data(self, received_message) -> dict:
         """
         Formats a messages received from a topic.
 
@@ -117,25 +123,6 @@ class PubSubHelper:
         return json.loads(
             received_message.message.data.decode("utf-8").replace("'", '"')
         )
-
-    def try_delete_subscriber(self, subscriber_id: str, attempts: int = 5) -> None:
-        subscriber = pubsub_v1.SubscriberClient()
-        subscription_path = self.subscriber_client.subscription_path(
-            self.project_id, subscriber_id
-        )
-
-        if self._subscription_exists(subscriber_id):
-            with subscriber:
-                subscriber.delete_subscription(
-                    request={"subscription": subscription_path}
-                )
-        while attempts != 0:
-            if self._wait_and_check_subscription_deleted(subscriber_id):
-                return
-
-            attempts -= 1
-
-        print(f"Fail to delete subscriber. Subscription path: {subscription_path}")
 
     def _subscription_exists(self, subscriber_id: str) -> bool:
         """
@@ -152,10 +139,8 @@ class PubSubHelper:
             self.subscriber_client.get_subscription(
                 request={"subscription": subscription_path}
             )
-            logger.debug("Subscription found")
             return True
         except exceptions.NotFound:
-            logger.debug("Subscription not found")
             return False
 
     def _wait_and_check_subscription_exists(
