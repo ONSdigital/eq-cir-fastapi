@@ -21,10 +21,3 @@ def generate_subscriber_id() -> str:
     chars_list = random.choices("abcdefghijklmnopqrstuvwxyz", k=4)
     suffix = "".join(chars_list)
     return f"{settings.SUBSCRIPTION_ID}-{suffix}"
-
-
-def inject_wait_time(seconds: int) -> None:
-    if settings.CONF == 'local-int-tests':
-        return
-
-    time.sleep(seconds)

@@ -5,7 +5,7 @@ from fastapi import status
 
 from app.config import settings
 from tests.integration_tests.helpers.integration_helpers import subscriber_teardown, subscriber_setup, \
-    generate_subscriber_id, inject_wait_time
+    generate_subscriber_id
 from tests.integration_tests.helpers.pubsub_helper import PubSubHelper
 from app.models.responses import CiMetadata
 from app.services.ci_classifier_service import CiClassifierService
@@ -27,12 +27,10 @@ class TestPostCiV1:
     @classmethod
     def setup_class(cls) -> None:
         subscriber_setup(ci_pubsub_helper, cls.subscription_id)
-        inject_wait_time(3)
 
     @classmethod
     def teardown_class(cls) -> None:
         subscriber_teardown(ci_pubsub_helper, cls.subscription_id)
-        inject_wait_time(3)
 
     def teardown_method(self):
         """
