@@ -1,5 +1,3 @@
-from typing import Any
-
 from google.cloud import exceptions, storage
 
 from app.config import logging, settings
@@ -26,12 +24,15 @@ class BucketLoader:
         """
         return self.ci_schema_bucket
 
-    def _create_bucket(self, bucket_name: str) -> storage.Bucket:
+    def _create_bucket(self, bucket_name: str) -> storage.Bucket | None:
         """
         Create a bucket in Google cloud storage
 
         Parameters:
         bucket_name (str): The bucket name to create
+
+        Returns:
+        storage.Bucket | None: The created bucket object or None if the bucket already exists
         """
         try:
             bucket = self.__storage_client.create_bucket(
@@ -43,19 +44,22 @@ class BucketLoader:
 
             return bucket
 
-        except exceptions.Conflict as exc:
-            logger.debug("Bucket already exists")
+        except exceptions.Conflict:
+            logger.debug("Bucket already exists. Creation is skipped")
 
-            raise Exception("Bucket already exists") from exc
+            return None
 
-    def _initialise_bucket(self, bucket_name) -> Any | None:
+    def _initialise_bucket(self, bucket_name) -> storage.Bucket:
         """
         Connect to google cloud storage client using PROJECT_ID
-        If bucket does not exists, then create the bucket
+        For local environment, if bucket does not exist, then create the bucket
         Else connect to the bucket
 
         Parameters:
         bucket_name (str): The bucket name
+
+        Returns:
+        storage.Bucket: The bucket object
         """
         try:
             bucket = self.__storage_client.get_bucket(
@@ -67,7 +71,7 @@ class BucketLoader:
             if settings.CONF != "local-docker":
                 raise ExceptionBucketNotFound from exc
 
-            # If bucket does not exist, create it
+            # For local environment, if bucket does not exist, create it
             bucket = self._create_bucket(bucket_name)
 
         return bucket
