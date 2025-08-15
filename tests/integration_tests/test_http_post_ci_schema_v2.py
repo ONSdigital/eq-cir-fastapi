@@ -1,12 +1,17 @@
-import json
 from urllib.parse import urlencode
 
+import pytest
 from fastapi import status
 
-from app.events.subscriber import Subscriber
+from app.config import settings
 from app.models.responses import CiMetadata
 from app.services.ci_classifier_service import CiClassifierService
+from tests.integration_tests.helpers.integration_helpers import subscriber_teardown, subscriber_setup, \
+    generate_subscriber_id
+from tests.integration_tests.helpers.pubsub_helper import PubSubHelper
 from tests.integration_tests.utils import make_iap_request
+
+ci_pubsub_helper = PubSubHelper(settings.PUBLISH_CI_TOPIC_ID)
 
 
 class TestPostCiV2:
@@ -15,10 +20,15 @@ class TestPostCiV2:
     post_url = "/v2/publish_collection_instrument?validator_version=0.0.1"
     post_url_no_validator = "/v2/publish_collection_instrument"
     get_metadata_url = "/v1/ci_metadata"
-    # Initialise the subscriber client
-    subscriber = Subscriber()
-    # NOTE: Anytime a happy path for post_ci_v2 is called, make sure to add in a line that pulls &
-    # acknowledges the messages that are published to a topic
+    subscription_id = generate_subscriber_id()  # Unique subscription ID to avoid conflicts and GCP errors
+
+    @classmethod
+    def setup_class(cls) -> None:
+        subscriber_setup(ci_pubsub_helper, cls.subscription_id)
+
+    @classmethod
+    def teardown_class(cls) -> None:
+        subscriber_teardown(ci_pubsub_helper, cls.subscription_id)
 
     def teardown_method(self):
         """
@@ -56,10 +66,7 @@ class TestPostCiV2:
         check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
 
-        received_messages = self.subscriber.pull_messages_and_acknowledge()
-
-        decoded_received_messages = [x.decode("utf-8") for x in received_messages]
-        decoded_received_messages = [json.loads(x) for x in decoded_received_messages]
+        received_messages = ci_pubsub_helper.try_pull_and_acknowledge_messages(self.subscription_id)
 
         expected_ci = CiMetadata(
             ci_version=1,
@@ -79,7 +86,7 @@ class TestPostCiV2:
         # database assertion
         assert check_ci_in_db_data == [expected_ci.model_dump()]
         # assert that the metadata is pulled through in the subscription
-        assert expected_ci.model_dump() in decoded_received_messages
+        assert expected_ci.model_dump() == received_messages[0]
 
     def test_can_publish_valid_ci_with_sds_schema(self, setup_payload):
         """
@@ -111,11 +118,8 @@ class TestPostCiV2:
         # sends request to http_query_ci endpoint for data
         check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
         check_ci_in_db_data = check_ci_in_db.json()
-        # Need to pull and acknowledge messages to clear subscription
-        received_messages = self.subscriber.pull_messages_and_acknowledge()
 
-        decoded_received_messages = [x.decode("utf-8") for x in received_messages]
-        decoded_received_messages = [json.loads(x) for x in decoded_received_messages]
+        received_messages = ci_pubsub_helper.try_pull_and_acknowledge_messages(self.subscription_id)
 
         expected_ci = CiMetadata(
             ci_version=1,
@@ -136,7 +140,7 @@ class TestPostCiV2:
         # database assertion
         assert check_ci_in_db_data == [expected_ci.model_dump()]
         # assert that the metadata is pulled through in the subscription
-        assert expected_ci.model_dump() in decoded_received_messages
+        assert expected_ci.model_dump() == received_messages[0]
 
     def test_can_append_version_to_existing_ci(
         self,
@@ -149,9 +153,6 @@ class TestPostCiV2:
         """
         ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_publish_ci_return_payload)
         ci_response_data = ci_response.json()
-
-        # Need to pull and acknowledge messages to clear subscription
-        self.subscriber.pull_messages_and_acknowledge()
 
         survey_id = setup_publish_ci_return_payload["survey_id"]
         classifier_type = CiClassifierService.get_classifier_type(setup_publish_ci_return_payload)
@@ -190,6 +191,9 @@ class TestPostCiV2:
         assert check_ci_in_db_data[1]["ci_version"] == 1
         assert check_ci_in_db_data[0]["ci_version"] == 2
 
+        # Need to pull and acknowledge messages to clear subscription
+        ci_pubsub_helper.try_pull_and_acknowledge_messages(self.subscription_id)
+
     def test_cannot_publish_ci_missing_survey_id(
         self,
         setup_payload,
@@ -201,7 +205,6 @@ class TestPostCiV2:
         payload = setup_payload
         payload["survey_id"] = " "
         ci_response = make_iap_request("POST", f"{self.post_url}", json=payload)
-        self.subscriber.pull_messages_and_acknowledge()
 
         assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -219,7 +222,6 @@ class TestPostCiV2:
         payload = setup_payload
         payload["language"] = " "
         ci_response = make_iap_request("POST", f"{self.post_url}", json=payload)
-        self.subscriber.pull_messages_and_acknowledge()
 
         assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -239,7 +241,6 @@ class TestPostCiV2:
         payload.pop(classifier_type)
 
         ci_response = make_iap_request("POST", f"{self.post_url}", json=payload)
-        self.subscriber.pull_messages_and_acknowledge()
 
         assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -257,7 +258,6 @@ class TestPostCiV2:
         payload = setup_payload
         payload["title"] = " "
         ci_response = make_iap_request("POST", f"{self.post_url}", json=payload)
-        self.subscriber.pull_messages_and_acknowledge()
 
         assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -275,7 +275,6 @@ class TestPostCiV2:
         payload = setup_payload
         payload["data_version"] = " "
         ci_response = make_iap_request("POST", f"{self.post_url}", json=payload)
-        self.subscriber.pull_messages_and_acknowledge()
 
         assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -291,6 +290,9 @@ class TestPostCiV2:
         http_post_ci_metadata_v1 should return a 401 unauthorized error if the endpoint is
         requested with an unauthorized token.
         """
+        if settings.CONF == "local-int-tests":
+            pytest.skip("Skipping test_publish_ci_returns_unauthorized_request on local environment")
+
         payload = setup_payload
         ci_response = make_iap_request("POST", f"{self.post_url}", json=payload, unauthenticated=True)
 
