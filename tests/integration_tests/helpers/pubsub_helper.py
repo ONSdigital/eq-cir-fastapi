@@ -59,7 +59,7 @@ class PubSubHelper:
                         request={"subscription": subscription_path}
                     )
 
-            if self._wait_and_check_subscription_deleted(subscriber_id):
+            if self._wait_and_check_subscription_not_exists(subscriber_id):
                 return
 
         except Exception as exc:
@@ -113,7 +113,8 @@ class PubSubHelper:
 
         raise RuntimeError("Failed to pull messages after multiple attempts")
 
-    def _format_received_message_data(self, received_message) -> dict:
+    @staticmethod
+    def _format_received_message_data(received_message) -> dict:
         """
         Formats a messages received from a topic.
 
@@ -123,25 +124,6 @@ class PubSubHelper:
         return json.loads(
             received_message.message.data.decode("utf-8").replace("'", '"')
         )
-
-    def _subscription_exists(self, subscriber_id: str) -> bool:
-        """
-        Checks a subscription exists.
-
-        Parameters:
-        subscriber_id: the unique id of the subscriber being checked.
-        """
-        subscription_path = self.subscriber_client.subscription_path(
-            self.project_id, subscriber_id
-        )
-
-        try:
-            self.subscriber_client.get_subscription(
-                request={"subscription": subscription_path}
-            )
-            return True
-        except exceptions.NotFound:
-            return False
 
     def _wait_and_check_subscription_exists(
             self,
@@ -167,18 +149,18 @@ class PubSubHelper:
 
         return False
 
-    def _wait_and_check_subscription_deleted(
+    def _wait_and_check_subscription_not_exists(
             self,
             subscriber_id: str,
             attempts: int = 5,
             backoff: float = 0.5,
     ) -> bool:
         """
-        Waits for a subscription to be created and checks if it is deleted.
+        Waits for a subscription to be deleted and checks if it does not exist.
 
         Parameters:
         subscriber_id: the unique id of the subscriber being checked.
-        attempts: the number of attempts to check if the subscription is deleted.
+        attempts: the number of attempts to check if the subscription does not exist.
         backoff: the time to wait between attempts.
         """
         while attempts != 0:
@@ -190,6 +172,25 @@ class PubSubHelper:
             backoff += backoff
 
         return False
+
+    def _subscription_exists(self, subscriber_id: str) -> bool:
+        """
+        Checks a subscription exists.
+
+        Parameters:
+        subscriber_id: the unique id of the subscriber being checked.
+        """
+        subscription_path = self.subscriber_client.subscription_path(
+            self.project_id, subscriber_id
+        )
+
+        try:
+            self.subscriber_client.get_subscription(
+                request={"subscription": subscription_path}
+            )
+            return True
+        except exceptions.NotFound:
+            return False
 
 
 ci_pubsub_helper = PubSubHelper(settings.PUBLISH_CI_TOPIC_ID)

@@ -69,7 +69,7 @@ class TestPublisher:
         actual_error_message = str(mock_logger.call_args[0][0].args[0])
         assert actual_error_message == expected_error_message
 
-    def test_topic_exists_success(self, mocker):
+    def test_verify_topic_success_when_topic_exists(self, mocker):
         mocked_publisher_client = mocker.Mock()
         mocked_publisher_client.topic_path.return_value = "project_id/topics/topic_id"
 
@@ -79,7 +79,7 @@ class TestPublisher:
         mocked_publisher_client.get_topic.assert_called_once_with(request={"topic": "project_id/topics/topic_id"})
         assert result
 
-    def test_topic_exists_failure(self, mocker):
+    def test_verify_topic_raise_exception_when_topic_not_found(self, mocker):
         mocked_publisher_client = mocker.Mock()
         mocked_publisher_client.get_topic.side_effect = exceptions.NotFound("Topic not found")
 
