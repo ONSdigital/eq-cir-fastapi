@@ -4,6 +4,7 @@ from app.exception import exceptions
 from app.models.events import PostCIEvent
 from app.models.requests import PostCiSchemaV1Data
 from app.models.responses import CiMetadata, CiValidatorMetadata
+from app.repositories.buckets.ci_schema_bucket_repository import CiSchemaBucketRepository
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from app.services.ci_classifier_service import CiClassifierService
 from app.services.ci_schema_location_service import CiSchemaLocationService
@@ -313,3 +314,9 @@ class CiProcessorService:
                 metadata (CiMetadata): Schema metadata
                 """
         self.ci_firebase_repository.update_ci_metadata(guid, metadata)
+
+    def update_validator_version_and_ci(self, guid: str, post_data: PostCiSchemaV1Data, ci_metadata: CiMetadata):
+        ci = post_data.__dict__
+        location = f"{guid}.json"
+
+        self.ci_firebase_repository.update_validator_version_and_ci(location, ci, ci_metadata)

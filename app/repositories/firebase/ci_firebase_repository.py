@@ -217,3 +217,14 @@ class CiFirebaseRepository:
         key = ci_metadata.guid
 
         transaction.delete(self.ci_collection.document(key))
+
+    def update_validator_version_and_ci(self, guid: str, ci: dict, ci_metadata: CiMetadata):
+        """
+              Updates ci in bucket
+
+              Parameters:
+              guid: identifier for ci
+              ci: ci data
+              """
+        self.update_ci_metadata(guid, ci_metadata)
+        self.ci_bucket_repository.store_ci_schema(guid, ci)
