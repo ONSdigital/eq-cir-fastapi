@@ -108,6 +108,9 @@ async def http_put_ci_validator_version_v1(
         ci_processor_service: CiProcessorService = Depends(),
 ):
 
+    if not query_params.params_not_none(query_params.__dict__.keys()):
+        raise exceptions.ExceptionIncorrectKeyNames
+
     ci_metadata = ci_processor_service.get_ci_metadata_with_id(query_params.guid)
 
     if not ci_metadata:

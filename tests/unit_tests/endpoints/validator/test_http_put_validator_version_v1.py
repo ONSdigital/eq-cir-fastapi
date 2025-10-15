@@ -54,3 +54,47 @@ class TestHttpPutValidatorVersionV1:
         print("response")
         print(response.json())
         assert response.json() == mock_ci_metadata_v2.model_dump()
+
+    def test_endpoint_metadata_not_found(self,
+                                         mocked_get_ci_metadata_with_id,
+                                         mocked_retrieve_ci_schema,
+                                         mocked_update_ci_metadata):
+
+        content_type = "application/json"
+        mocked_get_ci_metadata_with_id.return_value = None
+        mocked_retrieve_ci_schema.return_value = None
+        mocked_update_ci_metadata.return_value = None
+
+        # Make request to base url without any query params
+        response = client.put(self.url,
+                              headers={"ContentType": content_type},
+                              json=mock_ci_metadata_v2.model_dump())
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert response.json()["message"] == "No results found"
+
+
+    def test_endpoint_returns_400_no_validator_version(self,
+                                                       mocked_get_ci_metadata_with_id,
+                                                       mocked_retrieve_ci_schema,
+                                                       mocked_update_ci_metadata):
+        content_type = "application/json"
+        response = client.put(self.missing_validator_version,
+                              headers={"ContentType": content_type},
+                              json=mock_ci_metadata_v2.model_dump()
+                              )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json()["message"] == "Invalid search parameters provided"
+
+    def test_endpoint_returns_400_no_guid(self,
+                                          mocked_get_ci_metadata_with_id,
+                                          mocked_retrieve_ci_schema,
+                                          mocked_update_ci_metadata):
+        content_type = "application/json"
+        response = client.put(self.missing_guid,
+                              headers={"ContentType": content_type},
+                              json=mock_ci_metadata_v2.model_dump())
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json()["message"] == "Invalid search parameters provided"
