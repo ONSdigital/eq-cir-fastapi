@@ -4,7 +4,6 @@ from app.exception import exceptions
 from app.models.events import PostCIEvent
 from app.models.requests import PostCiSchemaV1Data
 from app.models.responses import CiMetadata, CiValidatorMetadata
-from app.repositories.buckets.ci_schema_bucket_repository import CiSchemaBucketRepository
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from app.services.ci_classifier_service import CiClassifierService
 from app.services.ci_schema_location_service import CiSchemaLocationService

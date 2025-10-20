@@ -6,13 +6,11 @@ from app.config import Settings, logging
 from app.exception import exceptions
 from app.exception.exception_response_models import ExceptionResponseModel
 from app.models.requests import (
-    PatchValidatorVersionV1Params, PostCiSchemaV1Data,
+    PatchValidatorVersionV1Params,
+    PostCiSchemaV1Data,
 )
 from app.models.responses import CiMetadata
 from app.services.ci_processor_service import CiProcessorService
-from app.repositories.buckets.ci_schema_bucket_repository import (
-    CiSchemaBucketRepository,
-)
 
 router = APIRouter()
 
