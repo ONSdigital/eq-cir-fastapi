@@ -218,7 +218,7 @@ class CiFirebaseRepository:
 
         transaction.delete(self.ci_collection.document(key))
 
-    def update_validator_version_and_ci(self, guid: str, ci: dict, ci_metadata: CiMetadata):
+    def update_validator_version_and_ci(self, ci: dict, ci_metadata: CiMetadata):
         """
               Updates ci in bucket
 
@@ -226,5 +226,6 @@ class CiFirebaseRepository:
               guid: identifier for ci
               ci: ci data
               """
-        self.update_ci_metadata(guid, ci_metadata)
-        self.ci_bucket_repository.store_ci_schema(guid, ci)
+        stored_ci_filename = CiSchemaLocationService.get_ci_schema_location(ci_metadata)
+        self.update_ci_metadata(ci_metadata["guid"], ci_metadata)
+        self.ci_bucket_repository.store_ci_schema(stored_ci_filename, ci)

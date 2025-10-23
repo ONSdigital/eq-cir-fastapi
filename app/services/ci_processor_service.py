@@ -314,8 +314,6 @@ class CiProcessorService:
                 """
         self.ci_firebase_repository.update_ci_metadata(guid, metadata)
 
-    def update_validator_version_and_ci(self, guid: str, post_data: PostCiSchemaV1Data, ci_metadata: CiMetadata):
+    def update_validator_version_and_ci(self, post_data: PostCiSchemaV1Data, ci_metadata: CiMetadata):
         ci = post_data.__dict__
-        location = f"{guid}.json"
-
-        self.ci_firebase_repository.update_validator_version_and_ci(location, ci, ci_metadata)
+        self.ci_firebase_repository.update_validator_version_and_ci(ci, ci_metadata)
