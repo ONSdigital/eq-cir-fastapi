@@ -227,5 +227,5 @@ class CiFirebaseRepository:
               ci: ci data
               """
         stored_ci_filename = CiSchemaLocationService.get_ci_schema_location(ci_metadata)
-        self.update_ci_metadata(ci_metadata["guid"], ci_metadata)
+        self.update_ci_metadata(ci_metadata.guid, ci_metadata)
         self.ci_bucket_repository.store_ci_schema(stored_ci_filename, ci)

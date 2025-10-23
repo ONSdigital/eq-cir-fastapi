@@ -16,7 +16,6 @@ settings = Settings()
 
 
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_with_id")
-@patch("app.repositories.buckets.ci_schema_bucket_repository.CiSchemaBucketRepository.retrieve_ci_schema")
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.update_ci_metadata")
 class TestHttpPutValidatorVersionV1:
     """Tests for the `http_put_ci_validator_version_v1` endpoint"""
@@ -37,13 +36,11 @@ class TestHttpPutValidatorVersionV1:
 
     def test_endpoint_returns_200(self,
                                   mocked_update_ci_metadata,
-                                  mocked_retrieve_ci_schema,
                                   mocked_get_ci_metadata_with_id):
         content_type = "application/json"
         # mocked function to return valid ci metadata, indicating ci metadata is found
         mocked_get_ci_metadata_with_id.return_value = mock_ci_metadata_v2
         # mocked function to return valid ci schema, indicating ci schema is found from bucket
-        mocked_retrieve_ci_schema.return_value = mock_ci_metadata_v2.__dict__
 
         response = client.put(self.url,
                               headers={"ContentType": content_type},
@@ -53,12 +50,10 @@ class TestHttpPutValidatorVersionV1:
 
     def test_endpoint_metadata_not_found(self,
                                          mocked_get_ci_metadata_with_id,
-                                         mocked_retrieve_ci_schema,
                                          mocked_update_ci_metadata):
 
         content_type = "application/json"
         mocked_get_ci_metadata_with_id.return_value = None
-        mocked_retrieve_ci_schema.return_value = None
         mocked_update_ci_metadata.return_value = None
 
         # Make request to base url without any query params
@@ -72,7 +67,6 @@ class TestHttpPutValidatorVersionV1:
 
     def test_endpoint_returns_400_no_validator_version(self,
                                                        mocked_get_ci_metadata_with_id,
-                                                       mocked_retrieve_ci_schema,
                                                        mocked_update_ci_metadata):
         content_type = "application/json"
         response = client.put(self.missing_validator_version,
@@ -85,7 +79,6 @@ class TestHttpPutValidatorVersionV1:
 
     def test_endpoint_returns_400_no_guid(self,
                                           mocked_get_ci_metadata_with_id,
-                                          mocked_retrieve_ci_schema,
                                           mocked_update_ci_metadata):
         content_type = "application/json"
         response = client.put(self.missing_guid,
