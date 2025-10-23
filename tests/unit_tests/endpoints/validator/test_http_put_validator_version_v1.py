@@ -73,7 +73,7 @@ class TestHttpPutValidatorVersionV1:
         # Make request to base url without any query params
         response = client.put(self.url,
                               headers={"ContentType": content_type},
-                              json=mock_ci_metadata_v2.model_dump())
+                              json=mock_post_ci_schema.model_dump())
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert response.json()["message"] == "No results found"
@@ -86,7 +86,7 @@ class TestHttpPutValidatorVersionV1:
         content_type = "application/json"
         response = client.put(self.missing_validator_version,
                               headers={"ContentType": content_type},
-                              json=mock_ci_metadata_v2.model_dump()
+                              json=mock_post_ci_schema.model_dump()
                               )
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -100,7 +100,7 @@ class TestHttpPutValidatorVersionV1:
         content_type = "application/json"
         response = client.put(self.missing_guid,
                               headers={"ContentType": content_type},
-                              json=mock_ci_metadata_v2.model_dump())
+                              json=mock_post_ci_schema.model_dump())
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert response.json()["message"] == "Invalid search parameters provided"
