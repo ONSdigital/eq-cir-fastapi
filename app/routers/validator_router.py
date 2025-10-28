@@ -124,6 +124,6 @@ async def http_put_ci_validator_version_v1(
     ci_updated_metadata = ci_metadata.copy()
     ci_updated_metadata.validator_version = query_params.validator_version
 
-    ci_processor_service.update_validator_version_and_ci(post_data, ci_metadata)
+    ci_processor_service.update_validator_version_and_ci(post_data, ci_updated_metadata)
 
     return ci_updated_metadata.model_dump()

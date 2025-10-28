@@ -53,12 +53,12 @@ class TestHttpPutValidatorVersionV1:
         assert response.json() == mock_updated_ci_metadata_v2.model_dump()
 
         mocked_store_ci_schema.assert_called_once_with(
-            f"{mock_ci_metadata_v2.guid}.json",
+            f"{mock_updated_ci_metadata_v2.guid}.json",
             mock_post_ci_schema.model_dump(),
         )
         mocked_update_ci_metadata.assert_called_once_with(
-            mock_ci_metadata_v2.guid,
-            mock_ci_metadata_v2
+            mock_updated_ci_metadata_v2.guid,
+            mock_updated_ci_metadata_v2
         )
 
     def test_endpoint_metadata_not_found(self,
