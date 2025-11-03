@@ -597,6 +597,73 @@ paths:
                 $ref: '#/components/schemas/ExceptionResponseModel'
           description: Internal Server Error
       summary: Http Patch Ci Validator Version V1
+    put:
+      operationId: http_put_ci_validator_version_v1_v1_update_validator_version_put
+      parameters:
+      - description: guid for CI
+        in: query
+        name: guid
+        required: false
+        schema:
+          description: guid for CI
+          title: Guid
+          type: string
+      - description: Validator version of CI schema
+        example: 0.0.1
+        in: query
+        name: validator_version
+        required: false
+        schema:
+          description: Validator version of CI schema
+          title: Validator Version
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCiSchemaV1Data'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CiMetadata'
+          description: Successfully updated validator version
+        '400':
+          content:
+            application/json:
+              example:
+                message: Invalid search parameters provided
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              example:
+                message: No CI found
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Not Found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+        '500':
+          content:
+            application/json:
+              example:
+                message: Unable to process request
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+      summary: Http Put Ci Validator Version V1
   /v2/ci_metadata:
     get:
       description: 'GET method that returns any metadata objects from Firestore that

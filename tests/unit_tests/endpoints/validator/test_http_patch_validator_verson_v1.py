@@ -45,10 +45,6 @@ class TestHttpPatchValidatorVersionV1:
 
         response = client.patch(self.url)
         assert response.status_code == status.HTTP_200_OK
-        print("mockdata")
-        print(mock_ci_metadata_v2.model_dump())
-        print("response")
-        print(response.json())
         assert response.json() == mock_ci_metadata_v2.model_dump()
 
     def test_endpoint_metadata_not_found(self,

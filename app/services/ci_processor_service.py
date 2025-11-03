@@ -313,3 +313,7 @@ class CiProcessorService:
                 metadata (CiMetadata): Schema metadata
                 """
         self.ci_firebase_repository.update_ci_metadata(guid, metadata)
+
+    def update_validator_version_and_ci(self, post_data: PostCiSchemaV1Data, ci_metadata: CiMetadata):
+        ci = post_data.__dict__
+        self.ci_firebase_repository.update_validator_version_and_ci(ci, ci_metadata)
