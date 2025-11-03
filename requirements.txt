@@ -1,5 +1,5 @@
 fastapi==0.116.1
-starlette==0.47.2
+starlette==0.49.1
 firebase_admin==6.1.0
 google-cloud-pubsub==2.31.1
 protobuf==6.31.1
