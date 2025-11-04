@@ -1,10 +1,8 @@
 from unittest.mock import patch
 
 from fastapi import status
-from fastapi import APIRouter
 from fastapi import FastAPI
 
-from app.config import Settings
 from app.routers.status_router import router
 from starlette.testclient import TestClient
 
