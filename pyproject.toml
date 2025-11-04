@@ -1,7 +1,7 @@
 [tool.ruff]
 line-length = 120
 indent-width = 4
-exclude = ["tests/integration_tests", "tests/unit_tests", "tests/test_data"]
+exclude = ["tests/integration_tests", "tests/unit_tests", "tests/test_data", "scripts"]
 
 [tool.ruff.lint]
 select = [
