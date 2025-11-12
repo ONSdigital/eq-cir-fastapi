@@ -21,7 +21,7 @@ class TestPutValidatorVersionV1:
         querystring = urlencode({"survey_id": 3456})
         make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
 
-    def test_update_validator_version(self, setup_payload, setup_modified_payload):
+    def test_update_validator_version(self, setup_payload):
         """
         What am I testing:
         AC-1.1 - The ability to patch a new schema and validator version
@@ -43,14 +43,14 @@ class TestPutValidatorVersionV1:
 
         put_response = make_iap_request("PUT",
                                           f"{self.update_validator}?{urlencode(query_params.__dict__)}",
-                                          json=setup_modified_payload)
+                                          json=setup_payload)
 
         assert put_response.status_code == status.HTTP_200_OK
 
-        survey_id = setup_modified_payload["survey_id"]
-        classifier_type = CiClassifierService.get_classifier_type(setup_modified_payload)
-        classifier_value = CiClassifierService.get_classifier_value(setup_modified_payload, classifier_type)
-        language = setup_modified_payload["language"]
+        survey_id = setup_payload["survey_id"]
+        classifier_type = CiClassifierService.get_classifier_type(setup_payload)
+        classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)
+        language = setup_payload["language"]
 
         querystring = urlencode(
             {
@@ -65,8 +65,8 @@ class TestPutValidatorVersionV1:
         check_ci_in_db_data = check_ci_in_db.json()
 
         expected_ci = CiMetadata(
-            ci_version=2,
-            data_version="2",
+            ci_version=1,
+            data_version='1',
             validator_version=updated_validator_version,
             classifier_type=classifier_type,
             classifier_value=classifier_value,
@@ -74,7 +74,7 @@ class TestPutValidatorVersionV1:
             language=language,
             published_at=check_ci_in_db_data[0]["published_at"],
             survey_id=survey_id,
-            title="Updated"
+            title="NotDune"
         )
 
         assert expected_ci.model_dump() == check_ci_in_db_data[0]
