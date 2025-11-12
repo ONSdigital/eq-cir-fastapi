@@ -40,11 +40,14 @@ class TestPutValidatorVersionV1:
             validator_version=updated_validator_version
 
         )
-        patch_response = make_iap_request("PUT",
+        setup_payload["data_version"] = 2
+        setup_payload["title"] = "updated"
+
+        put_response = make_iap_request("PUT",
                                           f"{self.update_validator}?{urlencode(query_params.__dict__)}",
                                           json=setup_payload)
 
-        assert patch_response.status_code == status.HTTP_200_OK
+        assert put_response.status_code == status.HTTP_200_OK
 
         survey_id = setup_payload["survey_id"]
         classifier_type = CiClassifierService.get_classifier_type(setup_payload)
@@ -65,7 +68,7 @@ class TestPutValidatorVersionV1:
 
         expected_ci = CiMetadata(
             ci_version=1,
-            data_version='1',
+            data_version='2',
             validator_version=updated_validator_version,
             classifier_type=classifier_type,
             classifier_value=classifier_value,
@@ -73,7 +76,7 @@ class TestPutValidatorVersionV1:
             language=language,
             published_at=check_ci_in_db_data[0]["published_at"],
             survey_id=survey_id,
-            title=setup_payload["title"]
+            title="updated"
         )
 
         assert expected_ci.model_dump() == check_ci_in_db_data[0]
