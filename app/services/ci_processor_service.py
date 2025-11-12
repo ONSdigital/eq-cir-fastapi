@@ -22,6 +22,7 @@ class CiProcessorService:
     def process_raw_ci(
             self,
             post_data: PostCiSchemaV1Data,
+            ci_id: str,
             validator_version: str = "",
     ) -> CiMetadata:
         """
@@ -30,9 +31,6 @@ class CiProcessorService:
         Parameters:
         post_data (PostCiSchemaV1Data): incoming CI metadata
         """
-
-        # Generate new uid
-        ci_id = CreateGuidService.create_guid()
 
         ci = post_data.__dict__
 
