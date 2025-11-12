@@ -40,7 +40,8 @@ class TestPutValidatorVersionV1:
             validator_version=updated_validator_version
 
         )
-        setup_payload["data_version"] = 2
+        setup_payload["ci_version"] = 2
+        setup_payload["data_version"] = "2"
         setup_payload["title"] = "updated"
 
         put_response = make_iap_request("PUT",
@@ -67,7 +68,7 @@ class TestPutValidatorVersionV1:
         check_ci_in_db_data = check_ci_in_db.json()
 
         expected_ci = CiMetadata(
-            ci_version=1,
+            ci_version=2,
             data_version='2',
             validator_version=updated_validator_version,
             classifier_type=classifier_type,
