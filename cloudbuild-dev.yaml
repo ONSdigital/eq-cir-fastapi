@@ -27,7 +27,7 @@ steps:
         export PROJECT_ID=${PROJECT_ID}
         make unit-tests
 
-  - name: docker
+  - name: gcr.io/cloud-builders/docker
     id: "Build and push docker image"
     entrypoint: sh
     args:
