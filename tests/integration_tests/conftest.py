@@ -49,3 +49,20 @@ def setup_payload():
         "data_version": "1",
     }
     return payload
+
+
+@pytest.fixture
+def setup_modified_payload():
+    ci_exists = firestore_client.get_latest_ci_metadata("3456", "form_type", "business", "welsh")
+    if ci_exists:
+        querystring = urlencode({"survey_id": 3456})
+        make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
+    payload = {
+        "ci_version": 2,
+        "survey_id": "3456",
+        "language": "welsh",
+        "form_type": "business",
+        "title": "Edited",
+        "data_version": "2",
+    }
+    return payload
