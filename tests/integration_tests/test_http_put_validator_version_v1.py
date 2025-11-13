@@ -2,7 +2,7 @@ from urllib.parse import urlencode
 
 from starlette import status
 
-from app.models.requests import PatchValidatorVersionV1Params
+from app.models.requests import UpdateValidatorVersionV1Params
 from app.models.responses import CiMetadata
 from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request
@@ -24,10 +24,11 @@ class TestPutValidatorVersionV1:
     def test_update_validator_version(self, setup_payload):
         """
         What am I testing:
-        AC-1.1 - The ability to patch a new schema and validator version
+        AC-1.1 - The ability to put a new schema and validator version
         and the correct response is returned with the version.
         AC-1.3 - When a CI is published in the response the datetime
         field is present with an ISO8601 value. (2023-01-24T13:56:38Z)
+        Updating the CI will update the published date
         """
         # Creates a CI in the database, essentially running post_ci_v1 from handler folder
         ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_payload)
@@ -36,7 +37,7 @@ class TestPutValidatorVersionV1:
         original_published_at = ci_response_data["published_at"]
         updated_validator_version = "0.0.2"
 
-        query_params = PatchValidatorVersionV1Params(
+        query_params = UpdateValidatorVersionV1Params(
             guid=ci_guid,
             validator_version=updated_validator_version
 

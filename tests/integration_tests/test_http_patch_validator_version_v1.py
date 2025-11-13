@@ -2,7 +2,7 @@ from urllib.parse import urlencode
 
 from starlette import status
 
-from app.models.requests import PatchValidatorVersionV1Params
+from app.models.requests import UpdateValidatorVersionV1Params
 from app.models.responses import CiMetadata
 from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request
@@ -35,7 +35,7 @@ class TestPatchValidatorVersionV1:
         ci_guid = ci_response_data["guid"]
         updated_validator_version = "0.0.2"
 
-        query_params = PatchValidatorVersionV1Params(
+        query_params = UpdateValidatorVersionV1Params(
             guid=ci_guid,
             validator_version=updated_validator_version
 
