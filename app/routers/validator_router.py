@@ -11,7 +11,6 @@ from app.models.requests import (
 )
 from app.models.responses import CiMetadata
 from app.services.ci_processor_service import CiProcessorService
-from app.services.datetime_service import DatetimeService
 
 router = APIRouter()
 
