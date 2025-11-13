@@ -316,4 +316,5 @@ class CiProcessorService:
 
     def update_validator_version_and_ci(self, post_data: PostCiSchemaV1Data, ci_metadata: CiMetadata):
         ci = post_data.__dict__
+        ci_metadata.published_at = str(DatetimeService.get_current_date_and_time().strftime(settings.PUBLISHED_AT_FORMAT))
         self.ci_firebase_repository.update_validator_version_and_ci(ci, ci_metadata)
