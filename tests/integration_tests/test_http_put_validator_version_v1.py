@@ -33,6 +33,7 @@ class TestPutValidatorVersionV1:
         ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_payload)
         ci_response_data = ci_response.json()
         ci_guid = ci_response_data["guid"]
+        original_published_at = ci_response_data["published_at"]
         updated_validator_version = "0.0.2"
 
         query_params = PatchValidatorVersionV1Params(
@@ -77,4 +78,5 @@ class TestPutValidatorVersionV1:
             title="NotDune"
         )
 
+        assert original_published_at != check_ci_in_db_data[0]["published_at"]
         assert expected_ci.model_dump() == check_ci_in_db_data[0]
