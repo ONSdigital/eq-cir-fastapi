@@ -220,7 +220,7 @@ async def http_get_ci_metadata_v3(
     ci_metadata = ci_processor_service.get_ci_metadata_with_id(query_params.guid)
 
     if not ci_metadata:
-        error_message = "patch_ci_validator: exception raised - No collection instrument metadata found"
+        error_message = "get_ci_metadata_v3: exception raised - No collection instrument metadata found"
         logger.error(error_message)
         logger.debug(f"{error_message}:{query_params.guid}")
         raise exceptions.ExceptionNoCIMetadata
