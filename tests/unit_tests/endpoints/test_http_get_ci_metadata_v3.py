@@ -7,9 +7,7 @@ from fastapi.testclient import TestClient
 from app.config import Settings
 from app.main import app
 from app.models.requests import GetCiMetadataV3Params
-from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from tests.test_data.ci_test_data import (
-    mock_ci_metadata_list,
     mock_id, mock_ci_metadata_v2,
 )
 
