@@ -19,7 +19,7 @@ settings = Settings()
 
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_with_id")
 class TestHttpGetCiMetadataV2:
-    """Tests for the `http_get_ci_metadata_v2` endpoint"""
+    """Tests for the `http_get_ci_metadata_v3` endpoint"""
 
     base_url = "/v3/ci_metadata"
 
