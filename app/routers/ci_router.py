@@ -217,13 +217,13 @@ async def http_get_ci_metadata_v3(
     if query_params.guid == "":
         raise exceptions.ExceptionIncorrectKeyNames
 
-    ci_metadata = ci_processor_service.get_ci_metadata_with_id
+    ci_metadata = ci_processor_service.get_ci_metadata_with_id(query_params.guid)
 
-    if ci_metadata is None:
-        error_message = "get_ci_metadata_v3: exception raised - No collection instruments found"
+    if not ci_metadata:
+        error_message = "patch_ci_validator: exception raised - No collection instrument metadata found"
         logger.error(error_message)
-        logger.debug(f"{error_message}:{asdict(query_params)}")
-        raise exceptions.ExceptionNoCIFound
+        logger.debug(f"{error_message}:{query_params.guid}")
+        raise exceptions.ExceptionNoCIMetadata
 
     logger.info("CI metadata retrieved successfully.")
 

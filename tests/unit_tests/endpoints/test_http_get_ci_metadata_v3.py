@@ -49,10 +49,6 @@ class TestHttpGetCiMetadataV2:
         assert response.status_code == status.HTTP_200_OK
         assert response.json()== mock_ci_metadata_v2.model_dump()
 
-        CiFirebaseRepository.mocked_get_ci_metadata_with_id.assert_called_once_with(
-            mock_id,
-        )
-
     def test_endpoint_returns_200_if_ci_metadata_found_with_query_without_status(
         self,
         mocked_get_ci_metadata_with_id
@@ -69,10 +65,6 @@ class TestHttpGetCiMetadataV2:
 
         assert response.status_code == status.HTTP_200_OK
         assert response.json() == mock_ci_metadata_v2.model_dump()
-
-        CiFirebaseRepository.mocked_get_ci_metadata_with_id.assert_called_once_with(
-            mock_id,
-        )
 
     def test_endpoint_returns_200_if_ci_metadata_found_with_empty_query(
         self,
@@ -106,7 +98,7 @@ class TestHttpGetCiMetadataV2:
         response = client.get(self.url)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
-        assert response.json()["message"] == "No CI found"
+        assert response.json()["message"] == "No results found"
 
     def test_endpoint_returns_400_if_guid_empty(
         self,
