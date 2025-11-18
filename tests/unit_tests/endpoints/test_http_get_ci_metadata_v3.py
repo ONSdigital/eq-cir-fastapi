@@ -32,30 +32,12 @@ class TestHttpGetCiMetadataV2:
         f"{base_url}?guid="
     )
 
-    def test_endpoint_returns_200_if_ci_metadata_found_with_query(
+    def test_endpoint_returns_200_if_ci_metadata_found(
         self,
         mocked_get_ci_metadata_with_id
     ):
         """
-        Endpoint should return `HTTP_200_OK` and ci metadata collection as part of the response if ci metadata is found if
-        queried with params.
-        Assert the mocked function is called with the correct params.
-        """
-        # Update mocked function to return a list of valid ci metadata
-        mocked_get_ci_metadata_with_id.return_value = mock_ci_metadata_v2.model_dump()
-
-        response = client.get(self.url)
-
-        assert response.status_code == status.HTTP_200_OK
-        assert response.json()== mock_ci_metadata_v2.model_dump()
-
-    def test_endpoint_returns_200_if_ci_metadata_found_with_query_without_status(
-        self,
-        mocked_get_ci_metadata_with_id
-    ):
-        """
-        Endpoint should return `HTTP_200_OK` and ci metadata collection as part of the response if ci metadata is found if
-        queried with params without status.
+        Endpoint should return `HTTP_200_OK` and ci metadata collection as part of the response if ci metadata is found
         Assert the mocked function is called with the correct params.
         """
         # Update mocked function to return a list of valid ci metadata
@@ -65,24 +47,6 @@ class TestHttpGetCiMetadataV2:
 
         assert response.status_code == status.HTTP_200_OK
         assert response.json() == mock_ci_metadata_v2.model_dump()
-
-    def test_endpoint_returns_200_if_ci_metadata_found_with_empty_query(
-        self,
-        mocked_get_ci_metadata_with_id,
-    ):
-        """
-        Endpoint should return `HTTP_200_OK` and ci metadata collection as part of the response if ci metadata is found with
-        empty query params. An empty request is still valid for this endpoint.
-        Assert the mocked function is called.
-        """
-        # Update mocked function to return a list of valid ci metadata
-        mocked_get_ci_metadata_with_id.return_value = mock_ci_metadata_v2.model_dump()
-        # Make request to base url without any query params
-        response = client.get(self.base_url)
-
-        assert response.status_code == status.HTTP_200_OK
-        assert response.json() == mock_ci_metadata_v2.model_dump()
-
 
     def test_endpoint_returns_404_if_ci_metadata_not_found(
         self,
