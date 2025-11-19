@@ -6,7 +6,7 @@ from fastapi import status
 
 from app.config import Settings
 from app.main import app
-from app.models.requests import PatchValidatorVersionV1Params
+from app.models.requests import UpdateValidatorVersionV1Params
 from tests.test_data.ci_test_data import (
     mock_validator_version_v2, mock_id, mock_ci_metadata_v2,
 )
@@ -23,7 +23,7 @@ class TestHttpPatchValidatorVersionV1:
 
     base_url = "/v1/update_validator_version"
 
-    query_params = PatchValidatorVersionV1Params(
+    query_params = UpdateValidatorVersionV1Params(
         guid=mock_id,
         validator_version=mock_validator_version_v2
 

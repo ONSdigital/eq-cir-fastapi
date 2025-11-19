@@ -6,8 +6,8 @@ from app.config import Settings, logging
 from app.exception import exceptions
 from app.exception.exception_response_models import ExceptionResponseModel
 from app.models.requests import (
-    PatchValidatorVersionV1Params,
     PostCiSchemaV1Data,
+    UpdateValidatorVersionV1Params,
 )
 from app.models.responses import CiMetadata
 from app.services.ci_processor_service import CiProcessorService
@@ -43,7 +43,7 @@ settings = Settings()
     },
 )
 async def http_patch_ci_validator_version_v1(
-        query_params: PatchValidatorVersionV1Params = Depends(),
+        query_params: UpdateValidatorVersionV1Params = Depends(),
         ci_processor_service: CiProcessorService = Depends(),
 ):
     """
@@ -102,7 +102,7 @@ async def http_patch_ci_validator_version_v1(
 )
 async def http_put_ci_validator_version_v1(
         post_data: PostCiSchemaV1Data,
-        query_params: PatchValidatorVersionV1Params = Depends(),
+        query_params: UpdateValidatorVersionV1Params = Depends(),
         ci_processor_service: CiProcessorService = Depends(),
 ):
 
