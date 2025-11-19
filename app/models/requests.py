@@ -37,7 +37,6 @@ class GetCiMetadataV1Params:
         """
         return all(getattr(self, key) for key in keys)
 
-
 @dataclass
 class GetCiMetadataV2Params:
     """
@@ -66,6 +65,13 @@ class GetCiMetadataV2Params:
         """
         return all(not getattr(self, key) for key in keys)
 
+@dataclass
+class GetCiMetadataV3Params:
+    """
+    Model for `get_ci_metadata_v3` request query params
+    """
+
+    guid: str = Query(default=None, description="GUID")
 
 @dataclass
 class GetCiSchemaV1Params:
