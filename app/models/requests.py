@@ -69,7 +69,6 @@ class GetCiMetadataV2Params:
 class GetCiMetadataV3Params:
     """
     Model for `get_ci_metadata_v3` request query params
-    All parameters are optional
     """
 
     guid: str = Query(default=None, description="GUID")
