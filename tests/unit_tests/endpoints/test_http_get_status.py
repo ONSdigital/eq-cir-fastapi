@@ -1,10 +1,12 @@
 from unittest.mock import patch
 
-from fastapi import status, FastAPI
+from fastapi import status
 from fastapi.testclient import TestClient
 
+from app.config import Settings
 from app.routers.status_router import router
 
+client = TestClient(router)
 test_500_client = TestClient(router, raise_server_exceptions=False)
 app = FastAPI()
 app.include_router(router)
