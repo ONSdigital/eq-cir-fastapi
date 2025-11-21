@@ -125,6 +125,15 @@ If you want to test posting data to these functions using Postman or similar, yo
 
 ### Integration testsing
 
+### Everything running locally
+
+In this configuration, the integration test uses the CIR API service running in Docker. Please make sure that the Docker containers are running before executing the integration tests. The CIR service talks to the PubSub, Firestore, and Cloud Storage emulators running in Docker.
+Tests on unauthorised access to endpoints are skipped in this configuration as IAP is not present in a local environment to test the endpoints access authorisation behaviour.
+
+```bash
+make integration-tests-local
+```
+
 ### Everything running in the cloud
 
 In this configuration, the integration test uses the CIR API service running in Cloud Run of your test/dev GCP project. Please note that the CIR is not the updated version unless run after either executing the deploy script or creating a PR and gone through the pipeline. These services both talk to Firestore and Cloud Storage running on the same project.
@@ -153,16 +162,3 @@ The openapi spec file in `gateway/openapi.yaml` should not be edited manually as
 
 Multiple CIs can be published using `scripts/publish_multiple_ci.py`. To run the file run `make publish-multiple-ci`.A Log file
 will be generated with timstamp once all the CIs are published.Before running, make sure to clone the [eq-questionnaire-schemas](https://github.com/ONSdigital/eq-questionnaire-schemas/tree/main/schemas/business/en) repository and specify the file location in `publish_multiple_ci.py`.
-
-## Running in docker
-
-You will have to add code to create a topic adding the following snippet to publisher.py and calling it in function _verify_topic_exists.
-Remember not to accidentally commit.
-
-```python
-def create_topic(self) -> None:
-   """Create a new Pub/Sub topic."""
-   logger.debug("create_topic")
-   topic = self.publisher_client.create_topic(request={"name": self.topic_path})
-   logger.debug(f"Created topic: {topic.name}")
-```

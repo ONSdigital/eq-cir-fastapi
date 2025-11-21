@@ -1,0 +1,196 @@
+import json
+import time
+
+from google.cloud import pubsub_v1, exceptions
+
+from app.config import settings
+
+
+class PubSubHelper:
+    def __init__(self, topic_id: str):
+        if settings.CONF == "local-docker":
+            self.project_id = "mock-project-id"
+        else:
+            self.project_id = settings.PROJECT_ID
+
+        self.subscriber_client = pubsub_v1.SubscriberClient()
+        self.topic_id = topic_id
+
+    def try_create_subscriber(self, subscriber_id: str) -> None:
+        """
+        Creates a subscriber with a unique subscriber id if one does not already exist.
+
+        Parameters:
+        subscriber_id: the unique id of the subscriber being created.
+        """
+        topic_path = self.subscriber_client.topic_path(self.project_id, self.topic_id)
+
+        subscription_path = self.subscriber_client.subscription_path(
+            self.project_id, subscriber_id
+        )
+
+        try:
+            if not self._subscription_exists(subscriber_id):
+                self.subscriber_client.create_subscription(
+                    request={
+                        "name": subscription_path,
+                        "topic": topic_path,
+                        "enable_message_ordering": True,
+                    }
+                )
+
+            if self._wait_and_check_subscription_exists(subscriber_id):
+                return
+
+        except Exception as exc:
+            print(f"Error creating subscriber. Subscription path: {subscription_path}")
+            raise RuntimeError(f"Error creating subscriber. Subscription path: {subscription_path}") from exc
+
+    def try_delete_subscriber(self, subscriber_id: str) -> None:
+        subscriber = pubsub_v1.SubscriberClient()
+        subscription_path = self.subscriber_client.subscription_path(
+            self.project_id, subscriber_id
+        )
+
+        try:
+            if self._subscription_exists(subscriber_id):
+                with subscriber:
+                    subscriber.delete_subscription(
+                        request={"subscription": subscription_path}
+                    )
+
+            if self._wait_and_check_subscription_not_exists(subscriber_id):
+                return
+
+        except Exception as exc:
+            print(f"Error deleting subscriber. Subscription path: {subscription_path}")
+            raise RuntimeError(f"Error deleting subscriber. Subscription path: {subscription_path}") from exc
+
+    def try_pull_and_acknowledge_messages(self,
+                                          subscriber_id: str,
+                                          num_messages: int = 5,
+                                          attempts: int = 5,
+                                          backoff: float = 0.5) -> list[dict] | None:
+        """
+        Pulls all messages published to a topic via a subscriber.
+
+        Parameters:
+        subscriber_id: the unique id of the subscriber being created.
+        """
+        subscription_path = self.subscriber_client.subscription_path(
+            self.project_id, subscriber_id
+        )
+
+        while attempts != 0:
+            try:
+                response = self.subscriber_client.pull(
+                    request={"subscription": subscription_path, "max_messages": num_messages},
+                )
+
+                message_count = len(response.received_messages)
+
+                if message_count == 0:
+                    print("No messages found in the response")
+                    return None
+
+                messages = []
+                ack_ids = []
+
+                for received_message in response.received_messages:
+                    messages.append(self._format_received_message_data(received_message))
+                    ack_ids.append(received_message.ack_id)
+
+                self.subscriber_client.acknowledge(
+                    request={"subscription": subscription_path, "ack_ids": ack_ids}
+                )
+
+                return messages
+
+            except exceptions.NotFound:
+                attempts -= 1
+                time.sleep(backoff)
+                backoff += backoff
+
+        raise RuntimeError("Failed to pull messages after multiple attempts")
+
+    @staticmethod
+    def _format_received_message_data(received_message) -> dict:
+        """
+        Formats a messages received from a topic.
+
+        Parameters:
+        received_message: The message received from the topic.
+        """
+        return json.loads(
+            received_message.message.data.decode("utf-8").replace("'", '"')
+        )
+
+    def _wait_and_check_subscription_exists(
+            self,
+            subscriber_id: str,
+            attempts: int = 5,
+            backoff: float = 0.5,
+    ) -> bool:
+        """
+        Waits for a subscription to be created and checks if it exists.
+
+        Parameters:
+        subscriber_id: the unique id of the subscriber being checked.
+        attempts: the number of attempts to check if the subscription exists.
+        backoff: the time to wait between attempts.
+        """
+        while attempts != 0:
+            if self._subscription_exists(subscriber_id):
+                return True
+
+            attempts -= 1
+            time.sleep(backoff)
+            backoff += backoff
+
+        return False
+
+    def _wait_and_check_subscription_not_exists(
+            self,
+            subscriber_id: str,
+            attempts: int = 5,
+            backoff: float = 0.5,
+    ) -> bool:
+        """
+        Waits for a subscription to be deleted and checks if it does not exist.
+
+        Parameters:
+        subscriber_id: the unique id of the subscriber being checked.
+        attempts: the number of attempts to check if the subscription does not exist.
+        backoff: the time to wait between attempts.
+        """
+        while attempts != 0:
+            if not self._subscription_exists(subscriber_id):
+                return True
+
+            attempts -= 1
+            time.sleep(backoff)
+            backoff += backoff
+
+        return False
+
+    def _subscription_exists(self, subscriber_id: str) -> bool:
+        """
+        Checks a subscription exists.
+
+        Parameters:
+        subscriber_id: the unique id of the subscriber being checked.
+        """
+        subscription_path = self.subscriber_client.subscription_path(
+            self.project_id, subscriber_id
+        )
+
+        try:
+            self.subscriber_client.get_subscription(
+                request={"subscription": subscription_path}
+            )
+            return True
+        except exceptions.NotFound:
+            return False
+
+
+ci_pubsub_helper = PubSubHelper(settings.PUBLISH_CI_TOPIC_ID)

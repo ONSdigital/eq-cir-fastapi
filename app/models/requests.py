@@ -140,8 +140,8 @@ class PostCiSchemaV2Params:
     validator_version: str = Query(default=None, description="Validator version of CI schema", example="0.0.1")
 
 @dataclass
-class PatchValidatorVersionV1Params:
-    """Model for `post_ci_schema_v2` request query params"""
+class UpdateValidatorVersionV1Params:
+    """Model for `ci_validator_metadata` request query params"""
 
     guid: str = Query(default=None, description="guid for CI")
     validator_version: str = Query(default=None, description="Validator version of CI schema", example="0.0.1")

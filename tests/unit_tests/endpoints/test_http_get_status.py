@@ -1,14 +1,15 @@
 from unittest.mock import patch
 
 from fastapi import status
-from fastapi.testclient import TestClient
+from fastapi import FastAPI
 
-from app.config import Settings
 from app.routers.status_router import router
+from starlette.testclient import TestClient
 
-client = TestClient(router)
 test_500_client = TestClient(router, raise_server_exceptions=False)
-settings = Settings()
+app = FastAPI()
+app.include_router(router)
+client = TestClient(app)
 
 
 class TestHttpGetStatus:
