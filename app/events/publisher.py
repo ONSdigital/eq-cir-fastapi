@@ -6,7 +6,7 @@ from google.cloud.pubsub_v1.publisher import exceptions as pubsub_exceptions
 
 from app.config import logging, settings
 from app.exception.exceptions import ExceptionTopicNotFound
-from app.models.events import PostCIEvent
+from app.models.responses import CiMetadata
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +27,7 @@ class Publisher:
         if settings.CONF == "local-docker" and not self._verify_topic_exists(topic_path):
             self._create_topic(topic_path)
 
-    def publish_message(self, event_msg: PostCIEvent) -> None:
+    def publish_message(self, event_msg: CiMetadata) -> None:
         """Publishes an event message to a Pub/Sub topic."""
 
         # Get the topic path
