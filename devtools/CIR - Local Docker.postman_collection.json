@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "3c58d107-104f-4803-b276-65e4e2368fd8",
+		"_postman_id": "8121762b-177a-48f2-8996-d2bf99baf601",
 		"name": "CIR - Local Docker",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "19111771"
@@ -53,6 +53,51 @@
 		},
 		{
 			"name": "Http Get Ci Metadata V2",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://0.0.0.0:3030/v2/ci_metadata?classifier_type=form_type&classifier_value=0001&language=en&survey_id=134",
+					"protocol": "http",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "3030",
+					"path": [
+						"v2",
+						"ci_metadata"
+					],
+					"query": [
+						{
+							"key": "classifier_type",
+							"value": "form_type",
+							"description": "classifier type used"
+						},
+						{
+							"key": "classifier_value",
+							"value": "0001",
+							"description": "form type to get"
+						},
+						{
+							"key": "language",
+							"value": "en",
+							"description": "language to get"
+						},
+						{
+							"key": "survey_id",
+							"value": "134",
+							"description": "survey id to get"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Http Get Ci Metadata V3",
 			"request": {
 				"method": "GET",
 				"header": [],

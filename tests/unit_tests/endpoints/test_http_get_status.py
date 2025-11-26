@@ -1,10 +1,9 @@
 from unittest.mock import patch
 
-from fastapi import status
-from fastapi import FastAPI
+from fastapi import status, FastAPI
+from fastapi.testclient import TestClient
 
 from app.routers.status_router import router
-from starlette.testclient import TestClient
 
 test_500_client = TestClient(router, raise_server_exceptions=False)
 app = FastAPI()
