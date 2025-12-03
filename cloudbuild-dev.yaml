@@ -1,14 +1,14 @@
 steps:
-  - name: python:3.11
+  - name: python:3.13
     id: "Upgrade pip"
     entrypoint: "python"
     args: ["-m", "pip", "install", "--upgrade", "pip", "--user"]
-  - name: python:3.11
+  - name: python:3.13
     id: "Setup Python and install project requirements"
     entrypoint: pip
     args: ["install", "-r", "requirements.txt", "--user"]
 
-  - name: python:3.11
+  - name: python:3.13
     id: "Check linting and code formatting"
     entrypoint: sh
     args:
@@ -16,7 +16,7 @@ steps:
       - |
         make lint-check
 
-  - name: python:3.11
+  - name: python:3.13
     id: "Run unit tests"
     entrypoint: sh
     args:
