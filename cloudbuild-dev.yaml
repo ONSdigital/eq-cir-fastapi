@@ -1,32 +1,4 @@
 steps:
-  - name: python:3.13
-    id: "Upgrade pip"
-    entrypoint: "python"
-    args: ["-m", "pip", "install", "--upgrade", "pip", "--user"]
-  - name: python:3.13
-    id: "Setup Python and install project requirements"
-    entrypoint: pip
-    args: ["install", "-r", "requirements.txt", "--user"]
-
-  - name: python:3.13
-    id: "Check linting and code formatting"
-    entrypoint: sh
-    args:
-      - "-c"
-      - |
-        make lint-check
-
-  - name: python:3.13
-    id: "Run unit tests"
-    entrypoint: sh
-    args:
-      - "-c"
-      - |
-        export CI_STORAGE_BUCKET_NAME=${_CI_STORAGE_BUCKET_NAME}
-        export FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}
-        export PROJECT_ID=${PROJECT_ID}
-        make unit-tests
-
   - name: gcr.io/cloud-builders/docker
     id: "Build and push docker image"
     entrypoint: sh
@@ -122,6 +94,7 @@ steps:
         export INT_PROJECT_ID=${PROJECT_ID}
         export INT_PUBLISH_CI_TOPIC_ID=${_PUBLISH_CI_TOPIC_ID}
         export INT_URL_SCHEME=https
+        make setup
         make integration-tests-cloudbuild
 options:
   logging: CLOUD_LOGGING_ONLY
