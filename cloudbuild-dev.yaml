@@ -1,4 +1,16 @@
 steps:
+  - name: python:3.13
+    id: "pytest unit tests + lint"
+    entrypoint: sh
+    args:
+      - "-c"
+      - |
+        pip install --upgrade pip --user
+        pip install uv
+        uv sync
+        make lint
+        make unit-tests
+
   - name: gcr.io/cloud-builders/docker
     id: "Build and push docker image"
     entrypoint: sh
@@ -78,7 +90,7 @@ steps:
         --limit=1 \
         > /workspace/oauth_client_name
 
-  - name: python:3.11
+  - name: python:3.13
     id: "pytest integration tests"
     # gcloud returns OAUTH_CLIENT_NAME as '$OAUTH_BRAND_NAME/identityAwareProxy/OAUTH_CLIENT_ID'
     # so we have to split by / and use the last part of the string here to get OAUTH_CLIENT_ID
