@@ -8,6 +8,9 @@
       pull_request:
         branches: [main]
 
+    permissions:
+      contents: read
+
     concurrency:
       group: "${{ github.head_ref || github.ref_name }}-${{ github.workflow }}"
       cancel-in-progress: true
