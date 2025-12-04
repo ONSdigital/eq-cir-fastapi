@@ -31,4 +31,4 @@
             run: make lint
 
           - name: Test
-            run: make unit-test
+            run: make unit-tests
