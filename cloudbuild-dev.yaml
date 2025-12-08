@@ -1,30 +1,14 @@
 steps:
-  - name: python:3.11
-    id: "Upgrade pip"
-    entrypoint: "python"
-    args: ["-m", "pip", "install", "--upgrade", "pip", "--user"]
-  - name: python:3.11
-    id: "Setup Python and install project requirements"
-    entrypoint: pip
-    args: ["install", "-r", "requirements.txt", "--user"]
-
-  - name: python:3.11
-    id: "Check linting and code formatting"
+  - name: python:3.13
+    id: "pytest unit tests + lint"
     entrypoint: sh
     args:
       - "-c"
       - |
-        make lint-check
-
-  - name: python:3.11
-    id: "Run unit tests"
-    entrypoint: sh
-    args:
-      - "-c"
-      - |
-        export CI_STORAGE_BUCKET_NAME=${_CI_STORAGE_BUCKET_NAME}
-        export FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}
-        export PROJECT_ID=${PROJECT_ID}
+        pip install --upgrade pip --user
+        pip install uv
+        uv sync
+        make lint
         make unit-tests
 
   - name: gcr.io/cloud-builders/docker
@@ -106,7 +90,7 @@ steps:
         --limit=1 \
         > /workspace/oauth_client_name
 
-  - name: python:3.11
+  - name: python:3.13
     id: "pytest integration tests"
     # gcloud returns OAUTH_CLIENT_NAME as '$OAUTH_BRAND_NAME/identityAwareProxy/OAUTH_CLIENT_ID'
     # so we have to split by / and use the last part of the string here to get OAUTH_CLIENT_ID
@@ -122,6 +106,9 @@ steps:
         export INT_PROJECT_ID=${PROJECT_ID}
         export INT_PUBLISH_CI_TOPIC_ID=${_PUBLISH_CI_TOPIC_ID}
         export INT_URL_SCHEME=https
+        pip install --upgrade pip --user
+        pip install uv
+        uv sync
         make integration-tests-cloudbuild
 options:
   logging: CLOUD_LOGGING_ONLY

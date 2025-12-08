@@ -864,3 +864,57 @@ paths:
                 $ref: '#/components/schemas/ExceptionResponseModel'
           description: Internal Server Error
       summary: Http Get Ci Schema V2
+  /v3/ci_metadata:
+    get:
+      description: GET method that returns ONE metadata object from Firestore that
+        match the guid passed.
+      operationId: http_get_ci_metadata_v3_v3_ci_metadata_get
+      parameters:
+      - description: GUID
+        in: query
+        name: guid
+        required: false
+        schema:
+          description: GUID
+          title: Guid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '400':
+          content:
+            application/json:
+              example:
+                message: Invalid search parameters provided
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              example:
+                message: No CI found
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Not Found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+        '500':
+          content:
+            application/json:
+              example:
+                message: Unable to process request
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+      summary: Http Get Ci Metadata V3

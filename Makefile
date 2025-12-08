@@ -13,13 +13,13 @@ start-cloud-dev:
 	export FIRESTORE_DB_NAME='$(PROJECT_ID)-cir' && \
 	export CI_STORAGE_BUCKET_NAME='$(PROJECT_ID)-cir-europe-west2-schema' && \
 	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
-	python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 3030
+	uv run python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 3030
 
 unit-tests:
 	export CONF='unit' && \
 	export CI_STORAGE_BUCKET_NAME='the-ci-schema-bucket' && \
 	export PROJECT_ID='$(PROJECT_ID)' && \
-	python -m pytest --cov=app --cov-fail-under=90 --cov-report term-missing --cov-config=.coveragerc_unit -vv ./tests/unit_tests/ -W ignore::DeprecationWarning
+	uv run python -m pytest --cov=app --cov-fail-under=90 --cov-report term-missing --cov-config=.coveragerc_unit -vv ./tests/unit_tests/ -W ignore::DeprecationWarning
 
 integration-tests-local:
 	export CONF='local-int-tests' && \
@@ -33,7 +33,7 @@ integration-tests-local:
 	export PUBSUB_EMULATOR_HOST=localhost:8086 && \
 	export FIRESTORE_EMULATOR_HOST=localhost:8200 && \
 	export STORAGE_EMULATOR_HOST=http://localhost:9026 && \
-	python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
+	uv run python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
 
 integration-tests-sandbox:
 	export PROJECT_ID='$(PROJECT_ID)' && \
@@ -44,7 +44,7 @@ integration-tests-sandbox:
 	export URL_SCHEME='https' && \
 	export OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID} && \
 	export PYTHONPATH=app && \
-	python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
+	uv run python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
 
 #For use only by automated cloudbuild, is not intended to work locally.
 integration-tests-cloudbuild:
@@ -55,26 +55,58 @@ integration-tests-cloudbuild:
 	export URL_SCHEME=${INT_URL_SCHEME} && \
 	export OAUTH_CLIENT_ID=${INT_OAUTH_CLIENT_ID} && \
 	export PYTHONPATH=app && \
-	python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
+	uv run python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
 
 generate-spec:
 	export PROJECT_ID='$(PROJECT_ID)' && \
 	export FIRESTORE_DB_NAME='$(PROJECT_ID)-cir' && \
 	export CI_STORAGE_BUCKET_NAME='$(PROJECT_ID)-cir-europe-west2-schema' && \
 	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
-	python -m scripts.generate_openapi
+	uv run python -m scripts.generate_openapi
 
 lint:
-	python -m ruff check .
+	uv run python -m ruff check .
 
 lint-check:
-	python -m ruff check .
+	uv run python -m ruff check .
 
 lint-fix:
-	python -m ruff check --fix .
+	uv run python -m ruff check --fix .
 
 audit:
-	python -m pip_audit
+	uv run python -m pip_audit
 
 publish-multiple-ci:
-	python -m scripts.publish_multiple_ci
+	uv run python -m scripts.publish_multiple_ci
+
+setup:
+	@command -v uv >/dev/null 2>&1 || { \
+		echo "uv not found – installing..."; \
+		curl -LsSf https://astral.sh/uv/install.sh | sh; \
+	}
+	uv sync
+
+.PHONY:  bump bump-patch bump-minor bump-major
+bump:
+	@echo "🔼 Bumping project version (patch)..."
+	uv run --only-group version-check python .github/scripts/bump_version.py patch
+	@echo "🔄 Generating new lock file..."
+	uv lock
+
+bump-patch:
+	@echo "🔼 Bumping project version (patch)..."
+	uv run --only-group version-check python .github/scripts/bump_version.py patch
+	@echo "🔄 Generating new lock file..."
+	uv lock
+
+bump-minor:
+	@echo "🔼 Bumping project version (minor)..."
+	uv run --only-group version-check python .github/scripts/bump_version.py minor
+	@echo "🔄 Generating new lock file..."
+	uv lock
+
+bump-major:
+	@echo "🔼 Bumping project version (major)..."
+	uv run --only-group version-check python .github/scripts/bump_version.py major
+	@echo "🔄 Generating new lock file..."
+	uv lock
