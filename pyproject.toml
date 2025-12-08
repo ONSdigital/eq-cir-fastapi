@@ -27,12 +27,6 @@ dependencies = [
     "uvicorn==0.38.0",
 ]
 
-[dependency-groups]
-version-check = [
- "toml>=0.10.2",
- "tomlkit>=0.13.3",
-]
-
 
 [tool.ruff]
 line-length = 120
