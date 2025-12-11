@@ -16,7 +16,7 @@ settings = Settings()
 
 
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_with_id")
-class TestHttpGetCiMetadataV2:
+class TestHttpGetCiMetadataV3:
     """Tests for the `http_get_ci_metadata_v3` endpoint"""
 
     base_url = "/v3/ci_metadata"
@@ -39,7 +39,7 @@ class TestHttpGetCiMetadataV2:
         Assert the mocked function is called with the correct params.
         """
         # Update mocked function to return a list of valid ci metadata
-        mocked_get_ci_metadata_with_id.return_value = mock_ci_metadata_v2.model_dump()
+        mocked_get_ci_metadata_with_id.return_value = mock_ci_metadata_v2
 
         response = client.get(self.url)
 
