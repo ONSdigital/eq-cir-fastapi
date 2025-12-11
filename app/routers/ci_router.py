@@ -227,7 +227,7 @@ async def http_get_ci_metadata_v3(
 
     logger.info("CI metadata retrieved successfully.")
 
-    return ci_metadata
+    return ci_metadata.model_dump()
 
 
 # Fetching CI schema from Bucket version 1
