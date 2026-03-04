@@ -1,5 +1,5 @@
 steps:
-  - name: docker
+  - name: gcr.io/cloud-builders/docker
     id: "Build and push docker image"
     entrypoint: sh
     args:

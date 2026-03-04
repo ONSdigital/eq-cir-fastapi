@@ -16,21 +16,10 @@ To install dependencies and configure the project for first use, follow the inst
 
 1. If required, install either Docker Desktop or Rancher Desktop
 2. Open a terminal at the project root
-3. Install other dependencies using `brew`
+3. Set up `uv` virtual environment and install dependencies
 
-   `$ brew upgrade && brew install google-cloud-sdk pyenv`
-
-4. Install and start using the Python version defined in the `.python-version` file using `pyenv`
-
-   `$ pyenv install`
-
-5. Create a new virtual environment to manage Python packages for the project using `venv` and activate it
-
-   `$ python3 -m venv env && source env/bin/activate`
-
-6. Install project requirements using `pip`. This action will read the attributes in the `requirements.txt` file and install the right packages and versions we need, which insures we can set the correct dependencies for other devs and when deploying to production
-
-   `$ pip install --upgrade pip && pip install -r requirements.txt`
+   `make setup`
+4. Set your IDE to use the `uv` virtual environment as your interpreter.
 
 The project is now ready for development or to use for deployments.
 
@@ -139,7 +128,7 @@ make integration-tests-local
 In this configuration, the integration test uses the CIR API service running in Cloud Run of your test/dev GCP project. Please note that the CIR is not the updated version unless run after either executing the deploy script or creating a PR and gone through the pipeline. These services both talk to Firestore and Cloud Storage running on the same project.
 
 ```bash
-PROJECT_NAME=ons-sds-ci
+PROJECT_NAME=ons-sds-sandbox-01
 gcloud auth login
 gcloud config set project $PROJECT_NAME
 

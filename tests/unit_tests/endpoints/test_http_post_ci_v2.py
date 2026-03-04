@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 from app.config import Settings
 from app.events.publisher import Publisher
 from app.main import app
-from app.models.events import PostCIEvent
+from app.models.responses import CiMetadata
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from app.services.ci_schema_location_service import CiSchemaLocationService
 from tests.test_data.ci_test_data import (
@@ -76,7 +76,7 @@ class TestHttpPostCiV2:
             mock_post_ci_schema.model_dump(),
             CiSchemaLocationService.get_ci_schema_location(mock_ci_metadata_v2),
         )
-        Publisher.publish_message.assert_called_once_with(PostCIEvent(**mock_ci_metadata_v2.model_dump()))
+        Publisher.publish_message.assert_called_once_with(CiMetadata(**mock_ci_metadata_v2.model_dump()))
 
     def test_endpoint_returns_200_if_ci_next_version_created_successfully(
         self,
@@ -116,7 +116,7 @@ class TestHttpPostCiV2:
             mock_post_ci_schema.model_dump(),
             CiSchemaLocationService.get_ci_schema_location(mock_next_version_ci_metadata_v2),
         )
-        Publisher.publish_message.assert_called_once_with(PostCIEvent(**mock_next_version_ci_metadata_v2.model_dump()))
+        Publisher.publish_message.assert_called_once_with(CiMetadata(**mock_next_version_ci_metadata_v2.model_dump()))
 
     def test_endpoint_returns_400_if_no_post_data(
         self,
