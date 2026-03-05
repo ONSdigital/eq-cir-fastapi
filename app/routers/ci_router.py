@@ -432,7 +432,7 @@ async def http_post_ci_schema_v2(
      # Generate new uid
     ci_id = CreateGuidService.create_guid()
 
-    ci_metadata = ci_processor_service.process_raw_ci(post_data, ci_id, query_params.validator_version)
+    ci_metadata = ci_processor_service.process_raw_ci(post_data, ci_id)
 
     logger.info("CI schema posted successfully")
 

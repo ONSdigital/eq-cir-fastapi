@@ -4,7 +4,7 @@ from fastapi.exceptions import RequestValidationError
 from app.config import Settings, logging
 from app.exception import exceptions
 from app.exception.exception_interceptor import ExceptionInterceptor
-from app.routers import ci_router, status_router, validator_router
+from app.routers import ci_router, status_router
 
 app = FastAPI()
 logger = logging.getLogger(__name__)
@@ -16,10 +16,6 @@ app.openapi_version = "3.0.1"
 app.title = "Collection Instrumentation Register"
 app.version = "1.0.0"
 
-app.add_exception_handler(
-    exceptions.ExceptionNoValidator,
-    ExceptionInterceptor.throw_400_no_validator_provided_exception,
-)
 app.add_exception_handler(
     exceptions.ExceptionNoCIMetadata,
     ExceptionInterceptor.throw_404_no_ci_metadata_exception,
@@ -83,4 +79,3 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 app.include_router(ci_router.router)
 app.include_router(status_router.router)
-app.include_router(validator_router.router)

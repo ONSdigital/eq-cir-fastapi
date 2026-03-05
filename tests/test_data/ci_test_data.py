@@ -140,23 +140,6 @@ mock_ci_metadata_list = [
     ),
 ]
 
-mock_ci_validator_metadata_list =[
-    CiValidatorMetadata(
-        survey_id=mock_survey_id,
-        classifier_type=mock_classifier_type,
-        classifier_value=mock_classifier_value,
-        guid=mock_id,
-        ci_version=1,
-    ),
-    CiValidatorMetadata(
-        survey_id=mock_survey_id,
-        classifier_type=mock_classifier_type,
-        classifier_value=mock_classifier_value,
-        guid=mock_id,
-        ci_version=2,
-    ),
-]
-
 mock_ci_published_metadata = CiMetadata(
     ci_version=1,
     data_version=mock_data_version,

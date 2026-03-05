@@ -1,4 +1,3 @@
-from app.models.responses import CiValidatorMetadata
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from tests.test_data.ci_test_data import (
     mock_ci_metadata,
