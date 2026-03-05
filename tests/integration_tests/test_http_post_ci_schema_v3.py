@@ -15,10 +15,10 @@ ci_pubsub_helper = PubSubHelper(settings.PUBLISH_CI_TOPIC_ID)
 
 
 class TestPostCiV3:
-    """Tests for the `http_post_ci_v2` endpoint."""
+    """Tests for the `http_post_ci_v3` endpoint."""
 
-    post_url = "/v3/publish_collection_instrument?guid=guid&validator_version=0.0.1"
-    post_url_no_guid = "/v3/publish_collection_instrument?validator_version=0.0.1"
+    post_url = "/v3/publish_collection_instrument?guid=guid&ci_version=0.0.1"
+    post_url_no_guid = "/v3/publish_collection_instrument?ci_version=0.0.1"
     get_metadata_url = "/v1/ci_metadata"
     subscription_id = generate_subscriber_id()  # Unique subscription ID to avoid conflicts and GCP errors
 
@@ -70,7 +70,6 @@ class TestPostCiV3:
 
         expected_ci = CiMetadata(
             ci_version=1,
-            validator_version="0.0.1",
             data_version=setup_payload["data_version"],
             classifier_type=classifier_type,
             classifier_value=classifier_value,
@@ -123,7 +122,6 @@ class TestPostCiV3:
 
         expected_ci = CiMetadata(
             ci_version=1,
-            validator_version="0.0.1",
             data_version=setup_payload["data_version"],
             classifier_type=classifier_type,
             classifier_value=classifier_value,
@@ -172,7 +170,6 @@ class TestPostCiV3:
 
         expected_ci = CiMetadata(
             ci_version=2,
-            validator_version="0.0.1",
             data_version=setup_publish_ci_return_payload["data_version"],
             classifier_type=classifier_type,
             classifier_value=classifier_value,
@@ -297,18 +294,3 @@ class TestPostCiV3:
         ci_response = make_iap_request("POST", f"{self.post_url}", json=payload, unauthenticated=True)
 
         assert ci_response.status_code == status.HTTP_401_UNAUTHORIZED
-
-    def test_publish_ci_fails_missing_validator_version(self, setup_payload):
-        """
-        What am I testing:
-        http_post_ci_metadata_v1 should return a 400 bad request if no validator version provided
-        """
-        ci_response = make_iap_request("POST", f"{self.post_url_no_guid}", json=setup_payload, )
-
-        assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
-
-        ci_response_data = ci_response.json()
-        assert ci_response_data == {
-            "message": "No validator version provided",
-            "status": "error",
-        }

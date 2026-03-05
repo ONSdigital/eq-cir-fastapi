@@ -6,7 +6,6 @@ from app.models.responses import CiMetadata, CiValidatorMetadata
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from app.services.ci_classifier_service import CiClassifierService
 from app.services.ci_schema_location_service import CiSchemaLocationService
-from app.services.create_guid_service import CreateGuidService
 from app.services.datetime_service import DatetimeService
 from app.services.document_version_service import DocumentVersionService
 
@@ -22,7 +21,6 @@ class CiProcessorService:
             self,
             post_data: PostCiSchemaV1Data,
             ci_id: str,
-            validator_version: str = "",
             ci_version: str | None = "",
     ) -> CiMetadata:
         """
@@ -42,7 +40,6 @@ class CiProcessorService:
 
         next_version_ci_metadata = self.build_next_version_ci_metadata(
             ci_id,
-            validator_version,
             classifier_type,
             classifier_value,
             post_data,
@@ -57,7 +54,6 @@ class CiProcessorService:
         # create event message
         event_message = CiMetadata(
             ci_version=next_version_ci_metadata.ci_version,
-            validator_version=validator_version,
             data_version=next_version_ci_metadata.data_version,
             classifier_type=next_version_ci_metadata.classifier_type,
             classifier_value=next_version_ci_metadata.classifier_value,
@@ -108,7 +104,6 @@ class CiProcessorService:
     def build_next_version_ci_metadata(
             self,
             ci_id: str,
-            validator_version: str,
             classifier_type: str,
             classifier_value: str,
             post_data: PostCiSchemaV1Data,
@@ -119,7 +114,6 @@ class CiProcessorService:
 
         Parameters:
         ci_id (str): the guid of the metadata.
-        validator_version (str): vaidator version of schema
         classifier_type (str): the classifier type used.
         classifier_value (str): the classier value
         post_data (PostCiSchemaV1Data): the sds schema of the schema.
@@ -127,16 +121,15 @@ class CiProcessorService:
         Returns:
         CiMetadata: the next version of CI metadata.
         """
-        
-        if ci_version == "" or ci_version is None: 
+
+        if ci_version == "" or ci_version is None:
             ci_version: int = self.calculate_next_ci_version(post_data.survey_id,
                                                           classifier_type,
                                                           classifier_value,
-                                                          post_data.language) 
+                                                          post_data.language)
         next_version_ci_metadata = CiMetadata(
             guid=ci_id,
             ci_version=ci_version,
-            validator_version=validator_version,
             data_version=post_data.data_version,
             classifier_type=classifier_type,
             classifier_value=classifier_value,
@@ -306,18 +299,3 @@ class CiProcessorService:
         except Exception as exc:
             logger.error("Rolling back CI transaction")
             raise exceptions.GlobalException from exc
-
-    def update_ci_validator_version(self, guid: str, metadata: CiMetadata):
-        """
-                Updates CI
-
-                Parameters:
-                guid (str): identifier for ci
-                metadata (CiMetadata): Schema metadata
-                """
-        self.ci_firebase_repository.update_ci_metadata(guid, metadata)
-
-    def update_validator_version_and_ci(self, post_data: PostCiSchemaV1Data, ci_metadata: CiMetadata):
-        ci = post_data.__dict__
-        ci_metadata.published_at = str(DatetimeService.get_current_date_and_time().strftime(settings.PUBLISHED_AT_FORMAT))
-        self.ci_firebase_repository.update_validator_version_and_ci(ci, ci_metadata)

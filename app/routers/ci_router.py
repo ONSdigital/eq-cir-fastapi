@@ -19,7 +19,7 @@ from app.models.requests import (
     PostCiSchemaV2Params,
     PostCiSchemaV3Params,
 )
-from app.models.responses import CiMetadata, CiValidatorMetadata
+from app.models.responses import CiMetadata
 from app.repositories.buckets.ci_schema_bucket_repository import (
     CiSchemaBucketRepository,
 )
@@ -429,11 +429,6 @@ async def http_post_ci_schema_v2(
     """
     logger.info("Posting CI schema via v2 endpoint")
 
-    if query_params.validator_version == "" or query_params.validator_version is None:
-        message = "No validation version supplied"
-        logger.debug(f"{message}")
-        raise exceptions.ExceptionNoValidator
-
      # Generate new uid
     ci_id = CreateGuidService.create_guid()
 
@@ -478,39 +473,9 @@ async def http_post_ci_schema_v3(
         message = "No guid supplied"
         logger.debug(f"{message}")
         raise exceptions.ExceptionIncorrectKeyNames
-    
+
     ci_metadata = ci_processor_service.process_raw_ci(post_data, query_params.guid, query_params.ci_version)
 
     logger.info("CI schema posted successfully")
 
     return ci_metadata.model_dump()
-
-
-@router.get(
-    "/v1/ci_validator_metadata",
-    responses={
-        500: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_500_global_exception}},
-        },
-        404: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_404_no_ci_validator_metadata_exception}},
-        },
-    },
-)
-async def http_get_ci_validator_metadata_v1(
-    ci_processor_service: CiProcessorService = Depends(),
-) -> list[CiValidatorMetadata]:
-    """
-    GET method that returns the validator metadata for a CI schema.
-    """
-    logger.info("Getting ci validator metadata via v1 endpoint")
-
-    ci_validator_metadata_collection = ci_processor_service.get_ci_validator_metadata_collection()
-
-    if not ci_validator_metadata_collection:
-        logger.error("No collection instrument validator metadata found")
-        raise exceptions.ExceptionNoCIValidatorMetadata
-
-    return ci_validator_metadata_collection

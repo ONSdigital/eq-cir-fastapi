@@ -57,7 +57,6 @@ class TestHttpPostCiV2:
 
         response = client.post(
             self.url,
-            params={"validator_version": "0.0.1"},
             headers={"ContentType": CONTENT_TYPE},
             json=mock_post_ci_schema.model_dump(),
         )
@@ -97,7 +96,6 @@ class TestHttpPostCiV2:
 
         response = client.post(
             self.url,
-            params={"validator_version": "0.0.1"},
             headers={"ContentType": CONTENT_TYPE},
             json=mock_post_ci_schema.model_dump(),
         )
@@ -130,9 +128,7 @@ class TestHttpPostCiV2:
         as part of the request
         """
         # Make request to base url without any post data
-        response = client.post(self.url,
-                               params={"validator_version": "0.0.1"},
-                               headers={"ContentType": CONTENT_TYPE})
+        response = client.post(self.url, headers={"ContentType": CONTENT_TYPE})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert response.json()["message"] == "Validation has failed"
@@ -163,7 +159,6 @@ class TestHttpPostCiV2:
 
         response = client.post(
             self.url,
-            params={"validator_version": "0.0.1"},
             headers={"ContentType": CONTENT_TYPE},
             json=edited_mock_post_ci_schema.model_dump(),
         )
@@ -191,7 +186,6 @@ class TestHttpPostCiV2:
             test_data = json.load(json_file)
 
         response = client.post(self.url,
-                               params={"validator_version": "0.0.1"},
                                headers={"ContentType": CONTENT_TYPE},
                                json=test_data)
 
@@ -259,7 +253,6 @@ class TestHttpPostCiV2:
 
         response = client.post(
             self.url,
-            params={"validator_version": "0.0.1"},
             headers={"ContentType": CONTENT_TYPE},
             json=edited_mock_post_ci_schema.model_dump(),
         )
@@ -287,7 +280,6 @@ class TestHttpPostCiV2:
 
         response = test_500_client.post(
             self.url,
-            params={"validator_version": "0.0.1"},
             headers={"ContentType": CONTENT_TYPE},
             json=mock_post_ci_schema.model_dump(),
         )
@@ -315,36 +307,9 @@ class TestHttpPostCiV2:
 
         response = test_500_client.post(
             self.url,
-            params={"validator_version": "0.0.1"},
             headers={"ContentType": CONTENT_TYPE},
             json=mock_post_ci_schema.model_dump(),
         )
 
         assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
         assert response.json()["message"] == "Unable to process request"
-
-    def test_endpoint_returns_400_if_validator_version_missing(
-            self,
-            mocked_perform_new_ci_transaction,
-            mocked_get_latest_ci_metadata,
-            mocked_publish_message,
-            mocked_create_guid,
-    ):
-        """
-        Endpoint should return `HTTP_400_BAD_REQUEST` if validator verson is missing from param
-        """
-        # Update mocked function to return `None` indicating no previous version of metadata is found
-        mocked_get_latest_ci_metadata.return_value = None
-        # Update mocked function to return a valid guid
-        mocked_create_guid.return_value = mock_id
-        # Raise an exception to simulate an error in publish message
-        mocked_publish_message.side_effect = Exception()
-
-        response = test_500_client.post(
-            self.url,
-            headers={"ContentType": CONTENT_TYPE},
-            json=mock_post_ci_schema.model_dump(),
-        )
-
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert response.json()["message"] == "No validator version provided"
