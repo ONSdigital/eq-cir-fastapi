@@ -474,17 +474,12 @@ async def http_post_ci_schema_v3(
     """
     logger.info("Posting CI schema via v2 endpoint")
 
-    if query_params.validator_version == "" or query_params.validator_version is None:
-        message = "No validation version supplied"
-        logger.debug(f"{message}")
-        raise exceptions.ExceptionNoValidator
-
     if query_params.guid == "" or query_params.guid is None:
         message = "No guid supplied"
         logger.debug(f"{message}")
         raise exceptions.ExceptionIncorrectKeyNames
-
-    ci_metadata = ci_processor_service.process_raw_ci(post_data, query_params.guid, query_params.validator_version)
+    
+    ci_metadata = ci_processor_service.process_raw_ci(post_data, query_params.guid, query_params.ci_version)
 
     logger.info("CI schema posted successfully")
 
