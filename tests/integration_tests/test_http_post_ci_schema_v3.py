@@ -46,8 +46,11 @@ class TestPostCiV3:
         AC-1.3 - When a CI is published in the response the datetime
         field is present with an ISO8601 value. (2023-01-24T13:56:38Z)
         """
-        # Creates a CI in the database, essentially running post_ci_v1 from handler folder
         ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_payload,)
+
+        # Assert response status code = 200 OK
+        assert ci_response.status_code == status.HTTP_200_OK
+
         ci_response_data = ci_response.json()
         survey_id = setup_payload["survey_id"]
         classifier_type = CiClassifierService.get_classifier_type(setup_payload)
