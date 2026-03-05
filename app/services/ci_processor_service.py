@@ -123,10 +123,8 @@ class CiProcessorService:
         """
 
         if ci_version == "" or ci_version is None:
-            ci_version: int = self.calculate_next_ci_version(post_data.survey_id,
-                                                          classifier_type,
-                                                          classifier_value,
-                                                          post_data.language)
+            ci_version: int = self.calculate_next_ci_version(post_data.survey_id, classifier_type, classifier_value, post_data.language)
+
         next_version_ci_metadata = CiMetadata(
             guid=ci_id,
             ci_version=ci_version,
