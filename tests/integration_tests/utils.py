@@ -31,6 +31,9 @@ def make_iap_request(method, path, **kwargs):
     if "unauthenticated" in kwargs:
         kwargs.pop("unauthenticated")
         auth_token = "bad-request-key"
+    elif settings.CONF == 'local-int-tests':
+        # For local integration tests, we want to bypass authentication, so we set the auth token to a default value.
+        auth_token = 'default'
     else:
         # Set Headers using fetched id token. Requires valid credentials file at path specified by the
         # `GOOGLE_APPLICATION_CREDENTIALS` env var. See README.md for more details
