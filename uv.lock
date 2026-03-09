@@ -143,6 +143,7 @@ dependencies = [
     { name = "fastapi" },
     { name = "firebase-admin" },
     { name = "gcp-storage-emulator" },
+    { name = "google-cloud-iam" },
     { name = "google-cloud-pubsub" },
     { name = "httpx" },
     { name = "mock-firestore" },
@@ -174,6 +175,7 @@ requires-dist = [
     { name = "fastapi", specifier = "==0.121.0" },
     { name = "firebase-admin", specifier = "==7.1.0" },
     { name = "gcp-storage-emulator", specifier = "==2024.8.3" },
+    { name = "google-cloud-iam", specifier = ">=2.21.0" },
     { name = "google-cloud-pubsub", specifier = "==2.33.0" },
     { name = "httpx", specifier = "==0.28.1" },
     { name = "mock-firestore", specifier = "==0.11.0" },
@@ -451,6 +453,23 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/80/9d/027b9bf61a44422bcdcb00a2acc59152065b1cffa1fc89da62277730973e/google_cloud_firestore-2.21.0.tar.gz", hash = "sha256:0c37faa8506297f827eefc38feb155247a6dcb9a541289631015d125f1b003f8", size = 528159, upload-time = "2025-06-03T19:28:27.195Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/0a/03/94755c64a2fb85cba734ac05a4f80096b8c0acfab0508c9d52c57f571687/google_cloud_firestore-2.21.0-py3-none-any.whl", hash = "sha256:bf33ccc38a27afc60748d1f9bb7c46b078d0d39d288636bdfd967611d7b3f17f", size = 368813, upload-time = "2025-06-03T19:28:25.131Z" },
+]
+
+[[package]]
+name = "google-cloud-iam"
+version = "2.21.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "google-api-core", extra = ["grpc"] },
+    { name = "google-auth" },
+    { name = "grpc-google-iam-v1" },
+    { name = "grpcio" },
+    { name = "proto-plus" },
+    { name = "protobuf" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/aa/0b/037b1e1eb601646d6f49bc06d62094c1d0996b373dcbf70c426c6c51572e/google_cloud_iam-2.21.0.tar.gz", hash = "sha256:fc560527e22b97c6cbfba0797d867cf956c727ba687b586b9aa44d78e92281a3", size = 499038, upload-time = "2026-01-15T13:15:08.243Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c8/44/02ac4e147ea034a3d641c11b54c9d8d0b80fc1ea6a8b7d6c1588d208d42a/google_cloud_iam-2.21.0-py3-none-any.whl", hash = "sha256:1b4a21302b186a31f3a516ccff303779638308b7c801fb61a2406b6a0c6293c4", size = 458958, upload-time = "2026-01-15T13:13:40.671Z" },
 ]
 
 [[package]]

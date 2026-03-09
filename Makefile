@@ -1,6 +1,6 @@
 # Global Variables
 LOCAL_URL=localhost:3030
-GOOGLE_APPLICATION_CREDENTIALS=sandbox-key.json
+#GOOGLE_APPLICATION_CREDENTIALS=sandbox-key.json
 PROJECT_ID = $(shell gcloud config get project)
 OAUTH_BRAND_NAME = $(shell gcloud iap oauth-brands list --format='value(name)' --limit=1 --project=$(PROJECT_ID))
 OAUTH_CLIENT_NAME = $(shell gcloud iap oauth-clients list $(OAUTH_BRAND_NAME) --format='value(name)' \
@@ -9,10 +9,10 @@ OAUTH_CLIENT_ID = $(shell echo $(OAUTH_CLIENT_NAME)| cut -d'/' -f 6)
 SANDBOX_IP_ADDRESS = $(shell gcloud compute addresses list --global  --filter=name:$(PROJECT_ID)-cir-static-lb-ip --format='value(address)' --limit=1 --project=$(PROJECT_ID))
 
 start-cloud-dev:
+	gcloud auth application-default login && \
 	export PROJECT_ID='$(PROJECT_ID)' && \
 	export FIRESTORE_DB_NAME='$(PROJECT_ID)-cir' && \
 	export CI_STORAGE_BUCKET_NAME='$(PROJECT_ID)-cir-europe-west2-schema' && \
-	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
 	uv run python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 3030
 
 unit-tests:
@@ -39,7 +39,6 @@ integration-tests-sandbox:
 	export PROJECT_ID='$(PROJECT_ID)' && \
 	export FIRESTORE_DB_NAME='$(PROJECT_ID)-cir' && \
 	export CI_STORAGE_BUCKET_NAME='$(PROJECT_ID)-cir-europe-west2-schema' && \
-	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
 	export DEFAULT_HOSTNAME=${SANDBOX_IP_ADDRESS}.nip.io && \
 	export URL_SCHEME='https' && \
 	export OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID} && \
@@ -58,10 +57,10 @@ integration-tests-cloudbuild:
 	uv run python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
 
 generate-spec:
+	gcloud auth application-default login && \
 	export PROJECT_ID='$(PROJECT_ID)' && \
 	export FIRESTORE_DB_NAME='$(PROJECT_ID)-cir' && \
 	export CI_STORAGE_BUCKET_NAME='$(PROJECT_ID)-cir-europe-west2-schema' && \
-	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
 	uv run python -m scripts.generate_openapi
 
 lint:

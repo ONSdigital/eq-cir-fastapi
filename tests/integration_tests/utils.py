@@ -1,4 +1,5 @@
 import requests
+from google.cloud import iam_credentials_v1
 from google.auth.transport.requests import Request
 from google.oauth2 import id_token
 
@@ -31,10 +32,25 @@ def make_iap_request(method, path, **kwargs):
     if "unauthenticated" in kwargs:
         kwargs.pop("unauthenticated")
         auth_token = "bad-request-key"
+    elif settings.CONF == 'local-int-tests':
+        # For local integration tests, we want to bypass authentication, so we set the auth token to a default value.
+        auth_token = 'default'
     else:
         # Set Headers using fetched id token. Requires valid credentials file at path specified by the
         # `GOOGLE_APPLICATION_CREDENTIALS` env var. See README.md for more details
-        auth_token = id_token.fetch_id_token(Request(), audience=settings.OAUTH_CLIENT_ID)
+        #auth_token = id_token.fetch_id_token(Request(), audience=settings.OAUTH_CLIENT_ID)
+
+        service_account_email = "ons-cir-sandbox-384314@appspot.gserviceaccount.com"
+        client = iam_credentials_v1.IAMCredentialsClient()
+        name = f"projects/-/serviceAccounts/{service_account_email}"
+
+        response = client.generate_id_token(
+            name=name,
+            audience=settings.OAUTH_CLIENT_ID,
+            include_email=True
+        )
+
+        auth_token = response.token
 
     headers = {
         "Authorization": f"Bearer {auth_token}",

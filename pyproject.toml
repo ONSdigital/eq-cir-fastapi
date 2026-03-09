@@ -8,6 +8,7 @@ dependencies = [
     "fastapi==0.121.0",
     "firebase-admin==7.1.0",
     "gcp-storage-emulator==2024.8.3",
+    "google-cloud-iam>=2.21.0",
     "google-cloud-pubsub==2.33.0",
     "httpx==0.28.1",
     "mock-firestore==0.11.0",
