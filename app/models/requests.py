@@ -144,6 +144,8 @@ class PostCiSchemaV2Params:
     """Model for `post_ci_schema_v3` request query params"""
 
     guid: str = Query(default=None, description="guid for CI")
+    validator_version: str = Query(default=None, description="Validator version of CI schema", example="0.0.1")
+
 
 
 @dataclass
@@ -151,4 +153,21 @@ class PostCiSchemaV3Params:
     """Model for `post_ci_schema_v3` request query params"""
 
     guid: str = Query(default=None, description="guid for CI")
-    ci_version: str = Query(default=None, description="version of CI schema", example="1")
+    validator_version: str = Query(default=None, description="Validator version of CI schema", example="0.0.1")
+    ci_version: str = Query(default=None, description="CI version of CI schema", example="1")
+
+
+    def params_not_none(self, keys):
+        """
+        Loops through each input `keys` and checks if associated class param is `None`
+
+        If all param values are not `None` return `True`, otherwise return `False`
+        """
+        return all(getattr(self, key) for key in keys)
+
+@dataclass
+class UpdateValidatorVersionV1Params:
+    """Model for `ci_validator_metadata` request query params"""
+
+    guid: str = Query(default=None, description="guid for CI")
+    validator_version: str = Query(default=None, description="Validator version of CI schema", example="0.0.1")
