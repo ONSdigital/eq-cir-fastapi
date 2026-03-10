@@ -68,6 +68,7 @@ steps:
         "--ingress",
         "internal-and-cloud-load-balancing",
         "--update-env-vars",
+        "--no-invoker-iam-check",
         "CIR_APPLICATION_VERSION=development",
       ]
 
