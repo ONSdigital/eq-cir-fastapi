@@ -60,6 +60,7 @@ steps:
         "run",
         "deploy",
         "cir",
+        "--no-invoker-iam-check",
         "--image",
         "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:${SHORT_SHA}",
         "--region",
@@ -73,8 +74,6 @@ steps:
 
   - name: python:3.13
     id: "pytest integration tests"
-    # gcloud returns OAUTH_CLIENT_NAME as '$OAUTH_BRAND_NAME/identityAwareProxy/OAUTH_CLIENT_ID'
-    # so we have to split by / and use the last part of the string here to get OAUTH_CLIENT_ID
     entrypoint: sh
     args:
       - "-c"
