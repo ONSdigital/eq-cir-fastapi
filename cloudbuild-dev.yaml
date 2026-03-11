@@ -84,6 +84,7 @@ steps:
         export INT_PROJECT_ID=${PROJECT_ID}
         export INT_PUBLISH_CI_TOPIC_ID=${_PUBLISH_CI_TOPIC_ID}
         export INT_URL_SCHEME=https
+        export SECRET_ID=iap-secret
         pip install --upgrade pip --user
         pip install uv
         uv sync
