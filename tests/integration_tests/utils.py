@@ -1,6 +1,5 @@
 import requests
-from google.auth.transport.requests import Request
-from google.oauth2 import id_token
+from sds_common.services.http_service import HttpService
 
 from app.config import Settings
 
@@ -31,6 +30,13 @@ def make_iap_request(method, path, **kwargs):
     if "unauthenticated" in kwargs:
         kwargs.pop("unauthenticated")
         auth_token = "bad-request-key"
+        headers = {
+            "Authorization": f"Bearer {auth_token}",
+            "Content-Type": "application/json",
+        }
+    else:
+        headers = HttpService.generate_authentication_headers()
+
     elif settings.CONF == 'local-int-tests':
         # For local integration tests, we want to bypass authentication, so we set the auth token to a default value.
         auth_token = 'default'

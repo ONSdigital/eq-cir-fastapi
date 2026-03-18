@@ -17,6 +17,7 @@ steps:
         "run",
         "deploy",
         "cir",
+        "--no-invoker-iam-check",
         "--image",
         "europe-west2-docker.pkg.dev/ons-sds-ci/cir-perm/${PROJECT_ID}:latest",
         "--region",
