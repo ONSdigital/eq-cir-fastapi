@@ -16,7 +16,6 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 settings = Settings()
 
-# PATCH /v1/collection-instruments/{guid}/validator-version
 @router.patch(
     "/v1/collection-instruments/validator-version",
     responses={
@@ -76,7 +75,6 @@ async def patch_collection_instrument_validator_version(
 
     return ci_metadata.model_dump()
 
-# PUT /v1/collection-instruments/{guid}/validator-version
 @router.put(
     "/v1/collection-instruments/validator-version",
     responses={
