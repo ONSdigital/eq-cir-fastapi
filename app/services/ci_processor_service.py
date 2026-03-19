@@ -119,6 +119,7 @@ class CiProcessorService:
         ci_id (str): the guid of the metadata.
         classifier_type (str): the classifier type used.
         classifier_value (str): the classier value
+        validator_version (str): validator version of schema
         post_data (PostCiSchemaV1Data): the sds schema of the schema.
 
         Returns:

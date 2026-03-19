@@ -346,7 +346,9 @@ async def http_post_ci_schema_v1(
     """
     logger.info("Posting ci schema via v1 endpoint")
 
-    ci_metadata = ci_processor_service.process_raw_ci(post_data)
+    ci_id = CreateGuidService.create_guid()
+
+    ci_metadata = ci_processor_service.process_raw_ci(post_data, ci_id)
 
     logger.info("CI schema posted successfully")
     return ci_metadata.model_dump()
