@@ -319,7 +319,7 @@ async def get_collection_instrument_schema_by_guid_v2(
     logger.info("Getting ci schema via v2 endpoint...")
     logger.debug(f"Input data: query_params={query_params.__dict__}")
 
-    if guid is None:
+    if query_params.guid is None:
         raise exceptions.ExceptionIncorrectKeyNames
 
     ci_metadata = ci_processor_service.get_ci_metadata_with_id(query_params.guid)

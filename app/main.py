@@ -4,8 +4,7 @@ from fastapi.exceptions import RequestValidationError
 from app.config import Settings, logging
 from app.exception import exceptions
 from app.exception.exception_interceptor import ExceptionInterceptor
-from app.routers import ci_router, status_router, validator_router, ci_router_restful, validator_router_restful
-                         
+from app.routers import ci_router, ci_router_restful, status_router, validator_router, validator_router_restful
 
 app = FastAPI()
 logger = logging.getLogger(__name__)
