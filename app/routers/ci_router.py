@@ -12,11 +12,11 @@ from app.models.requests import (
     DeleteCiV1Params,
     GetCiMetadataV1Params,
     GetCiMetadataV2Params,
+    GetCiMetadataV3Params,
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
     PostCiSchemaV1Data,
     PostCiSchemaV2Params,
-    PostCiSchemaV3Params,
 )
 from app.models.responses import CiMetadata, CiValidatorMetadata
 from app.repositories.buckets.ci_schema_bucket_repository import (
@@ -24,7 +24,6 @@ from app.repositories.buckets.ci_schema_bucket_repository import (
 )
 from app.services.ci_processor_service import CiProcessorService
 from app.services.ci_schema_location_service import CiSchemaLocationService
-from app.services.create_guid_service import CreateGuidService
 
 router = APIRouter()
 
@@ -345,7 +344,6 @@ async def http_post_ci_schema_v1(
     the whole request body to a Google Cloud Bucket.
     """
     logger.info("Posting ci schema via v1 endpoint")
-
 
     ci_metadata = ci_processor_service.process_raw_ci(post_data)
 

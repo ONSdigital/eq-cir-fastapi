@@ -12,11 +12,13 @@ CLASSIFIER_VALUE_DESC: Final[str] = "classifier_value used by the CI"
 LANG_DESC: Final[str] = "The language of the CI"
 SURVEY_ID_DESC: Final[str] = "The survey_id of the CI"
 
+
 @dataclass
 class DeleteCiV1Params:
     """Model for `delete_ci_metadata_v1` request query params"""
 
     survey_id: str = Query(default=None, description="The survey ID of the CI to be deleted.", example="123")
+
 
 @dataclass
 class GetCiMetadataV1Params:
@@ -88,6 +90,7 @@ class GetCiSchemaV1Params:
         """
         return all(getattr(self, arg) for arg in args)
 
+
 @dataclass
 class GetCiSchemaV2Params:
     """Model for `get_ci_schema_v2` request query params"""
@@ -97,6 +100,7 @@ class GetCiSchemaV2Params:
         description="The global unique ID of the CI",
         example="428ae4d1-8e7f-4a9d-8bef-05a266bf81e7",
     )
+
 
 class PostCiSchemaV1Data(BaseModel):
     """
@@ -133,6 +137,7 @@ class PostCiSchemaV1Data(BaseModel):
         if value == "" or value.isspace():
             raise ValueError(f"{info.field_name} can't be empty or null")
         return value
+
 
 @dataclass
 class PostCiSchemaV2Params:
