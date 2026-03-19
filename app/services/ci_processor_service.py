@@ -20,9 +20,9 @@ class CiProcessorService:
     def process_raw_ci(
             self,
             post_data: PostCiSchemaV1Data,
-            ci_id: str,
+            ci_id = "",
             validator_version: str = "",
-            ci_version: str | None = "",
+            ci_version: str = "",
     ) -> CiMetadata:
         """
         Processes incoming ci
@@ -44,7 +44,6 @@ class CiProcessorService:
             classifier_type,
             classifier_value,
             post_data,
-            ci_version,
         )
 
         stored_ci_filename = CiSchemaLocationService.get_ci_schema_location(next_version_ci_metadata)
@@ -109,8 +108,7 @@ class CiProcessorService:
             validator_version: str,
             classifier_type: str,
             classifier_value: str,
-            post_data: PostCiSchemaV1Data,
-            ci_version: str = "",
+            post_data: PostCiSchemaV1Data
     ) -> CiMetadata:
         """
         Builds the next version of CI metadata.
@@ -126,12 +124,13 @@ class CiProcessorService:
         CiMetadata: the next version of CI metadata.
         """
 
-        if ci_version == "" or ci_version is None:
-            ci_version: int = self.calculate_next_ci_version(post_data.survey_id, classifier_type, classifier_value, post_data.language)
 
         next_version_ci_metadata = CiMetadata(
             guid=ci_id,
-            ci_version=ci_version,
+            ci_version=self.calculate_next_ci_version(post_data.survey_id,
+                                                      classifier_type,
+                                                      classifier_value,
+                                                      post_data.language),
             validator_version=validator_version,
             data_version=post_data.data_version,
             classifier_type=classifier_type,

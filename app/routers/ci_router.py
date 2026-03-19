@@ -390,10 +390,7 @@ async def http_post_ci_schema_v2(
         logger.debug(f"{message}")
         raise exceptions.ExceptionNoValidator
 
-     # Generate new uid
-    ci_id = CreateGuidService.create_guid()
-
-    ci_metadata = ci_processor_service.process_raw_ci(post_data, ci_id)
+    ci_metadata = ci_processor_service.process_raw_ci(post_data, query_params.validator_version)
 
     logger.info("CI schema posted successfully")
 

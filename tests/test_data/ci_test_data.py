@@ -53,7 +53,7 @@ mock_post_ci_schema_with_sds_schema = PostCiSchemaV1Data(
 
 mock_ci_metadata = CiMetadata(
     ci_version=1,
-    validator_version="0.0.1",
+    validator_version="",
     data_version=mock_data_version,
     classifier_type=mock_classifier_type,
     classifier_value=mock_classifier_value,

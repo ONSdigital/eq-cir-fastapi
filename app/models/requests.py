@@ -12,13 +12,11 @@ CLASSIFIER_VALUE_DESC: Final[str] = "classifier_value used by the CI"
 LANG_DESC: Final[str] = "The language of the CI"
 SURVEY_ID_DESC: Final[str] = "The survey_id of the CI"
 
-
 @dataclass
 class DeleteCiV1Params:
     """Model for `delete_ci_metadata_v1` request query params"""
 
     survey_id: str = Query(default=None, description="The survey ID of the CI to be deleted.", example="123")
-
 
 @dataclass
 class GetCiMetadataV1Params:
@@ -90,7 +88,6 @@ class GetCiSchemaV1Params:
         """
         return all(getattr(self, arg) for arg in args)
 
-
 @dataclass
 class GetCiSchemaV2Params:
     """Model for `get_ci_schema_v2` request query params"""
@@ -100,7 +97,6 @@ class GetCiSchemaV2Params:
         description="The global unique ID of the CI",
         example="428ae4d1-8e7f-4a9d-8bef-05a266bf81e7",
     )
-
 
 class PostCiSchemaV1Data(BaseModel):
     """
@@ -138,15 +134,11 @@ class PostCiSchemaV1Data(BaseModel):
             raise ValueError(f"{info.field_name} can't be empty or null")
         return value
 
-
 @dataclass
 class PostCiSchemaV2Params:
     """Model for `post_ci_schema_v3` request query params"""
 
-    guid: str = Query(default=None, description="guid for CI")
     validator_version: str = Query(default=None, description="Validator version of CI schema", example="0.0.1")
-
-
 
 @dataclass
 class PostCiSchemaV3Params:
@@ -155,7 +147,6 @@ class PostCiSchemaV3Params:
     guid: str = Query(default=None, description="guid for CI")
     validator_version: str = Query(default=None, description="Validator version of CI schema", example="0.0.1")
     ci_version: str = Query(default=None, description="CI version of CI schema", example="1")
-
 
     def params_not_none(self, keys):
         """
@@ -171,3 +162,11 @@ class UpdateValidatorVersionV1Params:
 
     guid: str = Query(default=None, description="guid for CI")
     validator_version: str = Query(default=None, description="Validator version of CI schema", example="0.0.1")
+
+    def params_not_none(self, keys):
+        """
+        Loops through each input `keys` and checks if associated class param is `None`
+
+        If all param values are not `None` return `True`, otherwise return `False`
+        """
+        return all(getattr(self, key) for key in keys)
