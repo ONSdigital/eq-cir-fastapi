@@ -6,7 +6,6 @@ from app.models.responses import CiMetadata, CiValidatorMetadata
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from app.services.ci_classifier_service import CiClassifierService
 from app.services.ci_schema_location_service import CiSchemaLocationService
-from app.services.create_guid_service import CreateGuidService
 from app.services.datetime_service import DatetimeService
 from app.services.document_version_service import DocumentVersionService
 
@@ -18,20 +17,13 @@ class CiProcessorService:
         self.ci_firebase_repository = CiFirebaseRepository()
 
     # Posts new CI metadata to Firestore
-    def process_raw_ci(
-            self,
-            post_data: PostCiSchemaV1Data,
-            validator_version: str = "",
-    ) -> CiMetadata:
+    def process_raw_ci(self, post_data: PostCiSchemaV1Data, ci_id, ci_version, validator_version) -> CiMetadata:
         """
         Processes incoming ci
 
         Parameters:
         post_data (PostCiSchemaV1Data): incoming CI metadata
         """
-
-        # Generate new uid
-        ci_id = CreateGuidService.create_guid()
 
         ci = post_data.__dict__
 
@@ -41,12 +33,18 @@ class CiProcessorService:
         # Clean up unused classifier fields in ci
         ci = CiClassifierService.clean_ci_unused_classifier(ci, classifier_type)
 
+        metadata = self.get_ci_metadata_with_id(ci_id)
+
+        if metadata:
+            raise exceptions.GlobalException
+
         next_version_ci_metadata = self.build_next_version_ci_metadata(
             ci_id,
             validator_version,
             classifier_type,
             classifier_value,
             post_data,
+            ci_version
         )
 
         stored_ci_filename = CiSchemaLocationService.get_ci_schema_location(next_version_ci_metadata)
@@ -111,7 +109,8 @@ class CiProcessorService:
             validator_version: str,
             classifier_type: str,
             classifier_value: str,
-            post_data: PostCiSchemaV1Data
+            post_data: PostCiSchemaV1Data,
+            ci_version
     ) -> CiMetadata:
         """
         Builds the next version of CI metadata.
@@ -126,12 +125,17 @@ class CiProcessorService:
         Returns:
         CiMetadata: the next version of CI metadata.
         """
+        current_ci_version = self.calculate_next_ci_version(post_data.survey_id, classifier_type, classifier_value, post_data.language)
+
+        if ci_version == "":
+            ci_version = current_ci_version
+        elif int(ci_version) <= current_ci_version:
+            raise exceptions.GlobalException()
+
+
         next_version_ci_metadata = CiMetadata(
             guid=ci_id,
-            ci_version=self.calculate_next_ci_version(post_data.survey_id,
-                                                      classifier_type,
-                                                      classifier_value,
-                                                      post_data.language),
+            ci_version=int(ci_version),
             validator_version=validator_version,
             data_version=post_data.data_version,
             classifier_type=classifier_type,
