@@ -136,7 +136,7 @@ class PostCiSchemaV1Data(BaseModel):
 
 @dataclass
 class PostCiSchemaV2Params:
-    """Model for `post_ci_schema_v3` request query params"""
+    """Model for `post_ci_schema_v2` request query params"""
 
     validator_version: str = Query(default=None, description="Validator version of CI schema", example="0.0.1")
 
