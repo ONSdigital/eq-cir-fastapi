@@ -57,6 +57,7 @@ class TestHttpPostCiV2:
 
         response = client.post(
             self.url,
+            params={"validator_version": "0.0.1"},
             headers={"ContentType": CONTENT_TYPE},
             json=mock_post_ci_schema.model_dump(),
         )
@@ -96,6 +97,7 @@ class TestHttpPostCiV2:
 
         response = client.post(
             self.url,
+            params={"validator_version": "0.0.1"},
             headers={"ContentType": CONTENT_TYPE},
             json=mock_post_ci_schema.model_dump(),
         )
@@ -128,7 +130,9 @@ class TestHttpPostCiV2:
         as part of the request
         """
         # Make request to base url without any post data
-        response = client.post(self.url, headers={"ContentType": CONTENT_TYPE})
+        response = client.post(self.url,
+                               params={"validator_version": "0.0.1"},
+                               headers={"ContentType": CONTENT_TYPE})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert response.json()["message"] == "Validation has failed"
