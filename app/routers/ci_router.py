@@ -12,11 +12,11 @@ from app.models.requests import (
     DeleteCiV1Params,
     GetCiMetadataV1Params,
     GetCiMetadataV2Params,
-    GetCiMetadataV3Params,
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
     PostCiSchemaV1Data,
     PostCiSchemaV2Params,
+    PostCiSchemaV3Params,
 )
 from app.models.responses import CiMetadata, CiValidatorMetadata
 from app.repositories.buckets.ci_schema_bucket_repository import (
