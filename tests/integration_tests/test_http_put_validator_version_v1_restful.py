@@ -10,7 +10,7 @@ from tests.integration_tests.utils import make_iap_request
 
 class TestPutValidatorVersionV1Restful:
     post_url = "/v2/collection-instruments?validator_version=0.0.1"
-    update_validator = "/v1/collection-instruments"
+    update_validator = "/v1/collection-instruments/validator-version"
     get_metadata_url = "/v1/collection-instruments/metadata"
 
     def teardown_method(self):
