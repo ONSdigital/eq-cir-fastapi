@@ -33,14 +33,12 @@ def make_iap_request(method, path, **kwargs):
         kwargs.pop("unauthenticated")
         auth_token = "bad-request-key"
     elif settings.CONF == 'local-int-tests':
-        # For local integration tests, we want to bypass authentication, so we set the auth token to a default value.
+        # For local docker integration tests, we set the auth token to a default value.
         auth_token = 'default'
-    else:
-        # Set Headers using fetched id token. Requires valid credentials file at path specified by the
-        # `GOOGLE_APPLICATION_CREDENTIALS` env var. See README.md for more details
-        #auth_token = id_token.fetch_id_token(Request(), audience=settings.OAUTH_CLIENT_ID)
-
-        service_account_email = "ons-cir-sandbox-384314@appspot.gserviceaccount.com"
+    elif settings.CONF == 'sandbox-int-tests':
+        # For local GCP sandbox integration tests, we impersonate the default App Engine account to generate the
+        # Open ID token.
+        service_account_email = f"{settings.PROJECT_ID}@appspot.gserviceaccount.com"
         client = iam_credentials_v1.IAMCredentialsClient()
         name = f"projects/-/serviceAccounts/{service_account_email}"
 
@@ -51,6 +49,9 @@ def make_iap_request(method, path, **kwargs):
         )
 
         auth_token = response.token
+    else:
+        # For cloud-build integration tests, we use the default credentials to generate the Open ID token.
+        auth_token = id_token.fetch_id_token(Request(), audience=settings.OAUTH_CLIENT_ID)
 
     headers = {
         "Authorization": f"Bearer {auth_token}",
