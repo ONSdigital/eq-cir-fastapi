@@ -34,7 +34,7 @@ def make_iap_request(method, path, **kwargs):
         kwargs.pop("unauthenticated")
         auth_token = "bad-request-key"
     elif settings.CONF == 'local-int-tests':
-        # For local docker integration tests, we set the auth token to a default value.
+        # For local docker integration tests, we bypass the token
         auth_token = 'default'
     elif settings.CONF == 'sandbox-int-tests':
         # For local GCP sandbox integration tests, we impersonate the default App Engine account to generate the
@@ -58,12 +58,6 @@ def make_iap_request(method, path, **kwargs):
         "Authorization": f"Bearer {auth_token}",
         "Content-Type": "application/json",
     }
-        headers = {
-            "Authorization": f"Bearer {auth_token}",
-            "Content-Type": "application/json",
-        }
-    else:
-        headers = HttpService.generate_authentication_headers()
 
     url = f"{settings.URL_SCHEME}://{settings.DEFAULT_HOSTNAME}{path}"
 
