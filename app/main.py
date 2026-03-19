@@ -4,7 +4,8 @@ from fastapi.exceptions import RequestValidationError
 from app.config import Settings, logging
 from app.exception import exceptions
 from app.exception.exception_interceptor import ExceptionInterceptor
-from app.routers import ci_router, status_router, validator_router
+from app.routers import (ci_router, status_router, validator_router, ci_router_restful, validator_router_restful,
+                         status_router_restful)
 
 app = FastAPI()
 logger = logging.getLogger(__name__)
@@ -84,3 +85,10 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 app.include_router(ci_router.router)
 app.include_router(status_router.router)
 app.include_router(validator_router.router)
+
+# Version 2 routers, refactored to be more RESTful
+app.include_router(validator_router_restful.router)
+
+app.include_router(ci_router_restful.router)
+
+app.include_router(status_router_restful.router)
