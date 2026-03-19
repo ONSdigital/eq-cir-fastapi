@@ -20,6 +20,7 @@ unit-tests:
 	export PROJECT_ID='$(PROJECT_ID)' && \
 	uv run python -m pytest --cov=app --cov-fail-under=90 --cov-report term-missing --cov-config=.coveragerc_unit -vv ./tests/unit_tests/ -W ignore::DeprecationWarning
 
+# Spinning up emulators in docker is required to run the local integration tests.
 integration-tests-local:
 	export CONF='local-int-tests' && \
 	export PROJECT_ID='emulated-project-id' && \
@@ -58,11 +59,12 @@ integration-tests-cloudbuild:
 	export PYTHONPATH=app && \
 	uv run python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
 
+# Spinning up emulators in docker is required to run this command successfully.
 generate-spec:
-	gcloud auth application-default login && \
-	export PROJECT_ID='$(PROJECT_ID)' && \
-	export FIRESTORE_DB_NAME='$(PROJECT_ID)-cir' && \
-	export CI_STORAGE_BUCKET_NAME='$(PROJECT_ID)-cir-europe-west2-schema' && \
+	export PROJECT_ID='emulated-project-id' && \
+	export CI_STORAGE_BUCKET_NAME='emulated-ci-bucket' && \
+	export FIRESTORE_EMULATOR_HOST=localhost:8200 && \
+	export STORAGE_EMULATOR_HOST=http://localhost:9026 && \
 	uv run python -m scripts.generate_openapi
 
 lint:
