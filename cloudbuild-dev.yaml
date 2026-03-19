@@ -60,6 +60,7 @@ steps:
         "run",
         "deploy",
         "cir",
+        "--no-invoker-iam-check",
         "--image",
         "europe-west2-docker.pkg.dev/${PROJECT_ID}/cir/cir:${SHORT_SHA}",
         "--region",
@@ -71,29 +72,8 @@ steps:
         "CIR_APPLICATION_VERSION=development",
       ]
 
-  - name: "gcr.io/cloud-builders/gcloud"
-    id: "Retrieve `OAUTH_BRAND_NAME` and save it to workspace"
-    entrypoint: sh
-    args:
-      - "-c"
-      - |
-        gcloud iap oauth-brands list --format='value(name)' --limit=1 --project=${PROJECT_ID} \
-        > /workspace/oauth_brand_name
-
-  - name: "gcr.io/cloud-builders/gcloud"
-    id: "Retrieve `OAUTH_CLIENT_NAME` and save it to workspace"
-    entrypoint: sh
-    args:
-      - "-c"
-      - |
-        gcloud iap oauth-clients list $(cat /workspace/oauth_brand_name) --format='value(name)' \
-        --limit=1 \
-        > /workspace/oauth_client_name
-
   - name: python:3.13
     id: "pytest integration tests"
-    # gcloud returns OAUTH_CLIENT_NAME as '$OAUTH_BRAND_NAME/identityAwareProxy/OAUTH_CLIENT_ID'
-    # so we have to split by / and use the last part of the string here to get OAUTH_CLIENT_ID
     entrypoint: sh
     args:
       - "-c"
@@ -101,11 +81,10 @@ steps:
         export INT_DEFAULT_HOSTNAME=${_SSL_CERTIFICATE_DOMAIN}
         export INT_FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}
         export INT_CI_STORAGE_BUCKET_NAME=${_CI_STORAGE_BUCKET_NAME}
-        OAUTH_CLIENT_NAME=$(cat /workspace/oauth_client_name)
-        export INT_OAUTH_CLIENT_ID=${OAUTH_CLIENT_NAME##*/}
         export INT_PROJECT_ID=${PROJECT_ID}
         export INT_PUBLISH_CI_TOPIC_ID=${_PUBLISH_CI_TOPIC_ID}
         export INT_URL_SCHEME=https
+        export SECRET_ID=iap-secret
         pip install --upgrade pip --user
         pip install uv
         uv sync

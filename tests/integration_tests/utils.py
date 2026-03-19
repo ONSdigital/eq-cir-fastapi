@@ -2,6 +2,7 @@ import requests
 from google.cloud import iam_credentials_v1
 from google.auth.transport.requests import Request
 from google.oauth2 import id_token
+from sds_common.services.http_service import HttpService
 
 from app.config import Settings
 
@@ -57,6 +58,13 @@ def make_iap_request(method, path, **kwargs):
         "Authorization": f"Bearer {auth_token}",
         "Content-Type": "application/json",
     }
+        headers = {
+            "Authorization": f"Bearer {auth_token}",
+            "Content-Type": "application/json",
+        }
+    else:
+        headers = HttpService.generate_authentication_headers()
+
     url = f"{settings.URL_SCHEME}://{settings.DEFAULT_HOSTNAME}{path}"
 
     # Fetch the Identity-Aware Proxy-protected URL, including an
