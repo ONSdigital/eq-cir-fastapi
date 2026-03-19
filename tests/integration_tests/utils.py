@@ -34,21 +34,12 @@ def make_iap_request(method, path, **kwargs):
             "Authorization": f"Bearer {auth_token}",
             "Content-Type": "application/json",
         }
-    else:
-        headers = HttpService.generate_authentication_headers()
-
     elif settings.CONF == 'local-int-tests':
         # For local integration tests, we want to bypass authentication, so we set the auth token to a default value.
         auth_token = 'default'
     else:
-        # Set Headers using fetched id token. Requires valid credentials file at path specified by the
-        # `GOOGLE_APPLICATION_CREDENTIALS` env var. See README.md for more details
-        auth_token = id_token.fetch_id_token(Request(), audience=settings.OAUTH_CLIENT_ID)
+        headers = HttpService.generate_authentication_headers()
 
-    headers = {
-        "Authorization": f"Bearer {auth_token}",
-        "Content-Type": "application/json",
-    }
     url = f"{settings.URL_SCHEME}://{settings.DEFAULT_HOSTNAME}{path}"
 
     # Fetch the Identity-Aware Proxy-protected URL, including an

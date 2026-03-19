@@ -31,10 +31,6 @@ class CiProcessorService:
         Parameters:
         post_data (PostCiSchemaV1Data): incoming CI metadata
         """
-
-        # Generate new uid
-        ci_id = CreateGuidService.create_guid()
-
         ci = post_data.__dict__
 
         # Get classifier type and value from ci

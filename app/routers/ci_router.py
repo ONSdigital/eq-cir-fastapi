@@ -189,48 +189,6 @@ async def http_get_ci_metadata_v2(
 
     return return_ci_metadata_collection
 
-@router.get(
-    "/v3/ci_metadata",
-    responses={
-        400: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
-        },
-        500: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_500_global_exception}},
-        },
-        404: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_404_no_ci_exception}},
-        },
-    },
-)
-async def http_get_ci_metadata_v3(
-    query_params: GetCiMetadataV3Params = Depends(),
-    ci_processor_service: CiProcessorService = Depends(),
-):
-    """
-    GET method that returns ONE metadata object from Firestore that match the guid passed.
-    """
-    logger.info("Getting ci metadata via v3 endpoint")
-    logger.debug(f"get_ci_metadata_v3: Input data: query_params={query_params.__dict__}")
-
-    if query_params.guid == "":
-        raise exceptions.ExceptionIncorrectKeyNames
-
-    ci_metadata = ci_processor_service.get_ci_metadata_with_id(query_params.guid)
-
-    if not ci_metadata:
-        error_message = "get_ci_metadata_v3: exception raised - No collection instrument metadata found"
-        logger.error(error_message)
-        logger.debug(f"{error_message}:{query_params.guid}")
-        raise exceptions.ExceptionNoCIMetadata
-
-    logger.info("CI metadata retrieved successfully.")
-
-    return ci_metadata.model_dump()
-
 
 # Fetching CI schema from Bucket version 1
 @router.get(
@@ -476,7 +434,7 @@ async def http_post_ci_schema_v3(
         logger.debug(f"{message}")
         raise exceptions.ExceptionIncorrectKeyNames
 
-    ci_metadata = ci_processor_service.process_raw_ci(post_data, query_params.guid, query_params.ci_version)
+    ci_metadata = ci_processor_service.process_raw_ci(post_data, query_params.guid, query_params.validator_version, query_params.ci_version)
 
     logger.info("CI schema posted successfully")
 
