@@ -6,7 +6,6 @@ from app.models.responses import CiMetadata, CiValidatorMetadata
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from app.services.ci_classifier_service import CiClassifierService
 from app.services.ci_schema_location_service import CiSchemaLocationService
-from app.services.create_guid_service import CreateGuidService
 from app.services.datetime_service import DatetimeService
 from app.services.document_version_service import DocumentVersionService
 

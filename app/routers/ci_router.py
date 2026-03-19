@@ -12,7 +12,6 @@ from app.models.requests import (
     DeleteCiV1Params,
     GetCiMetadataV1Params,
     GetCiMetadataV2Params,
-    GetCiMetadataV3Params,
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
     PostCiSchemaV1Data,
