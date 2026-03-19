@@ -176,7 +176,6 @@ async def get_collection_instruments_metadata_v2(
 
     return return_ci_metadata_collection
 
-# GET /v3/collection-instruments/metadata/{guid}
 @router.get(
     "/v3/collection-instruments/metadata",
     responses={
@@ -377,7 +376,6 @@ async def create_collection_instrument_v1(
     logger.info("CI schema posted successfully")
     return ci_metadata.model_dump()
 
-# POST /v2/collection-instruments
 @router.post(
     "/v2/collection-instruments",
     responses={
@@ -420,7 +418,6 @@ async def create_collection_instrument_v2(
 
     return ci_metadata.model_dump()
 
-# GET /v1/collection-instruments/validator-metadata
 @router.get(
     "/v1/collection-instruments/validator-metadata",
     responses={
