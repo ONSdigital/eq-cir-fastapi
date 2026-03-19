@@ -359,6 +359,424 @@ paths:
                 $ref: '#/components/schemas/ExceptionResponseModel'
           description: Internal Server Error
       summary: Http Get Ci Validator Metadata V1
+  /v1/collection-instruments:
+    delete:
+      operationId: delete_collection_instrument_v1_collection_instruments_delete
+      parameters:
+      - description: The survey ID of the CI to be deleted.
+        example: '123'
+        in: query
+        name: survey_id
+        required: false
+        schema:
+          description: The survey ID of the CI to be deleted.
+          title: Survey Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '400':
+          content:
+            application/json:
+              example:
+                message: Invalid search parameters provided
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              example:
+                message: No CI to delete
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Not Found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+        '500':
+          content:
+            application/json:
+              example:
+                message: Unable to process request
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+      summary: Delete Collection Instrument
+    post:
+      description: 'POST method that creates a Collection Instrument. This will post
+        the metadata to Firestore and
+
+        the whole request body to a Google Cloud Bucket.'
+      operationId: create_collection_instrument_v1_v1_collection_instruments_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCiSchemaV1Data'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CiMetadata'
+          description: Successfully created a CI. This is illustrated with the returned
+            response containing the metadata of the CI.
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+        '500':
+          content:
+            application/json:
+              example:
+                message: Unable to process request
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+      summary: Create Collection Instrument V1
+  /v1/collection-instruments/metadata:
+    get:
+      description: GET method that returns any metadata objects from Firestore that
+        match the parameters passed.
+      operationId: get_collection_instruments_metadata_v1_v1_collection_instruments_metadata_get
+      parameters:
+      - description: classifier_type used by the CI
+        example: form_type
+        in: query
+        name: classifier_type
+        required: false
+        schema:
+          $ref: '#/components/schemas/Classifiers'
+          description: classifier_type used by the CI
+      - description: classifier_value used by the CI
+        example: '0001'
+        in: query
+        name: classifier_value
+        required: false
+        schema:
+          description: classifier_value used by the CI
+          title: Classifier Value
+          type: string
+      - description: The language of the CI
+        example: en
+        in: query
+        name: language
+        required: false
+        schema:
+          description: The language of the CI
+          title: Language
+          type: string
+      - description: The survey_id of the CI
+        example: '123'
+        in: query
+        name: survey_id
+        required: false
+        schema:
+          description: The survey_id of the CI
+          title: Survey Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '400':
+          content:
+            application/json:
+              example:
+                message: Invalid search parameters provided
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              example:
+                message: No schema metadata to update
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Not Found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+        '500':
+          content:
+            application/json:
+              example:
+                message: Unable to process request
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+      summary: Get Collection Instruments Metadata V1
+  /v1/collection-instruments/schema:
+    get:
+      description: GET method that fetches a CI schema by survey_id, form_type and
+        language.
+      operationId: get_collection_instrument_schema_v1_v1_collection_instruments_schema_get
+      parameters:
+      - description: classifier_type used by the CI
+        example: form_type
+        in: query
+        name: classifier_type
+        required: false
+        schema:
+          $ref: '#/components/schemas/Classifiers'
+          description: classifier_type used by the CI
+      - description: classifier_value used by the CI
+        example: '0001'
+        in: query
+        name: classifier_value
+        required: false
+        schema:
+          description: classifier_value used by the CI
+          title: Classifier Value
+          type: string
+      - description: The language of the CI
+        example: en
+        in: query
+        name: language
+        required: false
+        schema:
+          description: The language of the CI
+          title: Language
+          type: string
+      - description: The survey_id of the CI
+        example: '123'
+        in: query
+        name: survey_id
+        required: false
+        schema:
+          description: The survey_id of the CI
+          title: Survey Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CiMetadata'
+          description: Successfully retrieved the CI schema. This is illustrated by
+            returning the CI schema to the user.
+        '400':
+          content:
+            application/json:
+              example:
+                message: Invalid search parameters provided
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              example:
+                message: No CI found
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Not Found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+        '500':
+          content:
+            application/json:
+              example:
+                message: Unable to process request
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+      summary: Get Collection Instrument Schema V1
+  /v1/collection-instruments/validator-metadata:
+    get:
+      description: GET method that returns the validator metadata for a CI schema.
+      operationId: get_collection_instruments_validator_metadata_v1_v1_collection_instruments_validator_metadata_get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CiValidatorMetadata'
+                title: Response Get Collection Instruments Validator Metadata V1 V1
+                  Collection Instruments Validator Metadata Get
+                type: array
+          description: Successful Response
+        '404':
+          content:
+            application/json:
+              example:
+                message: No CI validator metadata found
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Not Found
+        '500':
+          content:
+            application/json:
+              example:
+                message: Unable to process request
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+      summary: Get Collection Instruments Validator Metadata V1
+  /v1/collection-instruments/validator-version:
+    patch:
+      description: PATCH method that updates validator_version by Guid.
+      operationId: patch_collection_instrument_validator_version_v1_collection_instruments_validator_version_patch
+      parameters:
+      - description: guid for CI
+        in: query
+        name: guid
+        required: false
+        schema:
+          description: guid for CI
+          title: Guid
+          type: string
+      - description: Validator version of CI schema
+        example: 0.0.1
+        in: query
+        name: validator_version
+        required: false
+        schema:
+          description: Validator version of CI schema
+          title: Validator Version
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CiMetadata'
+          description: Successfully updated validator version
+        '400':
+          content:
+            application/json:
+              example:
+                message: Invalid search parameters provided
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              example:
+                message: No CI found
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Not Found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+        '500':
+          content:
+            application/json:
+              example:
+                message: Unable to process request
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+      summary: Patch Collection Instrument Validator Version
+    put:
+      description: PUT method that updates validator_version and CI metadata by Guid.
+      operationId: put_collection_instrument_validator_version_v1_collection_instruments_validator_version_put
+      parameters:
+      - description: guid for CI
+        in: query
+        name: guid
+        required: false
+        schema:
+          description: guid for CI
+          title: Guid
+          type: string
+      - description: Validator version of CI schema
+        example: 0.0.1
+        in: query
+        name: validator_version
+        required: false
+        schema:
+          description: Validator version of CI schema
+          title: Validator Version
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCiSchemaV1Data'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CiMetadata'
+          description: Successfully updated validator version
+        '400':
+          content:
+            application/json:
+              example:
+                message: Invalid search parameters provided
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              example:
+                message: No CI found
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Not Found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+        '500':
+          content:
+            application/json:
+              example:
+                message: Unable to process request
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+      summary: Put Collection Instrument Validator Version
   /v1/dev/teardown:
     delete:
       description: DELETE method that deletes the CI schema from the bucket as well
@@ -751,6 +1169,206 @@ paths:
                 $ref: '#/components/schemas/ExceptionResponseModel'
           description: Internal Server Error
       summary: Http Get Ci Metadata V2
+  /v2/collection-instruments:
+    post:
+      description: 'POST method that creates a Collection Instrument. This will post
+        the metadata to Firestore and
+
+        the whole request body to a Google Cloud Bucket. Validator version required
+        param.'
+      operationId: create_collection_instrument_v2_v2_collection_instruments_post
+      parameters:
+      - description: Validator version of CI schema
+        example: 0.0.1
+        in: query
+        name: validator_version
+        required: false
+        schema:
+          description: Validator version of CI schema
+          title: Validator Version
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCiSchemaV1Data'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CiMetadata'
+          description: 'Successfully created a CI. This is illustrated with the returned
+            response containing the metadata of the CI. '
+        '400':
+          content:
+            application/json:
+              example:
+                message: Invalid search parameters provided
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+        '500':
+          content:
+            application/json:
+              example:
+                message: Unable to process request
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+      summary: Create Collection Instrument V2
+  /v2/collection-instruments/metadata:
+    get:
+      description: 'GET method that returns any metadata objects from Firestore that
+        match the parameters passed.
+
+        The user has multiple ways of querying the metadata.
+
+        1. Provide survey_id, form_type, language.
+
+        2. Provide no parameters.'
+      operationId: get_collection_instruments_metadata_v2_v2_collection_instruments_metadata_get
+      parameters:
+      - description: classifier_type used by the CI
+        example: form_type
+        in: query
+        name: classifier_type
+        required: false
+        schema:
+          $ref: '#/components/schemas/Classifiers'
+          description: classifier_type used by the CI
+      - description: classifier_value used by the CI
+        example: '0001'
+        in: query
+        name: classifier_value
+        required: false
+        schema:
+          description: classifier_value used by the CI
+          title: Classifier Value
+          type: string
+      - description: The language of the CI
+        example: en
+        in: query
+        name: language
+        required: false
+        schema:
+          description: The language of the CI
+          title: Language
+          type: string
+      - description: The survey_id of the CI
+        example: '123'
+        in: query
+        name: survey_id
+        required: false
+        schema:
+          description: The survey_id of the CI
+          title: Survey Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '400':
+          content:
+            application/json:
+              example:
+                message: Invalid search parameters provided
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              example:
+                message: No CI found
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Not Found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+        '500':
+          content:
+            application/json:
+              example:
+                message: Unable to process request
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+      summary: Get Collection Instruments Metadata V2
+  /v2/collection-instruments/schema:
+    get:
+      description: GET method that fetches a CI schema by GUID.
+      operationId: get_collection_instrument_schema_by_guid_v2_v2_collection_instruments_schema_get
+      parameters:
+      - description: The global unique ID of the CI
+        example: 428ae4d1-8e7f-4a9d-8bef-05a266bf81e7
+        in: query
+        name: guid
+        required: false
+        schema:
+          description: The global unique ID of the CI
+          title: Guid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CiMetadata'
+          description: Successfully Queried a CI. This is illustrated with the returned
+            response containing the schema of the CI.
+        '400':
+          content:
+            application/json:
+              example:
+                message: Invalid search parameters provided
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              example:
+                message: No CI found
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Not Found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+        '500':
+          content:
+            application/json:
+              example:
+                message: Unable to process request
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+      summary: Get Collection Instrument Schema By Guid V2
   /v2/publish_collection_instrument:
     post:
       description: 'POST method that creates a Collection Instrument. This will post
@@ -918,3 +1536,57 @@ paths:
                 $ref: '#/components/schemas/ExceptionResponseModel'
           description: Internal Server Error
       summary: Http Get Ci Metadata V3
+  /v3/collection-instruments/metadata:
+    get:
+      description: GET method that returns ONE metadata object from Firestore that
+        match the guid passed.
+      operationId: get_collection_instrument_metadata_by_guid_v3_collection_instruments_metadata_get
+      parameters:
+      - description: GUID
+        in: query
+        name: guid
+        required: false
+        schema:
+          description: GUID
+          title: Guid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '400':
+          content:
+            application/json:
+              example:
+                message: Invalid search parameters provided
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              example:
+                message: No CI found
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Not Found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+        '500':
+          content:
+            application/json:
+              example:
+                message: Unable to process request
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+      summary: Get Collection Instrument Metadata By Guid
