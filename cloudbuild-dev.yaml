@@ -90,3 +90,5 @@ steps:
         pip install uv
         uv sync
         make integration-tests-cloudbuild
+    options:
+      logging: CLOUD_LOGGING_ONLY
