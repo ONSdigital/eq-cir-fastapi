@@ -90,5 +90,3 @@ app.include_router(validator_router.router)
 app.include_router(validator_router_restful.router)
 
 app.include_router(ci_router_restful.router)
-
-app.include_router(status_router_restful.router)
