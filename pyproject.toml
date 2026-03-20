@@ -1,10 +1,10 @@
 [project]
 name = "cir"
-version = "0.1.8"
+version = "0.1.9"
 description = "Collection Instrument Registry"
 requires-python = ">=3.13,<3.14"
 dependencies = [
-    "coverage==7.11.0",
+    "coverage==7.13.5",
     "fastapi==0.121.0",
     "firebase-admin==7.1.0",
     "gcp-storage-emulator==2024.8.3",
