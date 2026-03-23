@@ -19,7 +19,22 @@ class TestPostCiV3:
 
     guid = "9d1bb195-08b9-494a-af52-1cbdda68deef"
 
-    post_url = "/v3/publish_collection_instrument?guid=9d1bb195-08b9-494a-af52-1cbdda68deef&ci_version=2%validator_version=0.0.1"
+    post_params = urlencode({"guid": "9d1bb195-08b9-494a-af52-1cbdda68deef",
+                             "ci_version": 2,
+                             "validator_version": "0.0.1"})
+
+    post_ci_params = urlencode({"guid": "9d1bb195-08b9-494a-af52-1cbdda68defg",
+                         "ci_version": 2,
+                         "validator_version": "0.0.1"})
+
+    update_params = urlencode({"guid": "9d1bb195-08b9-494a-af52-1cbdda68deed",
+                             "ci_version": 3,
+                             "validator_version": "0.0.1"})
+
+
+    post_url = f"/v3/publish_collection_instrument?{post_params}"
+    post_ci_url = f"/v3/publish_collection_instrument?{post_ci_params}"
+    updated_post_url = f"/v3/publish_collection_instrument?{update_params}"
     post_url_no_guid = "/v3/publish_collection_instrument?ci_version=2%validator_version=0.0.1"
     get_metadata_url = "/v1/ci_metadata"
     subscription_id = generate_subscriber_id()  # Unique subscription ID to avoid conflicts and GCP errors
@@ -104,7 +119,7 @@ class TestPostCiV3:
         """
         # Creates a CI in the database, essentially running post_ci_v1 from handler folder
         setup_payload["sds_schema"] = "xx-ytr-1234-856"
-        ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_payload)
+        ci_response = make_iap_request("POST", f"{self.post_ci_url}", json=setup_payload)
         ci_response_data = ci_response.json()
 
         survey_id = setup_payload["survey_id"]
@@ -156,7 +171,7 @@ class TestPostCiV3:
         Where the same CI is submitted(survey_id),
         then a new version is returned based on the survey_id
         """
-        ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_publish_ci_return_payload)
+        ci_response = make_iap_request("POST", f"{self.updated_post_url}", json=setup_publish_ci_return_payload)
         ci_response_data = ci_response.json()
 
         survey_id = setup_publish_ci_return_payload["survey_id"]
@@ -176,7 +191,7 @@ class TestPostCiV3:
         check_ci_in_db_data = check_ci_in_db.json()
 
         expected_ci = CiMetadata(
-            ci_version=2,
+            ci_version=100,
             validator_version="0.0.1",
             data_version=setup_publish_ci_return_payload["data_version"],
             classifier_type=classifier_type,
@@ -189,12 +204,12 @@ class TestPostCiV3:
         )
 
         assert ci_response.status_code == status.HTTP_200_OK
-        assert ci_response_data["ci_version"] == 2
+        assert ci_response_data["ci_version"] == 100
         # database assertions
         assert len(check_ci_in_db_data) == 2
         assert check_ci_in_db_data[0] == expected_ci.model_dump()
         assert check_ci_in_db_data[1]["ci_version"] == 1
-        assert check_ci_in_db_data[0]["ci_version"] == 2
+        assert check_ci_in_db_data[0]["ci_version"] == 100
 
         # Need to pull and acknowledge messages to clear subscription
         ci_pubsub_helper.try_pull_and_acknowledge_messages(self.subscription_id)
