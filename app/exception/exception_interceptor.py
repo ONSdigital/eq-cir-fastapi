@@ -73,19 +73,5 @@ class ExceptionInterceptor:
         er = ExceptionResponder(status.HTTP_400_BAD_REQUEST, erm.erm_400_incorrect_key_names_exception)
         return er.throw_er_with_json()
 
-    def throw_400_guid_in_use(request: Request, exc: Exception) -> JSONResponse:
-        """
-        When a guid is already in use and a 400 HTTP response is returned when using post v3
-        """
-        er = ExceptionResponder(status.HTTP_400_BAD_REQUEST, erm.erm_400_guid_in_use)
-        return er.throw_er_with_json()
-
-    def throw_400_ci_version_lower_than_current(request: Request, exc: Exception) -> JSONResponse:
-        """
-        When a guid is already in use and a 400 HTTP response is returned when using post v3
-        """
-        er = ExceptionResponder(status.HTTP_400_BAD_REQUEST, erm.erm_400_ci_version_lower_than_current)
-        return er.throw_er_with_json()
-
 
 exception_interceptor = ExceptionInterceptor()

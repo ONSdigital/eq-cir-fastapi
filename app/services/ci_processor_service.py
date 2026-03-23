@@ -36,7 +36,7 @@ class CiProcessorService:
         metadata = self.get_ci_metadata_with_id(ci_id)
 
         if metadata:
-            raise exceptions.ExceptionGuidInUse
+            raise exceptions.GlobalException
 
         next_version_ci_metadata = self.build_next_version_ci_metadata(
             ci_id,
@@ -129,8 +129,8 @@ class CiProcessorService:
 
         if ci_version == "":
             ci_version = current_ci_version
-        elif int(ci_version) <= current_ci_version:
-            raise exceptions.ExceptionCiVersionLower()
+        elif int(ci_version) < current_ci_version:
+            raise exceptions.GlobalException()
 
 
         next_version_ci_metadata = CiMetadata(

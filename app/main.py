@@ -60,14 +60,7 @@ app.add_exception_handler(
     exceptions.ExceptionTopicNotFound,
     ExceptionInterceptor.throw_500_global_exception,
 )
-app.add_exception_handler(
-    exceptions.ExceptionGuidInUse,
-    ExceptionInterceptor.throw_400_guid_in_use(),
-)
-app.add_exception_handler(
-    exceptions.ExceptionCiVersionLower,
-    ExceptionInterceptor.throw_400_ci_version_lower_than_current(),
-)
+
 
 
 @app.exception_handler(500)
