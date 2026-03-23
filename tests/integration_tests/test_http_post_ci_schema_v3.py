@@ -307,7 +307,7 @@ class TestPostCiV3:
     def test_publish_ci_returns_unauthorized_request(self, setup_payload):
         """
         What am I testing:
-        http_post_ci_metadata_v1 should return a 401 unauthorized error if the endpoint is
+        http_post_ci_metadata_v3 should return a 401 unauthorized error if the endpoint is
         requested with an unauthorized token.
         """
         if settings.CONF == "local-int-tests":

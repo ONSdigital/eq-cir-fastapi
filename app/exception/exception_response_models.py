@@ -18,3 +18,5 @@ erm_404_no_ci_to_delete = ExceptionResponseModel(status="error", message="No CI 
 erm_404_no_ci_validator_metadata_exception = ExceptionResponseModel(
     status="error", message="No CI validator metadata found"
 )
+erm_400_guid_in_use_exception = ExceptionResponseModel(status="error", message="Invalid GUID provided - GUID in use")
+erm_400_ci_version_lower_than_current_exception = ExceptionResponseModel(status="error", message="ci_version not greater than current version")

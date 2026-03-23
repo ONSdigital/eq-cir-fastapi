@@ -46,3 +46,11 @@ class ExceptionBucketNotFound(Exception):
 
 class ExceptionTopicNotFound(Exception):
     pass
+
+
+class ExceptionGuidInUse(Exception):
+    pass
+
+
+class ExceptionCiVersionLower(Exception):
+    pass
