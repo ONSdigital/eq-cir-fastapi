@@ -28,10 +28,10 @@ RUN uv sync --frozen --no-dev
 ENV PATH="/app/.venv/bin:$PATH"
 
 # Expose the port the app runs on
-# EXPOSE $PORT
+EXPOSE 3030
 
 # Reset the entrypoint to avoid potentially prefixing the command from other based images.
 # i.e ENTRYPOINT ["python"] + CMD ["python", "run.py"] will result in ENTRYPOINT ["python", "python", "run.py"]
 ENTRYPOINT []
 
-CMD uv run python -m uvicorn app.main:app --reload --host 0.0.0.0 --port $PORT
+CMD uv run python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 3030
