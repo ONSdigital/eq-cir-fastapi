@@ -33,31 +33,21 @@ def make_iap_request(method, path, **kwargs):
     if "unauthenticated" in kwargs:
         kwargs.pop("unauthenticated")
         auth_token = "bad-request-key"
+        headers = {
+            "Authorization": f"Bearer {auth_token}",
+            "Content-Type": "application/json",
+        }
     elif settings.CONF == 'local-int-tests':
         # For local docker integration tests, we bypass the token
         auth_token = 'default'
+        headers = {
+            "Authorization": f"Bearer {auth_token}",
+            "Content-Type": "application/json",
+        }
     elif settings.CONF == 'sandbox-int-tests':
-        # For local GCP sandbox integration tests, we impersonate the default App Engine account to generate the
-        # Open ID token.
-        service_account_email = f"{settings.PROJECT_ID}@appspot.gserviceaccount.com"
-        client = iam_credentials_v1.IAMCredentialsClient()
-        name = f"projects/-/serviceAccounts/{service_account_email}"
-
-        response = client.generate_id_token(
-            name=name,
-            audience=settings.OAUTH_CLIENT_ID,
-            include_email=True
-        )
-
-        auth_token = response.token
+        headers = HttpService.generate_authentication_headers_by_impersonation()
     else:
-        # For cloud-build integration tests, we use the default credentials to generate the Open ID token.
-        auth_token = id_token.fetch_id_token(Request(), audience=settings.OAUTH_CLIENT_ID)
-
-    headers = {
-        "Authorization": f"Bearer {auth_token}",
-        "Content-Type": "application/json",
-    }
+        headers = HttpService.generate_authentication_headers()
 
     url = f"{settings.URL_SCHEME}://{settings.DEFAULT_HOSTNAME}{path}"
 

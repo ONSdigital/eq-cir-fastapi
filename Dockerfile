@@ -28,7 +28,7 @@ RUN uv sync --frozen --no-dev
 ENV PATH="/app/.venv/bin:$PATH"
 
 # Expose the port the app runs on
-EXPOSE $PORT
+# EXPOSE $PORT
 
 # Reset the entrypoint to avoid potentially prefixing the command from other based images.
 # i.e ENTRYPOINT ["python"] + CMD ["python", "run.py"] will result in ENTRYPOINT ["python", "python", "run.py"]
