@@ -191,7 +191,7 @@ class TestPostCiV3:
         check_ci_in_db_data = check_ci_in_db.json()
 
         expected_ci = CiMetadata(
-            ci_version=100,
+            ci_version=3,
             validator_version="0.0.1",
             data_version=setup_publish_ci_return_payload["data_version"],
             classifier_type=classifier_type,
@@ -204,12 +204,12 @@ class TestPostCiV3:
         )
 
         assert ci_response.status_code == status.HTTP_200_OK
-        assert ci_response_data["ci_version"] == 100
+        assert ci_response_data["ci_version"] == 3
         # database assertions
         assert len(check_ci_in_db_data) == 2
         assert check_ci_in_db_data[0] == expected_ci.model_dump()
         assert check_ci_in_db_data[1]["ci_version"] == 1
-        assert check_ci_in_db_data[0]["ci_version"] == 100
+        assert check_ci_in_db_data[0]["ci_version"] == 3
 
         # Need to pull and acknowledge messages to clear subscription
         ci_pubsub_helper.try_pull_and_acknowledge_messages(self.subscription_id)
