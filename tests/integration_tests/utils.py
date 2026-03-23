@@ -1,7 +1,4 @@
 import requests
-from google.cloud import iam_credentials_v1
-from google.auth.transport.requests import Request
-from google.oauth2 import id_token
 from sds_common.services.http_service import HttpService
 
 from app.config import Settings
