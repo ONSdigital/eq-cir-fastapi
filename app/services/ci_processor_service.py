@@ -17,7 +17,7 @@ class CiProcessorService:
         self.ci_firebase_repository = CiFirebaseRepository()
 
     # Posts new CI metadata to Firestore
-    def process_raw_ci(self, post_data: PostCiSchemaV1Data, ci_id, ci_version, validator_version) -> CiMetadata:
+    def process_raw_ci(self, post_data: PostCiSchemaV1Data, ci_id, validator_version, ci_version = "") -> CiMetadata:
         """
         Processes incoming ci
 

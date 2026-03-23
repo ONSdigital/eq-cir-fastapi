@@ -348,7 +348,7 @@ async def http_post_ci_schema_v1(
 
     ci_id = CreateGuidService.create_guid()
 
-    ci_metadata = ci_processor_service.process_raw_ci(post_data, ci_id, "", "")
+    ci_metadata = ci_processor_service.process_raw_ci(post_data, ci_id, "")
 
     logger.info("CI schema posted successfully")
     return ci_metadata.model_dump()
@@ -392,7 +392,7 @@ async def http_post_ci_schema_v2(
 
     ci_id = CreateGuidService.create_guid()
 
-    ci_metadata = ci_processor_service.process_raw_ci(post_data, ci_id, "", query_params.validator_version)
+    ci_metadata = ci_processor_service.process_raw_ci(post_data, ci_id, query_params.validator_version)
 
     logger.info("CI schema posted successfully")
 
@@ -436,8 +436,8 @@ async def http_post_ci_schema_v3(
 
     ci_metadata = ci_processor_service.process_raw_ci(post_data,
                                                       query_params.guid,
-                                                      query_params.ci_version,
-                                                      query_params.validator_version)
+                                                      query_params.validator_version,
+                                                      query_params.ci_version)
 
     logger.info("CI schema posted successfully")
 
