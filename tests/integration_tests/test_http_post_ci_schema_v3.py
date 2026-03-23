@@ -17,8 +17,8 @@ ci_pubsub_helper = PubSubHelper(settings.PUBLISH_CI_TOPIC_ID)
 class TestPostCiV3:
     """Tests for the `http_post_ci_v3` endpoint."""
 
-    post_url = "/v3/publish_collection_instrument?guid=guid&ci_version=2"
-    post_url_no_guid = "/v3/publish_collection_instrument?ci_version=2"
+    post_url = "/v3/publish_collection_instrument?guid=guid&ci_version=2%validator_version=0.0.1"
+    post_url_no_guid = "/v3/publish_collection_instrument?ci_version=2%validator_version=0.0.1"
     get_metadata_url = "/v1/ci_metadata"
     subscription_id = generate_subscriber_id()  # Unique subscription ID to avoid conflicts and GCP errors
 
