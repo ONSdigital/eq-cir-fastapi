@@ -3,8 +3,8 @@ LOCAL_URL=localhost:3030
 PROJECT_ID = $(shell gcloud config get project)
 SANDBOX_IP_ADDRESS = $(shell gcloud compute addresses list --global  --filter=name:$(PROJECT_ID)-cir-static-lb-ip --format='value(address)' --limit=1 --project=$(PROJECT_ID))
 
+# Please run gcloud auth application-default login before running the following commands that interact with GCP services
 start-cloud-dev:
-	gcloud auth application-default login && \
 	export PROJECT_ID='$(PROJECT_ID)' && \
 	export FIRESTORE_DB_NAME='$(PROJECT_ID)-cir' && \
 	export CI_STORAGE_BUCKET_NAME='$(PROJECT_ID)-cir-europe-west2-schema' && \
@@ -30,8 +30,8 @@ integration-tests-local:
 	export STORAGE_EMULATOR_HOST=http://localhost:9026 && \
 	uv run python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
 
+# Please run gcloud auth application-default login before running the following commands that interact with GCP services
 integration-tests-sandbox:
-	gcloud auth application-default login && \
 	export CONF='sandbox-int-tests' && \
 	export PROJECT_ID='$(PROJECT_ID)' && \
 	export FIRESTORE_DB_NAME='$(PROJECT_ID)-cir' && \
