@@ -30,6 +30,7 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 settings = Settings()
 
+
 @router.delete(
     "/v1/collection-instruments",
     responses={
@@ -68,6 +69,7 @@ async def delete_collection_instrument(
     logger.info("CI metadata and schema successfully deleted")
     response_content = f"CI metadata and schema successfully deleted for {query_params.survey_id}."
     return JSONResponse(status_code=status.HTTP_200_OK, content=response_content)
+
 
 @router.get(
     "/v1/collection-instruments/metadata",
@@ -118,6 +120,7 @@ async def get_collection_instruments_metadata_v1(
     logger.info("CI metadata retrieved successfully.")
 
     return return_ci_metadata_collection
+
 
 @router.get(
     "/v2/collection-instruments/metadata",
@@ -176,6 +179,7 @@ async def get_collection_instruments_metadata_v2(
 
     return return_ci_metadata_collection
 
+
 @router.get(
     "/v3/collection-instruments/metadata",
     responses={
@@ -217,6 +221,7 @@ async def get_collection_instrument_metadata_by_guid(
     logger.info("CI metadata retrieved successfully.")
 
     return ci_metadata.model_dump()
+
 
 @router.get(
     "/v1/collection-instruments/schema",
@@ -284,6 +289,7 @@ async def get_collection_instrument_schema_v1(
 
     return ci_schema
 
+
 @router.get(
     "/v2/collection-instruments/schema",
     responses={
@@ -346,6 +352,7 @@ async def get_collection_instrument_schema_by_guid_v2(
 
     return JSONResponse(status_code=status.HTTP_200_OK, content=ci_schema)
 
+
 @router.post(
     "/v1/collection-instruments",
     responses={
@@ -375,6 +382,7 @@ async def create_collection_instrument_v1(
 
     logger.info("CI schema posted successfully")
     return ci_metadata.model_dump()
+
 
 @router.post(
     "/v2/collection-instruments",
@@ -417,6 +425,7 @@ async def create_collection_instrument_v2(
     logger.info("CI schema posted successfully")
 
     return ci_metadata.model_dump()
+
 
 @router.get(
     "/v1/collection-instruments/validator-metadata",

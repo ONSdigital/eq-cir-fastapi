@@ -41,6 +41,7 @@ settings = Settings()
             "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
         },
     },
+    deprecated=True
 )
 async def http_patch_ci_validator_version_v1(
         query_params: UpdateValidatorVersionV1Params = Depends(),
@@ -77,6 +78,7 @@ async def http_patch_ci_validator_version_v1(
 
     return ci_metadata.model_dump()
 
+
 @router.put(
     "/v1/update_validator_version",
     responses={
@@ -99,6 +101,7 @@ async def http_patch_ci_validator_version_v1(
             "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
         },
     },
+    deprecated=True
 )
 async def http_put_ci_validator_version_v1(
         post_data: PostCiSchemaV1Data,

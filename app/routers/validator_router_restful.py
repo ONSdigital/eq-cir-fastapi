@@ -11,10 +11,11 @@ from app.models.requests import (
 from app.models.responses import CiMetadata
 from app.services.ci_processor_service import CiProcessorService
 
-router = APIRouter()
+router = APIRouter(tags=["Validator"])
 
 logger = logging.getLogger(__name__)
 settings = Settings()
+
 
 @router.patch(
     "/v1/collection-instruments/validator-version",
@@ -74,6 +75,7 @@ async def patch_collection_instrument_validator_version(
                  [query_params.guid, query_params.validator_version])
 
     return ci_metadata.model_dump()
+
 
 @router.put(
     "/v1/collection-instruments/validator-version",

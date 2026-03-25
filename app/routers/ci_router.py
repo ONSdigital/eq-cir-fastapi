@@ -25,7 +25,7 @@ from app.repositories.buckets.ci_schema_bucket_repository import (
 from app.services.ci_processor_service import CiProcessorService
 from app.services.ci_schema_location_service import CiSchemaLocationService
 
-router = APIRouter()
+router = APIRouter(tags=["CI"])
 
 logger = logging.getLogger(__name__)
 settings = Settings()
@@ -47,10 +47,10 @@ settings = Settings()
             "content": {"application/json": {"example": erm.erm_404_no_ci_to_delete}},
         },
     },
-)
+    deprecated=True)
 async def http_delete_ci_v1(
-    query_params: DeleteCiV1Params = Depends(),
-    ci_processor_service: CiProcessorService = Depends(),
+        query_params: DeleteCiV1Params = Depends(),
+        ci_processor_service: CiProcessorService = Depends(),
 ):
     """
     DELETE method that deletes the CI schema from the bucket as well as the CI metadata from Firestore.
@@ -91,10 +91,11 @@ async def http_delete_ci_v1(
             "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
         },
     },
+    deprecated=True
 )
 async def http_get_ci_metadata_v1(
-    query_params: GetCiMetadataV1Params = Depends(),
-    ci_processor_service: CiProcessorService = Depends(),
+        query_params: GetCiMetadataV1Params = Depends(),
+        ci_processor_service: CiProcessorService = Depends(),
 ):
     """
     GET method that returns any metadata objects from Firestore that match the parameters passed.
@@ -143,10 +144,11 @@ async def http_get_ci_metadata_v1(
             "content": {"application/json": {"example": erm.erm_404_no_ci_exception}},
         },
     },
+    deprecated=True
 )
 async def http_get_ci_metadata_v2(
-    query_params: GetCiMetadataV2Params = Depends(),
-    ci_processor_service: CiProcessorService = Depends(),
+        query_params: GetCiMetadataV2Params = Depends(),
+        ci_processor_service: CiProcessorService = Depends(),
 ):
     """
     GET method that returns any metadata objects from Firestore that match the parameters passed.
@@ -187,6 +189,7 @@ async def http_get_ci_metadata_v2(
 
     return return_ci_metadata_collection
 
+
 @router.get(
     "/v3/ci_metadata",
     responses={
@@ -203,10 +206,11 @@ async def http_get_ci_metadata_v2(
             "content": {"application/json": {"example": erm.erm_404_no_ci_exception}},
         },
     },
+    deprecated=True
 )
 async def http_get_ci_metadata_v3(
-    query_params: GetCiMetadataV3Params = Depends(),
-    ci_processor_service: CiProcessorService = Depends(),
+        query_params: GetCiMetadataV3Params = Depends(),
+        ci_processor_service: CiProcessorService = Depends(),
 ):
     """
     GET method that returns ONE metadata object from Firestore that match the guid passed.
@@ -253,6 +257,7 @@ async def http_get_ci_metadata_v3(
             "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
         },
     },
+    deprecated=True
 )
 async def http_get_ci_schema_v1(
         query_params: GetCiSchemaV1Params = Depends(),
@@ -321,6 +326,7 @@ async def http_get_ci_schema_v1(
             "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
         },
     },
+    deprecated=True
 )
 async def http_get_ci_schema_v2(
         query_params: GetCiSchemaV2Params = Depends(),
@@ -376,6 +382,7 @@ async def http_get_ci_schema_v2(
             "content": {"application/json": {"example": erm.erm_500_global_exception}},
         },
     },
+    deprecated=True
 )
 async def http_post_ci_schema_v1(
         post_data: PostCiSchemaV1Data,
@@ -412,6 +419,7 @@ async def http_post_ci_schema_v1(
             "content": {"application/json": {"example": erm.erm_500_global_exception}},
         },
     },
+    deprecated=True
 )
 async def http_post_ci_schema_v2(
         post_data: PostCiSchemaV1Data,
@@ -448,9 +456,10 @@ async def http_post_ci_schema_v2(
             "content": {"application/json": {"example": erm.erm_404_no_ci_validator_metadata_exception}},
         },
     },
+    deprecated=True
 )
 async def http_get_ci_validator_metadata_v1(
-    ci_processor_service: CiProcessorService = Depends(),
+        ci_processor_service: CiProcessorService = Depends(),
 ) -> list[CiValidatorMetadata]:
     """
     GET method that returns the validator metadata for a CI schema.
