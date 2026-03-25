@@ -34,6 +34,15 @@ def make_iap_request(method, path, **kwargs):
             "Authorization": f"Bearer {auth_token}",
             "Content-Type": "application/json",
         }
+    elif settings.CONF == 'local-int-tests':
+        # For local docker integration tests, we bypass the token
+        auth_token = 'default'
+        headers = {
+            "Authorization": f"Bearer {auth_token}",
+            "Content-Type": "application/json",
+        }
+    elif settings.CONF == 'sandbox-int-tests':
+        headers = HttpService.generate_authentication_headers_by_impersonation()
     else:
         headers = HttpService.generate_authentication_headers()
 
