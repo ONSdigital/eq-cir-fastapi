@@ -147,7 +147,7 @@ class CiProcessorService:
 
     def validate_ci_version(self, ci_version: str, current_ci_version: int) -> int:
         try:
-            if ci_version == "":
+            if ci_version == "" or ci_version is None:
                 ci_version = current_ci_version
             elif int(ci_version) < current_ci_version:
                 raise exceptions.GlobalException()
