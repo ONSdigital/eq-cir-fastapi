@@ -17,7 +17,7 @@ class CiProcessorService:
         self.ci_firebase_repository = CiFirebaseRepository()
 
     # Posts new CI metadata to Firestore
-    def process_raw_ci(self, post_data: PostCiSchemaV1Data, ci_id, validator_version, ci_version = "") -> CiMetadata:
+    def process_raw_ci(self, post_data: PostCiSchemaV1Data, ci_id, validator_version = "", ci_version = "") -> CiMetadata:
         """
         Processes incoming ci
 
@@ -36,7 +36,7 @@ class CiProcessorService:
         metadata = self.get_ci_metadata_with_id(ci_id)
 
         if metadata:
-            raise exceptions.GlobalException
+            raise exceptions.ExceptionMissingInvalidGuid
 
         next_version_ci_metadata = self.build_next_version_ci_metadata(
             ci_id,
@@ -127,10 +127,7 @@ class CiProcessorService:
         """
         current_ci_version = self.calculate_next_ci_version(post_data.survey_id, classifier_type, classifier_value, post_data.language)
 
-        if ci_version == "":
-            ci_version = current_ci_version
-        elif int(ci_version) < current_ci_version:
-            raise exceptions.GlobalException()
+        ci_version = self.validate_ci_version(ci_version, current_ci_version)
 
 
         next_version_ci_metadata = CiMetadata(
@@ -147,6 +144,16 @@ class CiProcessorService:
             title=post_data.title,
         )
         return next_version_ci_metadata
+
+    def validate_ci_version(self, ci_version: str, current_ci_version: int) -> int:
+        try:
+            if ci_version == "":
+                ci_version = current_ci_version
+            elif int(ci_version) < current_ci_version:
+                raise exceptions.GlobalException()
+        except Exception as exc:
+            raise exceptions.ExceptionInvalidCiVersion from exc
+        return int(ci_version)
 
     def calculate_next_ci_version(self, survey_id: str, classifier_type, classifier_value, language: str) -> int:
         """

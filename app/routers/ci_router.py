@@ -348,7 +348,7 @@ async def http_post_ci_schema_v1(
 
     ci_id = CreateGuidService.create_guid()
 
-    ci_metadata = ci_processor_service.process_raw_ci(post_data, ci_id, "")
+    ci_metadata = ci_processor_service.process_raw_ci(post_data, ci_id)
 
     logger.info("CI schema posted successfully")
     return ci_metadata.model_dump()
@@ -425,14 +425,20 @@ async def http_post_ci_schema_v3(
 ):
     """
     POST method that creates a Collection Instrument. This will post the metadata to Firestore and
-    the whole request body to a Google Cloud Bucket. Validator version required param.
+    the whole request body to a Google Cloud Bucket.
+    guid and validator_version required param with optional ci_version.
     """
-    logger.info("Posting CI schema via v2 endpoint")
+    logger.info("Posting CI schema via v3 endpoint")
 
     if query_params.guid == "" or query_params.guid is None:
         message = "No guid supplied"
         logger.debug(f"{message}")
-        raise exceptions.ExceptionIncorrectKeyNames
+        raise exceptions.ExceptionMissingInvalidGuid
+
+    if query_params.validator_version == "" or query_params.validator_version is None:
+        message = "No validation version supplied"
+        logger.debug(f"{message}")
+        raise exceptions.ExceptionNoValidator
 
     ci_metadata = ci_processor_service.process_raw_ci(post_data,
                                                       query_params.guid,

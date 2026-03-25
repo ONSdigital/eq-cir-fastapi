@@ -73,5 +73,19 @@ class ExceptionInterceptor:
         er = ExceptionResponder(status.HTTP_400_BAD_REQUEST, erm.erm_400_incorrect_key_names_exception)
         return er.throw_er_with_json()
 
+    def throw_400_invalid_guid_exception(request: Request, exc: Exception) -> JSONResponse:
+        """
+        When there is no GUID found and a 400 HTTP response is returned
+        """
+        er = ExceptionResponder(status.HTTP_400_BAD_REQUEST, erm.erm_400_invalid_guid_exception)
+        return er.throw_er_with_json()
+
+    def throw_400_ci_version_invalid_exception(request: Request, exc: Exception) -> JSONResponse:
+        """
+        When there is no valid CI found and a 400 HTTP response is returned
+        """
+        er = ExceptionResponder(status.HTTP_400_BAD_REQUEST, erm.erm_400_invalid_ci_version_exception)
+        return er.throw_er_with_json()
+
 
 exception_interceptor = ExceptionInterceptor()
