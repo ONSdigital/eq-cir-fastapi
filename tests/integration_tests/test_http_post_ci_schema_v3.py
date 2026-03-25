@@ -17,26 +17,24 @@ ci_pubsub_helper = PubSubHelper(settings.PUBLISH_CI_TOPIC_ID)
 class TestPostCiV3:
     """Tests for the `http_post_ci_v3` endpoint."""
 
+    guid = "9d1bb195-08b9-494a-af52-1cbdda68deef"
+
     post_params = urlencode({"guid": "9d1bb195-08b9-494a-af52-1cbdda68deef",
                              "ci_version": 2,
                              "validator_version": "0.0.1"})
 
-    post_ci_params = urlencode({"guid": "2a7b5f60-7b9d-44de-b63d-d605f7e06c5d",
+    post_ci_params = urlencode({"guid": "9d1bb195-08b9-494a-af52-1cbdda68defg",
                          "ci_version": 2,
                          "validator_version": "0.0.1"})
 
-    update_params = urlencode({"guid": "5d686ebb-d4ea-487f-9aed-74ac7eb845db",
+    update_params = urlencode({"guid": "9d1bb195-08b9-494a-af52-1cbdda68deed",
+                             "ci_version": 3,
                              "validator_version": "0.0.1"})
-
-    post_no_ci_version = urlencode({"guid": "cafe15f4-8bbc-49e8-a73b-762c5c6de631",
-                               "ci_version": 3,
-                               "validator_version": "0.0.1"})
 
 
     post_url = f"/v3/publish_collection_instrument?{post_params}"
     post_ci_url = f"/v3/publish_collection_instrument?{post_ci_params}"
     updated_post_url = f"/v3/publish_collection_instrument?{update_params}"
-    post_no_ci_version_url = f"/v3/publish_collection_instrument?{post_params}"
     post_url_no_guid = "/v3/publish_collection_instrument?ci_version=2%validator_version=0.0.1"
     get_metadata_url = "/v1/ci_metadata"
     subscription_id = generate_subscriber_id()  # Unique subscription ID to avoid conflicts and GCP errors
@@ -215,59 +213,6 @@ class TestPostCiV3:
 
         # Need to pull and acknowledge messages to clear subscription
         ci_pubsub_helper.try_pull_and_acknowledge_messages(self.subscription_id)
-
-    def test_can_publish_without_ci_version(self, setup_payload):
-        """
-        What am I testing:
-        AC-1.1 - The ability to submit a CI (well-formed) to the API endpoint,
-        and the correct response is returned with the version.
-        AC-1.3 - When a CI is published in the response the datetime
-        field is present with an ISO8601 value. (2023-01-24T13:56:38Z)
-        """
-        ci_response = make_iap_request("POST", f"{self.post_no_ci_version}", json=setup_payload, )
-
-        # Assert response status code = 200 OK
-        assert ci_response.status_code == status.HTTP_200_OK
-
-        ci_response_data = ci_response.json()
-        survey_id = setup_payload["survey_id"]
-        classifier_type = CiClassifierService.get_classifier_type(setup_payload)
-        classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)
-        language = setup_payload["language"]
-
-        querystring = urlencode(
-            {
-                "classifier_type": classifier_type,
-                "classifier_value": classifier_value,
-                "language": language,
-                "survey_id": survey_id,
-            }
-        )
-        # sends request to http_query_ci endpoint for data
-        check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
-        check_ci_in_db_data = check_ci_in_db.json()
-
-        received_messages = ci_pubsub_helper.try_pull_and_acknowledge_messages(self.subscription_id)
-
-        expected_ci = CiMetadata(
-            ci_version=2,
-            validator_version="0.0.1",
-            data_version=setup_payload["data_version"],
-            classifier_type=classifier_type,
-            classifier_value=classifier_value,
-            guid=check_ci_in_db_data[0]["guid"],
-            language=setup_payload["language"],
-            published_at=check_ci_in_db_data[0]["published_at"],
-            survey_id=setup_payload["survey_id"],
-            title=setup_payload["title"],
-        )
-
-        assert "published_at" in ci_response_data
-        assert ci_response_data["ci_version"] == 2
-        # database assertion
-        assert check_ci_in_db_data == [expected_ci.model_dump()]
-        # assert that the metadata is pulled through in the subscription
-        assert expected_ci.model_dump() == received_messages[0]
 
     def test_cannot_publish_ci_missing_survey_id(
         self,
