@@ -25,7 +25,7 @@ from app.repositories.buckets.ci_schema_bucket_repository import (
 from app.services.ci_processor_service import CiProcessorService
 from app.services.ci_schema_location_service import CiSchemaLocationService
 
-router = APIRouter(tags=["CI"])
+router = APIRouter(tags=["legacy"])
 
 logger = logging.getLogger(__name__)
 settings = Settings()

@@ -11,7 +11,7 @@ from app.models.requests import (
 from app.models.responses import CiMetadata
 from app.services.ci_processor_service import CiProcessorService
 
-router = APIRouter(tags=["Validator"])
+router = APIRouter()
 
 logger = logging.getLogger(__name__)
 settings = Settings()
