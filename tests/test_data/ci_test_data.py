@@ -79,6 +79,20 @@ mock_ci_metadata_v2 = CiMetadata(
     title=mock_title,
 )
 
+mock_ci_metadata_v3 = CiMetadata(
+    ci_version=2,
+    validator_version=mock_validator_version_v2,
+    data_version=mock_data_version,
+    classifier_type=mock_classifier_type,
+    classifier_value=mock_classifier_value,
+    guid=mock_id,
+    language=mock_language,
+    published_at=mock_published_at,
+    sds_schema=mock_sds_schema,
+    survey_id=mock_survey_id,
+    title=mock_title,
+)
+
 mock_updated_ci_metadata_v2 = CiMetadata(
     ci_version=1,
     validator_version=mock_updated_validator_version_v2,
@@ -109,6 +123,20 @@ mock_next_version_ci_metadata = CiMetadata(
 
 mock_next_version_ci_metadata_v2 = CiMetadata(
     ci_version=2,
+    validator_version=mock_validator_version_v2,
+    data_version=mock_data_version,
+    classifier_type=mock_classifier_type,
+    classifier_value=mock_classifier_value,
+    guid=mock_next_version_id,
+    language=mock_language,
+    published_at=mock_published_at,
+    sds_schema=mock_sds_schema,
+    survey_id=mock_survey_id,
+    title=mock_title,
+)
+
+mock_next_version_ci_metadata_v3 = CiMetadata(
+    ci_version=100,
     validator_version=mock_validator_version_v2,
     data_version=mock_data_version,
     classifier_type=mock_classifier_type,
