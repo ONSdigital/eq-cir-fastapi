@@ -11,7 +11,6 @@ class Settings(BaseSettings):
     CI_STORAGE_BUCKET_NAME: str = "ons-cir-dev"
     DEFAULT_HOSTNAME: str = "only required for integration tests"
     FIRESTORE_DB_NAME: str = "(default)"
-    OAUTH_CLIENT_ID: str = "only required for integration tests"
     LOG_LEVEL: str = "INFO"
     PROJECT_ID: str = "ons-cir-dev"
     PUBLISHED_AT_FORMAT: str = "%Y-%m-%dT%H:%M:%S.%fZ"

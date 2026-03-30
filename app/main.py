@@ -60,6 +60,14 @@ app.add_exception_handler(
     exceptions.ExceptionTopicNotFound,
     ExceptionInterceptor.throw_500_global_exception,
 )
+app.add_exception_handler(
+    exceptions.ExceptionMissingInvalidGuid,
+    ExceptionInterceptor.throw_400_invalid_guid_exception,
+)
+app.add_exception_handler(
+    exceptions.ExceptionInvalidCiVersion,
+    ExceptionInterceptor.throw_400_ci_version_invalid_exception,
+)
 
 
 @app.exception_handler(500)

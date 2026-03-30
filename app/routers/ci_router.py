@@ -12,11 +12,11 @@ from app.models.requests import (
     DeleteCiV1Params,
     GetCiMetadataV1Params,
     GetCiMetadataV2Params,
-    GetCiMetadataV3Params,
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
     PostCiSchemaV1Data,
     PostCiSchemaV2Params,
+    PostCiSchemaV3Params,
 )
 from app.models.responses import CiMetadata, CiValidatorMetadata
 from app.repositories.buckets.ci_schema_bucket_repository import (
@@ -24,6 +24,7 @@ from app.repositories.buckets.ci_schema_bucket_repository import (
 )
 from app.services.ci_processor_service import CiProcessorService
 from app.services.ci_schema_location_service import CiSchemaLocationService
+from app.services.create_guid_service import CreateGuidService
 
 router = APIRouter(tags=["legacy"])
 
@@ -190,50 +191,6 @@ async def http_get_ci_metadata_v2(
     return return_ci_metadata_collection
 
 
-@router.get(
-    "/v3/ci_metadata",
-    responses={
-        400: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
-        },
-        500: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_500_global_exception}},
-        },
-        404: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_404_no_ci_exception}},
-        },
-    },
-    deprecated=True
-)
-async def http_get_ci_metadata_v3(
-        query_params: GetCiMetadataV3Params = Depends(),
-        ci_processor_service: CiProcessorService = Depends(),
-):
-    """
-    GET method that returns ONE metadata object from Firestore that match the guid passed.
-    """
-    logger.info("Getting ci metadata via v3 endpoint")
-    logger.debug(f"get_ci_metadata_v3: Input data: query_params={query_params.__dict__}")
-
-    if query_params.guid == "":
-        raise exceptions.ExceptionIncorrectKeyNames
-
-    ci_metadata = ci_processor_service.get_ci_metadata_with_id(query_params.guid)
-
-    if not ci_metadata:
-        error_message = "get_ci_metadata_v3: exception raised - No collection instrument metadata found"
-        logger.error(error_message)
-        logger.debug(f"{error_message}:{query_params.guid}")
-        raise exceptions.ExceptionNoCIMetadata
-
-    logger.info("CI metadata retrieved successfully.")
-
-    return ci_metadata.model_dump()
-
-
 # Fetching CI schema from Bucket version 1
 @router.get(
     "/v1/retrieve_collection_instrument",
@@ -394,7 +351,9 @@ async def http_post_ci_schema_v1(
     """
     logger.info("Posting ci schema via v1 endpoint")
 
-    ci_metadata = ci_processor_service.process_raw_ci(post_data)
+    ci_id = CreateGuidService.create_guid()
+
+    ci_metadata = ci_processor_service.process_raw_ci(post_data, ci_id)
 
     logger.info("CI schema posted successfully")
     return ci_metadata.model_dump()
@@ -437,7 +396,60 @@ async def http_post_ci_schema_v2(
         logger.debug(f"{message}")
         raise exceptions.ExceptionNoValidator
 
-    ci_metadata = ci_processor_service.process_raw_ci(post_data, query_params.validator_version)
+    ci_id = CreateGuidService.create_guid()
+
+    ci_metadata = ci_processor_service.process_raw_ci(post_data, ci_id, query_params.validator_version)
+
+    logger.info("CI schema posted successfully")
+
+    return ci_metadata.model_dump()
+
+@router.post(
+    "/v3/publish_collection_instrument",
+    responses={
+        200: {
+            "model": CiMetadata,
+            "description": (
+                    "Successfully created a CI. This is illustrated with the returned response containing the "
+                    "metadata of the CI. "
+            ),
+        },
+        400: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
+        },
+        500: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_500_global_exception}},
+        },
+    },
+)
+async def http_post_ci_schema_v3(
+        post_data: PostCiSchemaV1Data,
+        query_params: PostCiSchemaV3Params = Depends(),
+        ci_processor_service: CiProcessorService = Depends(),
+):
+    """
+    POST method that creates a Collection Instrument. This will post the metadata to Firestore and
+    the whole request body to a Google Cloud Bucket.
+    guid and validator_version required param with optional ci_version.
+    """
+    logger.info("Posting CI schema via v3 endpoint")
+
+    if query_params.guid == "" or query_params.guid is None:
+        message = "No guid supplied"
+        logger.debug(f"{message}")
+        raise exceptions.ExceptionMissingInvalidGuid
+
+    if query_params.validator_version == "" or query_params.validator_version is None:
+        message = "No validation version supplied"
+        logger.debug(f"{message}")
+        raise exceptions.ExceptionNoValidator
+
+    ci_metadata = ci_processor_service.process_raw_ci(post_data,
+                                                      query_params.guid,
+                                                      query_params.validator_version,
+                                                      query_params.ci_version)
 
     logger.info("CI schema posted successfully")
 
