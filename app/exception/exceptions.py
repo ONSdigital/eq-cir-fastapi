@@ -7,6 +7,11 @@ functions to be raised properly
 class ExceptionNoValidator(Exception):
     pass
 
+class ExceptionMissingInvalidGuid(Exception):
+    pass
+
+class ExceptionInvalidCiVersion(Exception):
+    pass
 
 class ExceptionNoCIFound(Exception):
     pass
