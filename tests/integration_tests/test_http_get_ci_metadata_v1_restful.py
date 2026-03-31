@@ -60,9 +60,8 @@ class TestGetCiMetadataV1Restful:
         get_collection_instruments_metadata_v1 should return appropriate ci if language is different
         """
         # post 3 ci with the same data
-        for _ in range(3):
-            # Posts the ci using http_post_ci endpoint
-            make_iap_request("POST", f"{self.post_url}", json=setup_payload)
+        for data in self.encoded_list:
+            make_iap_request("POST", f"/v3/collection-instruments?{data}", json=setup_payload)
 
         survey_id = setup_payload["survey_id"]
         classifier_type = CiClassifierService.get_classifier_type(setup_payload)
