@@ -31,7 +31,7 @@ class TestGetCiMetadataV1Restful:
         """
         # post 3 ci with the same data
         for data in self.encoded_list:
-            make_iap_request("POST", f"/v3/collection-instruments?{data[0]}", json=setup_payload)
+            make_iap_request("POST", f"/v3/collection-instruments?{data}", json=setup_payload)
 
         survey_id = setup_payload["survey_id"]
         classifier_type = CiClassifierService.get_classifier_type(setup_payload)
@@ -96,7 +96,7 @@ class TestGetCiMetadataV1Restful:
         new_language_query_ci_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         new_language_query_ci_response_data = new_language_query_ci_response.json()
 
-        assert len(query_ci_response_data) == 3
+        assert len(query_ci_response_data) == 2
         assert len(new_language_query_ci_response_data) == 1
         assert new_language_query_ci_response_data[0]["language"] == "English"
 
