@@ -6,14 +6,14 @@ from fastapi import status
 
 from app.config import settings
 from app.models.requests import GetCiSchemaV2Params
-from tests.integration_tests.utils import make_iap_request
+from tests.integration_tests.utils import make_iap_request, create_post_params
 
 
 class TestHttpGetCiSchemaV2Restful:
     """Tests for the `get_collection_instrument_schema_by_guid_v2` endpoint"""
 
     url = "/v2/collection-instruments/schema"
-    post_url = "/v1/collection-instruments"
+    post_url = "/v3/collection-instruments"
 
     def teardown_method(self):
         """
@@ -56,8 +56,12 @@ class TestHttpGetCiSchemaV2Restful:
         exist and a valid query to return the schema is made via a GET request
         """
         # Use `post_ci_v1` to create ci metadata and schema on the db
-        response = make_iap_request("POST", f"{self.post_url}", json=setup_payload)
-        created_ci = response.json()
+
+        data = create_post_params(1)
+
+        post_response = make_iap_request("POST", f"/v3/collection-instruments?{data[0]}", json=setup_payload)
+
+        created_ci = post_response.json()
 
         # Create a valid querystring using the `id` returned when ci created
         query_params = GetCiSchemaV2Params(guid=created_ci["guid"])

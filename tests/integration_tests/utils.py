@@ -57,12 +57,12 @@ def make_iap_request(method, path, **kwargs):
     return requests.request(method, url, headers=headers, **kwargs)
 
 
-def create_post_params(number_of_items: int):
+def create_post_params(number_of_items: int, validator_version = "0.0.1"):
     list_of_params = []
     for _ in range(number_of_items):
         params = {
             "guid": str(uuid.uuid4()),
-            "validator_version": "0.0.1"
+            "validator_version": validator_version
         }
         list_of_params.append(urlencode(params))
     return list_of_params
