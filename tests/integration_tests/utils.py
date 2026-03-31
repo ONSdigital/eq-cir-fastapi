@@ -62,7 +62,6 @@ def create_post_params(number_of_items: int):
     for _ in range(number_of_items):
         params = {
             "guid": str(uuid.uuid4()),
-            "ci_version": 1,
             "validator_version": "0.0.1"
         }
         list_of_params.append(urlencode(params))
