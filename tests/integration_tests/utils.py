@@ -1,3 +1,6 @@
+import uuid
+from urllib.parse import urlencode
+
 import requests
 from sds_common.services.http_service import HttpService
 
@@ -52,3 +55,16 @@ def make_iap_request(method, path, **kwargs):
     # Authorization header containing "Bearer " followed by a
     # Google-issued OpenID Connect token for the service account.
     return requests.request(method, url, headers=headers, **kwargs)
+
+
+def create_post_params(number_of_items: int):
+    list_of_params = []
+    for _ in range(number_of_items):
+        params = {
+            "guid": str(uuid.uuid4()),
+            "ci_version": 1,
+            "validator_version": "0.0.1"
+        }
+        list_of_params.append(urlencode(params))
+    return list_of_params
+

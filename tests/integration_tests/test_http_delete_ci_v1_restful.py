@@ -12,7 +12,12 @@ class TestDeleteCiV1Restful:
     """Tests for the `delete_collection_instrument` endpoint"""
 
     base_url = "/v1/collection-instruments"
-    post_url = "/v1/collection-instruments"
+
+    post_params = urlencode({"guid": "9d1bb195-08b9-494a-af52-1cbdda68deef",
+                             "ci_version": 2,
+                             "validator_version": "0.0.1"})
+
+    post_url = f"/v3/collection-instruments?{post_params}"
 
     def test_can_delete_ci_returns_200(self, setup_payload):
         """
