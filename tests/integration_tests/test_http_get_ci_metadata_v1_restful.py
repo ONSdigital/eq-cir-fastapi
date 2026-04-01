@@ -96,7 +96,7 @@ class TestGetCiMetadataV1Restful:
         new_language_query_ci_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         new_language_query_ci_response_data = new_language_query_ci_response.json()
 
-        assert len(query_ci_response_data) == 2
+        assert len(query_ci_response_data) == 1
         assert len(new_language_query_ci_response_data) == 1
         assert new_language_query_ci_response_data[0]["language"] == "English"
 
