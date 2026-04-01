@@ -5,7 +5,7 @@ import pytest
 from fastapi import status
 
 from app.config import settings
-from tests.integration_tests.utils import make_iap_request
+from tests.integration_tests.utils import make_iap_request, create_post_params
 
 
 class TestDeleteCiV1Restful:
@@ -13,11 +13,9 @@ class TestDeleteCiV1Restful:
 
     base_url = "/v1/collection-instruments"
 
-    post_params = urlencode({"guid": "9d1bb195-08b9-494a-af52-1cbdda68deef",
-                             "ci_version": 2,
-                             "validator_version": "0.0.1"})
+    post_params = create_post_params(1)
 
-    post_url = f"/v3/collection-instruments?{post_params}"
+    post_url = f"/v3/collection-instruments?{post_params[0]}"
 
     def test_can_delete_ci_returns_200(self, setup_payload):
         """

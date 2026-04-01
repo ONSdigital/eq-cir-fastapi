@@ -1,6 +1,5 @@
 from urllib.parse import urlencode
 
-from app.config import settings
 from app.models.responses import CiValidatorMetadata
 from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request, create_post_params

@@ -9,7 +9,7 @@ from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.helpers.integration_helpers import subscriber_teardown, subscriber_setup, \
     generate_subscriber_id
 from tests.integration_tests.helpers.pubsub_helper import PubSubHelper
-from tests.integration_tests.utils import make_iap_request
+from tests.integration_tests.utils import make_iap_request, create_post_params
 
 ci_pubsub_helper = PubSubHelper(settings.PUBLISH_CI_TOPIC_ID)
 
@@ -17,26 +17,13 @@ ci_pubsub_helper = PubSubHelper(settings.PUBLISH_CI_TOPIC_ID)
 class TestPostCiV3:
     """Tests for the `http_post_ci_v3` endpoint."""
 
-    guid = "9d1bb195-08b9-494a-af52-1cbdda68deef"
+    post_params = create_post_params(3, "0.0.1")
 
-    post_params = urlencode({"guid": "9d1bb195-08b9-494a-af52-1cbdda68deef",
-                             "ci_version": 2,
-                             "validator_version": "0.0.1"})
-
-    post_ci_params = urlencode({"guid": "9d1bb195-08b9-494a-af52-1cbdda68defg",
-                         "ci_version": 2,
-                         "validator_version": "0.0.1"})
-
-    update_params = urlencode({"guid": "9d1bb195-08b9-494a-af52-1cbdda68deed",
-                             "ci_version": 3,
-                             "validator_version": "0.0.1"})
-
-
-    post_url = f"/v3/publish_collection_instrument?{post_params}"
-    post_ci_url = f"/v3/publish_collection_instrument?{post_ci_params}"
-    updated_post_url = f"/v3/publish_collection_instrument?{update_params}"
-    post_url_no_guid = "/v3/publish_collection_instrument?ci_version=2%validator_version=0.0.1"
-    get_metadata_url = "/v1/ci_metadata"
+    post_url = f"/v3/collection-instruments?{post_params[0]}"
+    post_ci_url = f"/v3/collection-instruments?{post_params[1]}"
+    updated_post_url = f"/v3/collection-instruments?{post_params[3]}"
+    post_url_no_guid = "/v3/collection-instruments?ci_version=1%validator_version=0.0.1"
+    get_metadata_url = "/v1/collection-instruments/metadata"
     subscription_id = generate_subscriber_id()  # Unique subscription ID to avoid conflicts and GCP errors
 
     @classmethod
@@ -89,7 +76,7 @@ class TestPostCiV3:
         received_messages = ci_pubsub_helper.try_pull_and_acknowledge_messages(self.subscription_id)
 
         expected_ci = CiMetadata(
-            ci_version=2,
+            ci_version=1,
             validator_version="0.0.1",
             data_version=setup_payload["data_version"],
             classifier_type=classifier_type,
