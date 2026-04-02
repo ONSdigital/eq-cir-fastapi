@@ -21,7 +21,7 @@ class TestPostCiV3:
 
     post_url = f"/v3/collection-instruments?{post_params[0]}"
     post_ci_url = f"/v3/collection-instruments?{post_params[1]}"
-    updated_post_url = f"/v3/collection-instruments?{post_params[3]}"
+    updated_post_url = f"/v3/collection-instruments?{post_params[2]}"
     post_url_no_guid = "/v3/collection-instruments?ci_version=1%validator_version=0.0.1"
     get_metadata_url = "/v1/collection-instruments/metadata"
     subscription_id = generate_subscriber_id()  # Unique subscription ID to avoid conflicts and GCP errors
