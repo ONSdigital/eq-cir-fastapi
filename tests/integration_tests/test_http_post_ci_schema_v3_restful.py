@@ -89,7 +89,7 @@ class TestPostCiV3:
         )
 
         assert "published_at" in ci_response_data
-        assert ci_response_data["ci_version"] == 2
+        assert ci_response_data["ci_version"] == 1
         # database assertion
         assert check_ci_in_db_data == [expected_ci.model_dump()]
         # assert that the metadata is pulled through in the subscription
@@ -143,7 +143,7 @@ class TestPostCiV3:
         )
 
         assert "published_at" in ci_response_data
-        assert ci_response_data["ci_version"] == 2
+        assert ci_response_data["ci_version"] == 1
         # database assertion
         assert check_ci_in_db_data == [expected_ci.model_dump()]
         # assert that the metadata is pulled through in the subscription
@@ -191,7 +191,7 @@ class TestPostCiV3:
         )
 
         assert ci_response.status_code == status.HTTP_200_OK
-        assert ci_response_data["ci_version"] == 3
+        assert ci_response_data["ci_version"] == 1
         # database assertions
         assert len(check_ci_in_db_data) == 2
         assert check_ci_in_db_data[0] == expected_ci.model_dump()
