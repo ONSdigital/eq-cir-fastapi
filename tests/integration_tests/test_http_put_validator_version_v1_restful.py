@@ -9,9 +9,6 @@ from tests.integration_tests.utils import make_iap_request, create_post_params
 
 
 class TestPutValidatorVersionV1Restful:
-    post_url = "/v2/collection-instruments?validator_version=0.0.1"
-
-
     update_validator = "/v1/collection-instruments/validator-version"
     get_metadata_url = "/v1/collection-instruments/metadata"
 
@@ -37,7 +34,7 @@ class TestPutValidatorVersionV1Restful:
         data = create_post_params(1)
 
         ci_response = make_iap_request("POST", f"/v3/collection-instruments?{data[0]}", json=setup_payload)
-        
+
         ci_response_data = ci_response.json()
         ci_guid = ci_response_data["guid"]
         original_published_at = ci_response_data["published_at"]
