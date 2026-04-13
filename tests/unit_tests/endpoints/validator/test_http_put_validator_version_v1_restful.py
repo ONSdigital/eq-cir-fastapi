@@ -23,7 +23,7 @@ settings = Settings()
 class TestHttpPutValidatorVersionV1:
     """Tests for the `http_put_ci_validator_version_v1` endpoint"""
 
-    base_url = "/v1/update_validator_version"
+    base_url = "/v1/collection-instruments/validator-version"
 
     query_params = UpdateValidatorVersionV1Params(
         guid=mock_id,

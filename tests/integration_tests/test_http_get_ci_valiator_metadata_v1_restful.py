@@ -1,16 +1,14 @@
 from urllib.parse import urlencode
 
-from app.config import settings
 from app.models.responses import CiValidatorMetadata
 from app.services.ci_classifier_service import CiClassifierService
-from tests.integration_tests.utils import make_iap_request
+from tests.integration_tests.utils import make_iap_request, create_post_params
 
 
 class TestHttpGetCiValidatorMetadataV1Restful:
     survey_id = "3456"
     base_url = "/v1/collection-instruments/validator-metadata"
-    post_url_v1 = "/v1/collection-instruments"
-    post_url_v2 = "/v2/collection-instruments"
+    post_url = "/v3/collection-instruments"
 
     def teardown_method(self):
         """
@@ -27,14 +25,12 @@ class TestHttpGetCiValidatorMetadataV1Restful:
         """
         # Post CIs to create metadata
         # Post CI with v1 endpoint, validator version = empty
-        make_iap_request("POST", f"{self.post_url_v1}", json=setup_payload)
-        # Post CI with v2 endpoint, validator version = v0.0.1
-        querystring = urlencode({"validator_version": "v0.0.1"})
-        make_iap_request("POST", f"{self.post_url_v2}?{querystring}", json=setup_payload)
-        # Post CI with v2 endpoint, validator version = v0.0.2
-        querystring = urlencode({"validator_version": "v0.0.2"})
-        make_iap_request("POST", f"{self.post_url_v2}?{querystring}", json=setup_payload)
-
+        data = create_post_params(1)
+        make_iap_request("POST", f"/v3/collection-instruments?{data[0]}", json=setup_payload)        # Post CI with v2 endpoint, validator version = v0.0.1
+        data = create_post_params(1, "0.0.2")
+        make_iap_request("POST", f"/v3/collection-instruments?{data[0]}", json=setup_payload)        # Post CI with v2 endpoint, validator version = v0.0.2
+        data = create_post_params(1, "0.0.3")
+        make_iap_request("POST", f"/v3/collection-instruments?{data[0]}", json=setup_payload)
         # Retrieve all CI validator metadata
         response = make_iap_request("GET", f"{self.base_url}")
 
@@ -58,5 +54,5 @@ class TestHttpGetCiValidatorMetadataV1Restful:
             assert ci_validator_metadata["classifier_type"] == classifier_type
             assert ci_validator_metadata["classifier_value"] == classifier_value
             assert ci_validator_metadata["ci_version"] == [3, 2, 1][i]
-            assert ci_validator_metadata["validator_version"] == ["v0.0.2", "v0.0.1", ""][i]
+            assert ci_validator_metadata["validator_version"] == ["0.0.3", "0.0.2", "0.0.1"][i]
             assert isinstance(CiValidatorMetadata(**ci_validator_metadata), CiValidatorMetadata)

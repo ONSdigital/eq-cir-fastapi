@@ -4,14 +4,14 @@ import pytest
 from fastapi import status
 
 from app.config import settings
-from tests.integration_tests.utils import make_iap_request
+from tests.integration_tests.utils import make_iap_request, create_post_params
 
 
 class TestGetCiMetadataV3:
     """Tests for the `get_collection_instrument_metadata_by_guid` endpoint."""
 
     base_url = "/v3/collection-instruments/metadata"
-    post_url = "/v1/collection-instruments"
+    post_url = "/v3/collection-instruments"
 
     def teardown_method(self):
         """
@@ -27,7 +27,9 @@ class TestGetCiMetadataV3:
         get_collection_instrument_metadata_by_guid should return 1 metadata if the guid matches
         """
 
-        post_response = make_iap_request("POST", f"{self.post_url}", json=setup_payload)
+        data = create_post_params(1)
+
+        post_response = make_iap_request("POST", f"/v3/collection-instruments?{data[0]}", json=setup_payload)
 
         guid = post_response.json()["guid"]
 
@@ -49,8 +51,9 @@ class TestGetCiMetadataV3:
         What am I testing:
         get_collection_instrument_metadata_by_guid should return 404 status code if the guid does not match any existing CI.
         """
-        make_iap_request("POST", f"{self.post_url}", json=setup_payload)
+        data = create_post_params(1)
 
+        make_iap_request("POST", f"/v3/collection-instruments?{data[0]}", json=setup_payload)
         get_ci_metadata_v3_payload = {
             "guid": "123456" # guid that does not exist
         }

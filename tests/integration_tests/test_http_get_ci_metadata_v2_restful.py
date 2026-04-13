@@ -5,13 +5,15 @@ from fastapi import status
 
 from app.config import settings
 from app.services.ci_classifier_service import CiClassifierService
-from tests.integration_tests.utils import make_iap_request
+from tests.integration_tests.utils import make_iap_request, create_post_params
 
 
 class TestGetCiMetadataV2Restful:
     """Tests for the `get_collection_instruments_metadata_v2` endpoint."""
 
     base_url = "/v2/collection-instruments/metadata"
+
+    param_list = create_post_params(3)
     post_url = "/v1/collection-instruments"
 
     def teardown_method(self):
@@ -27,9 +29,8 @@ class TestGetCiMetadataV2Restful:
         What am I testing:
         get_collection_instruments_metadata_v2 should return three ci_versions if the same ci is posted thrice.
         """
-        for _ in range(3):
-            # Posts the ci using http_post_ci endpoint
-            make_iap_request("POST", f"{self.post_url}", json=setup_payload)
+        for data in self.param_list:
+            make_iap_request("POST", f"/v3/collection-instruments?{data}", json=setup_payload)
 
         classifier_type = CiClassifierService.get_classifier_type(setup_payload)
         classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)
@@ -69,7 +70,10 @@ class TestGetCiMetadataV2Restful:
         # post 3 ci with the same data
         setup_payload["sds_schema"] = "xx-ytr-1234-856"
         # Posts the ci using http_post_ci endpoint
-        make_iap_request("POST", f"{self.post_url}", json=setup_payload)
+
+        data = create_post_params(1)
+
+        make_iap_request("POST", f"/v3/collection-instruments?{data[0]}", json=setup_payload)
 
         classifier_type = CiClassifierService.get_classifier_type(setup_payload)
         classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)

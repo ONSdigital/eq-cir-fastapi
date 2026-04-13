@@ -4,25 +4,40 @@ import pytest
 from fastapi import status
 
 from app.config import settings
+from app.models.responses import CiMetadata
+from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.helpers.integration_helpers import subscriber_teardown, subscriber_setup, \
     generate_subscriber_id
 from tests.integration_tests.helpers.pubsub_helper import PubSubHelper
-from app.models.responses import CiMetadata
-from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request
 
 ci_pubsub_helper = PubSubHelper(settings.PUBLISH_CI_TOPIC_ID)
 
 
-class TestPostCiV1Restful:
-    """Tests for the `get_collection_instruments_metadata_v1` endpoint."""
+class TestPostCiV3:
+    """Tests for the `http_post_ci_v3` endpoint."""
 
-    post_url = "/v1/collection-instruments"
+    guid = "9d1bb195-08b9-494a-af52-1cbdda68deef"
+
+    post_params = urlencode({"guid": "9d1bb195-08b9-494a-af52-1cbdda68deef",
+                             "ci_version": 2,
+                             "validator_version": "0.0.1"})
+
+    post_ci_params = urlencode({"guid": "9d1bb195-08b9-494a-af52-1cbdda68defg",
+                         "ci_version": 2,
+                         "validator_version": "0.0.1"})
+
+    update_params = urlencode({"guid": "9d1bb195-08b9-494a-af52-1cbdda68deed",
+                             "ci_version": 3,
+                             "validator_version": "0.0.1"})
+
+
+    post_url = f"/v3/collection-instruments?{post_params}"
+    post_ci_url = f"/v3/collection-instruments?{post_ci_params}"
+    updated_post_url = f"/v3/collection-instruments?{update_params}"
+    post_url_no_guid = "/v3/collection-instruments?ci_version=2%validator_version=0.0.1"
     get_metadata_url = "/v1/collection-instruments/metadata"
     subscription_id = generate_subscriber_id()  # Unique subscription ID to avoid conflicts and GCP errors
-
-    # NOTE: Anytime a happy path for post_ci_v1 is called, make sure to add in a line that pulls &
-    # acknowledges the messages that are published to a topic
 
     @classmethod
     def setup_class(cls) -> None:
@@ -38,7 +53,7 @@ class TestPostCiV1Restful:
         is not reflected in the firestore and schemas.
         """
         querystring = urlencode({"survey_id": 3456})
-        make_iap_request("DELETE", f"/v1/collection-instruments?{querystring}")
+        make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
 
     def test_can_publish_valid_ci(self, setup_payload):
         """
@@ -48,8 +63,11 @@ class TestPostCiV1Restful:
         AC-1.3 - When a CI is published in the response the datetime
         field is present with an ISO8601 value. (2023-01-24T13:56:38Z)
         """
-        # Creates a CI in the database, essentially running post_ci_v1 from handler folder
-        ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_payload)
+        ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_payload,)
+
+        # Assert response status code = 200 OK
+        assert ci_response.status_code == status.HTTP_200_OK
+
         ci_response_data = ci_response.json()
         survey_id = setup_payload["survey_id"]
         classifier_type = CiClassifierService.get_classifier_type(setup_payload)
@@ -71,9 +89,9 @@ class TestPostCiV1Restful:
         received_messages = ci_pubsub_helper.try_pull_and_acknowledge_messages(self.subscription_id)
 
         expected_ci = CiMetadata(
-            ci_version=1,
+            ci_version=2,
+            validator_version="0.0.1",
             data_version=setup_payload["data_version"],
-            validator_version="",
             classifier_type=classifier_type,
             classifier_value=classifier_value,
             guid=check_ci_in_db_data[0]["guid"],
@@ -84,7 +102,7 @@ class TestPostCiV1Restful:
         )
 
         assert "published_at" in ci_response_data
-        assert ci_response_data["ci_version"] == 1
+        assert ci_response_data["ci_version"] == 2
         # database assertion
         assert check_ci_in_db_data == [expected_ci.model_dump()]
         # assert that the metadata is pulled through in the subscription
@@ -101,7 +119,7 @@ class TestPostCiV1Restful:
         """
         # Creates a CI in the database, essentially running post_ci_v1 from handler folder
         setup_payload["sds_schema"] = "xx-ytr-1234-856"
-        ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_payload)
+        ci_response = make_iap_request("POST", f"{self.post_ci_url}", json=setup_payload)
         ci_response_data = ci_response.json()
 
         survey_id = setup_payload["survey_id"]
@@ -124,9 +142,9 @@ class TestPostCiV1Restful:
         received_messages = ci_pubsub_helper.try_pull_and_acknowledge_messages(self.subscription_id)
 
         expected_ci = CiMetadata(
-            ci_version=1,
+            ci_version=2,
+            validator_version="0.0.1",
             data_version=setup_payload["data_version"],
-            validator_version="",
             classifier_type=classifier_type,
             classifier_value=classifier_value,
             guid=check_ci_in_db_data[0]["guid"],
@@ -138,22 +156,22 @@ class TestPostCiV1Restful:
         )
 
         assert "published_at" in ci_response_data
-        assert ci_response_data["ci_version"] == 1
+        assert ci_response_data["ci_version"] == 2
         # database assertion
         assert check_ci_in_db_data == [expected_ci.model_dump()]
         # assert that the metadata is pulled through in the subscription
         assert expected_ci.model_dump() == received_messages[0]
 
     def test_can_append_version_to_existing_ci(
-            self,
-            setup_publish_ci_return_payload,
+        self,
+        setup_publish_ci_return_payload,
     ):
         """
         What am I testing:
         Where the same CI is submitted(survey_id),
         then a new version is returned based on the survey_id
         """
-        ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_publish_ci_return_payload)
+        ci_response = make_iap_request("POST", f"{self.updated_post_url}", json=setup_publish_ci_return_payload)
         ci_response_data = ci_response.json()
 
         survey_id = setup_publish_ci_return_payload["survey_id"]
@@ -173,8 +191,8 @@ class TestPostCiV1Restful:
         check_ci_in_db_data = check_ci_in_db.json()
 
         expected_ci = CiMetadata(
-            ci_version=2,
-            validator_version="",
+            ci_version=3,
+            validator_version="0.0.1",
             data_version=setup_publish_ci_return_payload["data_version"],
             classifier_type=classifier_type,
             classifier_value=classifier_value,
@@ -186,18 +204,19 @@ class TestPostCiV1Restful:
         )
 
         assert ci_response.status_code == status.HTTP_200_OK
-        assert ci_response_data["ci_version"] == 2
+        assert ci_response_data["ci_version"] == 3
         # database assertions
         assert len(check_ci_in_db_data) == 2
         assert check_ci_in_db_data[0] == expected_ci.model_dump()
         assert check_ci_in_db_data[1]["ci_version"] == 1
-        assert check_ci_in_db_data[0]["ci_version"] == 2
+        assert check_ci_in_db_data[0]["ci_version"] == 3
 
+        # Need to pull and acknowledge messages to clear subscription
         ci_pubsub_helper.try_pull_and_acknowledge_messages(self.subscription_id)
 
     def test_cannot_publish_ci_missing_survey_id(
-            self,
-            setup_payload,
+        self,
+        setup_payload,
     ):
         """
         What am I testing:
@@ -288,7 +307,7 @@ class TestPostCiV1Restful:
     def test_publish_ci_returns_unauthorized_request(self, setup_payload):
         """
         What am I testing:
-        get_collection_instruments_metadata_v1 should return a 401 unauthorized error if the endpoint is
+        http_post_ci_metadata_v3 should return a 401 unauthorized error if the endpoint is
         requested with an unauthorized token.
         """
         if settings.CONF == "local-int-tests":

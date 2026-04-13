@@ -16,7 +16,6 @@ from app.models.requests import (
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
     PostCiSchemaV1Data,
-    PostCiSchemaV2Params,
     PostCiSchemaV3Params,
 )
 from app.models.responses import CiMetadata, CiValidatorMetadata
@@ -25,7 +24,6 @@ from app.repositories.buckets.ci_schema_bucket_repository import (
 )
 from app.services.ci_processor_service import CiProcessorService
 from app.services.ci_schema_location_service import CiSchemaLocationService
-from app.services.create_guid_service import CreateGuidService
 
 router = APIRouter()
 
@@ -353,84 +351,6 @@ async def get_collection_instrument_schema_by_guid_v2(
     logger.info("Schema successfully retrieved.")
 
     return JSONResponse(status_code=status.HTTP_200_OK, content=ci_schema)
-
-
-@router.post(
-    "/v1/collection-instruments",
-    responses={
-        200: {
-            "model": CiMetadata,
-            "description": (
-                    "Successfully created a CI. This is illustrated with the returned response containing the metadata of the CI."
-            ),
-        },
-        500: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_500_global_exception}},
-        },
-    },
-)
-async def create_collection_instrument_v1(
-        post_data: PostCiSchemaV1Data,
-        ci_processor_service: CiProcessorService = Depends(),
-):
-    """
-    POST method that creates a Collection Instrument. This will post the metadata to Firestore and
-    the whole request body to a Google Cloud Bucket.
-    """
-    logger.info("Posting ci schema via v1 endpoint")
-
-    ci_id = CreateGuidService.create_guid()
-
-    ci_metadata = ci_processor_service.process_raw_ci(post_data, ci_id)
-
-    logger.info("CI schema posted successfully")
-    return ci_metadata.model_dump()
-
-
-@router.post(
-    "/v2/collection-instruments",
-    responses={
-        200: {
-            "model": CiMetadata,
-            "description": (
-                    "Successfully created a CI. This is illustrated with the returned response containing the "
-                    "metadata of the CI. "
-            ),
-        },
-        400: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
-        },
-        500: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_500_global_exception}},
-        },
-    },
-)
-async def create_collection_instrument_v2(
-        post_data: PostCiSchemaV1Data,
-        query_params: PostCiSchemaV2Params = Depends(),
-        ci_processor_service: CiProcessorService = Depends(),
-):
-    """
-    POST method that creates a Collection Instrument. This will post the metadata to Firestore and
-    the whole request body to a Google Cloud Bucket. Validator version required param.
-    """
-    logger.info("Posting CI schema via v2 endpoint")
-
-    if query_params.validator_version == "" or query_params.validator_version is None:
-        message = "No validation version supplied"
-        logger.debug(f"{message}")
-        raise exceptions.ExceptionNoValidator
-
-    ci_id = CreateGuidService.create_guid()
-
-    ci_metadata = ci_processor_service.process_raw_ci(post_data, ci_id, query_params.validator_version)
-
-    logger.info("CI schema posted successfully")
-
-    return ci_metadata.model_dump()
 
 
 @router.post(
