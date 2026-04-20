@@ -25,7 +25,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.develop
     ports:
       - 3030:3030
     environment:

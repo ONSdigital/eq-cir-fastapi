@@ -5,13 +5,12 @@ from starlette import status
 from app.models.requests import UpdateValidatorVersionV1Params
 from app.models.responses import CiMetadata
 from app.services.ci_classifier_service import CiClassifierService
-from tests.integration_tests.utils import make_iap_request
+from tests.integration_tests.utils import make_iap_request, create_post_params
 
 
-class TestPatchValidatorVersionV1:
-    post_url = "/v2/publish_collection_instrument?validator_version=0.0.1"
-    update_validator = "/v1/update_validator_version"
-    get_metadata_url = "/v1/ci_metadata"
+class TestPutValidatorVersionV1Restful:
+    update_validator = "/v1/collection-instruments/validator-version"
+    get_metadata_url = "/v1/collection-instruments/metadata"
 
     def teardown_method(self):
         """
@@ -19,20 +18,26 @@ class TestPatchValidatorVersionV1:
         is not reflected in the firestore and schemas.
         """
         querystring = urlencode({"survey_id": 3456})
-        make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
+        make_iap_request("DELETE", f"/v1/collection-instruments?{querystring}")
 
     def test_update_validator_version(self, setup_payload):
         """
         What am I testing:
-        AC-1.1 - The ability to submit a CI (well-formed) to the API endpoint,
+        AC-1.1 - The ability to put a new schema and validator version
         and the correct response is returned with the version.
         AC-1.3 - When a CI is published in the response the datetime
         field is present with an ISO8601 value. (2023-01-24T13:56:38Z)
+        Updating the CI will update the published date
         """
         # Creates a CI in the database, essentially running post_ci_v1 from handler folder
-        ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_payload)
+
+        data = create_post_params(1)
+
+        ci_response = make_iap_request("POST", f"/v3/collection-instruments?{data[0]}", json=setup_payload)
+
         ci_response_data = ci_response.json()
         ci_guid = ci_response_data["guid"]
+        original_published_at = ci_response_data["published_at"]
         updated_validator_version = "0.0.2"
 
         query_params = UpdateValidatorVersionV1Params(
@@ -40,9 +45,12 @@ class TestPatchValidatorVersionV1:
             validator_version=updated_validator_version
 
         )
-        patch_response = make_iap_request("PATCH", f"{self.update_validator}?{urlencode(query_params.__dict__)}")
 
-        assert patch_response.status_code == status.HTTP_200_OK
+        put_response = make_iap_request("PUT",
+                                          f"{self.update_validator}?{urlencode(query_params.__dict__)}",
+                                          json=setup_payload)
+
+        assert put_response.status_code == status.HTTP_200_OK
 
         survey_id = setup_payload["survey_id"]
         classifier_type = CiClassifierService.get_classifier_type(setup_payload)
@@ -71,7 +79,8 @@ class TestPatchValidatorVersionV1:
             language=language,
             published_at=check_ci_in_db_data[0]["published_at"],
             survey_id=survey_id,
-            title=setup_payload["title"]
+            title="NotDune"
         )
 
+        assert original_published_at != check_ci_in_db_data[0]["published_at"]
         assert expected_ci.model_dump() == check_ci_in_db_data[0]

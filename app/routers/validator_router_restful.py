@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter, Depends
 
 import app.exception.exception_response_models as erm
@@ -17,8 +16,9 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 settings = Settings()
 
+
 @router.put(
-    "/v1/update_validator_version",
+    "/v1/collection-instruments/validator-version",
     responses={
         200: {
             "model": CiMetadata,
@@ -40,19 +40,24 @@ settings = Settings()
         },
     },
 )
-async def http_put_ci_validator_version_v1(
+async def put_collection_instrument_validator_version(
         post_data: PostCiSchemaV1Data,
         query_params: UpdateValidatorVersionV1Params = Depends(),
         ci_processor_service: CiProcessorService = Depends(),
 ):
+    """
+    PUT method that updates validator_version and CI metadata by Guid.
+    """
+    logger.info("Putting validator_version")
+    logger.debug(f"Input data: guid={query_params.guid}, query_params={query_params.__dict__}")
 
-    if not query_params.params_not_none(query_params.__dict__.keys()):
+    if  not query_params.params_not_none(query_params.__dict__.keys()):
         raise exceptions.ExceptionIncorrectKeyNames
 
     ci_metadata = ci_processor_service.get_ci_metadata_with_id(query_params.guid)
 
     if not ci_metadata:
-        error_message = "patch_ci_validator: exception raised - No collection instrument metadata found"
+        error_message = "put_collection_instrument_validator_version: exception raised - No collection instrument metadata found"
         logger.error(error_message)
         logger.debug(f"{error_message}:{query_params.guid}")
         raise exceptions.ExceptionNoCIMetadata
@@ -60,10 +65,7 @@ async def http_put_ci_validator_version_v1(
     if ci_metadata.validator_version == query_params.validator_version:
         logger.info("No change to validator_version")
         return ci_metadata.model_dump()
-
-    ci_updated_metadata = ci_metadata.copy()
+    ci_updated_metadata = ci_metadata.model_copy()
     ci_updated_metadata.validator_version = query_params.validator_version
-
     ci_processor_service.update_validator_version_and_ci(post_data, ci_updated_metadata)
-
     return ci_updated_metadata.model_dump()

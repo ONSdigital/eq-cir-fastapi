@@ -1,0 +1,136 @@
+from urllib.parse import urlencode
+
+import pytest
+from fastapi import status
+
+from app.config import settings
+from app.services.ci_classifier_service import CiClassifierService
+from tests.integration_tests.utils import make_iap_request, create_post_params
+
+
+class TestGetCiMetadataV2Restful:
+    """Tests for the `get_collection_instruments_metadata_v2` endpoint."""
+
+    base_url = "/v2/collection-instruments/metadata"
+
+    param_list = create_post_params(3)
+    post_url = "/v1/collection-instruments"
+
+    def teardown_method(self):
+        """
+        This function deletes the test CI with survey_id:3456 at the end of each integration test to ensure it
+        is not reflected in the firestore and schemas.
+        """
+        querystring = urlencode({"survey_id": 3456})
+        make_iap_request("DELETE", f"/v1/collection-instruments?{querystring}")
+
+    def test_post_3_ci_with_same_metadata_get_ci_metadata_v2_returns_3(self, setup_payload):
+        """
+        What am I testing:
+        get_collection_instruments_metadata_v2 should return three ci_versions if the same ci is posted thrice.
+        """
+        for data in self.param_list:
+            make_iap_request("POST", f"/v3/collection-instruments?{data}", json=setup_payload)
+
+        classifier_type = CiClassifierService.get_classifier_type(setup_payload)
+        classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)
+
+        get_ci_metadata_v2_payload = {
+            "classifier_type": classifier_type,
+            "classifier_value": classifier_value,
+            "language": setup_payload["language"],
+            "survey_id": setup_payload["survey_id"],
+        }
+        querystring = urlencode(get_ci_metadata_v2_payload)
+
+        # sends request to http_get_ci_metadata_v2 endpoint for data
+        get_ci_metadata_v2_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
+        get_ci_metadata_v2_response_data = get_ci_metadata_v2_response.json()
+
+        assert len(get_ci_metadata_v2_response_data) == 3
+        assert get_ci_metadata_v2_response_data[2]["ci_version"] == 1
+        assert get_ci_metadata_v2_response_data[1]["ci_version"] == 2
+        assert get_ci_metadata_v2_response_data[0]["ci_version"] == 3
+
+    def test_get_ci_metadata_v2_returns_all_metadata(self):
+        """
+        What am I testing:
+        get_collection_instruments_metadata_v2 should return all metadata if no args are provided for the query.
+        """
+        # Passing an empty list to the get_ci_metadata_v2
+        get_ci_metadata_v2_response = make_iap_request("GET", f"{self.base_url}")
+        get_ci_metadata_v2_response_data = get_ci_metadata_v2_response.json()
+        assert len(get_ci_metadata_v2_response_data) > 0
+
+    def test_post_ci_with_same_metadata_query_ci_returns_with_new_keys_sds_schema(self, setup_payload):
+        """
+        What am I testing:
+        get_collection_instruments_metadata_v2 should return ci with new keys sds_schema when queried.
+        """
+        # post 3 ci with the same data
+        setup_payload["sds_schema"] = "xx-ytr-1234-856"
+        # Posts the ci using http_post_ci endpoint
+
+        data = create_post_params(1)
+
+        make_iap_request("POST", f"/v3/collection-instruments?{data[0]}", json=setup_payload)
+
+        classifier_type = CiClassifierService.get_classifier_type(setup_payload)
+        classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)
+
+        get_ci_metadata_v2_payload = {
+            "classifier_type": classifier_type,
+            "classifier_value": classifier_value,
+            "language": setup_payload["language"],
+            "survey_id": setup_payload["survey_id"],
+        }
+        querystring = urlencode(get_ci_metadata_v2_payload)
+
+        # sends request to http_get_ci_metadata_v2 endpoint for data
+        get_ci_metadata_v2_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
+        query_ci_response_json = get_ci_metadata_v2_response.json()
+        assert query_ci_response_json[0]["sds_schema"] == "xx-ytr-1234-856"
+
+    def test_metadata_query_v2_returns_404(self, setup_payload):
+        """
+        What am I testing:
+        get_collection_instruments_metadata_v2 should return 404 status code if ci is not found.
+        """
+        classifier_type = CiClassifierService.get_classifier_type(setup_payload)
+        classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)
+
+        get_ci_metadata_v2_payload = {
+            "classifier_type": classifier_type,
+            "classifier_value": classifier_value,
+            "language": setup_payload["language"],
+            "survey_id": setup_payload["survey_id"],
+        }
+        querystring = urlencode(get_ci_metadata_v2_payload)
+
+        # sends request to http_get_ci_metadata_v2 endpoint for data
+        get_ci_metadata_v2_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
+        assert get_ci_metadata_v2_response.status_code == status.HTTP_404_NOT_FOUND
+        query_ci_response = get_ci_metadata_v2_response.json()
+        assert query_ci_response["message"] == "No CI found"
+        assert query_ci_response["status"] == "error"
+
+    def test_metadata_query_ci_v2_returns_unauthorized_request(self, setup_payload):
+        """
+        What am I testing:
+        get_collection_instruments_metadata_v2 should return a 401 unauthorized error if the endpoint is requested with an unauthorized token.
+        """
+        if settings.CONF == "local-int-tests":
+            pytest.skip("Skipping test_metadata_query_ci_v2_returns_unauthorized_request on local environment")
+
+        classifier_type = CiClassifierService.get_classifier_type(setup_payload)
+        classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)
+
+        get_ci_metadata_v2_payload = {
+            "classifier_type": classifier_type,
+            "classifier_value": classifier_value,
+            "language": setup_payload["language"],
+            "survey_id": setup_payload["survey_id"],
+        }
+        querystring = urlencode(get_ci_metadata_v2_payload)
+        response = make_iap_request("GET", f"{self.base_url}?{querystring}", unauthenticated=True)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED

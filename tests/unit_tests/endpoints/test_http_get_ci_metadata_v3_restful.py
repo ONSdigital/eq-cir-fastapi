@@ -16,10 +16,10 @@ settings = Settings()
 
 
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_with_id")
-class TestHttpGetCiMetadataV3:
-    """Tests for the `http_get_ci_metadata_v3` endpoint"""
+class TestHttpGetCiMetadataV3Restful:
+    """Tests for the `get_collection_instrument_metadata_by_guid` endpoint"""
 
-    base_url = "/v3/ci_metadata"
+    base_url = "/v3/collection-instruments/metadata"
 
     query_params = GetCiMetadataV3Params(
         guid=mock_id,

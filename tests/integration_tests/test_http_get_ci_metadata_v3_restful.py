@@ -4,14 +4,14 @@ import pytest
 from fastapi import status
 
 from app.config import settings
-from tests.integration_tests.utils import make_iap_request
+from tests.integration_tests.utils import make_iap_request, create_post_params
 
 
 class TestGetCiMetadataV3:
-    """Tests for the `http_get_ci_metadata_v3` endpoint."""
+    """Tests for the `get_collection_instrument_metadata_by_guid` endpoint."""
 
-    base_url = "/v3/ci_metadata"
-    post_url = "/v1/publish_collection_instrument"
+    base_url = "/v3/collection-instruments/metadata"
+    post_url = "/v3/collection-instruments"
 
     def teardown_method(self):
         """
@@ -19,15 +19,17 @@ class TestGetCiMetadataV3:
         is not reflected in the firestore and schemas.
         """
         querystring = urlencode({"survey_id": 3456})
-        make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
+        make_iap_request("DELETE", f"/v1/collection-instruments?{querystring}")
 
     def test_get_ci_metadata_v3_returns_200(self, setup_payload):
         """
         What am I testing:
-        http_get_ci_metadata_v3 should return 1 metadata if the guid matches
+        get_collection_instrument_metadata_by_guid should return 1 metadata if the guid matches
         """
 
-        post_response = make_iap_request("POST", f"{self.post_url}", json=setup_payload)
+        data = create_post_params(1)
+
+        post_response = make_iap_request("POST", f"/v3/collection-instruments?{data[0]}", json=setup_payload)
 
         guid = post_response.json()["guid"]
 
@@ -47,10 +49,11 @@ class TestGetCiMetadataV3:
     def test_metadata_query_v3_returns_404(self, setup_payload):
         """
         What am I testing:
-        http_get_ci metadata_v3 should return 404 status code if the guid does not match any existing CI.
+        get_collection_instrument_metadata_by_guid should return 404 status code if the guid does not match any existing CI.
         """
-        make_iap_request("POST", f"{self.post_url}", json=setup_payload)
+        data = create_post_params(1)
 
+        make_iap_request("POST", f"/v3/collection-instruments?{data[0]}", json=setup_payload)
         get_ci_metadata_v3_payload = {
             "guid": "123456" # guid that does not exist
         }
@@ -67,7 +70,7 @@ class TestGetCiMetadataV3:
     def test_metadata_query_ci_v3_returns_unauthorized_request(self, setup_payload):
         """
         What am I testing:
-        http_get_ci metadata_v3 should return a 401 unauthorized error if the endpoint is requested with an unauthorized token.
+        get_collection_instrument_metadata_by_guid should return a 401 unauthorized error if the endpoint is requested with an unauthorized token.
         """
         if settings.CONF == "local-int-tests":
             pytest.skip("Skipping test_metadata_query_ci_v3_returns_unauthorized_request on local environment")
