@@ -21,8 +21,6 @@ from tests.test_data.ci_test_data import (
     mock_ci_metadata_v3_with_ci_version,
 )
 
-client = TestClient(app)
-test_500_client = TestClient(app, raise_server_exceptions=False)
 settings = Settings()
 
 CONTENT_TYPE = "application/json"
@@ -46,6 +44,7 @@ class TestHttpPostCiV3:
         mocked_get_latest_ci_metadata,
         mocked_publish_message,
         mocked_create_guid,
+        test_client,
     ):
         """
         Endpoint should return `HTTP_200_OK` and serialized CI metadata when called with
@@ -56,7 +55,7 @@ class TestHttpPostCiV3:
         mocked_get_latest_ci_metadata.return_value = None
         mocked_create_guid.return_value = mock_id
 
-        response = client.post(
+        response = test_client.post(
             self.url,
             params={"validator_version": "0.0.1"},
             headers={"ContentType": CONTENT_TYPE},

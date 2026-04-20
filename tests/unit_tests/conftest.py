@@ -5,6 +5,7 @@ import pytest
 from gcp_storage_emulator.server import create_server
 from google.cloud import pubsub_v1
 from mockfirestore import MockFirestore
+from fastapi.testclient import TestClient
 
 from app.config import Settings, logging
 
@@ -84,3 +85,25 @@ def setup_pubsub_emulator():
         pytest.fail(f"Failed to create Pub/Sub topic: {e}")
 
     yield
+
+@pytest.fixture
+def test_client():
+    """
+    General client for hitting endpoints in tests, also mocking firebase credentials.
+    """
+    from app.main import app
+
+    client = TestClient(app)
+    yield client
+
+
+@pytest.fixture
+def test_client_no_server_exception():
+    """
+    This client is only used to test the 500 server error exception handler,
+    therefore server exception for this client is suppressed
+    """
+    from app.main import app
+
+    client = TestClient(app, raise_server_exceptions=False)
+    yield client
