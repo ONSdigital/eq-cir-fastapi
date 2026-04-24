@@ -8,7 +8,7 @@ class Settings(BaseSettings):
 
     CONF: str = ""
     CI_FIRESTORE_COLLECTION_NAME: str = "ons-collection-instruments"
-    CI_STORAGE_BUCKET_NAME: str = "ons-cir-dev"
+    CI_STORAGE_BUCKET_NAME: str = "emulated-ci-bucket"
     DEFAULT_HOSTNAME: str = "only required for integration tests"
     FIRESTORE_DB_NAME: str = "(default)"
     LOG_LEVEL: str = "INFO"

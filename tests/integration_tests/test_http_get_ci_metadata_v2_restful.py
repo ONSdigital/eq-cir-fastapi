@@ -14,7 +14,7 @@ class TestGetCiMetadataV2Restful:
     base_url = "/v2/collection-instruments/metadata"
 
     param_list = create_post_params(3)
-    post_url = "/v1/collection-instruments"
+    post_url = "/v3/collection-instruments"
 
     def teardown_method(self):
         """
@@ -30,7 +30,7 @@ class TestGetCiMetadataV2Restful:
         get_collection_instruments_metadata_v2 should return three ci_versions if the same ci is posted thrice.
         """
         for data in self.param_list:
-            make_iap_request("POST", f"/v3/collection-instruments?{data}", json=setup_payload)
+            make_iap_request("POST", f"{self.post_url}?{data}", json=setup_payload)
 
         classifier_type = CiClassifierService.get_classifier_type(setup_payload)
         classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)
@@ -52,15 +52,32 @@ class TestGetCiMetadataV2Restful:
         assert get_ci_metadata_v2_response_data[1]["ci_version"] == 2
         assert get_ci_metadata_v2_response_data[0]["ci_version"] == 3
 
-    def test_get_ci_metadata_v2_returns_all_metadata(self):
+    def test_get_ci_metadata_v2_returns_all_metadata(self, setup_payload):
         """
         What am I testing:
         get_collection_instruments_metadata_v2 should return all metadata if no args are provided for the query.
         """
+        # Post 3 different versions of the same CI
+        for data in self.param_list:
+            make_iap_request("POST", f"{self.post_url}?{data}", json=setup_payload)
+
+        # Post a CI with different form_type
+        new_payload = setup_payload.copy()
+        new_payload["form_type"] = "something-else"
+        params = {
+            "validator_version": f"0.0.10",
+            "guid": f"test-guid-10",
+            "ci_version": 1,
+        }
+        make_iap_request("POST", f"{self.post_url}?{urlencode(params)}", json=new_payload)
+
         # Passing an empty list to the get_ci_metadata_v2
         get_ci_metadata_v2_response = make_iap_request("GET", f"{self.base_url}")
         get_ci_metadata_v2_response_data = get_ci_metadata_v2_response.json()
-        assert len(get_ci_metadata_v2_response_data) > 0
+
+        # The response should include all 4 posted CIs since no query parameters were provided to filter the results
+        assert get_ci_metadata_v2_response.status_code == status.HTTP_200_OK
+        assert len(get_ci_metadata_v2_response_data) == 4
 
     def test_post_ci_with_same_metadata_query_ci_returns_with_new_keys_sds_schema(self, setup_payload):
         """
@@ -68,12 +85,13 @@ class TestGetCiMetadataV2Restful:
         get_collection_instruments_metadata_v2 should return ci with new keys sds_schema when queried.
         """
         # post 3 ci with the same data
-        setup_payload["sds_schema"] = "xx-ytr-1234-856"
+        new_payload = setup_payload.copy()
+        new_payload["sds_schema"] = "xx-ytr-1234-856"
         # Posts the ci using http_post_ci endpoint
 
         data = create_post_params(1)
 
-        make_iap_request("POST", f"/v3/collection-instruments?{data[0]}", json=setup_payload)
+        make_iap_request("POST", f"{self.post_url}?{data[0]}", json=new_payload)
 
         classifier_type = CiClassifierService.get_classifier_type(setup_payload)
         classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)
@@ -89,6 +107,9 @@ class TestGetCiMetadataV2Restful:
         # sends request to http_get_ci_metadata_v2 endpoint for data
         get_ci_metadata_v2_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         query_ci_response_json = get_ci_metadata_v2_response.json()
+
+        assert get_ci_metadata_v2_response.status_code == status.HTTP_200_OK
+        assert len(query_ci_response_json) == 1
         assert query_ci_response_json[0]["sds_schema"] == "xx-ytr-1234-856"
 
     def test_metadata_query_v2_returns_404(self, setup_payload):

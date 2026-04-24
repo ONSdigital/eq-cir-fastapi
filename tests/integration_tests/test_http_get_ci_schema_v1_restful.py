@@ -15,6 +15,8 @@ class TestHttpGetCiSchemaV1Restful:
 
     url = "/v1/collection-instruments/schema"
 
+    post_url = "/v3/collection-instruments"
+
     def teardown_method(self):
         """
         This function deletes the test CI with survey_id:3456 at the end of each integration test to ensure it
@@ -66,7 +68,9 @@ class TestHttpGetCiSchemaV1Restful:
         # Use `post_ci_v1` to create ci metadata and schema on the db
         data = create_post_params(1)
 
-        make_iap_request("POST", f"/v3/collection-instruments?{data[0]}", json=setup_payload)
+        post_response = make_iap_request("POST", f"{self.post_url}?{data[0]}", json=setup_payload)
+
+        assert post_response.status_code == status.HTTP_200_OK
 
         classifier_type = CiClassifierService.get_classifier_type(setup_payload)
         classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)

@@ -9,7 +9,7 @@ from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.helpers.integration_helpers import subscriber_teardown, subscriber_setup, \
     generate_subscriber_id
 from tests.integration_tests.helpers.pubsub_helper import PubSubHelper
-from tests.integration_tests.utils import make_iap_request
+from tests.integration_tests.utils import make_iap_request, create_post_params
 
 ci_pubsub_helper = PubSubHelper(settings.PUBLISH_CI_TOPIC_ID)
 
@@ -17,25 +17,9 @@ ci_pubsub_helper = PubSubHelper(settings.PUBLISH_CI_TOPIC_ID)
 class TestPostCiV3:
     """Tests for the `http_post_ci_v3` endpoint."""
 
-    guid = "9d1bb195-08b9-494a-af52-1cbdda68deef"
+    post_url = "/v3/collection-instruments"
+    encoded_list = create_post_params(3)
 
-    post_params = urlencode({"guid": "9d1bb195-08b9-494a-af52-1cbdda68deef",
-                             "ci_version": 2,
-                             "validator_version": "0.0.1"})
-
-    post_ci_params = urlencode({"guid": "9d1bb195-08b9-494a-af52-1cbdda68defg",
-                         "ci_version": 2,
-                         "validator_version": "0.0.1"})
-
-    update_params = urlencode({"guid": "9d1bb195-08b9-494a-af52-1cbdda68deed",
-                             "ci_version": 3,
-                             "validator_version": "0.0.1"})
-
-
-    post_url = f"/v3/collection-instruments?{post_params}"
-    post_ci_url = f"/v3/collection-instruments?{post_ci_params}"
-    updated_post_url = f"/v3/collection-instruments?{update_params}"
-    post_url_no_guid = "/v3/collection-instruments?ci_version=2%validator_version=0.0.1"
     get_metadata_url = "/v1/collection-instruments/metadata"
     subscription_id = generate_subscriber_id()  # Unique subscription ID to avoid conflicts and GCP errors
 
@@ -63,7 +47,8 @@ class TestPostCiV3:
         AC-1.3 - When a CI is published in the response the datetime
         field is present with an ISO8601 value. (2023-01-24T13:56:38Z)
         """
-        ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_payload,)
+        data = self.encoded_list[0]
+        ci_response = make_iap_request("POST", f"{self.post_url}?{data}", json=setup_payload)
 
         # Assert response status code = 200 OK
         assert ci_response.status_code == status.HTTP_200_OK
@@ -83,28 +68,30 @@ class TestPostCiV3:
             }
         )
         # sends request to http_query_ci endpoint for data
-        check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
-        check_ci_in_db_data = check_ci_in_db.json()
+        get_metadata_response = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
+
+        assert get_metadata_response.status_code == status.HTTP_200_OK
+        get_metadata_response_data = get_metadata_response.json()
 
         received_messages = ci_pubsub_helper.try_pull_and_acknowledge_messages(self.subscription_id)
 
         expected_ci = CiMetadata(
-            ci_version=2,
+            ci_version=1,
             validator_version="0.0.1",
             data_version=setup_payload["data_version"],
             classifier_type=classifier_type,
             classifier_value=classifier_value,
-            guid=check_ci_in_db_data[0]["guid"],
+            guid=get_metadata_response_data[0]["guid"],
             language=setup_payload["language"],
-            published_at=check_ci_in_db_data[0]["published_at"],
+            published_at=get_metadata_response_data[0]["published_at"],
             survey_id=setup_payload["survey_id"],
             title=setup_payload["title"],
         )
 
         assert "published_at" in ci_response_data
-        assert ci_response_data["ci_version"] == 2
+        assert ci_response_data["ci_version"] == 1
         # database assertion
-        assert check_ci_in_db_data == [expected_ci.model_dump()]
+        assert get_metadata_response_data == [expected_ci.model_dump()]
         # assert that the metadata is pulled through in the subscription
         assert expected_ci.model_dump() == received_messages[0]
 
@@ -118,10 +105,16 @@ class TestPostCiV3:
         This test is very similar to test_can_publish_valid_ci expect that sds_schema value is not empty
         """
         # Creates a CI in the database, essentially running post_ci_v1 from handler folder
-        setup_payload["sds_schema"] = "xx-ytr-1234-856"
-        ci_response = make_iap_request("POST", f"{self.post_ci_url}", json=setup_payload)
-        ci_response_data = ci_response.json()
+        new_payload = setup_payload.copy()
+        new_payload["sds_schema"] = "xx-ytr-1234-856"
 
+        data = self.encoded_list[0]
+        ci_response = make_iap_request("POST", f"{self.post_url}?{data}", json=new_payload)
+
+        # Assert response status code = 200 OK
+        assert ci_response.status_code == status.HTTP_200_OK
+
+        ci_response_data = ci_response.json()
         survey_id = setup_payload["survey_id"]
         classifier_type = CiClassifierService.get_classifier_type(setup_payload)
         classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)
@@ -136,48 +129,54 @@ class TestPostCiV3:
             }
         )
         # sends request to http_query_ci endpoint for data
-        check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
-        check_ci_in_db_data = check_ci_in_db.json()
+        get_metadata_response = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
+
+        assert get_metadata_response.status_code == status.HTTP_200_OK
+        get_metadata_response_data = get_metadata_response.json()
 
         received_messages = ci_pubsub_helper.try_pull_and_acknowledge_messages(self.subscription_id)
 
         expected_ci = CiMetadata(
-            ci_version=2,
+            ci_version=1,
             validator_version="0.0.1",
-            data_version=setup_payload["data_version"],
+            data_version=new_payload["data_version"],
             classifier_type=classifier_type,
             classifier_value=classifier_value,
-            guid=check_ci_in_db_data[0]["guid"],
-            language=setup_payload["language"],
-            published_at=check_ci_in_db_data[0]["published_at"],
-            sds_schema=setup_payload["sds_schema"],
-            survey_id=setup_payload["survey_id"],
-            title=setup_payload["title"],
+            guid=get_metadata_response_data[0]["guid"],
+            language=new_payload["language"],
+            published_at=get_metadata_response_data[0]["published_at"],
+            sds_schema=new_payload["sds_schema"],
+            survey_id=new_payload["survey_id"],
+            title=new_payload["title"],
         )
 
         assert "published_at" in ci_response_data
-        assert ci_response_data["ci_version"] == 2
+        assert ci_response_data["ci_version"] == 1
         # database assertion
-        assert check_ci_in_db_data == [expected_ci.model_dump()]
+        assert get_metadata_response_data == [expected_ci.model_dump()]
         # assert that the metadata is pulled through in the subscription
         assert expected_ci.model_dump() == received_messages[0]
 
     def test_can_append_version_to_existing_ci(
-        self,
-        setup_publish_ci_return_payload,
+            self,
+            setup_payload,
     ):
         """
         What am I testing:
         Where the same CI is submitted(survey_id),
         then a new version is returned based on the survey_id
         """
-        ci_response = make_iap_request("POST", f"{self.updated_post_url}", json=setup_publish_ci_return_payload)
-        ci_response_data = ci_response.json()
+        # Post the same CI twice, which should create two versions of the CI in the database
+        ci_response_1 = make_iap_request("POST", f"{self.post_url}?{self.encoded_list[0]}", json=setup_payload)
+        assert ci_response_1.status_code == status.HTTP_200_OK
 
-        survey_id = setup_publish_ci_return_payload["survey_id"]
-        classifier_type = CiClassifierService.get_classifier_type(setup_publish_ci_return_payload)
-        classifier_value = CiClassifierService.get_classifier_value(setup_publish_ci_return_payload, classifier_type)
-        language = setup_publish_ci_return_payload["language"]
+        ci_response_2 = make_iap_request("POST", f"{self.post_url}?{self.encoded_list[1]}", json=setup_payload)
+        assert ci_response_2.status_code == status.HTTP_200_OK
+
+        survey_id = setup_payload["survey_id"]
+        classifier_type = CiClassifierService.get_classifier_type(setup_payload)
+        classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)
+        language = setup_payload["language"]
         querystring = urlencode(
             {
                 "classifier_type": classifier_type,
@@ -187,44 +186,58 @@ class TestPostCiV3:
             }
         )
         # sends request to http_query_ci endpoint for data
-        check_ci_in_db = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
-        check_ci_in_db_data = check_ci_in_db.json()
+        get_metadata_response = make_iap_request("GET", f"{self.get_metadata_url}?{querystring}")
 
-        expected_ci = CiMetadata(
-            ci_version=3,
-            validator_version="0.0.1",
-            data_version=setup_publish_ci_return_payload["data_version"],
-            classifier_type=classifier_type,
-            classifier_value=classifier_value,
-            guid=check_ci_in_db_data[0]["guid"],
-            language=setup_publish_ci_return_payload["language"],
-            published_at=check_ci_in_db_data[0]["published_at"],
-            survey_id=setup_publish_ci_return_payload["survey_id"],
-            title=setup_publish_ci_return_payload["title"],
-        )
+        assert get_metadata_response.status_code == status.HTTP_200_OK
+        get_metadata_response_data = get_metadata_response.json()
 
-        assert ci_response.status_code == status.HTTP_200_OK
-        assert ci_response_data["ci_version"] == 3
+        expected_ci_metadata_list = [
+            CiMetadata(
+                ci_version=2,
+                validator_version="0.0.1",
+                data_version=setup_payload["data_version"],
+                classifier_type=classifier_type,
+                classifier_value=classifier_value,
+                guid=get_metadata_response_data[0]["guid"],
+                language=setup_payload["language"],
+                published_at=get_metadata_response_data[0]["published_at"],
+                survey_id=setup_payload["survey_id"],
+                title=setup_payload["title"],
+            ),
+            CiMetadata(
+                ci_version=1,
+                validator_version="0.0.1",
+                data_version=setup_payload["data_version"],
+                classifier_type=classifier_type,
+                classifier_value=classifier_value,
+                guid=get_metadata_response_data[1]["guid"],
+                language=setup_payload["language"],
+                published_at=get_metadata_response_data[1]["published_at"],
+                survey_id=setup_payload["survey_id"],
+                title=setup_payload["title"],
+            )
+        ]
+
         # database assertions
-        assert len(check_ci_in_db_data) == 2
-        assert check_ci_in_db_data[0] == expected_ci.model_dump()
-        assert check_ci_in_db_data[1]["ci_version"] == 1
-        assert check_ci_in_db_data[0]["ci_version"] == 3
+        assert len(get_metadata_response_data) == 2
+        assert get_metadata_response_data == [ci_metadata.model_dump() for ci_metadata in expected_ci_metadata_list]
 
         # Need to pull and acknowledge messages to clear subscription
         ci_pubsub_helper.try_pull_and_acknowledge_messages(self.subscription_id)
 
     def test_cannot_publish_ci_missing_survey_id(
-        self,
-        setup_payload,
+            self,
+            setup_payload,
     ):
         """
         What am I testing:
             If a metadata field is missing <survey_id>, then the correct response is returned.
         """
-        payload = setup_payload
-        payload["survey_id"] = " "
-        ci_response = make_iap_request("POST", f"{self.post_url}", json=payload)
+        new_payload = setup_payload.copy()
+        new_payload["survey_id"] = " "
+
+        data = self.encoded_list[0]
+        ci_response = make_iap_request("POST", f"{self.post_url}?{data}", json=new_payload)
 
         assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -239,9 +252,11 @@ class TestPostCiV3:
         What am I testing:
         AC-3.2	If a metadata field is missing <language>, then the correct response is returned.
         """
-        payload = setup_payload
-        payload["language"] = " "
-        ci_response = make_iap_request("POST", f"{self.post_url}", json=payload)
+        new_payload = setup_payload.copy()
+        new_payload["language"] = " "
+
+        data = self.encoded_list[0]
+        ci_response = make_iap_request("POST", f"{self.post_url}?{data}", json=new_payload)
 
         assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -256,11 +271,12 @@ class TestPostCiV3:
         What am I testing:
         AC-3.3	If a metadata field is missing a classifier, then the correct response is returned.
         """
-        payload = setup_payload
-        classifier_type = CiClassifierService.get_classifier_type(payload)
-        payload.pop(classifier_type)
+        new_payload = setup_payload.copy()
+        classifier_type = CiClassifierService.get_classifier_type(new_payload)
+        new_payload.pop(classifier_type)
 
-        ci_response = make_iap_request("POST", f"{self.post_url}", json=payload)
+        data = self.encoded_list[0]
+        ci_response = make_iap_request("POST", f"{self.post_url}?{data}", json=new_payload)
 
         assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -275,9 +291,11 @@ class TestPostCiV3:
         What am I testing:
         AC-3.4	If a metadata field is missing <title>, then the correct response is returned.
         """
-        payload = setup_payload
-        payload["title"] = " "
-        ci_response = make_iap_request("POST", f"{self.post_url}", json=payload)
+        new_payload = setup_payload.copy()
+        new_payload["title"] = " "
+
+        data = self.encoded_list[0]
+        ci_response = make_iap_request("POST", f"{self.post_url}?{data}", json=new_payload)
 
         assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -292,9 +310,11 @@ class TestPostCiV3:
         What am I testing:
         AC-3.6	If a metadata field is missing <data_version>, then the correct response is returned.
         """
-        payload = setup_payload
-        payload["data_version"] = " "
-        ci_response = make_iap_request("POST", f"{self.post_url}", json=payload)
+        new_payload = setup_payload.copy()
+        new_payload["data_version"] = " "
+
+        data = self.encoded_list[0]
+        ci_response = make_iap_request("POST", f"{self.post_url}?{data}", json=new_payload)
 
         assert ci_response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -313,7 +333,6 @@ class TestPostCiV3:
         if settings.CONF == "local-int-tests":
             pytest.skip("Skipping test_publish_ci_returns_unauthorized_request on local environment")
 
-        payload = setup_payload
-        ci_response = make_iap_request("POST", f"{self.post_url}", json=payload, unauthenticated=True)
+        ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_payload, unauthenticated=True)
 
         assert ci_response.status_code == status.HTTP_401_UNAUTHORIZED

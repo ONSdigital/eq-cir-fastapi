@@ -9,7 +9,6 @@ from tests.test_data.ci_test_data import (
     mock_language,
     mock_post_ci_schema,
     mock_post_ci_schema_with_sds_schema,
-    mock_post_ci_schema_without_sds_schema,
     mock_survey_id,
 )
 

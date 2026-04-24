@@ -5,14 +5,17 @@ from fastapi import status
 
 from app.config import settings
 from app.services.ci_classifier_service import CiClassifierService
-from tests.integration_tests.utils import make_iap_request
+from tests.integration_tests.utils import make_iap_request, create_post_params
 
 
 class TestGetCiMetadataV1:
     """Tests for the `http_get_ci_metadata_v1` endpoint"""
 
     base_url = "/v1/ci_metadata"
-    post_url = "/v1/publish_collection_instrument"
+
+    post_url = "/v3/publish_collection_instrument"
+
+    encoded_list = create_post_params(3)
 
     def teardown_method(self):
         """
@@ -28,8 +31,8 @@ class TestGetCiMetadataV1:
         http_get_ci_metadata_v1 should return three ci_versions if the same ci is posted thrice.
         """
         # post 3 ci with the same data
-        for _ in range(3):
-            make_iap_request("POST", f"{self.post_url}", json=setup_payload)
+        for data in self.encoded_list:
+            make_iap_request("POST", f"{self.post_url}?{data}", json=setup_payload)
 
         survey_id = setup_payload["survey_id"]
         classifier_type = CiClassifierService.get_classifier_type(setup_payload)
@@ -47,6 +50,7 @@ class TestGetCiMetadataV1:
         query_ci_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         query_ci_response_data = query_ci_response.json()
 
+        assert query_ci_response.status_code == status.HTTP_200_OK
         assert len(query_ci_response_data) == 3
         assert query_ci_response_data[2]["ci_version"] == 1
         assert query_ci_response_data[1]["ci_version"] == 2
@@ -57,10 +61,9 @@ class TestGetCiMetadataV1:
         What am I testing:
         http_get_ci_metadata_v1 should return appropriate ci if language is different
         """
-        # post 3 ci with the same data
-        for _ in range(3):
-            # Posts the ci using http_post_ci endpoint
-            make_iap_request("POST", f"{self.post_url}", json=setup_payload)
+        data = create_post_params(1)
+
+        make_iap_request("POST", f"{self.post_url}?{data[0]}", json=setup_payload)
 
         survey_id = setup_payload["survey_id"]
         classifier_type = CiClassifierService.get_classifier_type(setup_payload)
@@ -78,8 +81,13 @@ class TestGetCiMetadataV1:
         query_ci_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         query_ci_response_data = query_ci_response.json()
 
-        setup_payload["language"] = "English"
-        make_iap_request("POST", f"{self.post_url}", json=setup_payload)
+        assert query_ci_response.status_code == status.HTTP_200_OK
+        assert len(query_ci_response_data) == 1
+
+        new_payload = setup_payload.copy()
+        new_payload["language"] = "English"
+        data = create_post_params(1)
+        make_iap_request("POST", f"{self.post_url}?{data[0]}", json=new_payload)
         querystring = urlencode(
             {
                 "classifier_type": classifier_type,
@@ -92,7 +100,7 @@ class TestGetCiMetadataV1:
         new_language_query_ci_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         new_language_query_ci_response_data = new_language_query_ci_response.json()
 
-        assert len(query_ci_response_data) == 3
+        assert new_language_query_ci_response.status_code == status.HTTP_200_OK
         assert len(new_language_query_ci_response_data) == 1
         assert new_language_query_ci_response_data[0]["language"] == "English"
 
@@ -101,14 +109,15 @@ class TestGetCiMetadataV1:
         What am I testing:
         http_get_ci_metadata_v1 should return ci with new keys sds_schema when queried.
         """
-        # post 3 ci with the same data
-        setup_payload["sds_schema"] = "xx-ytr-1234-856"
+        new_payload = setup_payload.copy()
+        new_payload["sds_schema"] = "xx-ytr-1234-856"
         # Posts the ci using http_post_ci endpoint
-        make_iap_request("POST", f"{self.post_url}", json=setup_payload)
-        survey_id = setup_payload["survey_id"]
-        classifier_type = CiClassifierService.get_classifier_type(setup_payload)
-        classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)
-        language = setup_payload["language"]
+        data = create_post_params(1)
+        make_iap_request("POST", f"{self.post_url}?{data[0]}", json=new_payload)
+        survey_id = new_payload["survey_id"]
+        classifier_type = CiClassifierService.get_classifier_type(new_payload)
+        classifier_value = CiClassifierService.get_classifier_value(new_payload, classifier_type)
+        language = new_payload["language"]
         querystring = urlencode(
             {
                 "classifier_type": classifier_type,
@@ -120,6 +129,8 @@ class TestGetCiMetadataV1:
         # sends request to http_query_ci endpoint for data
         query_ci_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
         query_ci_response_json = query_ci_response.json()
+
+        assert query_ci_response.status_code == status.HTTP_200_OK
         assert query_ci_response_json[0]["sds_schema"] == "xx-ytr-1234-856"
 
     def test_metadata_query_ci_returns_404(self, setup_payload):
@@ -191,5 +202,4 @@ class TestGetCiMetadataV1:
             }
         )
         response = make_iap_request("GET", f"{self.base_url}?{querystring}", unauthenticated=True)
-        print(response)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED

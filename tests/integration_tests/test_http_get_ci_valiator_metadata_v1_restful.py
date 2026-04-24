@@ -26,11 +26,11 @@ class TestHttpGetCiValidatorMetadataV1Restful:
         # Post CIs to create metadata
         # Post CI with v1 endpoint, validator version = empty
         data = create_post_params(1)
-        make_iap_request("POST", f"/v3/collection-instruments?{data[0]}", json=setup_payload)        # Post CI with v2 endpoint, validator version = v0.0.1
+        make_iap_request("POST", f"{self.post_url}?{data[0]}", json=setup_payload)        # Post CI with v2 endpoint, validator version = v0.0.1
         data = create_post_params(1, "0.0.2")
-        make_iap_request("POST", f"/v3/collection-instruments?{data[0]}", json=setup_payload)        # Post CI with v2 endpoint, validator version = v0.0.2
+        make_iap_request("POST", f"{self.post_url}?{data[0]}", json=setup_payload)        # Post CI with v2 endpoint, validator version = v0.0.2
         data = create_post_params(1, "0.0.3")
-        make_iap_request("POST", f"/v3/collection-instruments?{data[0]}", json=setup_payload)
+        make_iap_request("POST", f"{self.post_url}?{data[0]}", json=setup_payload)
         # Retrieve all CI validator metadata
         response = make_iap_request("GET", f"{self.base_url}")
 

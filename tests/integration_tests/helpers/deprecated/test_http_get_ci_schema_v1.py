@@ -7,14 +7,14 @@ from fastapi import status
 from app.config import settings
 from app.models.requests import GetCiSchemaV1Params
 from app.services.ci_classifier_service import CiClassifierService
-from tests.integration_tests.utils import make_iap_request
+from tests.integration_tests.utils import make_iap_request, create_post_params
 
 
 class TestHttpGetCiSchemaV1:
     """Tests for the `http_get_ci_schema_v1` endpoint"""
 
     url = "/v1/retrieve_collection_instrument"
-    post_url = "/v1/publish_collection_instrument"
+    post_url = "/v3/publish_collection_instrument"
 
     def teardown_method(self):
         """
@@ -65,7 +65,11 @@ class TestHttpGetCiSchemaV1:
         exist and a valid query to return the schema is made via a GET request
         """
         # Use `post_ci_v1` to create ci metadata and schema on the db
-        make_iap_request("POST", f"{self.post_url}", json=setup_payload)
+        data = create_post_params(1)
+
+        post_response = make_iap_request("POST", f"{self.post_url}?{data[0]}", json=setup_payload)
+
+        assert post_response.status_code == status.HTTP_200_OK
 
         classifier_type = CiClassifierService.get_classifier_type(setup_payload)
         classifier_value = CiClassifierService.get_classifier_value(setup_payload, classifier_type)

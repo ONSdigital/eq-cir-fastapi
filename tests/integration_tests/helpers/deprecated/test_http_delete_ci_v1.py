@@ -5,14 +5,17 @@ import pytest
 from fastapi import status
 
 from app.config import settings
-from tests.integration_tests.utils import make_iap_request
+from tests.integration_tests.utils import make_iap_request, create_post_params
 
 
 class TestDeleteCiV1:
     """Tests for the `http_delete_ci_v1` endpoint"""
 
     base_url = "/v1/dev/teardown"
-    post_url = "/v1/publish_collection_instrument"
+
+    post_params = create_post_params(1)
+
+    post_url = f"/v3/publish_collection_instrument?{post_params[0]}"
 
     def test_can_delete_ci_returns_200(self, setup_payload):
         """

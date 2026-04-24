@@ -24,7 +24,7 @@ class FirebaseLoader:
         """
         Set the transaction for firestore client
         """
-        self.client.transaction = self.client.transaction()
+        return self.client.transaction()
 
     def _set_collection(self, collection) -> CollectionReference:
         """

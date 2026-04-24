@@ -5,11 +5,11 @@ from starlette import status
 from app.models.requests import UpdateValidatorVersionV1Params
 from app.models.responses import CiMetadata
 from app.services.ci_classifier_service import CiClassifierService
-from tests.integration_tests.utils import make_iap_request
+from tests.integration_tests.utils import make_iap_request, create_post_params
 
 
 class TestPutValidatorVersionV1:
-    post_url = "/v2/publish_collection_instrument?validator_version=0.0.1"
+    post_url = "/v3/publish_collection_instrument"
     update_validator = "/v1/update_validator_version"
     get_metadata_url = "/v1/ci_metadata"
 
@@ -31,7 +31,12 @@ class TestPutValidatorVersionV1:
         Updating the CI will update the published date
         """
         # Creates a CI in the database, essentially running post_ci_v1 from handler folder
-        ci_response = make_iap_request("POST", f"{self.post_url}", json=setup_payload)
+        data = create_post_params(1)
+
+        ci_response = make_iap_request("POST", f"{self.post_url}?{data[0]}", json=setup_payload)
+
+        assert ci_response.status_code == status.HTTP_200_OK
+
         ci_response_data = ci_response.json()
         ci_guid = ci_response_data["guid"]
         original_published_at = ci_response_data["published_at"]
@@ -40,7 +45,6 @@ class TestPutValidatorVersionV1:
         query_params = UpdateValidatorVersionV1Params(
             guid=ci_guid,
             validator_version=updated_validator_version
-
         )
 
         put_response = make_iap_request("PUT",

@@ -43,7 +43,7 @@ def firestore_mock(test_client):
 
     yield mock_firestore
 
-    mock_firestore.client.reset()
+    #mock_firestore.client.reset()
 
 
 @pytest.fixture(autouse=True)

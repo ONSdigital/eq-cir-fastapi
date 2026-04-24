@@ -59,9 +59,11 @@ class TestHttpGetCiSchemaV2Restful:
 
         data = create_post_params(1)
 
-        post_response = make_iap_request("POST", f"/v3/collection-instruments?{data[0]}", json=setup_payload)
+        post_response = make_iap_request("POST", f"{self.post_url}?{data[0]}", json=setup_payload)
 
         created_ci = post_response.json()
+
+        assert post_response.status_code == status.HTTP_200_OK
 
         # Create a valid querystring using the `id` returned when ci created
         query_params = GetCiSchemaV2Params(guid=created_ci["guid"])
