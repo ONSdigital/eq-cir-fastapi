@@ -20,7 +20,7 @@ class TestPostCiV3:
     post_url = "/v3/publish_collection_instrument"
     encoded_list = create_post_params(3)
 
-    get_metadata_url = "/v1/ci_metadata"
+    get_metadata_url = "/v2/ci_metadata"
     subscription_id = generate_subscriber_id()  # Unique subscription ID to avoid conflicts and GCP errors
 
     @classmethod

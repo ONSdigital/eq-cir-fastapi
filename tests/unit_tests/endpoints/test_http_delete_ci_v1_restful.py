@@ -5,17 +5,19 @@ from fastapi import status
 
 from app.config import Settings
 from app.models.requests import DeleteCiV1Params
+from tests.test_config.endpoints import ENDPOINTS, DELETE_CI
+from tests.test_config.endpoints_loader import EndpointsLoader
 from tests.test_data.ci_test_data import mock_ci_metadata, mock_survey_id
 
 settings = Settings()
-
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_collection_with_survey_id")
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.perform_delete_ci_transaction")
 class TestHttpDeleteCiV1Restful:
     """Tests for the `delete_collection_instrument` endpoint"""
 
-    base_url = "/v1/collection-instruments"
+    base_url = endpoints_loader.get_url(DELETE_CI)
     query_params = DeleteCiV1Params(survey_id=mock_survey_id)
     url = f"{base_url}?{urlencode(query_params.__dict__)}"
 

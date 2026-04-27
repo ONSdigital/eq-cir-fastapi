@@ -5,6 +5,8 @@ from fastapi import status
 
 from app.config import Settings
 from app.models.requests import GetCiMetadataV1Params
+from tests.test_config.endpoints import ENDPOINTS, GET_CI_METADATA_V1
+from tests.test_config.endpoints_loader import EndpointsLoader
 from tests.test_data.ci_test_data import (
     mock_ci_metadata,
     mock_classifier_type,
@@ -14,13 +16,14 @@ from tests.test_data.ci_test_data import (
 )
 
 settings = Settings()
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_collection")
 class TestHttpGetCiMetadataV1Restful:
     """Tests for the `get_collection_instruments_metadata_v1` endpoint"""
 
-    base_url = "/v1/collection-instruments/metadata"
+    base_url = endpoints_loader.get_url(GET_CI_METADATA_V1)
     query_params = GetCiMetadataV1Params(
         classifier_type=mock_classifier_type,
         classifier_value=mock_classifier_value,
