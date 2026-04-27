@@ -3,14 +3,13 @@ from urllib.parse import urlencode
 
 from fastapi import status
 
-from app.config import Settings
 from app.models.requests import DeleteCiV1Params
 from tests.test_config.endpoints import ENDPOINTS, DELETE_CI
 from tests.test_config.endpoints_loader import EndpointsLoader
 from tests.test_data.ci_test_data import mock_ci_metadata, mock_survey_id
 
-settings = Settings()
 endpoints_loader = EndpointsLoader(ENDPOINTS)
+
 
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_collection_with_survey_id")
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.perform_delete_ci_transaction")

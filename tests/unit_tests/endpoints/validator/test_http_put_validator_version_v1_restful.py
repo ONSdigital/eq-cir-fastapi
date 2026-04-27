@@ -4,15 +4,15 @@ from urllib.parse import urlencode
 
 from fastapi import status
 
-from app.config import Settings
 from app.models.requests import UpdateValidatorVersionV1Params
+from tests.test_config.endpoints import ENDPOINTS, PUT_VALIDATOR_VERSION
+from tests.test_config.endpoints_loader import EndpointsLoader
 from tests.test_data.ci_test_data import (
     mock_id, mock_ci_metadata_v2, mock_post_ci_schema, mock_updated_validator_version_v2,
     mock_updated_ci_metadata_v2,
 )
 
-settings = Settings()
-
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_with_id")
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.update_ci_metadata")
@@ -20,7 +20,7 @@ settings = Settings()
 class TestHttpPutValidatorVersionV1:
     """Tests for the `http_put_ci_validator_version_v1` endpoint"""
 
-    base_url = "/v1/collection-instruments/validator-version"
+    base_url = endpoints_loader.get_url(PUT_VALIDATOR_VERSION)
 
     query_params = UpdateValidatorVersionV1Params(
         guid=mock_id,

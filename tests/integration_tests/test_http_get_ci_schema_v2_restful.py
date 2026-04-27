@@ -7,13 +7,17 @@ from fastapi import status
 from app.config import settings
 from app.models.requests import GetCiSchemaV2Params
 from tests.integration_tests.utils import make_iap_request, create_post_params
+from tests.test_config.endpoints import ENDPOINTS, POST_CI, GET_CI_SCHEMA, DELETE_CI
+from tests.test_config.endpoints_loader import EndpointsLoader
+
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 class TestHttpGetCiSchemaV2Restful:
     """Tests for the `get_collection_instrument_schema_by_guid_v2` endpoint"""
 
-    url = "/v2/collection-instruments/schema"
-    post_url = "/v3/collection-instruments"
+    url = endpoints_loader.get_url(GET_CI_SCHEMA)
+    post_url = endpoints_loader.get_url(POST_CI)
 
     def teardown_method(self):
         """
@@ -21,7 +25,7 @@ class TestHttpGetCiSchemaV2Restful:
         is not reflected in the firestore and schemas.
         """
         querystring = urlencode({"survey_id": 3456})
-        make_iap_request("DELETE", f"/v1/collection-instruments?{querystring}")
+        make_iap_request("DELETE", f"{endpoints_loader.get_url(DELETE_CI)}?{querystring}")
 
     def test_endpoint_returns_400_bad_request_if_bad_query(self):
         """
@@ -84,5 +88,4 @@ class TestHttpGetCiSchemaV2Restful:
         querystring = urlencode(asdict(query_params))
 
         response = make_iap_request("GET", f"{self.url}?{querystring}", unauthenticated=True)
-        print(response)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED

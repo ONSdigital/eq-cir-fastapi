@@ -4,10 +4,15 @@ from unittest.mock import patch
 import pytest
 from fastapi import status
 
+from tests.test_config.endpoints import ENDPOINTS, POST_CI
+from tests.test_config.endpoints_loader import EndpointsLoader
 from tests.test_data.ci_test_data import mock_ci_metadata_v3, mock_next_version_id, mock_post_ci_schema, mock_id
 
 CONTENT_TYPE = "application/json"
-URL = "/v3/collection-instruments"
+
+endpoints_loader = EndpointsLoader(ENDPOINTS)
+
+URL = endpoints_loader.get_url(POST_CI)
 
 
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_latest_ci_metadata")

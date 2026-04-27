@@ -3,11 +3,12 @@ from urllib.parse import urlencode
 
 from fastapi import status
 
-from app.config import Settings
 from app.models.requests import GetCiSchemaV2Params
+from tests.test_config.endpoints import ENDPOINTS, GET_CI_SCHEMA
+from tests.test_config.endpoints_loader import EndpointsLoader
 from tests.test_data.ci_test_data import mock_ci_metadata, mock_id
 
-settings = Settings()
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_with_id")
@@ -15,7 +16,7 @@ settings = Settings()
 class TestHttpGetCiSchemaV2Restful:
     """Tests for the `get_collection_instrument_schema_by_guid_v2` endpoint"""
 
-    base_url = "/v2/collection-instruments/schema"
+    base_url = endpoints_loader.get_url(GET_CI_SCHEMA)
     query_params = GetCiSchemaV2Params(guid=mock_id)
     url = f"{base_url}?{urlencode(query_params.__dict__)}"
 

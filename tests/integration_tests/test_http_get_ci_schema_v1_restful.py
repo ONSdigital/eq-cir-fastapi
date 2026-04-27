@@ -8,14 +8,18 @@ from app.config import settings
 from app.models.requests import GetCiSchemaV1Params
 from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request, create_post_params
+from tests.test_config.endpoints import ENDPOINTS, GET_CI_SCHEMA_V1, POST_CI, DELETE_CI
+from tests.test_config.endpoints_loader import EndpointsLoader
+
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 class TestHttpGetCiSchemaV1Restful:
     """Tests for the `get_collection_instrument_schema_v1` endpoint"""
 
-    url = "/v1/collection-instruments/schema"
+    url = endpoints_loader.get_url(GET_CI_SCHEMA_V1)
 
-    post_url = "/v3/collection-instruments"
+    post_url = endpoints_loader.get_url(POST_CI)
 
     def teardown_method(self):
         """
@@ -23,7 +27,7 @@ class TestHttpGetCiSchemaV1Restful:
         is not reflected in the firestore and schemas.
         """
         querystring = urlencode({"survey_id": 3456})
-        make_iap_request("DELETE", f"/v1/collection-instruments?{querystring}")
+        make_iap_request("DELETE", f"{endpoints_loader.get_url(DELETE_CI)}?{querystring}")
 
     def test_endpoint_returns_400_bad_request_if_bad_query(self):
         """

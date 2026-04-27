@@ -1,9 +1,14 @@
 from unittest.mock import patch
 from fastapi import status
 
+from tests.test_config.endpoints import ENDPOINTS, GET_CI_VALIDATOR_METADATA
+from tests.test_config.endpoints_loader import EndpointsLoader
 from tests.test_data.ci_test_data import mock_ci_metadata_list, mock_ci_validator_metadata_list
 
-URL = "/v1/collection-instruments/validator-metadata"
+
+endpoints_loader = EndpointsLoader(ENDPOINTS)
+
+URL = endpoints_loader.get_url(GET_CI_VALIDATOR_METADATA)
 
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_all_ci_metadata_collection")
 def test_endpoint_returns_200_if_ci_validator_metadata_found(

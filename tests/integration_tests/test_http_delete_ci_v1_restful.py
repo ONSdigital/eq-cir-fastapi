@@ -6,16 +6,20 @@ from fastapi import status
 
 from app.config import settings
 from tests.integration_tests.utils import make_iap_request, create_post_params
+from tests.test_config.endpoints import ENDPOINTS, DELETE_CI, POST_CI
+from tests.test_config.endpoints_loader import EndpointsLoader
+
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 class TestDeleteCiV1Restful:
     """Tests for the `delete_collection_instrument` endpoint"""
 
-    base_url = "/v1/collection-instruments"
+    base_url = endpoints_loader.get_url(DELETE_CI)
 
     post_params = create_post_params(1)
 
-    post_url = f"/v3/collection-instruments?{post_params[0]}"
+    post_url = f"{endpoints_loader.get_url(POST_CI)}?{post_params[0]}"
 
     def test_can_delete_ci_returns_200(self, setup_payload):
         """

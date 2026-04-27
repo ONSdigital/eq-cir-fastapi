@@ -6,12 +6,17 @@ from fastapi import status
 from app.config import settings
 from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request, create_post_params
+from tests.test_config.endpoints import ENDPOINTS, GET_CI_METADATA_V1, POST_CI, DELETE_CI
+from tests.test_config.endpoints_loader import EndpointsLoader
+
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 class TestGetCiMetadataV1Restful:
     """Tests for the `http_get_ci_metadata_v1` endpoint"""
 
-    base_url = "/v1/collection-instruments/metadata"
+    post_url = endpoints_loader.get_url(POST_CI)
+    base_url = endpoints_loader.get_url(GET_CI_METADATA_V1)
 
     encoded_list = create_post_params(3)
 
@@ -21,7 +26,7 @@ class TestGetCiMetadataV1Restful:
         is not reflected in the firestore and schemas.
         """
         querystring = urlencode({"survey_id": 3456})
-        make_iap_request("DELETE", f"/v1/collection-instruments?{querystring}")
+        make_iap_request("DELETE", f"{endpoints_loader.get_url(DELETE_CI)}?{querystring}")
 
     def test_post_3_ci_with_same_metadata_query_ci_returns_3(self, setup_payload):
         """
@@ -30,7 +35,7 @@ class TestGetCiMetadataV1Restful:
         """
         # post 3 ci with the same data
         for data in self.encoded_list:
-            make_iap_request("POST", f"/v3/collection-instruments?{data}", json=setup_payload)
+            make_iap_request("POST", f"{self.post_url}?{data}", json=setup_payload)
 
         survey_id = setup_payload["survey_id"]
         classifier_type = CiClassifierService.get_classifier_type(setup_payload)
@@ -60,7 +65,7 @@ class TestGetCiMetadataV1Restful:
         """
         data = create_post_params(1)
 
-        make_iap_request("POST", f"/v3/collection-instruments?{data[0]}", json=setup_payload)
+        make_iap_request("POST", f"{self.post_url}?{data[0]}", json=setup_payload)
 
         survey_id = setup_payload["survey_id"]
         classifier_type = CiClassifierService.get_classifier_type(setup_payload)
@@ -84,7 +89,7 @@ class TestGetCiMetadataV1Restful:
         new_payload = setup_payload.copy()
         new_payload["language"] = "English"
         data = create_post_params(1)
-        make_iap_request("POST", f"/v3/collection-instruments?{data[0]}", json=new_payload)
+        make_iap_request("POST", f"{self.post_url}?{data[0]}", json=new_payload)
         querystring = urlencode(
             {
                 "classifier_type": classifier_type,
@@ -110,7 +115,7 @@ class TestGetCiMetadataV1Restful:
         new_payload["sds_schema"] = "xx-ytr-1234-856"
         # Posts the ci using http_post_ci endpoint
         data = create_post_params(1)
-        make_iap_request("POST", f"/v3/collection-instruments?{data[0]}", json=new_payload)
+        make_iap_request("POST", f"{self.post_url}?{data[0]}", json=new_payload)
         survey_id = new_payload["survey_id"]
         classifier_type = CiClassifierService.get_classifier_type(new_payload)
         classifier_value = CiClassifierService.get_classifier_value(new_payload, classifier_type)

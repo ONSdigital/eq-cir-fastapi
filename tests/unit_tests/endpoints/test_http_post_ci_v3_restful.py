@@ -4,6 +4,8 @@ from fastapi import status
 
 from app.models.responses import CiMetadata
 from app.services.ci_schema_location_service import CiSchemaLocationService
+from tests.test_config.endpoints import ENDPOINTS, POST_CI
+from tests.test_config.endpoints_loader import EndpointsLoader
 from tests.test_data.ci_test_data import (
     mock_classifier_type,
     mock_classifier_value,
@@ -17,6 +19,8 @@ from tests.test_data.ci_test_data import (
 
 CONTENT_TYPE = "application/json"
 
+endpoints_loader = EndpointsLoader(ENDPOINTS)
+
 
 @patch("app.services.create_guid_service.CreateGuidService.create_guid")
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_latest_ci_metadata")
@@ -26,7 +30,7 @@ class TestHttpPostCiV3:
     Tests for the `http_post_ci_v3` endpoint
     """
 
-    url = "/v3/collection-instruments"
+    url = endpoints_loader.get_url(POST_CI)
 
     def test_endpoint_returns_200_if_ci_created_successfully(
         self,

@@ -10,17 +10,20 @@ from tests.integration_tests.helpers.integration_helpers import subscriber_teard
     generate_subscriber_id
 from tests.integration_tests.helpers.pubsub_helper import PubSubHelper
 from tests.integration_tests.utils import make_iap_request, create_post_params
+from tests.test_config.endpoints import ENDPOINTS, POST_CI, GET_CI_METADATA_V1, DELETE_CI
+from tests.test_config.endpoints_loader import EndpointsLoader
 
 ci_pubsub_helper = PubSubHelper(settings.PUBLISH_CI_TOPIC_ID)
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 class TestPostCiV3:
     """Tests for the `http_post_ci_v3` endpoint."""
 
-    post_url = "/v3/collection-instruments"
+    post_url = endpoints_loader.get_url(POST_CI)
     encoded_list = create_post_params(3)
 
-    get_metadata_url = "/v1/collection-instruments/metadata"
+    get_metadata_url = endpoints_loader.get_url(GET_CI_METADATA_V1)
     subscription_id = generate_subscriber_id()  # Unique subscription ID to avoid conflicts and GCP errors
 
     @classmethod
@@ -37,7 +40,7 @@ class TestPostCiV3:
         is not reflected in the firestore and schemas.
         """
         querystring = urlencode({"survey_id": 3456})
-        make_iap_request("DELETE", f"/v1/dev/teardown?{querystring}")
+        make_iap_request("DELETE", f"{endpoints_loader.get_url(DELETE_CI)}?{querystring}")
 
     def test_can_publish_valid_ci(self, setup_payload):
         """

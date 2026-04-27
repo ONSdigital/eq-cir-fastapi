@@ -6,12 +6,16 @@ from app.models.requests import UpdateValidatorVersionV1Params
 from app.models.responses import CiMetadata
 from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request, create_post_params
+from tests.test_config.endpoints import ENDPOINTS, PUT_VALIDATOR_VERSION, GET_CI_METADATA_V1, POST_CI, DELETE_CI
+from tests.test_config.endpoints_loader import EndpointsLoader
+
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 class TestPutValidatorVersionV1Restful:
-    post_url = "/v3/collection-instruments"
-    update_validator = "/v1/collection-instruments/validator-version"
-    get_metadata_url = "/v1/collection-instruments/metadata"
+    post_url = endpoints_loader.get_url(POST_CI)
+    update_validator = endpoints_loader.get_url(PUT_VALIDATOR_VERSION)
+    get_metadata_url = endpoints_loader.get_url(GET_CI_METADATA_V1)
 
     def teardown_method(self):
         """
@@ -19,7 +23,7 @@ class TestPutValidatorVersionV1Restful:
         is not reflected in the firestore and schemas.
         """
         querystring = urlencode({"survey_id": 3456})
-        make_iap_request("DELETE", f"/v1/collection-instruments?{querystring}")
+        make_iap_request("DELETE", f"{endpoints_loader.get_url(DELETE_CI)}?{querystring}")
 
     def test_update_validator_version(self, setup_payload):
         """

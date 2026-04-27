@@ -3,7 +3,6 @@ from urllib.parse import urlencode
 
 from fastapi import status
 
-from app.config import Settings
 from app.models.requests import GetCiMetadataV1Params
 from tests.test_config.endpoints import ENDPOINTS, GET_CI_METADATA_V1
 from tests.test_config.endpoints_loader import EndpointsLoader
@@ -15,7 +14,6 @@ from tests.test_data.ci_test_data import (
     mock_survey_id,
 )
 
-settings = Settings()
 endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 

@@ -3,8 +3,9 @@ from urllib.parse import urlencode
 
 from fastapi import status
 
-from app.config import Settings
 from app.models.requests import GetCiSchemaV1Params
+from tests.test_config.endpoints import ENDPOINTS, GET_CI_SCHEMA_V1
+from tests.test_config.endpoints_loader import EndpointsLoader
 from tests.test_data.ci_test_data import (
     mock_ci_metadata,
     mock_classifier_type,
@@ -13,7 +14,7 @@ from tests.test_data.ci_test_data import (
     mock_survey_id,
 )
 
-settings = Settings()
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_latest_ci_metadata")
@@ -21,7 +22,7 @@ settings = Settings()
 class TestHttpGetCiSchemaV1Restful:
     """Tests for the `get_collection_instrument_schema_v1` endpoint"""
 
-    base_url = "/v1/collection-instruments/schema"
+    base_url = endpoints_loader.get_url(GET_CI_SCHEMA_V1)
     query_params = GetCiSchemaV1Params(
         classifier_type=mock_classifier_type,
         classifier_value=mock_classifier_value,

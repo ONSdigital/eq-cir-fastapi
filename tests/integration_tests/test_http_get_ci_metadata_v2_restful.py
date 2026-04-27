@@ -6,15 +6,19 @@ from fastapi import status
 from app.config import settings
 from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request, create_post_params
+from tests.test_config.endpoints import ENDPOINTS, GET_CI_METADATA, POST_CI, DELETE_CI
+from tests.test_config.endpoints_loader import EndpointsLoader
+
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 class TestGetCiMetadataV2Restful:
     """Tests for the `get_collection_instruments_metadata_v2` endpoint."""
 
-    base_url = "/v2/collection-instruments/metadata"
+    base_url = endpoints_loader.get_url(GET_CI_METADATA)
 
     param_list = create_post_params(3)
-    post_url = "/v3/collection-instruments"
+    post_url = endpoints_loader.get_url(POST_CI)
 
     def teardown_method(self):
         """
@@ -22,7 +26,7 @@ class TestGetCiMetadataV2Restful:
         is not reflected in the firestore and schemas.
         """
         querystring = urlencode({"survey_id": 3456})
-        make_iap_request("DELETE", f"/v1/collection-instruments?{querystring}")
+        make_iap_request("DELETE", f"{endpoints_loader.get_url(DELETE_CI)}?{querystring}")
 
     def test_post_3_ci_with_same_metadata_get_ci_metadata_v2_returns_3(self, setup_payload):
         """
