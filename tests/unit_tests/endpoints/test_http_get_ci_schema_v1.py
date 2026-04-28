@@ -19,7 +19,7 @@ endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_latest_ci_metadata")
 @patch("app.repositories.buckets.ci_schema_bucket_repository.CiSchemaBucketRepository.retrieve_ci_schema")
-class TestHttpGetCiSchemaV1Restful:
+class TestHttpGetCiSchemaV1:
     """Tests for the `get_collection_instrument_schema_v1` endpoint"""
 
     base_url = endpoints_loader.get_url(GET_CI_SCHEMA_V1)

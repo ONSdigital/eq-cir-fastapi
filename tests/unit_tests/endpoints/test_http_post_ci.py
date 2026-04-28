@@ -25,7 +25,7 @@ endpoints_loader = EndpointsLoader(ENDPOINTS)
 @patch("app.services.create_guid_service.CreateGuidService.create_guid")
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_latest_ci_metadata")
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.perform_new_ci_transaction")
-class TestHttpPostCiV3:
+class TestHttpPostCi:
     """
     Tests for the `http_post_ci_v3` endpoint
     """

@@ -12,7 +12,7 @@ from tests.test_config.endpoints_loader import EndpointsLoader
 endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
-class TestGetCiMetadataV1Restful:
+class TestGetCiMetadataV1:
     """Tests for the `http_get_ci_metadata_v1` endpoint"""
 
     post_url = endpoints_loader.get_url(POST_CI)

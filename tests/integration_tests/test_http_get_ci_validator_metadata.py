@@ -10,7 +10,7 @@ from tests.test_config.endpoints_loader import EndpointsLoader
 endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
-class TestHttpGetCiValidatorMetadataV1Restful:
+class TestHttpGetCiValidatorMetadata:
     survey_id = "3456"
     base_url = endpoints_loader.get_url(GET_CI_VALIDATOR_METADATA)
     post_url = endpoints_loader.get_url(POST_CI)

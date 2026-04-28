@@ -1,6 +1,6 @@
 import os
 
-from tests.test_config.endpoints import EndpointConfig
+from tests.test_config.endpoints import ENDPOINTS_DEPRECATED, EndpointConfig
 
 
 class EndpointsLoader:
@@ -9,8 +9,6 @@ class EndpointsLoader:
         # This allows us to run tests against both the new and deprecated endpoints without needing to change the code in multiple places.
         # This logic can be removed once the deprecated endpoints are removed.
         if os.environ.get("ENDPOINTS_DEPRECATED") == "true":
-            from tests.test_config.endpoints import ENDPOINTS_DEPRECATED
-
             self.endpoints = ENDPOINTS_DEPRECATED
         else:
             self.endpoints = endpoints

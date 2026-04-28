@@ -12,7 +12,7 @@ from tests.test_config.endpoints_loader import EndpointsLoader
 endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
-class TestPutValidatorVersionV1Restful:
+class TestPutValidatorVersion:
     post_url = endpoints_loader.get_url(POST_CI)
     update_validator = endpoints_loader.get_url(PUT_VALIDATOR_VERSION)
     get_metadata_url = endpoints_loader.get_url(GET_CI_METADATA_V1)

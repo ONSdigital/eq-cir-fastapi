@@ -19,7 +19,7 @@ endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_collection")
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_all_ci_metadata_collection")
-class TestHttpGetCiMetadataV2Restful:
+class TestHttpGetCiMetadataV2:
     """Tests for the `get_collection_instruments_metadata_v2` endpoint"""
 
     base_url = endpoints_loader.get_url(GET_CI_METADATA)

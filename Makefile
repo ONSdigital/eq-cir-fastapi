@@ -18,7 +18,7 @@ unit-tests:
 	uv run python -m pytest --cov=app --cov-fail-under=90 --cov-report term-missing --cov-config=.coveragerc_unit -vv ./tests/unit_tests/ -W ignore::DeprecationWarning
 	make unit-tests-deprecated
 
-unit-tests-deprecated::
+unit-tests-deprecated:
 	export CONF='unit' && \
 	export CI_STORAGE_BUCKET_NAME='the-ci-schema-bucket' && \
 	export PROJECT_ID='mock-project-id' && \

@@ -17,7 +17,7 @@ ci_pubsub_helper = PubSubHelper(settings.PUBLISH_CI_TOPIC_ID)
 endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
-class TestPostCiV3:
+class TestPostCi:
     """Tests for the `http_post_ci_v3` endpoint."""
 
     post_url = endpoints_loader.get_url(POST_CI)

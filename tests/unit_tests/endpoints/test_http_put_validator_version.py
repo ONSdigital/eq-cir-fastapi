@@ -17,7 +17,7 @@ endpoints_loader = EndpointsLoader(ENDPOINTS)
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_with_id")
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.update_ci_metadata")
 @patch("app.repositories.buckets.ci_schema_bucket_repository.CiSchemaBucketRepository.store_ci_schema")
-class TestHttpPutValidatorVersionV1:
+class TestHttpPutValidatorVersion:
     """Tests for the `http_put_ci_validator_version_v1` endpoint"""
 
     base_url = endpoints_loader.get_url(PUT_VALIDATOR_VERSION)

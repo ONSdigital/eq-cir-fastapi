@@ -12,7 +12,7 @@ from tests.test_config.endpoints_loader import EndpointsLoader
 endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
-class TestDeleteCiV1Restful:
+class TestDeleteCi:
     """Tests for the `delete_collection_instrument` endpoint"""
 
     base_url = endpoints_loader.get_url(DELETE_CI)

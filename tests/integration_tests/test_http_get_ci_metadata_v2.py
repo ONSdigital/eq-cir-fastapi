@@ -12,7 +12,7 @@ from tests.test_config.endpoints_loader import EndpointsLoader
 endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
-class TestGetCiMetadataV2Restful:
+class TestGetCiMetadataV2:
     """Tests for the `get_collection_instruments_metadata_v2` endpoint."""
 
     base_url = endpoints_loader.get_url(GET_CI_METADATA)

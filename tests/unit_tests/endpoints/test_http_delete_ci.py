@@ -13,7 +13,7 @@ endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_collection_with_survey_id")
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.perform_delete_ci_transaction")
-class TestHttpDeleteCiV1Restful:
+class TestHttpDeleteCi:
     """Tests for the `delete_collection_instrument` endpoint"""
 
     base_url = endpoints_loader.get_url(DELETE_CI)
