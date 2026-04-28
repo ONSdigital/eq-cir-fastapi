@@ -1,4 +1,4 @@
 [run]
 omit =
     app/repositories/*
-    app/routers/ci_router.py
+    app/routers/ci_router_restful.py

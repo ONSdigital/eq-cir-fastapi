@@ -63,7 +63,7 @@ ENDPOINTS: dict[str, EndpointConfig] = {
 
 ENDPOINTS_DEPRECATED: dict[str, EndpointConfig] = {
     DELETE_CI: {
-        "url": "/v1/collection-instruments",
+        "url": "/v1/dev/teardown",
         "method": "DELETE",
     },
     GET_CI_METADATA: {

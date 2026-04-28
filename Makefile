@@ -16,6 +16,15 @@ unit-tests:
 	export PROJECT_ID='mock-project-id' && \
 	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
 	uv run python -m pytest --cov=app --cov-fail-under=90 --cov-report term-missing --cov-config=.coveragerc_unit -vv ./tests/unit_tests/ -W ignore::DeprecationWarning
+	make unit-tests-deprecated
+
+unit-tests-deprecated::
+	export CONF='unit' && \
+	export CI_STORAGE_BUCKET_NAME='the-ci-schema-bucket' && \
+	export PROJECT_ID='mock-project-id' && \
+	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
+	export ENDPOINTS_DEPRECATED="true" && \
+	uv run python -m pytest --cov=app --cov-fail-under=90 --cov-report term-missing --cov-config=.coveragerc_unit_deprecated -vv ./tests/unit_tests/ -W ignore::DeprecationWarning
 
 # Spinning up emulators in docker is required to run the local integration tests.
 integration-tests-local:
@@ -30,9 +39,36 @@ integration-tests-local:
 	export FIRESTORE_EMULATOR_HOST=localhost:8200 && \
 	export STORAGE_EMULATOR_HOST=http://localhost:9026 && \
 	uv run python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
+	make integration-tests-local-deprecated
+
+integration-tests-local-deprecated:
+	export CONF='local-int-tests' && \
+	export PROJECT_ID='emulated-project-id' && \
+	export CI_STORAGE_BUCKET_NAME='emulated-ci-bucket' && \
+	export PUBLISH_CI_TOPIC_ID='emulated-cir-topic' && \
+	export DEFAULT_HOSTNAME=${LOCAL_URL} && \
+	export URL_SCHEME='http' && \
+	export PYTHONPATH=app && \
+	export PUBSUB_EMULATOR_HOST=localhost:8086 && \
+	export FIRESTORE_EMULATOR_HOST=localhost:8200 && \
+	export STORAGE_EMULATOR_HOST=http://localhost:9026 && \
+	export ENDPOINTS_DEPRECATED="true" && \
+	uv run python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
 
 # Please run gcloud auth application-default login before running the following commands that interact with GCP services
 integration-tests-sandbox:
+	export CONF='sandbox-int-tests' && \
+	export PROJECT_ID='$(PROJECT_ID)' && \
+	export FIRESTORE_DB_NAME='$(PROJECT_ID)-cir' && \
+	export CI_STORAGE_BUCKET_NAME='$(PROJECT_ID)-cir-europe-west2-schema' && \
+	export DEFAULT_HOSTNAME=${SANDBOX_IP_ADDRESS}.nip.io && \
+	export URL_SCHEME='https' && \
+	export SECRET_ID='iap-secret' && \
+	export PYTHONPATH=app && \
+	uv run python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
+	make integration-tests-sandbox-deprecated
+
+integration-tests-sandbox-deprecated:
 	export CONF='sandbox-int-tests' && \
 	export PROJECT_ID='$(PROJECT_ID)' && \
 	export FIRESTORE_DB_NAME='$(PROJECT_ID)-cir' && \
@@ -52,6 +88,18 @@ integration-tests-cloudbuild:
 	export DEFAULT_HOSTNAME=${INT_DEFAULT_HOSTNAME} && \
 	export URL_SCHEME=${INT_URL_SCHEME} && \
 	export PYTHONPATH=app && \
+	uv run python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
+	make integration-tests-cloudbuild-deprecated
+
+integration-tests-cloudbuild-deprecated:
+	export CONF='cloudbuild-int-tests' && \
+	export PROJECT_ID=${INT_PROJECT_ID} && \
+	export FIRESTORE_DB_NAME=${INT_FIRESTORE_DB_NAME} && \
+	export CI_STORAGE_BUCKET_NAME=${INT_CI_STORAGE_BUCKET_NAME} && \
+	export DEFAULT_HOSTNAME=${INT_DEFAULT_HOSTNAME} && \
+	export URL_SCHEME=${INT_URL_SCHEME} && \
+	export PYTHONPATH=app && \
+	export ENDPOINTS_DEPRECATED="true" && \
 	uv run python -m pytest tests/integration_tests -vv -W ignore::DeprecationWarning
 
 # Spinning up emulators in docker is required to run this command successfully.
