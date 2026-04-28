@@ -1,8 +1,12 @@
 from unittest.mock import patch
 
+from fastapi import status
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.models.responses import CiMetadata
+from tests.test_config.endpoints import ENDPOINTS, POST_CI
+from tests.test_config.endpoints_loader import EndpointsLoader
 from tests.test_data.ci_test_data import (
     mock_classifier_type,
     mock_classifier_value,
@@ -10,15 +14,17 @@ from tests.test_data.ci_test_data import (
     mock_post_ci_schema,
     mock_post_ci_schema_with_sds_schema,
     mock_survey_id,
+    mock_post_ci_schema_without_sds_schema, mock_id,
 )
 
 client = TestClient(app)
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 class TestPostCiSchema:
     """Tests for the `post_ci_schema` firestore method"""
 
-    url = "/v1/publish_collection_instrument"
+    url = endpoints_loader.get_url(POST_CI)
 
     @patch("app.events.publisher.Publisher.publish_message")
     @patch("app.repositories.buckets.ci_schema_bucket_repository.CiSchemaBucketRepository.store_ci_schema")
@@ -38,6 +44,7 @@ class TestPostCiSchema:
         # Call the post ci endpoint
         client.post(
             self.url,
+            params={"validator_version": "0.0.1", "guid": "test-survey-id", "ci_version": 1},
             headers={"ContentType": "application/json"},
             json=mock_post_ci_schema.model_dump(),
         )
@@ -66,7 +73,7 @@ class TestPostCiSchema:
     ):
         """
         `post_ci_metadata` should create a new ci metadata record on firestore if provided with
-        valid data. If optional `sds_schema` is not proveded as part of the post data, this field
+        valid data. If optional `sds_schema` is not provided as part of the post data, this field
         should not be saved as part of the metadata on firestore
         """
         # Mocked `get_latest_ci_metadata` should return None for this test, indicating no previous version of metadata is found
@@ -75,6 +82,7 @@ class TestPostCiSchema:
         client.post(
             self.url,
             headers={"ContentType": "application/json"},
+            params={"validator_version": "0.0.1", "guid": "test-survey-id", "ci_version": 2},
             json=mock_post_ci_schema_without_sds_schema.model_dump(),
         )
 
@@ -105,18 +113,23 @@ class TestPostCiSchema:
     ):
         """
         `post_ci_metadata` should create a new ci metadata record on firestore if provided with
-        valid data. If optional `sds_schema` is proveded as part of the post data, this field
+        valid data. If optional `sds_schema` is provided as part of the post data, this field
         should be saved as part of the metadata on firestore
         """
         # Mocked `get_latest_ci_metadata` should return None for this test, indicating no previous version of metadata is found
         mocked_get_latest_ci_metadata.return_value = None
 
         # Call the post ci endpoint
-        client.post(
+        response = client.post(
             self.url,
+            params={"validator_version": "0.0.1", "guid": "test-survey-id", "ci_version": 3},
             headers={"ContentType": "application/json"},
             json=mock_post_ci_schema_with_sds_schema.model_dump(),
         )
+
+        assert response.status_code == status.HTTP_200_OK
+
+        ci_metadata = None
         # Query the mocked firestore db and confirm the new record is there
         ci_metadata_query = (
             mock_firestore_collection.where("survey_id", "==", mock_survey_id)
@@ -126,8 +139,11 @@ class TestPostCiSchema:
             .limit(1)
             .stream()
         )
+
         # Confirm the ci returned as part of the query contains the `sds_schema` field
         for ci in ci_metadata_query:
+            ci_metadata = CiMetadata(**ci.to_dict())
+            assert ci_metadata["sds_schema"] == mock_post_ci_schema_with_sds_schema.sds_schema
             # ci should contain doc and `sds_schema` should be present in created document keys
             assert "sds_schema" in ci._doc
             assert ci._doc["sds_schema"] == mock_post_ci_schema_with_sds_schema.sds_schema

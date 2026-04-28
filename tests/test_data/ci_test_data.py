@@ -42,6 +42,14 @@ mock_post_ci_schema_with_sds_schema = PostCiSchemaV1Data(
     sds_schema=mock_sds_schema_with_value,
 )
 
+mock_post_ci_schema_without_sds_schema = PostCiSchemaV1Data(
+    survey_id=mock_survey_id,
+    form_type=mock_classifier_value,
+    language=mock_language,
+    title=mock_title,
+    data_version=mock_data_version,
+)
+
 mock_ci_metadata = CiMetadata(
     ci_version=1,
     validator_version="",
