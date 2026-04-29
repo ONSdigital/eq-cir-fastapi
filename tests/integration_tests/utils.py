@@ -64,7 +64,7 @@ def create_post_params(number_of_items: int, validator_version = "0.0.1", with_v
             params = {
                 "guid": str(uuid.uuid4()),
                 "validator_version": validator_version,
-                "ci_version": i
+                "ci_version": i+1,
             }
         else:
             params = {

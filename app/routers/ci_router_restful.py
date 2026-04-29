@@ -49,6 +49,10 @@ async def delete_collection_instrument(
     query_params: DeleteCiV1Params = Depends(),
     ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
 ):
+    """
+    DELETE method that deletes all CI schema and metadata from CIR of a specified survey ID.
+    This is a helper endpoint that is used for cleaning up after tests.
+    """
     logger.info("Deleting ci metadata and schema via v1 endpoint...")
     logger.debug(f"Input data: query_params={query_params.__dict__}")
 
@@ -90,7 +94,7 @@ async def get_collection_instruments_metadata_v1(
     ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
 ):
     """
-    GET method that returns any metadata objects from Firestore that match the parameters passed.
+    GET method that returns any metadata objects from CIR that match the parameters passed.
     """
     logger.info("Getting ci metadata via v1 endpoint")
     logger.debug(f"Input data: query_params={query_params.__dict__}")
@@ -141,9 +145,9 @@ async def get_collection_instruments_metadata_v2(
     ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
 ):
     """
-    GET method that returns any metadata objects from Firestore that match the parameters passed.
+    GET method that returns any metadata objects from CIR that match the parameters passed.
     The user has multiple ways of querying the metadata.
-    1. Provide survey_id, form_type, language.
+    1. Provide survey_id, classifiers, language.
     2. Provide no parameters.
     """
     logger.info("Getting ci metadata via v2 endpoint")
@@ -331,9 +335,8 @@ async def create_collection_instrument_v3(
         ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
 ):
     """
-    POST method that creates a Collection Instrument. This will post the metadata to Firestore and
-    the whole request body to a Google Cloud Bucket.
-    guid and validator_version required param with optional ci_version.
+    POST method that creates a Collection Instrument in CIR.
+    Requires guid and validator_version as parameters with optional ci_version.
     """
     logger.info("Posting CI schema via v3 endpoint")
 
@@ -374,7 +377,7 @@ async def get_collection_instruments_validator_metadata_v1(
     ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
 ) -> list[CiValidatorMetadata]:
     """
-    GET method that returns the validator metadata for a CI schema.
+    GET method that returns the validator metadata for all collection instruments in CIR.
     """
     logger.info("Getting ci validator metadata via v1 endpoint")
 

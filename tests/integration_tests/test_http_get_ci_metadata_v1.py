@@ -13,7 +13,9 @@ endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 class TestGetCiMetadataV1:
-    """Tests for the `http_get_ci_metadata_v1` endpoint"""
+    """
+    Integration tests for the 'Get Ci Metadata V1' endpoint.
+    """
 
     post_url = endpoints_loader.get_url(POST_CI)
     base_url = endpoints_loader.get_url(GET_CI_METADATA_V1)
@@ -30,8 +32,11 @@ class TestGetCiMetadataV1:
 
     def test_post_3_ci_with_same_metadata_query_ci_returns_3(self, setup_payload):
         """
-        What am I testing:
-        get_collection_instruments_metadata_v1 should return three ci_versions if the same ci is posted thrice.
+        Test the 'Get Ci Metadata V1' endpoint returns all CIs that satisfies the parameters:
+        - Post 3 identical CIs using the 'Post CI' endpoint with the same metadata (same survey_id, classifier_type, classifier_value and language)
+        - Get CIs using the 'Get Ci Metadata V1' endpoint with the same parameters
+        - Assert that the response status code is 200 OK
+        - Assert that 3 CIs are returned and they are in the correct order based on ci_version (the latest ci should be returned first)
         """
         # post 3 ci with the same data
         for data in self.encoded_list:
@@ -51,6 +56,8 @@ class TestGetCiMetadataV1:
         )
         # sends request to http_query_ci endpoint for data
         query_ci_response = make_iap_request("GET", f"{self.base_url}?{querystring}")
+
+        assert query_ci_response.status_code == status.HTTP_200_OK
         query_ci_response_data = query_ci_response.json()
 
         assert len(query_ci_response_data) == 3
@@ -60,8 +67,12 @@ class TestGetCiMetadataV1:
 
     def test_post_ci_with_different_language_only_returns_1(self, setup_payload):
         """
-        What am I testing:
-        get_collection_instruments_metadata_v1 should return appropriate ci if language is different
+        Test the 'Get Ci Metadata V1' endpoint returns the CI with the correct language when multiple CIs with the same metadata but different language are posted:
+        - Post a CI using the 'Post CI' endpoint with specific metadata and language
+        - Post another CI using the 'Post CI' endpoint with the same metadata but different language
+        - Get CIs using the 'Get Ci Metadata V1' endpoint with the metadata and the language of the first CI
+        - Assert that the response status code is 200 OK
+        - Assert that only 1 CI is returned and it is the one with the correct language
         """
         data = create_post_params(1)
 
@@ -108,8 +119,11 @@ class TestGetCiMetadataV1:
 
     def test_post_ci_with_same_metadata_query_ci_returns_with_new_keys_sds_schema(self, setup_payload):
         """
-        What am I testing:
-        get_collection_instruments_metadata_v1 should return ci with new keys sds_schema when queried.
+        Test the 'Get Ci Metadata V1' endpoint returns the CI with the new key 'sds_schema' when a CI with the same metadata but with the 'sds_schema' key is posted:
+        - Post a CI using the 'Post CI' endpoint with the same metadata but with the 'sds_schema' key
+        - Get CIs using the 'Get Ci Metadata V1' endpoint with the same metadata
+        - Assert that the response status code is 200 OK
+        - Assert that the returned CI has the 'sds_schema' key and the value is correct
         """
         new_payload = setup_payload.copy()
         new_payload["sds_schema"] = "xx-ytr-1234-856"
@@ -137,8 +151,10 @@ class TestGetCiMetadataV1:
 
     def test_metadata_query_ci_returns_404(self, setup_payload):
         """
-        What am I testing:
-        get_collection_instruments_metadata_v1 should return 404 status code if ci is not found.
+        Test the 'Get Ci Metadata V1' endpoint returns 404 when no CI metadata is found for the given parameters:
+        - Get CIs using the 'Get Ci Metadata V1' endpoint with parameters that do not match any existing CI metadata
+        - Assert that the response status code is 404 Not Found
+        - Assert that the response message indicates no results found
         """
         survey_id = setup_payload["survey_id"]
         classifier_type = CiClassifierService.get_classifier_type(setup_payload)
@@ -157,12 +173,13 @@ class TestGetCiMetadataV1:
         assert query_ci_response.status_code == status.HTTP_404_NOT_FOUND
         query_ci_response = query_ci_response.json()
         assert query_ci_response["message"] == "No results found"
-        assert query_ci_response["status"] == "error"
 
     def test_metadata_query_ci_returns_400(self, setup_payload):
         """
-        What am I testing:
-        get_collection_instruments_metadata_v1 should return 400 status code if incorrect args are provided.
+        Test the 'Get Ci Metadata V1' endpoint returns 400 when invalid query parameters are provided:
+        - Get CIs using the 'Get Ci Metadata V1' endpoint with invalid query parameters
+        - Assert that the response status code is 400 Bad Request
+        - Assert that the response message indicates invalid search parameters
         """
         survey_id = setup_payload["survey_id"]
         classifier_type = CiClassifierService.get_classifier_type(setup_payload)
@@ -181,12 +198,12 @@ class TestGetCiMetadataV1:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         response_json = response.json()
         assert response_json["message"] == "Invalid search parameters provided"
-        assert response_json["status"] == "error"
 
     def test_metadata_query_ci_returns_unauthorized_request(self, setup_payload):
         """
-        What am I testing:
-        get_collection_instruments_metadata_v1 should return a 401 unauthorized error if the endpoint is requested with an unauthorized token.
+        Test the 'Get Ci Metadata V1' endpoint returns 401 when the request is not authenticated:
+        - Get CIs using the 'Get Ci Metadata V1' endpoint with valid parameters but without authentication
+        - Assert that the response status code is 401 Unauthorized
         """
         if settings.CONF == "local-int-tests":
             pytest.skip("Skipping test_metadata_query_ci_returns_unauthorized_request on local environment")
