@@ -112,7 +112,7 @@ async def http_get_ci_metadata_v1(
         query_params.survey_id, query_params.classifier_type, query_params.classifier_value, query_params.language
     )
 
-    if not ci_metadata_collection:
+    if not ci_metadata_collection or len(ci_metadata_collection) == 0:
         error_message = "get_ci_metadata_v1: exception raised - No collection instrument metadata found"
         logger.error(error_message)
         logger.debug(f"{error_message}:{asdict(query_params)}")
@@ -175,7 +175,7 @@ async def http_get_ci_metadata_v2(
                 query_params.language
             )
 
-    if not ci_metadata_collection:
+    if not ci_metadata_collection or len(ci_metadata_collection) == 0:
         error_message = "get_ci_metadata_v2: exception raised - No collection instruments found"
         logger.error(error_message)
         logger.debug(f"{error_message}:{asdict(query_params)}")
@@ -402,7 +402,7 @@ async def http_get_ci_validator_metadata_v1(
 
     ci_validator_metadata_collection = ci_processor_service.get_ci_validator_metadata_collection()
 
-    if not ci_validator_metadata_collection:
+    if not ci_validator_metadata_collection or len(ci_validator_metadata_collection) == 0:
         logger.error("No collection instrument validator metadata found")
         raise exceptions.ExceptionNoCIValidatorMetadata
 

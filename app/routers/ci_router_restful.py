@@ -383,7 +383,7 @@ async def get_collection_instruments_validator_metadata_v1(
 
     ci_validator_metadata_collection = ci_processor_service.get_ci_validator_metadata_collection()
 
-    if not ci_validator_metadata_collection:
+    if not ci_validator_metadata_collection or len(ci_validator_metadata_collection) == 0:
         logger.error("No collection instrument validator metadata found")
         raise exceptions.ExceptionNoCIValidatorMetadata
 
