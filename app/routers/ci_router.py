@@ -344,6 +344,7 @@ async def http_get_ci_schema_v2(
             "content": {"application/json": {"example": erm.erm_500_global_exception}},
         },
     },
+    deprecated=True
 )
 async def http_post_ci_schema_v3(
         post_data: PostCiSchemaV1Data,

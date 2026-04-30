@@ -1284,6 +1284,7 @@ paths:
       summary: Create Collection Instrument V3
   /v3/publish_collection_instrument:
     post:
+      deprecated: true
       description: 'POST method that creates a Collection Instrument in CIR.
 
         Requires guid and validator_version as parameters with optional ci_version.
