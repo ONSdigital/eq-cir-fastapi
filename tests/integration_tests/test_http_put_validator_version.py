@@ -1,7 +1,9 @@
 from urllib.parse import urlencode, parse_qs
 
+import pytest
 from starlette import status
 
+from app.config import settings
 from app.models.requests import UpdateValidatorVersionV1Params, PostCiSchemaV1Data
 from app.models.responses import CiMetadata
 from app.services.ci_classifier_service import CiClassifierService
@@ -183,3 +185,22 @@ class TestPutValidatorVersion:
 
         assert put_response.status_code == status.HTTP_400_BAD_REQUEST
         assert put_response.json()["message"] == "Validation has failed"
+
+    def test_update_validator_version_returns_401_if_unauthorized(self, setup_payload):
+        """
+        Test the 'Put Validator Version' endpoint returns a 401 status code if the request is made with invalid authentication credentials.
+        - Update the validator version using the 'Put Validator Version' endpoint with a valid querystring but without authentication headers
+        - Assert that the response status code is 401 Unauthorized
+        """
+        if settings.CONF == "local-int-tests":
+            pytest.skip("Skipping test_update_validator_version_returns_401_if_unauthorized on local environment")
+
+        query_params = UpdateValidatorVersionV1Params(
+            guid="some-guid",
+            validator_version="0.0.2"
+        )
+
+        put_response = make_iap_request("PUT", f"{self.update_validator}?{urlencode(query_params.__dict__)}",
+                                        json=setup_payload, unauthenticated=True)
+
+        assert put_response.status_code == status.HTTP_401_UNAUTHORIZED
