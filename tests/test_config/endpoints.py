@@ -44,7 +44,7 @@ ENDPOINTS: dict[str, EndpointConfig] = {
         "method": "GET",
     },
     GET_CI_VALIDATOR_METADATA: {
-        "url": "/v1/collection-instruments/validator-metadata",
+        "url": "/collection-instruments/validator-metadata",
         "method": "GET",
     },
     POST_CI: {

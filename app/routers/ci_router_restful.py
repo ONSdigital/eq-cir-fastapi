@@ -361,7 +361,7 @@ async def create_collection_instrument(
 
 
 @router.get(
-    "/v1/collection-instruments/validator-metadata",
+    "/collection-instruments/validator-metadata",
     responses={
         500: {
             "model": ExceptionResponseModel,
@@ -373,7 +373,7 @@ async def create_collection_instrument(
         },
     },
 )
-async def get_collection_instruments_validator_metadata_v1(
+async def get_collection_instruments_validator_metadata(
     ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
 ) -> list[CiValidatorMetadata]:
     """
