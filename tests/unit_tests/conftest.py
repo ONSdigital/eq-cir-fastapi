@@ -39,6 +39,7 @@ def firestore_mock(test_client):
     app = test_client.app
     mock_firestore = Mock(spec=FirebaseLoader)
     mock_firestore.client = MockFirestore()
+    mock_firestore.get_client.return_value = mock_firestore.client
     app.dependency_overrides[get_firebase_loader] = lambda: mock_firestore
 
     yield mock_firestore
@@ -65,11 +66,10 @@ def transaction_mock(firestore_mock):
 @pytest.fixture(autouse=True)
 def mock_firestore_collection(firestore_mock):
     collection = firestore_mock.client.collection(settings.CI_FIRESTORE_COLLECTION_NAME)
+    firestore_mock.ci_collection = collection
     firestore_mock.get_ci_collection.return_value = collection
 
     yield collection
-
-    firestore_mock.client.reset()
 
 
 @pytest.fixture(autouse=True)
