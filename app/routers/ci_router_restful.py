@@ -89,7 +89,7 @@ async def delete_collection_instrument(
         },
     },
 )
-async def get_collection_instruments_metadata(
+async def get_collection_instruments_metadata_v1(
     query_params: GetCiMetadataV1Params = Depends(),
     ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
 ):
