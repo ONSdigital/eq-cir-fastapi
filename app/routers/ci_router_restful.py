@@ -44,6 +44,7 @@ settings = Settings()
             "content": {"application/json": {"example": erm.erm_404_no_ci_to_delete}},
         },
     },
+    deprecated=True,
 )
 async def delete_collection_instrument(
     query_params: DeleteCiV1Params = Depends(),
@@ -88,6 +89,7 @@ async def delete_collection_instrument(
             "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
         },
     },
+    deprecated=True,
 )
 async def get_collection_instruments_metadata_v1(
     query_params: GetCiMetadataV1Params = Depends(),
@@ -203,6 +205,7 @@ async def get_collection_instruments_metadata(
             "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
         },
     },
+    deprecated=True,
 )
 async def get_collection_instrument_schema_v1(
         query_params: GetCiSchemaV1Params = Depends(),
