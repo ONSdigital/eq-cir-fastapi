@@ -36,7 +36,7 @@ ENDPOINTS: dict[str, EndpointConfig] = {
         "method": "GET",
     },
     GET_CI_SCHEMA: {
-        "url": "/v2/collection-instruments/schema",
+        "url": "/collection-instruments/schema",
         "method": "GET",
     },
     GET_CI_SCHEMA_V1: {

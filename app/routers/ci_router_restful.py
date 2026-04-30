@@ -89,7 +89,7 @@ async def delete_collection_instrument(
         },
     },
 )
-async def get_collection_instruments_metadata_v1(
+async def get_collection_instruments_metadata(
     query_params: GetCiMetadataV1Params = Depends(),
     ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
 ):
@@ -248,7 +248,7 @@ async def get_collection_instrument_schema_v1(
 
 
 @router.get(
-    "/v2/collection-instruments/schema",
+    "/collection-instruments/schema",
     responses={
         200: {
             "model": CiMetadata,
@@ -270,14 +270,14 @@ async def get_collection_instrument_schema_v1(
         },
     },
 )
-async def get_collection_instrument_schema_by_guid_v2(
+async def get_collection_instrument_schema_by_guid(
         query_params: GetCiSchemaV2Params = Depends(),
         ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
 ):
     """
     GET method that fetches a CI schema by GUID.
     """
-    logger.info("Getting ci schema via v2 endpoint...")
+    logger.info("Fetching schema for collection instrument")
     logger.debug(f"Input data: query_params={query_params.__dict__}")
 
     if query_params.guid is None:
