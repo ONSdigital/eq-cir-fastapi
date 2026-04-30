@@ -52,7 +52,7 @@ ENDPOINTS: dict[str, EndpointConfig] = {
         "method": "POST",
     },
     PUT_VALIDATOR_VERSION: {
-        "url": "/v1/collection-instruments/validator-version",
+        "url": "/collection-instruments/validator-version",
         "method": "PUT",
     },
     GET_STATUS: {
