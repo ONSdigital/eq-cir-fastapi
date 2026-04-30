@@ -48,7 +48,7 @@ ENDPOINTS: dict[str, EndpointConfig] = {
         "method": "GET",
     },
     POST_CI: {
-        "url": "/v3/collection-instruments",
+        "url": "/collection-instruments",
         "method": "POST",
     },
     PUT_VALIDATOR_VERSION: {

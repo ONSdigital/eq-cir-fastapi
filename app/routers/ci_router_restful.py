@@ -310,7 +310,7 @@ async def get_collection_instrument_schema_by_guid_v2(
 
 
 @router.post(
-    "/v3/collection-instruments",
+    "/collection-instruments",
     responses={
         200: {
             "model": CiMetadata,
@@ -329,7 +329,7 @@ async def get_collection_instrument_schema_by_guid_v2(
         },
     },
 )
-async def create_collection_instrument_v3(
+async def create_collection_instrument(
         post_data: PostCiSchemaV1Data,
         query_params: PostCiSchemaV3Params = Depends(),
         ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
@@ -338,7 +338,7 @@ async def create_collection_instrument_v3(
     POST method that creates a Collection Instrument in CIR.
     Requires guid and validator_version as parameters with optional ci_version.
     """
-    logger.info("Posting CI schema via v3 endpoint")
+    logger.info("Creating new collection instrument")
 
     if query_params.guid == "" or query_params.guid is None:
         message = "No guid supplied"
