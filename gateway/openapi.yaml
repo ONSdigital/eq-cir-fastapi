@@ -914,6 +914,8 @@ paths:
                 $ref: '#/components/schemas/ExceptionResponseModel'
           description: Internal Server Error
       summary: Http Put Ci Validator Version V1
+      tags:
+      - legacy
   /v2/ci_metadata:
     get:
       deprecated: true
