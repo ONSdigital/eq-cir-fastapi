@@ -28,7 +28,7 @@ ENDPOINTS: dict[str, EndpointConfig] = {
         "method": "DELETE",
     },
     GET_CI_METADATA: {
-        "url": "/v2/collection-instruments/metadata",
+        "url": "/collection-instruments/metadata",
         "method": "GET",
     },
     GET_CI_METADATA_V1: {

@@ -124,7 +124,7 @@ async def get_collection_instruments_metadata_v1(
 
 
 @router.get(
-    "/v2/collection-instruments/metadata",
+    "/collection-instruments/metadata",
     responses={
         400: {
             "model": ExceptionResponseModel,
@@ -140,7 +140,7 @@ async def get_collection_instruments_metadata_v1(
         },
     },
 )
-async def get_collection_instruments_metadata_v2(
+async def get_collection_instruments_metadata(
     query_params: GetCiMetadataV2Params = Depends(),
     ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
 ):
@@ -150,7 +150,7 @@ async def get_collection_instruments_metadata_v2(
     1. Provide survey_id, classifiers, language.
     2. Provide no parameters.
     """
-    logger.info("Getting ci metadata via v2 endpoint")
+    logger.info("Getting metadata for collection instrument")
     logger.debug(f"get_collection_instruments_metadata_v2: Input data: query_params={query_params.__dict__}")
 
     if query_params.params_all_none(query_params.__dict__.keys()):
