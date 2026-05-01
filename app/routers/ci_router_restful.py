@@ -28,9 +28,16 @@ logger = logging.getLogger(__name__)
 settings = Settings()
 
 
-@router.delete(
+@router.post(
     "/collection-instruments",
     responses={
+        200: {
+            "model": CiMetadata,
+            "description": (
+                    "Successfully created a CI. This is illustrated with the returned response containing the "
+                    "metadata of the CI. "
+            ),
+        },
         400: {
             "model": ExceptionResponseModel,
             "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
@@ -39,89 +46,37 @@ settings = Settings()
             "model": ExceptionResponseModel,
             "content": {"application/json": {"example": erm.erm_500_global_exception}},
         },
-        404: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_404_no_ci_to_delete}},
-        },
     },
 )
-async def delete_collection_instrument(
-    query_params: DeleteCiV1Params = Depends(),
-    ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
+async def create_collection_instrument(
+        post_data: PostCiSchemaV1Data,
+        query_params: PostCiSchemaV3Params = Depends(),
+        ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
 ):
     """
-    DELETE method that deletes all CI schema and metadata from CIR of a specified survey ID.
-    This is a helper endpoint that is used for cleaning up after tests.
+    POST method that creates a Collection Instrument in CIR.
+    Requires guid and validator_version as parameters with optional ci_version.
     """
-    logger.info("Deleting ci metadata and schema via v1 endpoint...")
-    logger.debug(f"Input data: query_params={query_params.__dict__}")
+    logger.info("Creating new collection instrument")
 
-    if query_params.survey_id is None:
-        raise exceptions.ExceptionIncorrectKeyNames
+    if query_params.guid == "" or query_params.guid is None:
+        message = "No guid supplied"
+        logger.debug(f"{message}")
+        raise exceptions.ExceptionMissingInvalidGuid
 
-    ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_with_survey_id(query_params.survey_id)
+    if query_params.validator_version == "" or query_params.validator_version is None:
+        message = "No validation version supplied"
+        logger.debug(f"{message}")
+        raise exceptions.ExceptionNoValidator
 
-    if not ci_metadata_collection:
-        logger.error(f"delete_collection_instrument: exception raised - No collection instrument found: {query_params.survey_id}")
-        raise exceptions.ExceptionNoCIToDelete
+    ci_metadata = ci_processor_service.process_raw_ci(post_data,
+                                                      query_params.guid,
+                                                      query_params.validator_version,
+                                                      query_params.ci_version)
 
-    ci_processor_service.delete_ci_in_transaction(ci_metadata_collection)
+    logger.info("CI schema posted successfully")
 
-    logger.info("CI metadata and schema successfully deleted")
-    response_content = f"CI metadata and schema successfully deleted for {query_params.survey_id}."
-    return JSONResponse(status_code=status.HTTP_200_OK, content=response_content)
-
-
-@router.get(
-    "/v1/collection-instruments/metadata",
-    responses={
-        500: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_500_global_exception}},
-        },
-        404: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_404_no_ci_metadata_exception}},
-        },
-        400: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
-        },
-    },
-    deprecated=True,
-)
-async def get_collection_instruments_metadata_v1(
-    query_params: GetCiMetadataV1Params = Depends(),
-    ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
-):
-    """
-    GET method that returns any metadata objects from CIR that match the parameters passed.
-    """
-    logger.info("Getting ci metadata via v1 endpoint")
-    logger.debug(f"Input data: query_params={query_params.__dict__}")
-
-    if not query_params.params_not_none(query_params.__dict__.keys()):
-        raise exceptions.ExceptionIncorrectKeyNames
-    if not Classifiers.has_member_key(query_params.classifier_type):
-        raise exceptions.ExceptionInvalidClassifier
-
-    ci_metadata_collection = ci_processor_service.get_ci_metadata_collection(
-        query_params.survey_id, query_params.classifier_type, query_params.classifier_value, query_params.language
-    )
-
-    if not ci_metadata_collection or len(ci_metadata_collection) == 0:
-        error_message = "get_collection_instruments_metadata_v1: exception raised - No collection instrument metadata found"
-        logger.error(error_message)
-        logger.debug(f"{error_message}:{asdict(query_params)}")
-        raise exceptions.ExceptionNoCIMetadata
-
-    return_ci_metadata_collection = []
-    for ci_metadata in ci_metadata_collection:
-        return_ci_metadata_collection.append(ci_metadata.model_dump())
-
-    logger.info("CI metadata retrieved successfully.")
-
-    return return_ci_metadata_collection
+    return ci_metadata.model_dump()
 
 
 @router.get(
@@ -172,6 +127,150 @@ async def get_collection_instruments_metadata(
         logger.error(error_message)
         logger.debug(f"{error_message}:{asdict(query_params)}")
         raise exceptions.ExceptionNoCIFound
+
+    return_ci_metadata_collection = []
+    for ci_metadata in ci_metadata_collection:
+        return_ci_metadata_collection.append(ci_metadata.model_dump())
+
+    logger.info("CI metadata retrieved successfully.")
+
+    return return_ci_metadata_collection
+
+
+@router.get(
+    "/collection-instruments/schema",
+    responses={
+        200: {
+            "model": CiMetadata,
+            "description": (
+                    "Successfully Queried a CI. This is illustrated with the returned response containing the schema of the CI."
+            ),
+        },
+        500: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_500_global_exception}},
+        },
+        404: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_404_no_ci_exception}},
+        },
+        400: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
+        },
+    },
+)
+async def get_collection_instrument_schema_by_guid(
+        query_params: GetCiSchemaV2Params = Depends(),
+        ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
+):
+    """
+    GET method that fetches a CI schema by GUID.
+    """
+    logger.info("Fetching schema for collection instrument")
+    logger.debug(f"Input data: query_params={query_params.__dict__}")
+
+    if query_params.guid is None:
+        raise exceptions.ExceptionIncorrectKeyNames
+
+    ci_metadata = ci_processor_service.get_ci_metadata_with_id(query_params.guid)
+
+    if not ci_metadata:
+        error_message = "get_collection_instrument_schema_by_guid_v2: exception raised - No collection instrument metadata found"
+        logger.error(error_message)
+        logger.debug(f"{error_message}:{query_params.guid}")
+        raise exceptions.ExceptionNoCIMetadata
+
+    bucket_schema_filename = CiSchemaLocationService.get_ci_schema_location(ci_metadata)
+
+    logger.info("Bucket schema location successfully retrieved. Getting schema")
+    logger.debug(f"Bucket schema location: {bucket_schema_filename}")
+
+    ci_schema = ci_processor_service.ci_bucket_repository.retrieve_ci_schema(bucket_schema_filename)
+
+    if not ci_schema:
+        message = "get_collection_instrument_schema_by_guid_v2: exception raised - No CI found for"
+        logger.info(message)
+        logger.debug(f"{message}:{query_params.guid}")
+        raise exceptions.ExceptionNoCIFound
+
+    logger.info("Schema successfully retrieved.")
+
+    return JSONResponse(status_code=status.HTTP_200_OK, content=ci_schema)
+
+
+@router.get(
+    "/collection-instruments/validator-metadata",
+    responses={
+        500: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_500_global_exception}},
+        },
+        404: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_404_no_ci_validator_metadata_exception}},
+        },
+    },
+)
+async def get_collection_instruments_validator_metadata(
+    ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
+) -> list[CiValidatorMetadata]:
+    """
+    GET method that returns the validator metadata for all collection instruments in CIR.
+    """
+    logger.info("Getting ci validator metadata via v1 endpoint")
+
+    ci_validator_metadata_collection = ci_processor_service.get_ci_validator_metadata_collection()
+
+    if not ci_validator_metadata_collection or len(ci_validator_metadata_collection) == 0:
+        logger.error("No collection instrument validator metadata found")
+        raise exceptions.ExceptionNoCIValidatorMetadata
+
+    return ci_validator_metadata_collection
+
+
+@router.get(
+    "/v1/collection-instruments/metadata",
+    responses={
+        500: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_500_global_exception}},
+        },
+        404: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_404_no_ci_metadata_exception}},
+        },
+        400: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
+        },
+    },
+    deprecated=True,
+)
+async def get_collection_instruments_metadata_v1(
+    query_params: GetCiMetadataV1Params = Depends(),
+    ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
+):
+    """
+    GET method that returns any metadata objects from CIR that match the parameters passed.
+    """
+    logger.info("Getting ci metadata via v1 endpoint")
+    logger.debug(f"Input data: query_params={query_params.__dict__}")
+
+    if not query_params.params_not_none(query_params.__dict__.keys()):
+        raise exceptions.ExceptionIncorrectKeyNames
+    if not Classifiers.has_member_key(query_params.classifier_type):
+        raise exceptions.ExceptionInvalidClassifier
+
+    ci_metadata_collection = ci_processor_service.get_ci_metadata_collection(
+        query_params.survey_id, query_params.classifier_type, query_params.classifier_value, query_params.language
+    )
+
+    if not ci_metadata_collection or len(ci_metadata_collection) == 0:
+        error_message = "get_collection_instruments_metadata_v1: exception raised - No collection instrument metadata found"
+        logger.error(error_message)
+        logger.debug(f"{error_message}:{asdict(query_params)}")
+        raise exceptions.ExceptionNoCIMetadata
 
     return_ci_metadata_collection = []
     for ci_metadata in ci_metadata_collection:
@@ -249,78 +348,9 @@ async def get_collection_instrument_schema_v1(
     return ci_schema
 
 
-@router.get(
-    "/collection-instruments/schema",
-    responses={
-        200: {
-            "model": CiMetadata,
-            "description": (
-                    "Successfully Queried a CI. This is illustrated with the returned response containing the schema of the CI."
-            ),
-        },
-        500: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_500_global_exception}},
-        },
-        404: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_404_no_ci_exception}},
-        },
-        400: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
-        },
-    },
-)
-async def get_collection_instrument_schema_by_guid(
-        query_params: GetCiSchemaV2Params = Depends(),
-        ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
-):
-    """
-    GET method that fetches a CI schema by GUID.
-    """
-    logger.info("Fetching schema for collection instrument")
-    logger.debug(f"Input data: query_params={query_params.__dict__}")
-
-    if query_params.guid is None:
-        raise exceptions.ExceptionIncorrectKeyNames
-
-    ci_metadata = ci_processor_service.get_ci_metadata_with_id(query_params.guid)
-
-    if not ci_metadata:
-        error_message = "get_collection_instrument_schema_by_guid_v2: exception raised - No collection instrument metadata found"
-        logger.error(error_message)
-        logger.debug(f"{error_message}:{query_params.guid}")
-        raise exceptions.ExceptionNoCIMetadata
-
-    bucket_schema_filename = CiSchemaLocationService.get_ci_schema_location(ci_metadata)
-
-    logger.info("Bucket schema location successfully retrieved. Getting schema")
-    logger.debug(f"Bucket schema location: {bucket_schema_filename}")
-
-    ci_schema = ci_processor_service.ci_bucket_repository.retrieve_ci_schema(bucket_schema_filename)
-
-    if not ci_schema:
-        message = "get_collection_instrument_schema_by_guid_v2: exception raised - No CI found for"
-        logger.info(message)
-        logger.debug(f"{message}:{query_params.guid}")
-        raise exceptions.ExceptionNoCIFound
-
-    logger.info("Schema successfully retrieved.")
-
-    return JSONResponse(status_code=status.HTTP_200_OK, content=ci_schema)
-
-
-@router.post(
+@router.delete(
     "/collection-instruments",
     responses={
-        200: {
-            "model": CiMetadata,
-            "description": (
-                    "Successfully created a CI. This is illustrated with the returned response containing the "
-                    "metadata of the CI. "
-            ),
-        },
         400: {
             "model": ExceptionResponseModel,
             "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
@@ -329,64 +359,34 @@ async def get_collection_instrument_schema_by_guid(
             "model": ExceptionResponseModel,
             "content": {"application/json": {"example": erm.erm_500_global_exception}},
         },
-    },
-)
-async def create_collection_instrument(
-        post_data: PostCiSchemaV1Data,
-        query_params: PostCiSchemaV3Params = Depends(),
-        ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
-):
-    """
-    POST method that creates a Collection Instrument in CIR.
-    Requires guid and validator_version as parameters with optional ci_version.
-    """
-    logger.info("Creating new collection instrument")
-
-    if query_params.guid == "" or query_params.guid is None:
-        message = "No guid supplied"
-        logger.debug(f"{message}")
-        raise exceptions.ExceptionMissingInvalidGuid
-
-    if query_params.validator_version == "" or query_params.validator_version is None:
-        message = "No validation version supplied"
-        logger.debug(f"{message}")
-        raise exceptions.ExceptionNoValidator
-
-    ci_metadata = ci_processor_service.process_raw_ci(post_data,
-                                                      query_params.guid,
-                                                      query_params.validator_version,
-                                                      query_params.ci_version)
-
-    logger.info("CI schema posted successfully")
-
-    return ci_metadata.model_dump()
-
-
-@router.get(
-    "/collection-instruments/validator-metadata",
-    responses={
-        500: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_500_global_exception}},
-        },
         404: {
             "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_404_no_ci_validator_metadata_exception}},
+            "content": {"application/json": {"example": erm.erm_404_no_ci_to_delete}},
         },
     },
 )
-async def get_collection_instruments_validator_metadata(
+async def delete_collection_instrument(
+    query_params: DeleteCiV1Params = Depends(),
     ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
-) -> list[CiValidatorMetadata]:
+):
     """
-    GET method that returns the validator metadata for all collection instruments in CIR.
+    DELETE method that deletes all CI schema and metadata from CIR of a specified survey ID.
+    This is a helper endpoint that is used for cleaning up after tests.
     """
-    logger.info("Getting ci validator metadata via v1 endpoint")
+    logger.info("Deleting ci metadata and schema via v1 endpoint...")
+    logger.debug(f"Input data: query_params={query_params.__dict__}")
 
-    ci_validator_metadata_collection = ci_processor_service.get_ci_validator_metadata_collection()
+    if query_params.survey_id is None:
+        raise exceptions.ExceptionIncorrectKeyNames
 
-    if not ci_validator_metadata_collection or len(ci_validator_metadata_collection) == 0:
-        logger.error("No collection instrument validator metadata found")
-        raise exceptions.ExceptionNoCIValidatorMetadata
+    ci_metadata_collection = ci_processor_service.get_ci_metadata_collection_with_survey_id(query_params.survey_id)
 
-    return ci_validator_metadata_collection
+    if not ci_metadata_collection:
+        logger.error(f"delete_collection_instrument: exception raised - No collection instrument found: {query_params.survey_id}")
+        raise exceptions.ExceptionNoCIToDelete
+
+    ci_processor_service.delete_ci_in_transaction(ci_metadata_collection)
+
+    logger.info("CI metadata and schema successfully deleted")
+    response_content = f"CI metadata and schema successfully deleted for {query_params.survey_id}."
+    return JSONResponse(status_code=status.HTTP_200_OK, content=response_content)
