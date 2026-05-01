@@ -280,9 +280,14 @@ paths:
           description: Internal Server Error
       summary: Delete Collection Instrument
     post:
-      description: 'POST method that creates a Collection Instrument in CIR.
+      description: 'POST method to create a new collection instrument
 
-        Requires guid and validator_version as parameters with optional ci_version.'
+
+        - A GUID is required
+
+        - A validator_version is required
+
+        - A ci_version is optional, if not specified, it will increment automatically'
       operationId: create_collection_instrument_collection_instruments_post
       parameters:
       - description: guid for CI
@@ -357,9 +362,10 @@ paths:
 
         The user has multiple ways of querying the metadata.
 
-        1. Provide survey_id, classifiers, language.
 
-        2. Provide no parameters.'
+        - Provide survey_id, classifiers, language.
+
+        - Provide no parameters.'
       operationId: get_collection_instruments_metadata_collection_instruments_metadata_get
       parameters:
       - description: classifier_type used by the CI
@@ -376,27 +382,33 @@ paths:
         name: classifier_value
         required: false
         schema:
+          anyOf:
+          - type: string
+          - type: 'null'
           description: classifier_value used by the CI
           title: Classifier Value
-          type: string
       - description: The language of the CI
         example: en
         in: query
         name: language
         required: false
         schema:
+          anyOf:
+          - type: string
+          - type: 'null'
           description: The language of the CI
           title: Language
-          type: string
       - description: The survey_id of the CI
         example: '123'
         in: query
         name: survey_id
         required: false
         schema:
+          anyOf:
+          - type: string
+          - type: 'null'
           description: The survey_id of the CI
           title: Survey Id
-          type: string
       responses:
         '200':
           content:
@@ -1161,27 +1173,33 @@ paths:
         name: classifier_value
         required: false
         schema:
+          anyOf:
+          - type: string
+          - type: 'null'
           description: classifier_value used by the CI
           title: Classifier Value
-          type: string
       - description: The language of the CI
         example: en
         in: query
         name: language
         required: false
         schema:
+          anyOf:
+          - type: string
+          - type: 'null'
           description: The language of the CI
           title: Language
-          type: string
       - description: The survey_id of the CI
         example: '123'
         in: query
         name: survey_id
         required: false
         schema:
+          anyOf:
+          - type: string
+          - type: 'null'
           description: The survey_id of the CI
           title: Survey Id
-          type: string
       responses:
         '200':
           content:

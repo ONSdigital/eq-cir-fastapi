@@ -15,8 +15,7 @@ from app.models.requests import (
     GetCiMetadataV2Params,
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
-    PostCiSchemaV1Data,
-    PostCiSchemaV3Params,
+    PostCiSchemaV1Data, PostCiSchemaV3Params,
 )
 from app.models.responses import CiMetadata, CiValidatorMetadata
 from app.services.ci_processor_service import CiProcessorService
@@ -54,8 +53,11 @@ async def create_collection_instrument(
         ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
 ):
     """
-    POST method that creates a Collection Instrument in CIR.
-    Requires guid and validator_version as parameters with optional ci_version.
+    POST method to create a new collection instrument
+
+    - A GUID is required
+    - A validator_version is required
+    - A ci_version is optional, if not specified, it will increment automatically
     """
     logger.info("Creating new collection instrument")
 
@@ -103,8 +105,9 @@ async def get_collection_instruments_metadata(
     """
     GET method that returns any metadata objects from CIR that match the parameters passed.
     The user has multiple ways of querying the metadata.
-    1. Provide survey_id, classifiers, language.
-    2. Provide no parameters.
+
+    - Provide survey_id, classifiers, language.
+    - Provide no parameters.
     """
     logger.info("Getting metadata for collection instrument")
     logger.debug(f"get_collection_instruments_metadata_v2: Input data: query_params={query_params.__dict__}")
