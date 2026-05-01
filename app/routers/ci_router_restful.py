@@ -29,7 +29,7 @@ settings = Settings()
 
 
 @router.delete(
-    "/v1/collection-instruments",
+    "/collection-instruments",
     responses={
         400: {
             "model": ExceptionResponseModel,
@@ -44,7 +44,6 @@ settings = Settings()
             "content": {"application/json": {"example": erm.erm_404_no_ci_to_delete}},
         },
     },
-    deprecated=True,
 )
 async def delete_collection_instrument(
     query_params: DeleteCiV1Params = Depends(),

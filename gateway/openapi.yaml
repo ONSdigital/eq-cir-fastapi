@@ -223,6 +223,62 @@ info:
 openapi: 3.0.1
 paths:
   /collection-instruments:
+    delete:
+      description: 'DELETE method that deletes all CI schema and metadata from CIR
+        of a specified survey ID.
+
+        This is a helper endpoint that is used for cleaning up after tests.'
+      operationId: delete_collection_instrument_collection_instruments_delete
+      parameters:
+      - description: The survey ID of the CI to be deleted.
+        example: '123'
+        in: query
+        name: survey_id
+        required: false
+        schema:
+          description: The survey ID of the CI to be deleted.
+          title: Survey Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '400':
+          content:
+            application/json:
+              example:
+                message: Invalid search parameters provided
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              example:
+                message: No CI to delete
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Not Found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+        '500':
+          content:
+            application/json:
+              example:
+                message: Unable to process request
+                status: error
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+      summary: Delete Collection Instrument
     post:
       description: 'POST method that creates a Collection Instrument in CIR.
 
@@ -689,64 +745,6 @@ paths:
       summary: Http Get Ci Validator Metadata V1
       tags:
       - legacy
-  /v1/collection-instruments:
-    delete:
-      deprecated: true
-      description: 'DELETE method that deletes all CI schema and metadata from CIR
-        of a specified survey ID.
-
-        This is a helper endpoint that is used for cleaning up after tests.'
-      operationId: delete_collection_instrument_v1_collection_instruments_delete
-      parameters:
-      - description: The survey ID of the CI to be deleted.
-        example: '123'
-        in: query
-        name: survey_id
-        required: false
-        schema:
-          description: The survey ID of the CI to be deleted.
-          title: Survey Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema: {}
-          description: Successful Response
-        '400':
-          content:
-            application/json:
-              example:
-                message: Invalid search parameters provided
-                status: error
-              schema:
-                $ref: '#/components/schemas/ExceptionResponseModel'
-          description: Bad Request
-        '404':
-          content:
-            application/json:
-              example:
-                message: No CI to delete
-                status: error
-              schema:
-                $ref: '#/components/schemas/ExceptionResponseModel'
-          description: Not Found
-        '422':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-        '500':
-          content:
-            application/json:
-              example:
-                message: Unable to process request
-                status: error
-              schema:
-                $ref: '#/components/schemas/ExceptionResponseModel'
-          description: Internal Server Error
-      summary: Delete Collection Instrument
   /v1/collection-instruments/metadata:
     get:
       deprecated: true

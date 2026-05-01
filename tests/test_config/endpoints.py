@@ -24,7 +24,7 @@ class EndpointConfig(TypedDict):
 
 ENDPOINTS: dict[str, EndpointConfig] = {
     DELETE_CI: {
-        "url": "/v1/collection-instruments",
+        "url": "/collection-instruments",
         "method": "DELETE",
     },
     GET_CI_METADATA: {
