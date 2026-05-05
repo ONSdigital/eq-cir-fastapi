@@ -1,11 +1,8 @@
 from typing import TypedDict
 
 # External use endpoints
-# 2 versions of get metadata endpoints
 GET_CI_METADATA: str = "get_ci_metadata"
-# 2 versions of get schema endpoints
 GET_CI_SCHEMA: str = "get_ci_schema"
-
 GET_CI_VALIDATOR_METADATA: str = "get_ci_validator_metadata"
 POST_CI: str = "post_ci"
 PUT_VALIDATOR_VERSION: str = "put_validator_version"
@@ -71,9 +68,5 @@ ENDPOINTS_DEPRECATED: dict[str, EndpointConfig] = {
     PUT_VALIDATOR_VERSION: {
         "url": "/v1/update_validator_version",
         "method": "PUT",
-    },
-    GET_STATUS: {
-        "url": "/status",
-        "method": "GET",
     }
 }

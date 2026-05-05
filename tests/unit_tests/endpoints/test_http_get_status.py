@@ -5,7 +5,8 @@ from fastapi import status
 from tests.test_config.endpoints import ENDPOINTS, GET_STATUS
 from tests.test_config.endpoints_loader import EndpointsLoader
 
-endpoints_loader = EndpointsLoader(ENDPOINTS)
+endpoints_loader = EndpointsLoader(ENDPOINTS, ignore_deprecated=True)
+
 
 class TestHttpGetStatus:
     base_url = endpoints_loader.get_url(GET_STATUS)
