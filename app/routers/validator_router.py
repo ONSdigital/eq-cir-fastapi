@@ -18,6 +18,7 @@ router = APIRouter(tags=["legacy"])
 logger = logging.getLogger(__name__)
 settings = Settings()
 
+
 @router.put(
     "/v1/update_validator_version",
     responses={
