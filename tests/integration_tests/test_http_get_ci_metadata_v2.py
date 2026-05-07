@@ -65,7 +65,7 @@ class TestGetCiMetadataV2:
 
     def test_get_ci_metadata_v2_returns_all_metadata(self, setup_payload):
         """
-        Test the 'Get Ci Metadata V2' endpoint returns all CIs that satisfies the parameters:
+        Test the 'Get Ci Metadata V2' endpoint returns all CIs without any filtering when no query parameters are provided.
         - Post 3 identical CIs using the 'Post CI' endpoint with the same metadata (same survey_id, classifier_type, classifier_value and language)
         - Post another CI with the same metadata but different form_type
         - Get CIs using the 'Get Ci Metadata V2' endpoint without any query parameters to filter the results
