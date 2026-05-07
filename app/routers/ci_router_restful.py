@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 
 import app.exception.exception_response_models as erm
 from app.config import Settings, logging
+from app.dependencies import get_ci_processor_service
 from app.exception import exceptions
 from app.exception.exception_response_models import ExceptionResponseModel
 from app.models.classifier import Classifiers
@@ -12,16 +13,12 @@ from app.models.requests import (
     DeleteCiV1Params,
     GetCiMetadataV1Params,
     GetCiMetadataV2Params,
-    GetCiMetadataV3Params,
     GetCiSchemaV1Params,
     GetCiSchemaV2Params,
     PostCiSchemaV1Data,
     PostCiSchemaV3Params,
 )
 from app.models.responses import CiMetadata, CiValidatorMetadata
-from app.repositories.buckets.ci_schema_bucket_repository import (
-    CiSchemaBucketRepository,
-)
 from app.services.ci_processor_service import CiProcessorService
 from app.services.ci_schema_location_service import CiSchemaLocationService
 
@@ -50,8 +47,12 @@ settings = Settings()
 )
 async def delete_collection_instrument(
     query_params: DeleteCiV1Params = Depends(),
-    ci_processor_service: CiProcessorService = Depends(),
+    ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
 ):
+    """
+    DELETE method that deletes all CI schema and metadata from CIR of a specified survey ID.
+    This is a helper endpoint that is used for cleaning up after tests.
+    """
     logger.info("Deleting ci metadata and schema via v1 endpoint...")
     logger.debug(f"Input data: query_params={query_params.__dict__}")
 
@@ -90,10 +91,10 @@ async def delete_collection_instrument(
 )
 async def get_collection_instruments_metadata_v1(
     query_params: GetCiMetadataV1Params = Depends(),
-    ci_processor_service: CiProcessorService = Depends(),
+    ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
 ):
     """
-    GET method that returns any metadata objects from Firestore that match the parameters passed.
+    GET method that returns any metadata objects from CIR that match the parameters passed.
     """
     logger.info("Getting ci metadata via v1 endpoint")
     logger.debug(f"Input data: query_params={query_params.__dict__}")
@@ -107,7 +108,7 @@ async def get_collection_instruments_metadata_v1(
         query_params.survey_id, query_params.classifier_type, query_params.classifier_value, query_params.language
     )
 
-    if not ci_metadata_collection:
+    if not ci_metadata_collection or len(ci_metadata_collection) == 0:
         error_message = "get_collection_instruments_metadata_v1: exception raised - No collection instrument metadata found"
         logger.error(error_message)
         logger.debug(f"{error_message}:{asdict(query_params)}")
@@ -141,12 +142,12 @@ async def get_collection_instruments_metadata_v1(
 )
 async def get_collection_instruments_metadata_v2(
     query_params: GetCiMetadataV2Params = Depends(),
-    ci_processor_service: CiProcessorService = Depends(),
+    ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
 ):
     """
-    GET method that returns any metadata objects from Firestore that match the parameters passed.
+    GET method that returns any metadata objects from CIR that match the parameters passed.
     The user has multiple ways of querying the metadata.
-    1. Provide survey_id, form_type, language.
+    1. Provide survey_id, classifiers, language.
     2. Provide no parameters.
     """
     logger.info("Getting ci metadata via v2 endpoint")
@@ -165,7 +166,7 @@ async def get_collection_instruments_metadata_v2(
                 query_params.language
             )
 
-    if not ci_metadata_collection:
+    if not ci_metadata_collection or len(ci_metadata_collection) == 0:
         error_message = "get_collection_instruments_metadata_v2: exception raised - No collection instruments found"
         logger.error(error_message)
         logger.debug(f"{error_message}:{asdict(query_params)}")
@@ -178,49 +179,6 @@ async def get_collection_instruments_metadata_v2(
     logger.info("CI metadata retrieved successfully.")
 
     return return_ci_metadata_collection
-
-
-@router.get(
-    "/v3/collection-instruments/metadata",
-    responses={
-        400: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
-        },
-        500: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_500_global_exception}},
-        },
-        404: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_404_no_ci_exception}},
-        },
-    },
-)
-async def get_collection_instrument_metadata_by_guid(
-    query_params: GetCiMetadataV3Params = Depends(),
-    ci_processor_service: CiProcessorService = Depends(),
-):
-    """
-    GET method that returns ONE metadata object from Firestore that match the guid passed.
-    """
-    logger.info("Getting ci metadata via v3 endpoint")
-    logger.debug(f"get_collection_instrument_metadata_by_guid: Input data: guid={query_params.__dict__}")
-
-    if query_params.guid == "":
-        raise exceptions.ExceptionIncorrectKeyNames
-
-    ci_metadata = ci_processor_service.get_ci_metadata_with_id(query_params.guid)
-
-    if not ci_metadata:
-        error_message = "get_collection_instrument_metadata_by_guid: exception raised - No collection instrument metadata found"
-        logger.error(error_message)
-        logger.debug(f"{error_message}:{query_params.guid}")
-        raise exceptions.ExceptionNoCIMetadata
-
-    logger.info("CI metadata retrieved successfully.")
-
-    return ci_metadata.model_dump()
 
 
 @router.get(
@@ -248,8 +206,7 @@ async def get_collection_instrument_metadata_by_guid(
 )
 async def get_collection_instrument_schema_v1(
         query_params: GetCiSchemaV1Params = Depends(),
-        ci_processor_service: CiProcessorService = Depends(),
-        ci_schema_bucket_repository: CiSchemaBucketRepository = Depends(),
+        ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
 ):
     """
     GET method that fetches a CI schema by survey_id, form_type and language.
@@ -277,7 +234,7 @@ async def get_collection_instrument_schema_v1(
     logger.info("Bucket schema location successfully retrieved. Getting schema")
     logger.debug(f"Bucket schema location: {bucket_schema_filename}")
 
-    ci_schema = ci_schema_bucket_repository.retrieve_ci_schema(bucket_schema_filename)
+    ci_schema = ci_processor_service.ci_bucket_repository.retrieve_ci_schema(bucket_schema_filename)
 
     if not ci_schema:
         error_message = "get_collection_instrument_schema_v1: exception raised - No CI found"
@@ -315,8 +272,7 @@ async def get_collection_instrument_schema_v1(
 )
 async def get_collection_instrument_schema_by_guid_v2(
         query_params: GetCiSchemaV2Params = Depends(),
-        ci_processor_service: CiProcessorService = Depends(),
-        ci_schema_bucket_repository: CiSchemaBucketRepository = Depends(),
+        ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
 ):
     """
     GET method that fetches a CI schema by GUID.
@@ -340,7 +296,7 @@ async def get_collection_instrument_schema_by_guid_v2(
     logger.info("Bucket schema location successfully retrieved. Getting schema")
     logger.debug(f"Bucket schema location: {bucket_schema_filename}")
 
-    ci_schema = ci_schema_bucket_repository.retrieve_ci_schema(bucket_schema_filename)
+    ci_schema = ci_processor_service.ci_bucket_repository.retrieve_ci_schema(bucket_schema_filename)
 
     if not ci_schema:
         message = "get_collection_instrument_schema_by_guid_v2: exception raised - No CI found for"
@@ -376,12 +332,11 @@ async def get_collection_instrument_schema_by_guid_v2(
 async def create_collection_instrument_v3(
         post_data: PostCiSchemaV1Data,
         query_params: PostCiSchemaV3Params = Depends(),
-        ci_processor_service: CiProcessorService = Depends(),
+        ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
 ):
     """
-    POST method that creates a Collection Instrument. This will post the metadata to Firestore and
-    the whole request body to a Google Cloud Bucket.
-    guid and validator_version required param with optional ci_version.
+    POST method that creates a Collection Instrument in CIR.
+    Requires guid and validator_version as parameters with optional ci_version.
     """
     logger.info("Posting CI schema via v3 endpoint")
 
@@ -419,16 +374,16 @@ async def create_collection_instrument_v3(
     },
 )
 async def get_collection_instruments_validator_metadata_v1(
-    ci_processor_service: CiProcessorService = Depends(),
+    ci_processor_service: CiProcessorService = Depends(get_ci_processor_service),
 ) -> list[CiValidatorMetadata]:
     """
-    GET method that returns the validator metadata for a CI schema.
+    GET method that returns the validator metadata for all collection instruments in CIR.
     """
     logger.info("Getting ci validator metadata via v1 endpoint")
 
     ci_validator_metadata_collection = ci_processor_service.get_ci_validator_metadata_collection()
 
-    if not ci_validator_metadata_collection:
+    if not ci_validator_metadata_collection or len(ci_validator_metadata_collection) == 0:
         logger.error("No collection instrument validator metadata found")
         raise exceptions.ExceptionNoCIValidatorMetadata
 

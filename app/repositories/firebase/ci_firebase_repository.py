@@ -3,10 +3,11 @@ from google.cloud.firestore import Query, Transaction
 
 from app.config import logging
 from app.models.responses import CiMetadata
+from app.repositories.buckets.bucket_loader import BucketLoader
 from app.repositories.buckets.ci_schema_bucket_repository import (
     CiSchemaBucketRepository,
 )
-from app.repositories.firebase.firebase_loader import firebase_loader
+from app.repositories.firebase.firebase_loader import FirebaseLoader
 from app.services.ci_schema_location_service import CiSchemaLocationService
 
 logger = logging.getLogger(__name__)
@@ -15,14 +16,14 @@ logger = logging.getLogger(__name__)
 class CiFirebaseRepository:
     """Provides methods to perform actions on firestore using the google firestore client"""
 
-    def __init__(self):
+    def __init__(self, bucket_loader: BucketLoader, firebase_loader: FirebaseLoader) -> None:
         """
         Initialises the google firestore client and sets the target collection based on
         `settings.PROJECT_ID`, `settings.FIRESTORE_DB_NAME` and `settings.CI_FIRESTORE_COLLECTION_NAME`
         """
-        self.client = firebase_loader.get_client()
+        self.firestore = firebase_loader
         self.ci_collection = firebase_loader.get_ci_collection()
-        self.ci_bucket_repository = CiSchemaBucketRepository()
+        self.ci_bucket_repository = CiSchemaBucketRepository(bucket_loader)
 
     def update_ci_metadata(self, guid: str, metadata: CiMetadata):
         """
@@ -85,7 +86,7 @@ class CiFirebaseRepository:
             self.create_ci_in_transaction(transaction, ci_id, next_version_ci_metadata)
             self.ci_bucket_repository.store_ci_schema(stored_ci_filename, ci)
 
-        post_ci_transaction_run(self.client.transaction())
+        post_ci_transaction_run(self.firestore.set_transaction())
 
     def create_ci_in_transaction(
         self,
@@ -204,7 +205,7 @@ class CiFirebaseRepository:
             self.ci_bucket_repository.delete_ci_schema(stored_ci_filename)
 
         for ci_metadata in ci_metadata_collection:
-            delete_ci_transaction_run(self.client.transaction(), ci_metadata)
+            delete_ci_transaction_run(self.firestore.set_transaction(), ci_metadata)
 
     def delete_ci_metadata_collection_in_transaction(self, transaction: Transaction, ci_metadata: CiMetadata):
         """
