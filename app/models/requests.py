@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Final, Optional
+from typing import Final
 
 from fastapi import Query
 from pydantic import BaseModel, ValidationInfo, field_validator
@@ -46,9 +46,9 @@ class GetCiMetadataV2Params:
     """
 
     classifier_type: Classifiers = Query(default=None, description=CLASSIFIER_TYPE_DESC, example="form_type")
-    classifier_value: Optional[str] = Query(default=None, description=CLASSIFIER_VALUE_DESC, example="0001")
-    language: Optional[str] = Query(default=None, description=LANG_DESC, example="en")
-    survey_id: Optional[str] = Query(default=None, description=SURVEY_ID_DESC, example="123")
+    classifier_value: str | None = Query(default=None, description=CLASSIFIER_VALUE_DESC, example="0001")
+    language: str | None = Query(default=None, description=LANG_DESC, example="en")
+    survey_id: str | None = Query(default=None, description=SURVEY_ID_DESC, example="123")
 
     def params_not_none(self, keys):
         """

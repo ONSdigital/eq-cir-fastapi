@@ -10,10 +10,7 @@ from app.exception import exceptions
 from app.exception.exception_response_models import ExceptionResponseModel
 from app.models.classifier import Classifiers
 from app.models.requests import (
-    DeleteCiV1Params,
-    GetCiMetadataV1Params,
     GetCiMetadataV2Params,
-    GetCiSchemaV1Params,
     GetCiSchemaV2Params,
     PostCiSchemaV1Data,
     PostCiSchemaV3Params,

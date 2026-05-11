@@ -13,7 +13,8 @@ from app.models.requests import (
     DeleteCiV1Params,
     GetCiMetadataV2Params,
     GetCiSchemaV2Params,
-    PostCiSchemaV1Data, PostCiSchemaV3Params,
+    PostCiSchemaV1Data,
+    PostCiSchemaV3Params,
 )
 from app.models.responses import CiMetadata, CiValidatorMetadata
 from app.services.ci_processor_service import CiProcessorService
