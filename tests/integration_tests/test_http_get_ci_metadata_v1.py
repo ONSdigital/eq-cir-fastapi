@@ -6,7 +6,7 @@ from fastapi import status
 from app.config import settings
 from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request, create_post_params
-from tests.test_config.endpoints import ENDPOINTS, GET_CI_METADATA_V1, POST_CI, DELETE_CI
+from tests.test_config.endpoints import ENDPOINTS, GET_CI_METADATA, POST_CI, DELETE_CI
 from tests.test_config.endpoints_loader import EndpointsLoader
 
 endpoints_loader = EndpointsLoader(ENDPOINTS)
@@ -18,7 +18,7 @@ class TestGetCiMetadataV1:
     """
 
     post_url = endpoints_loader.get_url(POST_CI)
-    base_url = endpoints_loader.get_url(GET_CI_METADATA_V1)
+    base_url = endpoints_loader.get_url(GET_CI_METADATA)
 
     encoded_list = create_post_params(3)
 
