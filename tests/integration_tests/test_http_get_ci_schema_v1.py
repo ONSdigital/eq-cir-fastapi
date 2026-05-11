@@ -8,7 +8,7 @@ from app.config import settings
 from app.models.requests import GetCiSchemaV1Params, PostCiSchemaV1Data
 from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request, create_post_params
-from tests.test_config.endpoints import ENDPOINTS, GET_CI_SCHEMA_V1, POST_CI, DELETE_CI
+from tests.test_config.endpoints import ENDPOINTS, GET_CI_SCHEMA, POST_CI, DELETE_CI
 from tests.test_config.endpoints_loader import EndpointsLoader
 
 endpoints_loader = EndpointsLoader(ENDPOINTS)
@@ -19,7 +19,7 @@ class TestHttpGetCiSchemaV1:
     Integration tests for the 'Get Ci Schema V1' endpoint.
     """
 
-    url = endpoints_loader.get_url(GET_CI_SCHEMA_V1)
+    url = endpoints_loader.get_url(GET_CI_SCHEMA)
     post_url = endpoints_loader.get_url(POST_CI)
 
     def teardown_method(self):
