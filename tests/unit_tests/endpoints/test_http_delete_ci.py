@@ -8,7 +8,7 @@ from tests.test_config.endpoints import ENDPOINTS, DELETE_CI
 from tests.test_config.endpoints_loader import EndpointsLoader
 from tests.test_data.ci_test_data import mock_ci_metadata, mock_survey_id
 
-endpoints_loader = EndpointsLoader(ENDPOINTS, ignore_deprecated=True)
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 @patch("app.repositories.firebase.ci_firebase_repository.CiFirebaseRepository.get_ci_metadata_collection_with_survey_id")

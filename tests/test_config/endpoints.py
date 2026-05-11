@@ -68,5 +68,13 @@ ENDPOINTS_DEPRECATED: dict[str, EndpointConfig] = {
     PUT_VALIDATOR_VERSION: {
         "url": "/v1/update_validator_version",
         "method": "PUT",
-    }
+    },
+    GET_STATUS: {
+        "url": "/status",
+        "method": "GET",
+    },
+    DELETE_CI: {
+        "url": "/collection-instruments",
+        "method": "DELETE",
+    },
 }

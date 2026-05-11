@@ -9,7 +9,7 @@ from tests.integration_tests.utils import make_iap_request, create_post_params
 from tests.test_config.endpoints import ENDPOINTS, DELETE_CI, POST_CI, GET_CI_SCHEMA
 from tests.test_config.endpoints_loader import EndpointsLoader
 
-endpoints_loader = EndpointsLoader(ENDPOINTS, ignore_deprecated=True)
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 class TestDeleteCi:
