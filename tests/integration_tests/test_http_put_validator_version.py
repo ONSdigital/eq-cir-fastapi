@@ -8,7 +8,7 @@ from app.models.requests import UpdateValidatorVersionV1Params, PostCiSchemaV1Da
 from app.models.responses import CiMetadata
 from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request, create_post_params
-from tests.test_config.endpoints import ENDPOINTS, PUT_VALIDATOR_VERSION, GET_CI_METADATA_V1, POST_CI, DELETE_CI, \
+from tests.test_config.endpoints import ENDPOINTS, PUT_VALIDATOR_VERSION, GET_CI_METADATA, POST_CI, DELETE_CI, \
     GET_CI_SCHEMA
 from tests.test_config.endpoints_loader import EndpointsLoader
 
@@ -21,7 +21,7 @@ class TestPutValidatorVersion:
     """
     post_url = endpoints_loader.get_url(POST_CI)
     update_validator = endpoints_loader.get_url(PUT_VALIDATOR_VERSION)
-    get_metadata_url = endpoints_loader.get_url(GET_CI_METADATA_V1)
+    get_metadata_url = endpoints_loader.get_url(GET_CI_METADATA)
     get_schema_url = endpoints_loader.get_url(GET_CI_SCHEMA)
 
     def teardown_method(self):
