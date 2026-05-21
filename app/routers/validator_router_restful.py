@@ -19,7 +19,7 @@ settings = Settings()
 
 
 @router.put(
-    "/v1/collection-instruments/validator-version",
+    "/collection-instruments/validator-version",
     responses={
         200: {
             "model": CiMetadata,
@@ -49,7 +49,7 @@ async def put_collection_instrument_validator_version(
     """
     PUT method that updates validator_version and CI metadata by Guid.
     """
-    logger.info("Putting validator_version")
+    logger.info("Putting validator version")
     logger.debug(f"Input data: guid={query_params.guid}, query_params={query_params.__dict__}")
 
     if  not query_params.params_not_none(query_params.__dict__.keys()):

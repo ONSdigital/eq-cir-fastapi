@@ -7,6 +7,7 @@ from tests.test_config.endpoints_loader import EndpointsLoader
 
 endpoints_loader = EndpointsLoader(ENDPOINTS)
 
+
 class TestHttpGetStatus:
     base_url = endpoints_loader.get_url(GET_STATUS)
 

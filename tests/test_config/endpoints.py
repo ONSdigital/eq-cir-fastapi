@@ -1,13 +1,8 @@
 from typing import TypedDict
 
 # External use endpoints
-# 2 versions of get metadata endpoints
 GET_CI_METADATA: str = "get_ci_metadata"
-GET_CI_METADATA_V1: str = "get_ci_metadata_v1"
-# 2 versions of get schema endpoints
 GET_CI_SCHEMA: str = "get_ci_schema"
-GET_CI_SCHEMA_V1: str = "get_ci_schema_v1"
-
 GET_CI_VALIDATOR_METADATA: str = "get_ci_validator_metadata"
 POST_CI: str = "post_ci"
 PUT_VALIDATOR_VERSION: str = "put_validator_version"
@@ -24,35 +19,27 @@ class EndpointConfig(TypedDict):
 
 ENDPOINTS: dict[str, EndpointConfig] = {
     DELETE_CI: {
-        "url": "/v1/collection-instruments",
+        "url": "/collection-instruments",
         "method": "DELETE",
     },
     GET_CI_METADATA: {
-        "url": "/v2/collection-instruments/metadata",
-        "method": "GET",
-    },
-    GET_CI_METADATA_V1: {
-        "url": "/v1/collection-instruments/metadata",
+        "url": "/collection-instruments/metadata",
         "method": "GET",
     },
     GET_CI_SCHEMA: {
-        "url": "/v2/collection-instruments/schema",
-        "method": "GET",
-    },
-    GET_CI_SCHEMA_V1: {
-        "url": "/v1/collection-instruments/schema",
+        "url": "/collection-instruments/schema",
         "method": "GET",
     },
     GET_CI_VALIDATOR_METADATA: {
-        "url": "/v1/collection-instruments/validator-metadata",
+        "url": "/collection-instruments/validator-metadata",
         "method": "GET",
     },
     POST_CI: {
-        "url": "/v3/collection-instruments",
+        "url": "/collection-instruments",
         "method": "POST",
     },
     PUT_VALIDATOR_VERSION: {
-        "url": "/v1/collection-instruments/validator-version",
+        "url": "/collection-instruments/validator-version",
         "method": "PUT",
     },
     GET_STATUS: {
@@ -62,24 +49,12 @@ ENDPOINTS: dict[str, EndpointConfig] = {
 }
 
 ENDPOINTS_DEPRECATED: dict[str, EndpointConfig] = {
-    DELETE_CI: {
-        "url": "/v1/dev/teardown",
-        "method": "DELETE",
-    },
     GET_CI_METADATA: {
         "url": "/v2/ci_metadata",
         "method": "GET",
     },
-    GET_CI_METADATA_V1: {
-        "url": "/v1/ci_metadata",
-        "method": "GET",
-    },
     GET_CI_SCHEMA: {
         "url": "/v2/retrieve_collection_instrument",
-        "method": "GET",
-    },
-    GET_CI_SCHEMA_V1: {
-        "url": "/v1/retrieve_collection_instrument",
         "method": "GET",
     },
     GET_CI_VALIDATOR_METADATA: {
@@ -97,5 +72,9 @@ ENDPOINTS_DEPRECATED: dict[str, EndpointConfig] = {
     GET_STATUS: {
         "url": "/status",
         "method": "GET",
-    }
+    },
+    DELETE_CI: {
+        "url": "/collection-instruments",
+        "method": "DELETE",
+    },
 }
