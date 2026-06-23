@@ -67,10 +67,24 @@ class ExceptionInterceptor:
 
     def throw_400_incorrect_key_names_exception(request: Request, exc: Exception) -> JSONResponse:
         """
-        When there is No CI found and a 404 HTTP response is returned
+        When there is No CI found and a 400 HTTP response is returned
         Triggered when either schema metadata or schema json file is not found
         """
         er = ExceptionResponder(status.HTTP_400_BAD_REQUEST, erm.erm_400_incorrect_key_names_exception)
+        return er.throw_er_with_json()
+
+    def throw_400_invalid_guid_exception(request: Request, exc: Exception) -> JSONResponse:
+        """
+        When there is no GUID found and a 400 HTTP response is returned
+        """
+        er = ExceptionResponder(status.HTTP_400_BAD_REQUEST, erm.erm_400_invalid_guid_exception)
+        return er.throw_er_with_json()
+
+    def throw_400_ci_version_invalid_exception(request: Request, exc: Exception) -> JSONResponse:
+        """
+        When there is no valid CI found and a 400 HTTP response is returned
+        """
+        er = ExceptionResponder(status.HTTP_400_BAD_REQUEST, erm.erm_400_invalid_ci_version_exception)
         return er.throw_er_with_json()
 
 

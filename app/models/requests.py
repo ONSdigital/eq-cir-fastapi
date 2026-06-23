@@ -37,6 +37,7 @@ class GetCiMetadataV1Params:
         """
         return all(getattr(self, key) for key in keys)
 
+
 @dataclass
 class GetCiMetadataV2Params:
     """
@@ -45,9 +46,9 @@ class GetCiMetadataV2Params:
     """
 
     classifier_type: Classifiers = Query(default=None, description=CLASSIFIER_TYPE_DESC, example="form_type")
-    classifier_value: str = Query(default=None, description=CLASSIFIER_VALUE_DESC, example="0001")
-    language: str = Query(default=None, description=LANG_DESC, example="en")
-    survey_id: str = Query(default=None, description=SURVEY_ID_DESC, example="123")
+    classifier_value: str | None = Query(default=None, description=CLASSIFIER_VALUE_DESC, example="0001")
+    language: str | None = Query(default=None, description=LANG_DESC, example="en")
+    survey_id: str | None = Query(default=None, description=SURVEY_ID_DESC, example="123")
 
     def params_not_none(self, keys):
         """
@@ -144,6 +145,16 @@ class PostCiSchemaV2Params:
     """Model for `post_ci_schema_v2` request query params"""
 
     validator_version: str = Query(default=None, description="Validator version of CI schema", example="0.0.1")
+
+
+@dataclass
+class PostCiSchemaV3Params:
+    """Model for `post_ci_schema_v3` request query params"""
+
+    guid: str = Query(default=None, description="guid for CI")
+    validator_version: str = Query(default=None, description="Validator version of CI schema", example="0.0.1")
+    ci_version: str = Query(default=None, description="CI version of CI schema", example="1")
+
 
 @dataclass
 class UpdateValidatorVersionV1Params:

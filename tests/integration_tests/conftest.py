@@ -2,10 +2,14 @@ from urllib.parse import urlencode
 
 import pytest
 
+from app.dependencies import get_bucket_loader, get_firebase_loader
 from app.repositories.firebase.ci_firebase_repository import CiFirebaseRepository
 from tests.integration_tests.utils import make_iap_request
 
-firestore_client = CiFirebaseRepository()
+firestore_client = CiFirebaseRepository(
+    bucket_loader = get_bucket_loader(),
+    firebase_loader = get_firebase_loader()
+)
 
 
 @pytest.fixture

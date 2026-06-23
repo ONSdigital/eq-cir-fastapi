@@ -22,6 +22,7 @@ mock_sds_schema = ""
 mock_survey_id = "test_survey_id"
 mock_title = "test_title"
 mock_published_at = "2023-04-20T12:00:00.000000Z"
+mock_sds_schema_with_value = "test_sds_schema"
 
 mock_post_ci_schema = PostCiSchemaV1Data(
     survey_id=mock_survey_id,
@@ -32,23 +33,21 @@ mock_post_ci_schema = PostCiSchemaV1Data(
     sds_schema=mock_sds_schema,
 )
 
-mock_post_ci_schema_without_sds_schema = PostCiSchemaV1Data(
-    survey_id=mock_survey_id,
-    classifier_type=mock_classifier_type,
-    classifier_value=mock_classifier_value,
-    language=mock_language,
-    title=mock_title,
-    data_version=mock_data_version,
-)
-
 mock_post_ci_schema_with_sds_schema = PostCiSchemaV1Data(
     survey_id=mock_survey_id,
+    form_type=mock_classifier_value,
     language=mock_language,
-    classifier_type=mock_classifier_type,
-    classifier_value=mock_classifier_value,
     title=mock_title,
     data_version=mock_data_version,
-    sds_schema="0004",
+    sds_schema=mock_sds_schema_with_value,
+)
+
+mock_post_ci_schema_without_sds_schema = PostCiSchemaV1Data(
+    survey_id=mock_survey_id,
+    form_type=mock_classifier_value,
+    language=mock_language,
+    title=mock_title,
+    data_version=mock_data_version,
 )
 
 mock_ci_metadata = CiMetadata(
@@ -66,6 +65,48 @@ mock_ci_metadata = CiMetadata(
 )
 
 mock_ci_metadata_v2 = CiMetadata(
+    ci_version=1,
+    validator_version=mock_validator_version_v2,
+    data_version=mock_data_version,
+    classifier_type=mock_classifier_type,
+    classifier_value=mock_classifier_value,
+    guid=mock_id,
+    language=mock_language,
+    published_at=mock_published_at,
+    sds_schema=mock_sds_schema,
+    survey_id=mock_survey_id,
+    title=mock_title,
+)
+
+mock_ci_metadata_v3 = CiMetadata(
+    ci_version=2,
+    validator_version=mock_validator_version_v2,
+    data_version=mock_data_version,
+    classifier_type=mock_classifier_type,
+    classifier_value=mock_classifier_value,
+    guid=mock_id,
+    language=mock_language,
+    published_at=mock_published_at,
+    sds_schema=mock_sds_schema,
+    survey_id=mock_survey_id,
+    title=mock_title,
+)
+
+mock_ci_metadata_with_sds_schema_v3 = CiMetadata(
+    ci_version=2,
+    validator_version=mock_validator_version_v2,
+    data_version=mock_data_version,
+    classifier_type=mock_classifier_type,
+    classifier_value=mock_classifier_value,
+    guid=mock_id,
+    language=mock_language,
+    published_at=mock_published_at,
+    sds_schema=mock_sds_schema_with_value,
+    survey_id=mock_survey_id,
+    title=mock_title,
+)
+
+mock_ci_metadata_v3_auto_version = CiMetadata(
     ci_version=1,
     validator_version=mock_validator_version_v2,
     data_version=mock_data_version,
@@ -114,6 +155,48 @@ mock_next_version_ci_metadata_v2 = CiMetadata(
     classifier_type=mock_classifier_type,
     classifier_value=mock_classifier_value,
     guid=mock_next_version_id,
+    language=mock_language,
+    published_at=mock_published_at,
+    sds_schema=mock_sds_schema,
+    survey_id=mock_survey_id,
+    title=mock_title,
+)
+
+mock_next_version_ci_metadata_v3 = CiMetadata(
+    ci_version=100,
+    validator_version=mock_validator_version_v2,
+    data_version=mock_data_version,
+    classifier_type=mock_classifier_type,
+    classifier_value=mock_classifier_value,
+    guid=mock_next_version_id,
+    language=mock_language,
+    published_at=mock_published_at,
+    sds_schema=mock_sds_schema,
+    survey_id=mock_survey_id,
+    title=mock_title,
+)
+
+mock_next_version_ci_metadata_v3_auto_version = CiMetadata(
+    ci_version=3,
+    validator_version=mock_validator_version_v2,
+    data_version=mock_data_version,
+    classifier_type=mock_classifier_type,
+    classifier_value=mock_classifier_value,
+    guid=mock_next_version_id,
+    language=mock_language,
+    published_at=mock_published_at,
+    sds_schema=mock_sds_schema,
+    survey_id=mock_survey_id,
+    title=mock_title,
+)
+
+mock_ci_metadata_v3_with_ci_version = CiMetadata(
+    ci_version=1,
+    validator_version=mock_validator_version_v2,
+    data_version=mock_data_version,
+    classifier_type=mock_classifier_type,
+    classifier_value=mock_classifier_value,
+    guid=mock_id,
     language=mock_language,
     published_at=mock_published_at,
     sds_schema=mock_sds_schema,

@@ -4,7 +4,7 @@ from fastapi.exceptions import RequestValidationError
 from app.config import Settings, logging
 from app.exception import exceptions
 from app.exception.exception_interceptor import ExceptionInterceptor
-from app.routers import ci_router, status_router, validator_router
+from app.routers import ci_router, ci_router_restful, status_router, validator_router, validator_router_restful
 
 app = FastAPI()
 logger = logging.getLogger(__name__)
@@ -60,6 +60,14 @@ app.add_exception_handler(
     exceptions.ExceptionTopicNotFound,
     ExceptionInterceptor.throw_500_global_exception,
 )
+app.add_exception_handler(
+    exceptions.ExceptionMissingInvalidGuid,
+    ExceptionInterceptor.throw_400_invalid_guid_exception,
+)
+app.add_exception_handler(
+    exceptions.ExceptionInvalidCiVersion,
+    ExceptionInterceptor.throw_400_ci_version_invalid_exception,
+)
 
 
 @app.exception_handler(500)
@@ -84,3 +92,8 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 app.include_router(ci_router.router)
 app.include_router(status_router.router)
 app.include_router(validator_router.router)
+
+# Version 2 routers, refactored to be more RESTful
+app.include_router(validator_router_restful.router)
+
+app.include_router(ci_router_restful.router)
