@@ -1,10 +1,10 @@
-from datetime import datetime
+from datetime import UTC, datetime
 
 
 class DatetimeService:
     @staticmethod
     def get_current_date_and_time() -> datetime:
         """
-        Gets current date and time. Wrapper for datetime.now() function to make it easier to mock for tests.
+        Gets current date and time in UTC timezone.
         """
-        return datetime.now()
+        return datetime.now(tz=UTC)

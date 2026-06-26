@@ -18,11 +18,14 @@ settings = Settings()
 
 
 @pytest.fixture(autouse=True)
-def mock_datetime(mocker):
-    mocker.patch(
-        "app.services.datetime_service.DatetimeService.get_current_date_and_time",
-        return_value=mock_publish_date,
-    )
+def mock_datetime(request, mocker):
+    if "use_real_datetime" in request.keywords:
+        pass # Bypass mocking datetime
+    else:
+        mocker.patch(
+            "app.services.datetime_service.DatetimeService.get_current_date_and_time",
+            return_value=mock_publish_date,
+        )
 
 
 @pytest.fixture(autouse=True)
