@@ -2,3 +2,4 @@
 omit =
     app/repositories/*
     app/routers/ci_router.py
+    app/routers/validator_router.py
