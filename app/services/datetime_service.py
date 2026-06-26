@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 
 class DatetimeService:
@@ -7,4 +7,4 @@ class DatetimeService:
         """
         Gets current date and time in UTC timezone.
         """
-        return datetime.now(tz=timezone.utc)
+        return datetime.now(tz=UTC)
