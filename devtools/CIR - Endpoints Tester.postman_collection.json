@@ -1,58 +1,21 @@
 {
   "info": {
-    "_postman_id": "74505ddf-29d3-46b3-8c12-1df2991c20f2",
+    "_postman_id": "f4fc7aeb-0ad9-41e6-84c1-64936a70e285",
     "name": "CIR - Endpoints Tester",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "27074658"
   },
   "item": [
     {
-      "name": "Http Get Ci Metadata V1",
+      "name": "Http Get Ci Metadata",
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{PROTOCOL}}://{{IP_ADDRESS}}{{GET_METADATA_V1_URL}}?classifier_type=form_type&classifier_value=0001&language=en&survey_id=134",
+          "raw": "{{PROTOCOL}}://{{IP_ADDRESS}}{{GET_METADATA_URL}}?classifier_type=form_type&classifier_value=0001&language=en&survey_id=134",
           "protocol": "{{PROTOCOL}}",
           "host": [
-            "{{IP_ADDRESS}}{{GET_METADATA_V1_URL}}"
-          ],
-          "query": [
-            {
-              "key": "classifier_type",
-              "value": "form_type",
-              "description": "The classifier type of the CI"
-            },
-            {
-              "key": "classifier_value",
-              "value": "0001",
-              "description": "the classifier value of the CI"
-            },
-            {
-              "key": "language",
-              "value": "en",
-              "description": "The language of the CI"
-            },
-            {
-              "key": "survey_id",
-              "value": "134",
-              "description": "The survey ID of the CI"
-            }
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Http Get Ci Metadata V2",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{PROTOCOL}}://{{IP_ADDRESS}}{{GET_METADATA_V2_URL}}?classifier_type=form_type&classifier_value=0001&language=en&survey_id=134",
-          "protocol": "{{PROTOCOL}}",
-          "host": [
-            "{{IP_ADDRESS}}{{GET_METADATA_V2_URL}}"
+            "{{IP_ADDRESS}}{{GET_METADATA_URL}}"
           ],
           "query": [
             {
@@ -77,52 +40,15 @@
       "response": []
     },
     {
-      "name": "Http Get Ci Schema V1",
+      "name": "Http Get Ci Schema",
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{PROTOCOL}}://{{IP_ADDRESS}}{{GET_SCHEMA_V1_URL}}?classifier_type=form_type&classifier_value=0001&language=en&survey_id=134",
+          "raw": "{{PROTOCOL}}://{{IP_ADDRESS}}{{GET_SCHEMA_URL}}?guid=68fea270-3423-4e59-9bc2-a703b728833e",
           "protocol": "{{PROTOCOL}}",
           "host": [
-            "{{IP_ADDRESS}}{{GET_SCHEMA_V1_URL}}"
-          ],
-          "query": [
-            {
-              "key": "classifier_type",
-              "value": "form_type",
-              "description": "the classifier type of the CI"
-            },
-            {
-              "key": "classifier_value",
-              "value": "0001",
-              "description": "The classifier value of the CI"
-            },
-            {
-              "key": "language",
-              "value": "en",
-              "description": "The lanugage of the CI"
-            },
-            {
-              "key": "survey_id",
-              "value": "134",
-              "description": "The survey id of the CI"
-            }
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Http Get Ci Schema V2",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{PROTOCOL}}://{{IP_ADDRESS}}{{GET_SCHEMA_V2_URL}}?guid=68fea270-3423-4e59-9bc2-a703b728833e",
-          "protocol": "{{PROTOCOL}}",
-          "host": [
-            "{{IP_ADDRESS}}{{GET_SCHEMA_V2_URL}}"
+            "{{IP_ADDRESS}}{{GET_SCHEMA_URL}}"
           ],
           "query": [
             {
@@ -135,7 +61,7 @@
       "response": []
     },
     {
-      "name": "Http Get CiValidator Metadata",
+      "name": "Http Get Ci Validator Metadata",
       "request": {
         "method": "GET",
         "header": [],
@@ -184,7 +110,7 @@
       "response": []
     },
     {
-      "name": "Http Post Ci Metadata",
+      "name": "Http Post Ci Schema",
       "request": {
         "method": "POST",
         "header": [],
@@ -287,53 +213,43 @@
   ],
   "variable": [
     {
-      "key": "GET_METADATA_V1_URL",
-      "value": "",
-      "description": "URL to get a list of CI metadata. Version 1"
+      "key": "GET_METADATA_URL",
+      "value": "/collection-instruments/metadata",
+      "description": "URL to get a list of CI metadata"
     },
     {
-      "key": "GET_METADATA_V2_URL",
-      "value": "",
-      "description": "URL to get a list of CI metadata. Version 2"
-    },
-    {
-      "key": "GET_SCHEMA_V1_URL",
-      "value": "",
-      "description": "URL to get a CI schema. Version 1"
-    },
-    {
-      "key": "GET_SCHEMA_V2_URL",
-      "value": "",
-      "description": "URL to get a CI schema. Version 2"
+      "key": "GET_SCHEMA_URL",
+      "value": "/collection-instruments/schema",
+      "description": "URL to get a CI schema"
     },
     {
       "key": "GET_VALIDATOR_METADATA_URL",
-      "value": "",
+      "value": "/collection-instruments/validator-metadata",
       "description": "URL to get all validator metadata"
     },
     {
       "key": "PUT_VALIDATOR_METADATA_URL",
-      "value": "",
+      "value": "/collection-instruments/validator-version",
       "description": "URL to update the validator version and CI schema of an existing CI"
     },
     {
       "key": "POST_SCHEMA_URL",
-      "value": "",
+      "value": "/collection-instruments",
       "description": "URL to post a new CI"
     },
     {
       "key": "DELETE_SCHEMA_URL",
-      "value": "",
+      "value": "/collection-instruments",
       "description": "URL to delete all CI schema related to the survey ID"
     },
     {
       "key": "IP_ADDRESS",
-      "value": "",
+      "value": "0.0.0.0:3030",
       "description": "IP address and port of CIR"
     },
     {
       "key": "PROTOCOL",
-      "value": "",
+      "value": "http",
       "description": "http or https"
     }
   ]
