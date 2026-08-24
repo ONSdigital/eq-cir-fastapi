@@ -1,6 +1,13 @@
 # Use a Python image with uv pre-installed
 FROM ghcr.io/astral-sh/uv:python3.13-alpine
 
+# Used to fix SQLITE vulnerabilities in Alpine
+RUN set -eux; \
+	apk add --no-cache --virtual .build-deps \
+		bluez-dev bzip2-dev dpkg-dev dpkg findutils gcc gdbm-dev gnupg libc-dev \
+		libffi-dev libnsl-dev libtirpc-dev linux-headers make ncurses-dev openssl-dev \
+		pax-utils sqlite-dev
+
 # Install the project into `/app`
 WORKDIR /app
 
