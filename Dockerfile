@@ -13,15 +13,18 @@ ENV UV_LINK_MODE=copy
 # Copy the pyproject and lockfile first (for better caching)
 ADD pyproject.toml uv.lock ./
 
+# Ensure Lockfile is up to date
+RUN uv lock --check
+
 # Install the project's dependencies using the lockfile and settings
 # We use docker mounts to cache the UV cache acrross builds (This speeds up multiple Docker builds)
 # We also use bind mounts for uv.lock and pyproject.toml to ensure that the cache is invalidated when they change
-RUN uv sync --frozen --no-install-project --no-dev
+RUN uv sync --no-install-project --no-dev
 
 # Then, add the rest of the project source code and install it
 # Installing separately from its dependencies allows optimal layer caching
 ADD . /app
-RUN uv sync --frozen --no-dev
+RUN uv sync --no-dev
 
 
 # Place executables in the environment at the front of the path
