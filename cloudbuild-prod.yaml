@@ -5,7 +5,7 @@ steps:
     args:
       - "-c"
       - |
-        docker build -t "europe-west2-docker.pkg.dev/ons-sds-ci/cir-perm/${PROJECT_ID}:latest" -t "europe-west2-docker.pkg.dev/ons-sds-ci/cir-perm/${PROJECT_ID}:${TAG_NAME}" .
+        docker build --pull --no-cache -t "europe-west2-docker.pkg.dev/ons-sds-ci/cir-perm/${PROJECT_ID}:latest" -t "europe-west2-docker.pkg.dev/ons-sds-ci/cir-perm/${PROJECT_ID}:${TAG_NAME}" .
         docker push "europe-west2-docker.pkg.dev/ons-sds-ci/cir-perm/${PROJECT_ID}:latest"
         docker push "europe-west2-docker.pkg.dev/ons-sds-ci/cir-perm/${PROJECT_ID}:${TAG_NAME}"
 
