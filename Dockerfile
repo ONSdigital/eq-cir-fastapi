@@ -1,5 +1,5 @@
 # Use a Python image with uv pre-installed
-FROM ghcr.io/astral-sh/uv:python3.13-alpine
+FROM ghcr.io/astral-sh/uv:python3.13-alpine@sha256:3ad497bedc14ffd0831dcd757d3c09ac8dfdb1d89d3e1ec47bbcb76f64a97c21
 
 # Used to fix SQLITE vulnerabilities in Alpine
 RUN set -eux; \
