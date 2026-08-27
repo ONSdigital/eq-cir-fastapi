@@ -130,6 +130,10 @@ class PostCiSchemaV1Data(BaseModel):
     sections: list | SkipJsonSchema[None] = None
     submission: dict | SkipJsonSchema[None] = None
     theme: str | SkipJsonSchema[None] = ""
+    answer_codes: list | SkipJsonSchema[None] = None
+    preview_questions: bool | SkipJsonSchema[None] = False
+    supplementary_data: dict | SkipJsonSchema[None] = None
+
 
     @field_validator("data_version", "language", "survey_id", "title")
     @classmethod
