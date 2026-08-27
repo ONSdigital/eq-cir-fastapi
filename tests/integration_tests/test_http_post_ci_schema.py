@@ -4,7 +4,6 @@ import pytest
 from fastapi import status
 
 from app.config import settings
-from app.models.requests import PostCiSchemaV1Data
 from app.models.responses import CiMetadata
 from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.helpers.integration_helpers import subscriber_teardown, subscriber_setup, \
@@ -109,6 +108,21 @@ class TestPostCi:
         # Assert that the response body contains the expected metadata
         assert get_metadata_response_data == [expected_ci_metadata.model_dump()]
 
+        querystring = urlencode(
+            {
+                "guid": parse_qs(data[0])["guid"][0],
+            }
+        )
+        # sends request to get ci schema endpoint to retrieve the schema back
+        get_ci_schema_response = make_iap_request("GET", f"{self.get_ci_schema_url}?{querystring}")
+
+        # Assert response status code = 200 OK
+        assert get_ci_schema_response.status_code == status.HTTP_200_OK
+        get_ci_schema_response = get_ci_schema_response.json()
+
+        # Assert that the response body is equivalent to the original payload
+        assert get_ci_schema_response == setup_payload
+
         # Pull message from subscription
         received_messages = ci_pubsub_helper.try_pull_and_acknowledge_messages(self.subscription_id)
 
@@ -181,6 +195,21 @@ class TestPostCi:
 
         # Assert that the response body contains the expected metadata
         assert get_metadata_response_data == [expected_ci_metadata.model_dump()]
+
+        querystring = urlencode(
+            {
+                "guid": parse_qs(data[0])["guid"][0],
+            }
+        )
+        # sends request to get ci schema endpoint to retrieve the schema back
+        get_ci_schema_response = make_iap_request("GET", f"{self.get_ci_schema_url}?{querystring}")
+
+        # Assert response status code = 200 OK
+        assert get_ci_schema_response.status_code == status.HTTP_200_OK
+        get_ci_schema_response = get_ci_schema_response.json()
+
+        # Assert that the response body is equivalent to the original payload
+        assert get_ci_schema_response == new_payload
 
         # Pull message from subscription
         received_messages = ci_pubsub_helper.try_pull_and_acknowledge_messages(self.subscription_id)
@@ -390,7 +419,6 @@ class TestPostCi:
 
         assert ci_response_data == expected_ci_response_data
 
-        #
         querystring = urlencode(
             {
                 "guid": guid,

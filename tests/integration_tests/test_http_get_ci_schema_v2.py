@@ -56,8 +56,8 @@ class TestHttpGetCiSchemaV2:
 
         response_schema = response.json()
 
-        # Assert that the response body is the expected ci schema
-        assert response_schema == PostCiSchemaV1Data(**setup_payload).model_dump()
+        # Assert that the response body is the schema being published
+        assert response_schema == setup_payload
 
     def test_endpoint_returns_400_bad_request_if_bad_query(self):
         """

@@ -121,7 +121,7 @@ class TestPutValidatorVersion:
         get_schema_response_data = get_schema_response.json()
 
         # Assert that the response body contains the updated CI schema with the new section added in the payload
-        assert get_schema_response_data == PostCiSchemaV1Data(**new_payload).model_dump()
+        assert get_schema_response_data == new_payload
 
     def test_update_validator_version_returns_404_if_ci_not_found(self, setup_payload):
         """
