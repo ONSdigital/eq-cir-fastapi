@@ -1,8 +1,8 @@
 from dataclasses import dataclass
-from typing import Final, Any
+from typing import Any, Final
 
 from fastapi import Query
-from pydantic import BaseModel, ValidationInfo, field_validator, ConfigDict
+from pydantic import BaseModel, ConfigDict, ValidationInfo, field_validator
 from pydantic.json_schema import SkipJsonSchema
 
 from app.models.classifier import Classifiers

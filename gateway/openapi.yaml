@@ -87,6 +87,7 @@ components:
       title: Classifiers
       type: string
     DeploymentStatus:
+      description: Model for Successful deployment response
       properties:
         status:
           default: OK
@@ -122,6 +123,7 @@ components:
       title: HTTPValidationError
       type: object
     PostCiSchemaV1Data:
+      additionalProperties: true
       description: 'Model for `post_ci_schema_v1` request post data
 
 
@@ -136,54 +138,15 @@ components:
         data_version:
           title: Data Version
           type: string
-        form_type:
-          title: Form Type
-          type: string
         language:
           title: Language
           type: string
-        legal_basis:
-          default: ''
-          title: Legal Basis
-          type: string
-        metadata:
-          items: {}
-          title: Metadata
-          type: array
-        mime_type:
-          default: ''
-          title: Mime Type
-          type: string
-        navigation:
-          additionalProperties: true
-          title: Navigation
-          type: object
-        post_submission:
-          additionalProperties: true
-          title: Post Submission
-          type: object
-        questionnaire_flow:
-          additionalProperties: true
-          title: Questionnaire Flow
-          type: object
         sds_schema:
           default: ''
           title: Sds Schema
           type: string
-        sections:
-          items: {}
-          title: Sections
-          type: array
-        submission:
-          additionalProperties: true
-          title: Submission
-          type: object
         survey_id:
           title: Survey Id
-          type: string
-        theme:
-          default: ''
-          title: Theme
           type: string
         title:
           title: Title
@@ -197,6 +160,11 @@ components:
       type: object
     ValidationError:
       properties:
+        ctx:
+          title: Context
+          type: object
+        input:
+          title: Input
         loc:
           items:
             anyOf:
@@ -467,10 +435,8 @@ paths:
         '200':
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/CiMetadata'
-          description: Successfully Queried a CI. This is illustrated with the returned
-            response containing the schema of the CI.
+              schema: {}
+          description: Successful Response
         '400':
           content:
             application/json:
