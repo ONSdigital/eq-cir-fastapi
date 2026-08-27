@@ -1,8 +1,8 @@
 from dataclasses import dataclass
-from typing import Final
+from typing import Final, Any
 
 from fastapi import Query
-from pydantic import BaseModel, ValidationInfo, field_validator
+from pydantic import BaseModel, ValidationInfo, field_validator, ConfigDict
 from pydantic.json_schema import SkipJsonSchema
 
 from app.models.classifier import Classifiers
@@ -117,22 +117,12 @@ class PostCiSchemaV1Data(BaseModel):
     language: str
     survey_id: str
     title: str
-    # Optional fields (classifiers)
-    form_type: str | SkipJsonSchema[None] = None
-    # Optional fields (others)
-    legal_basis: str | SkipJsonSchema[None] = ""
-    metadata: list | SkipJsonSchema[None] = None
-    mime_type: str | SkipJsonSchema[None] = ""
-    navigation: dict | SkipJsonSchema[None] = None
-    questionnaire_flow: dict | SkipJsonSchema[None] = None
-    post_submission: dict | SkipJsonSchema[None] = None
+
+    # Optional fields
     sds_schema: str | SkipJsonSchema[None] = ""
-    sections: list | SkipJsonSchema[None] = None
-    submission: dict | SkipJsonSchema[None] = None
-    theme: str | SkipJsonSchema[None] = ""
-    answer_codes: list | SkipJsonSchema[None] = None
-    preview_questions: bool | SkipJsonSchema[None] = False
-    supplementary_data: dict | SkipJsonSchema[None] = None
+
+    # Accept all extra fields
+    model_config = ConfigDict(extra='allow')
 
 
     @field_validator("data_version", "language", "survey_id", "title")
@@ -142,6 +132,24 @@ class PostCiSchemaV1Data(BaseModel):
         if value == "" or value.isspace():
             raise ValueError(f"{info.field_name} can't be empty or null")
         return value
+
+    def model_dump(self, *args, **kwargs) -> dict[str, Any]:
+        """
+        Override default `model_dump` to return a dictionary of data suitable for posting to
+        firestore and returning to the user:
+        * If `sds_schema` field is filled, include this as a key in the returned dictionary
+        * If `sds_schema` field is not filled or a default value, do not include this as a key in
+          the returned dictionary
+        """
+
+        if not self.sds_schema:
+            # Get any additional exclude fields from input `kwargs` or return empty set
+            exclude_fields = kwargs.get("exclude", set())
+            # Update kwargs to exclude `sds_schema` key/value pair if not filled
+            exclude_fields.add("sds_schema")
+            kwargs.update({"exclude": exclude_fields})
+
+        return super().model_dump(*args, **kwargs)
 
 
 @dataclass

@@ -142,12 +142,6 @@ async def get_collection_instruments_metadata(
 @router.get(
     "/collection-instruments/schema",
     responses={
-        200: {
-            "model": CiMetadata,
-            "description": (
-                    "Successfully Queried a CI. This is illustrated with the returned response containing the schema of the CI."
-            ),
-        },
         500: {
             "model": ExceptionResponseModel,
             "content": {"application/json": {"example": erm.erm_500_global_exception}},

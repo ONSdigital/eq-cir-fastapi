@@ -4,13 +4,14 @@ import pytest
 from fastapi import status
 
 from app.config import settings
+from app.models.requests import PostCiSchemaV1Data
 from app.models.responses import CiMetadata
 from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.helpers.integration_helpers import subscriber_teardown, subscriber_setup, \
     generate_subscriber_id
 from tests.integration_tests.helpers.pubsub_helper import PubSubHelper
 from tests.integration_tests.utils import make_iap_request, create_post_params
-from tests.test_config.endpoints import ENDPOINTS, POST_CI, GET_CI_METADATA, DELETE_CI
+from tests.test_config.endpoints import ENDPOINTS, POST_CI, GET_CI_METADATA, DELETE_CI, GET_CI_SCHEMA
 from tests.test_config.endpoints_loader import EndpointsLoader
 
 ci_pubsub_helper = PubSubHelper(settings.PUBLISH_CI_TOPIC_ID)
@@ -26,6 +27,7 @@ class TestPostCi:
     encoded_list = create_post_params(3)
 
     get_metadata_url = endpoints_loader.get_url(GET_CI_METADATA)
+    get_ci_schema_url = endpoints_loader.get_url(GET_CI_SCHEMA)
     subscription_id = generate_subscriber_id()  # Unique subscription ID to avoid conflicts and GCP errors
 
     @classmethod
@@ -331,6 +333,78 @@ class TestPostCi:
         # database assertions
         assert len(get_metadata_response_data) == 2
         assert get_metadata_response_data == [ci_metadata.model_dump() for ci_metadata in expected_ci_metadata_list]
+
+        # Need to pull and acknowledge messages to clear subscription
+        ci_pubsub_helper.try_pull_and_acknowledge_messages(self.subscription_id)
+
+    def test_can_publish_ci_with_any_extra_fields(self, setup_payload):
+        """
+        Test the 'Post CI' endpoint returns a 200 success status if a well-formed CI is submitted, and the correct response is returned
+        - Post a CI using the 'Post CI' endpoint with all required fields and valid data
+        - Assert that the response status code is 200 OK
+        - Assert that the response body contains the expected data
+        - Use the 'Get Ci Metadata V1' endpoint to retrieve the metadata for the posted CI using the same metadata
+        - Assert that the response status code is 200 OK
+        - Assert that the response body contains the expected metadata corresponding to the posted CI
+        - Pull the message from the subscription and assert that the message matches the expected metadata for the posted CI
+        """
+        # create post parameters without assigning version number
+        data = create_post_params(1)
+
+        # add extra fields to the setup_payload
+        extra_fields_payload = setup_payload.copy()
+
+        extra_fields_payload["extra_field_1"] = "extra_value_1"
+        extra_fields_payload["extra_field_2"] = [{"nested_field_1": "nested_value_1"}, {"nested_field_2": "nested_value_2"}]
+        extra_fields_payload["extra_field_3"] = {"key1": "value1", "key2": "value2"}
+        extra_fields_payload["extra_field_4"] = 12345
+        extra_fields_payload["extra_field_5"] = True
+
+        # call the post_ci endpoint with the extra_fields_payload and post parameters
+        ci_response = make_iap_request("POST", f"{self.post_url}?{data[0]}", json=extra_fields_payload)
+
+        # Assert response status code = 200 OK
+        assert ci_response.status_code == status.HTTP_200_OK
+
+        ci_response_data = ci_response.json()
+
+        survey_id = extra_fields_payload["survey_id"]
+        classifier_type = CiClassifierService.get_classifier_type(extra_fields_payload)
+        classifier_value = CiClassifierService.get_classifier_value(extra_fields_payload, classifier_type)
+        language = extra_fields_payload["language"]
+        guid = parse_qs(data[0])["guid"][0]
+
+        # Assert that the response body contains the expected metadata
+        expected_ci_response_data = {
+            "ci_version": 1,
+            "classifier_type": classifier_type,
+            "classifier_value": classifier_value,
+            "data_version": extra_fields_payload["data_version"],
+            "guid": guid,
+            "language": language,
+            "published_at": ci_response_data["published_at"],
+            "survey_id": survey_id,
+            "title": extra_fields_payload["title"],
+            "validator_version": parse_qs(data[0])["validator_version"][0],
+        }
+
+        assert ci_response_data == expected_ci_response_data
+
+        #
+        querystring = urlencode(
+            {
+                "guid": guid,
+            }
+        )
+        # sends request to get ci schema endpoint to retrieve the schema back
+        get_ci_schema_response = make_iap_request("GET", f"{self.get_ci_schema_url}?{querystring}")
+
+        # Assert response status code = 200 OK
+        assert get_ci_schema_response.status_code == status.HTTP_200_OK
+        get_ci_schema_response = get_ci_schema_response.json()
+
+        # Assert that the response body is equivalent to the original payload with extra fields
+        assert get_ci_schema_response == extra_fields_payload
 
         # Need to pull and acknowledge messages to clear subscription
         ci_pubsub_helper.try_pull_and_acknowledge_messages(self.subscription_id)
