@@ -1,4 +1,4 @@
-import datetime
+from datetime import UTC, datetime
 import uuid
 
 from app.config import Settings
@@ -8,26 +8,26 @@ settings = Settings()
 
 
 # Mock data for all tests
-mock_ci_version = "1"
+mock_ci_version = 1
 mock_data_version = "1"
 mock_validator_version = ""
 mock_classifier_type = "form_type"
-mock_classifier_value = "ft"
+mock_classifier_value = "0001"
 mock_id = str(uuid.uuid4())
-mock_language = "en-US"
-mock_published_at = datetime.datetime.utcnow().strftime(settings.PUBLISHED_AT_FORMAT)
+mock_language = "en"
+mock_published_at = datetime.now(tz=UTC).strftime(settings.PUBLISHED_AT_FORMAT)
 mock_sds_schema = "my test schema"
 mock_survey_id = "123"
 mock_title = "My test survey"
 
 
 class TestCiMetadata:
-    """Testsfor the `CiMetadata` response model"""
+    """Tests for the `CiMetadata` response model"""
 
     def test_model_dump_includes_sds_schema_if_filled(self):
         """
-        Overidden `model_dump` method should return a dictionary including `sds_schema` field as a
-        key/value pair if model is initiatised with this field as a valid string
+        Overridden `model_dump` method should return a dictionary including `sds_schema` field as a
+        key/value pair if model is initialised with this field as a valid string
         """
         ci_metadata = CiMetadata(
             ci_version=mock_ci_version,
@@ -50,8 +50,8 @@ class TestCiMetadata:
 
     def test_model_dump_excludes_sds_schema_if_not_filled(self):
         """
-        Overidden `model_dump` method should return a dictionary excluding `sds_schema` field as a
-        key/value pair if model is initiatised without this field
+        Overridden `model_dump` method should return a dictionary excluding `sds_schema` field as a
+        key/value pair if model is initialised without this field
         """
         ci_metadata = CiMetadata(
             ci_version=mock_ci_version,
@@ -72,8 +72,8 @@ class TestCiMetadata:
 
     def test_model_dump_excludes_additional_fields_if_required(self):
         """
-        Overidden `model_dump` method should return a dictionary excluding `sds_schema` field as a
-        key/value pair if model is initiatised without this field. It should also be able to
+        Overridden `model_dump` method should return a dictionary excluding `sds_schema` field as a
+        key/value pair if model is initialised without this field. It should also be able to
         exclude additional fields if called with the `exclude` kwarg.
         """
         ci_metadata = CiMetadata(

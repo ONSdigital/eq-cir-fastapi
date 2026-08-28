@@ -288,3 +288,25 @@ post_data = {
     "survey_id": mock_survey_id,
     "title": "test",
 }
+
+post_data_with_sds_schema = {
+    "data_version": "1",
+    "form_type": mock_classifier_value,
+    "language": mock_language,
+    "survey_id": mock_survey_id,
+    "title": "test",
+    "sds_schema": "test",
+}
+
+post_data_with_extra_fields = {
+    "data_version": "1",
+    "form_type": mock_classifier_value,
+    "language": mock_language,
+    "survey_id": mock_survey_id,
+    "title": "test",
+    "extra_field_1": ["test"],
+    "extra_field_2": {"test_key": "test_value"},
+    "extra_field_3": [{"test_key": "test_value"}, {"test_key_2": "test_value_2"}],
+    "extra_field_4": "",
+    "extra_field_5": None,
+}

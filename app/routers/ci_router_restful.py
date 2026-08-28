@@ -1,7 +1,6 @@
 from dataclasses import asdict
 
-from fastapi import APIRouter, Depends, status
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Depends
 
 import app.exception.exception_response_models as erm
 from app.config import Settings, logging
@@ -16,7 +15,7 @@ from app.models.requests import (
     PostCiSchemaV1Data,
     PostCiSchemaV3Params,
 )
-from app.models.responses import CiMetadata, CiValidatorMetadata
+from app.models.responses import CiValidatorMetadata
 from app.services.ci_processor_service import CiProcessorService
 from app.services.ci_schema_location_service import CiSchemaLocationService
 
@@ -29,13 +28,6 @@ settings = Settings()
 @router.post(
     "/collection-instruments",
     responses={
-        200: {
-            "model": CiMetadata,
-            "description": (
-                    "Successfully created a CI. This is illustrated with the returned response containing the "
-                    "metadata of the CI. "
-            ),
-        },
         400: {
             "model": ExceptionResponseModel,
             "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},
@@ -192,7 +184,7 @@ async def get_collection_instrument_schema_by_guid(
 
     logger.info("Schema successfully retrieved.")
 
-    return JSONResponse(status_code=status.HTTP_200_OK, content=ci_schema)
+    return ci_schema
 
 
 @router.get(
@@ -266,4 +258,5 @@ async def delete_collection_instrument(
 
     logger.info("CI metadata and schema successfully deleted")
     response_content = f"CI metadata and schema successfully deleted for {query_params.survey_id}."
-    return JSONResponse(status_code=status.HTTP_200_OK, content=response_content)
+
+    return response_content

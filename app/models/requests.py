@@ -20,31 +20,13 @@ class DeleteCiV1Params:
 
 
 @dataclass
-class GetCiMetadataV1Params:
-    """Model for `get_ci_metadata_v1` request query params"""
-
-    classifier_type: Classifiers = Query(default=None, description=CLASSIFIER_TYPE_DESC, example="form_type")
-    classifier_value: str = Query(default=None, description=CLASSIFIER_VALUE_DESC, example="0001")
-    language: str = Query(default=None, description=LANG_DESC, example="en")
-    survey_id: str = Query(default=None, description=SURVEY_ID_DESC, example="123")
-
-    def params_not_none(self, keys):
-        """
-        Loops through each input `keys` and checks if associated class param is `None`
-
-        If all param values are not `None` return `True`, otherwise return `False`
-        """
-        return all(getattr(self, key) for key in keys)
-
-
-@dataclass
 class GetCiMetadataV2Params:
     """
     Model for `get_ci_metadata_v2` request query params
     All parameters are optional
     """
 
-    classifier_type: Classifiers = Query(default=None, description=CLASSIFIER_TYPE_DESC, example="form_type")
+    classifier_type: Classifiers | None = Query(default=None, description=CLASSIFIER_TYPE_DESC, example="form_type")
     classifier_value: str | None = Query(default=None, description=CLASSIFIER_VALUE_DESC, example="0001")
     language: str | None = Query(default=None, description=LANG_DESC, example="en")
     survey_id: str | None = Query(default=None, description=SURVEY_ID_DESC, example="123")
@@ -64,31 +46,6 @@ class GetCiMetadataV2Params:
         If all param values are `None` return `True`, otherwise return `False`
         """
         return all(not getattr(self, key) for key in keys)
-
-@dataclass
-class GetCiMetadataV3Params:
-    """
-    Model for `get_ci_metadata_v3` request query params
-    """
-
-    guid: str = Query(default=None, description="GUID")
-
-@dataclass
-class GetCiSchemaV1Params:
-    """Model for `get_ci_schema_v1` request query params"""
-
-    classifier_type: Classifiers = Query(default=None, description=CLASSIFIER_TYPE_DESC, example="form_type")
-    classifier_value: str = Query(default=None, description=CLASSIFIER_VALUE_DESC, example="0001")
-    language: str = Query(default=None, description=LANG_DESC, example="en")
-    survey_id: str = Query(default=None, description=SURVEY_ID_DESC, example="123")
-
-    def params_not_none(self, *args):
-        """
-        Loops through each input `arg` and checks if associated class param is `None`
-
-        If all param values are not `None` return `True`, otherwise return `False`
-        """
-        return all(getattr(self, arg) for arg in args)
 
 
 @dataclass

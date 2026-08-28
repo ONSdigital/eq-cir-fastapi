@@ -49,14 +49,13 @@ class CiProcessorService:
         # Get classifier type and value from ci
         classifier_type = CiClassifierService.get_classifier_type(ci)
         classifier_value = CiClassifierService.get_classifier_value(ci, classifier_type)
-        # Clean up unused classifier fields in ci
-        ci = CiClassifierService.clean_ci_unused_classifier(ci, classifier_type)
 
+        # Check if CI metadata with the same guid already exists
         metadata = self.get_ci_metadata_with_id(ci_id)
-
         if metadata:
             raise exceptions.ExceptionMissingInvalidGuid
 
+        # Build the next version of CI metadata
         next_version_ci_metadata = self.build_next_version_ci_metadata(
             ci_id,
             validator_version,
@@ -68,6 +67,7 @@ class CiProcessorService:
 
         stored_ci_filename = CiSchemaLocationService.get_ci_schema_location(next_version_ci_metadata)
 
+        # Store the new CI in a transaction
         self.process_raw_ci_in_transaction(ci_id, next_version_ci_metadata, ci, stored_ci_filename)
         logger.debug(f"New CI created: {next_version_ci_metadata.model_dump()}")
 

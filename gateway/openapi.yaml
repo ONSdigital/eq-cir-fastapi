@@ -141,10 +141,6 @@ components:
         language:
           title: Language
           type: string
-        sds_schema:
-          default: ''
-          title: Sds Schema
-          type: string
         survey_id:
           title: Survey Id
           type: string
@@ -294,10 +290,8 @@ paths:
         '200':
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/CiMetadata'
-          description: 'Successfully created a CI. This is illustrated with the returned
-            response containing the metadata of the CI. '
+              schema: {}
+          description: Successful Response
         '400':
           content:
             application/json:
@@ -342,8 +336,11 @@ paths:
         name: classifier_type
         required: false
         schema:
-          $ref: '#/components/schemas/Classifiers'
+          anyOf:
+          - $ref: '#/components/schemas/Classifiers'
+          - type: 'null'
           description: classifier_type used by the CI
+          title: Classifier Type
       - description: classifier_value used by the CI
         example: '0001'
         in: query
@@ -729,8 +726,11 @@ paths:
         name: classifier_type
         required: false
         schema:
-          $ref: '#/components/schemas/Classifiers'
+          anyOf:
+          - $ref: '#/components/schemas/Classifiers'
+          - type: 'null'
           description: classifier_type used by the CI
+          title: Classifier Type
       - description: classifier_value used by the CI
         example: '0001'
         in: query
@@ -827,10 +827,8 @@ paths:
         '200':
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/CiMetadata'
-          description: Successfully Queried a CI. This is illustrated with the returned
-            response containing the schema of the CI.
+              schema: {}
+          description: Successful Response
         '400':
           content:
             application/json:
@@ -913,10 +911,8 @@ paths:
         '200':
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/CiMetadata'
-          description: 'Successfully created a CI. This is illustrated with the returned
-            response containing the metadata of the CI. '
+              schema: {}
+          description: Successful Response
         '400':
           content:
             application/json:
