@@ -43,7 +43,7 @@ class CiProcessorService:
         Returns:
         CiMetadata: the CI metadata of the newly published CI
         """
-        # model_dump allows extra fields to go through removes sds_schema if empty
+        # model_dump allows extra fields to go through
         ci: dict[str, Any] = post_data.model_dump()
 
         # Get classifier type and value from ci
@@ -335,7 +335,7 @@ class CiProcessorService:
             raise exceptions.GlobalException from exc
 
     def update_validator_version_and_ci(self, post_data: PostCiSchemaV1Data, ci_metadata: CiMetadata):
-        # model_dump allows extra fields to go through removes sds_schema if empty
+        # model_dump allows extra fields to go through
         ci = post_data.model_dump()
 
         ci_metadata.published_at = str(DatetimeService.get_current_date_and_time().strftime(settings.PUBLISHED_AT_FORMAT))
