@@ -1,3 +1,5 @@
+from typing import Any
+
 from app.config import logging, settings
 from app.events.publisher import Publisher
 from app.exception import exceptions
@@ -22,15 +24,27 @@ class CiProcessorService:
         self.publisher = publisher
 
     # Posts new CI metadata to Firestore
-    def process_raw_ci(self, post_data: PostCiSchemaV1Data, ci_id, validator_version = "", ci_version = "") -> CiMetadata:
+    def process_raw_ci(
+            self,
+            post_data: PostCiSchemaV1Data,
+            ci_id: str,
+            validator_version: str,
+            ci_version: str
+    ) -> CiMetadata:
         """
         Processes incoming ci
 
         Parameters:
         post_data (PostCiSchemaV1Data): incoming CI metadata
+        ci_id (str): the guid of the metadata.
+        validator_version (str): validator version of schema
+        ci_version (str): the version of the CI being added
+
+        Returns:
+        CiMetadata: the CI metadata of the newly published CI
         """
         # model_dump allows extra fields to go through removes sds_schema if empty
-        ci = post_data.model_dump()
+        ci: dict[str, Any] = post_data.model_dump()
 
         # Get classifier type and value from ci
         classifier_type = CiClassifierService.get_classifier_type(ci)
@@ -48,7 +62,7 @@ class CiProcessorService:
             validator_version,
             classifier_type,
             classifier_value,
-            post_data,
+            ci,
             ci_version
         )
 
@@ -80,12 +94,12 @@ class CiProcessorService:
             self,
             ci_id: str,
             next_version_ci_metadata: CiMetadata,
-            ci: dict,
+            ci: dict[str, Any],
             stored_ci_filename: str,
     ):
         """
         Process the new CI by calling a transactional function that wrap the procedures
-        Commit if the function is sucessful, rolling back otherwise.
+        Commit if the function is successful, rolling back otherwise.
 
         Parameters:
         ci_id (str): The unique id of the new CI.
@@ -114,7 +128,7 @@ class CiProcessorService:
             validator_version: str,
             classifier_type: str,
             classifier_value: str,
-            post_data: PostCiSchemaV1Data,
+            ci: dict[str, Any],
             ci_version
     ) -> CiMetadata:
         """
@@ -125,28 +139,29 @@ class CiProcessorService:
         validator_version (str): validator version of schema
         classifier_type (str): the classifier type used.
         classifier_value (str): the classier value
-        post_data (PostCiSchemaV1Data): the sds schema of the schema.
+        ci (dict): the dictionary of CI schema
 
         Returns:
         CiMetadata: the next version of CI metadata.
         """
-        current_ci_version = self.calculate_next_ci_version(post_data.survey_id, classifier_type, classifier_value, post_data.language)
+        current_ci_version = self.calculate_next_ci_version(ci["survey_id"], classifier_type, classifier_value, ci["language"])
 
         ci_version = self.validate_ci_version(ci_version, current_ci_version)
 
+        sds_schema = str(ci.get("sds_schema", ""))
 
         next_version_ci_metadata = CiMetadata(
             guid=ci_id,
             ci_version=int(ci_version),
             validator_version=validator_version,
-            data_version=post_data.data_version,
+            data_version=ci["data_version"],
             classifier_type=classifier_type,
             classifier_value=classifier_value,
-            language=post_data.language,
+            language=ci["language"],
             published_at=str(DatetimeService.get_current_date_and_time().strftime(settings.PUBLISHED_AT_FORMAT)),
-            sds_schema=post_data.sds_schema,
-            survey_id=post_data.survey_id,
-            title=post_data.title,
+            sds_schema=sds_schema,
+            survey_id=ci["survey_id"],
+            title=ci["title"],
         )
         return next_version_ci_metadata
 
@@ -318,16 +333,6 @@ class CiProcessorService:
         except Exception as exc:
             logger.error("Rolling back CI transaction")
             raise exceptions.GlobalException from exc
-
-    def update_ci_validator_version(self, guid: str, metadata: CiMetadata):
-        """
-                Updates CI
-
-                Parameters:
-                guid (str): identifier for ci
-                metadata (CiMetadata): Schema metadata
-                """
-        self.ci_firebase_repository.update_ci_metadata(guid, metadata)
 
     def update_validator_version_and_ci(self, post_data: PostCiSchemaV1Data, ci_metadata: CiMetadata):
         # model_dump allows extra fields to go through removes sds_schema if empty

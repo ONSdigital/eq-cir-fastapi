@@ -1,9 +1,8 @@
 from dataclasses import dataclass
-from typing import Any, Final
+from typing import Final
 
 from fastapi import Query
 from pydantic import BaseModel, ConfigDict, ValidationInfo, field_validator
-from pydantic.json_schema import SkipJsonSchema
 
 from app.models.classifier import Classifiers
 
@@ -118,12 +117,8 @@ class PostCiSchemaV1Data(BaseModel):
     survey_id: str
     title: str
 
-    # Optional fields
-    sds_schema: str | SkipJsonSchema[None] = ""
-
     # Accept all extra fields
     model_config = ConfigDict(extra='allow')
-
 
     @field_validator("data_version", "language", "survey_id", "title")
     @classmethod
@@ -132,31 +127,6 @@ class PostCiSchemaV1Data(BaseModel):
         if value == "" or value.isspace():
             raise ValueError(f"{info.field_name} can't be empty or null")
         return value
-
-    def model_dump(self, *args, **kwargs) -> dict[str, Any]:
-        """
-        Override default `model_dump` to return a dictionary of data suitable for posting to
-        firestore and returning to the user:
-        * If `sds_schema` field is filled, include this as a key in the returned dictionary
-        * If `sds_schema` field is not filled or a default value, do not include this as a key in
-          the returned dictionary
-        """
-
-        if not self.sds_schema:
-            # Get any additional exclude fields from input `kwargs` or return empty set
-            exclude_fields = kwargs.get("exclude", set())
-            # Update kwargs to exclude `sds_schema` key/value pair if not filled
-            exclude_fields.add("sds_schema")
-            kwargs.update({"exclude": exclude_fields})
-
-        return super().model_dump(*args, **kwargs)
-
-
-@dataclass
-class PostCiSchemaV2Params:
-    """Model for `post_ci_schema_v2` request query params"""
-
-    validator_version: str = Query(default=None, description="Validator version of CI schema", example="0.0.1")
 
 
 @dataclass

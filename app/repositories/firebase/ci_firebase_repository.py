@@ -1,3 +1,5 @@
+from typing import Any
+
 from firebase_admin import firestore
 from google.cloud.firestore import Query, Transaction
 
@@ -64,7 +66,7 @@ class CiFirebaseRepository:
         self,
         ci_id: str,
         next_version_ci_metadata: CiMetadata,
-        ci: dict,
+        ci: dict[str, Any],
         stored_ci_filename: str,
     ) -> None:
         """
@@ -219,7 +221,7 @@ class CiFirebaseRepository:
 
         transaction.delete(self.ci_collection.document(key))
 
-    def update_validator_version_and_ci(self, ci: dict, ci_metadata: CiMetadata):
+    def update_validator_version_and_ci(self, ci: dict[str, Any], ci_metadata: CiMetadata):
         """
               Updates ci in bucket
 

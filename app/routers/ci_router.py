@@ -92,12 +92,6 @@ async def http_get_ci_metadata_v2(
 @router.get(
     "/v2/retrieve_collection_instrument",
     responses={
-        200: {
-            "model": CiMetadata,
-            "description": (
-                    "Successfully Queried a CI. This is illustrated with the returned response containing the schema of the CI."
-            ),
-        },
         500: {
             "model": ExceptionResponseModel,
             "content": {"application/json": {"example": erm.erm_500_global_exception}},

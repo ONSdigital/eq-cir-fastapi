@@ -1,4 +1,5 @@
 import json
+from typing import Any
 
 from app.config import logging
 from app.repositories.buckets.bucket_loader import BucketLoader
@@ -10,7 +11,7 @@ class CiSchemaBucketRepository:
     def __init__(self, bucket_loader: BucketLoader):
         self.bucket = bucket_loader.get_ci_schema_bucket()
 
-    def store_ci_schema(self, blob_name: str, schema: dict) -> None:
+    def store_ci_schema(self, blob_name: str, schema: dict[str, Any]) -> None:
         """
         Stores ci schema in google bucket as json.
 
@@ -26,7 +27,7 @@ class CiSchemaBucketRepository:
         )
         logger.info(f"successfully stored: {blob_name}")
 
-    def retrieve_ci_schema(self, blob_name: str) -> dict | None:
+    def retrieve_ci_schema(self, blob_name: str) -> dict[str, Any] | None:
         """
         Get the CI schema from the ci schema bucket using the filename provided.
 
