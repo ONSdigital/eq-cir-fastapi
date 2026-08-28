@@ -22,12 +22,6 @@ settings = Settings()
 @router.put(
     "/v1/update_validator_version",
     responses={
-        200: {
-            "model": CiMetadata,
-            "description": (
-                    "Successfully updated validator version"
-            ),
-        },
         500: {
             "model": ExceptionResponseModel,
             "content": {"application/json": {"example": erm.erm_500_global_exception}},

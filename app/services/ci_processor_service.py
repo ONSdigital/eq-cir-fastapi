@@ -148,7 +148,9 @@ class CiProcessorService:
 
         ci_version = self.validate_ci_version(ci_version, current_ci_version)
 
-        sds_schema = str(ci.get("sds_schema", ""))
+        # Get SDS schema from ci, convert to string if it exists, otherwise set to empty string
+        raw_sds_schema = ci.get("sds_schema")
+        sds_schema = "" if raw_sds_schema is None else str(raw_sds_schema)
 
         next_version_ci_metadata = CiMetadata(
             guid=ci_id,

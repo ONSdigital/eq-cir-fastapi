@@ -1,55 +1,5 @@
 components:
   schemas:
-    CiMetadata:
-      description: Model for collection instrument metadata
-      properties:
-        ci_version:
-          title: Ci Version
-          type: integer
-        classifier_type:
-          title: Classifier Type
-          type: string
-        classifier_value:
-          title: Classifier Value
-          type: string
-        data_version:
-          title: Data Version
-          type: string
-        guid:
-          title: Guid
-          type: string
-        language:
-          title: Language
-          type: string
-        published_at:
-          title: Published At
-          type: string
-        sds_schema:
-          default: ''
-          title: Sds Schema
-          type: string
-        survey_id:
-          title: Survey Id
-          type: string
-        title:
-          title: Title
-          type: string
-        validator_version:
-          title: Validator Version
-          type: string
-      required:
-      - ci_version
-      - data_version
-      - validator_version
-      - classifier_type
-      - classifier_value
-      - guid
-      - language
-      - published_at
-      - survey_id
-      - title
-      title: CiMetadata
-      type: object
     CiValidatorMetadata:
       description: Model for collection instrument validator metadata
       properties:
@@ -535,9 +485,8 @@ paths:
         '200':
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/CiMetadata'
-          description: Successfully updated validator version
+              schema: {}
+          description: Successful Response
         '400':
           content:
             application/json:
@@ -666,9 +615,8 @@ paths:
         '200':
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/CiMetadata'
-          description: Successfully updated validator version
+              schema: {}
+          description: Successful Response
         '400':
           content:
             application/json:
