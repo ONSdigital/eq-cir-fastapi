@@ -24,31 +24,31 @@ mock_title = "test_title"
 mock_published_at = "2023-04-20T12:00:00.000000Z"
 mock_sds_schema_with_value = "test_sds_schema"
 
-mock_post_ci_schema = PostCiSchemaV1Data(
-    survey_id=mock_survey_id,
-    language=mock_language,
-    form_type=mock_classifier_value,
-    title=mock_title,
-    data_version=mock_data_version,
-    sds_schema=mock_sds_schema,
-)
+mock_post_ci_schema = PostCiSchemaV1Data(**{
+    "survey_id": mock_survey_id,
+    "language": mock_language,
+    "form_type": mock_classifier_value,
+    "title": mock_title,
+    "data_version": mock_data_version,
+    "sds_schema": mock_sds_schema,
+})
 
-mock_post_ci_schema_with_sds_schema = PostCiSchemaV1Data(
-    survey_id=mock_survey_id,
-    form_type=mock_classifier_value,
-    language=mock_language,
-    title=mock_title,
-    data_version=mock_data_version,
-    sds_schema=mock_sds_schema_with_value,
-)
+mock_post_ci_schema_with_sds_schema = PostCiSchemaV1Data(**{
+    "survey_id": mock_survey_id,
+    "language": mock_language,
+    "form_type": mock_classifier_value,
+    "title": mock_title,
+    "data_version": mock_data_version,
+    "sds_schema": mock_sds_schema_with_value,
+})
 
-mock_post_ci_schema_without_sds_schema = PostCiSchemaV1Data(
-    survey_id=mock_survey_id,
-    form_type=mock_classifier_value,
-    language=mock_language,
-    title=mock_title,
-    data_version=mock_data_version,
-)
+mock_post_ci_schema_without_sds_schema = PostCiSchemaV1Data(**{
+    "survey_id": mock_survey_id,
+    "language": mock_language,
+    "form_type": mock_classifier_value,
+    "title": mock_title,
+    "data_version": mock_data_version,
+})
 
 mock_ci_metadata = CiMetadata(
     ci_version=1,
