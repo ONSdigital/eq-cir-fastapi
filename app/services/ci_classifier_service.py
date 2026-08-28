@@ -33,22 +33,3 @@ class CiClassifierService:
         The classifier value
         """
         return ci[key]
-
-    @staticmethod
-    def clean_ci_unused_classifier(ci: dict, classifier_type: str) -> dict:
-        """
-        This method remove unused classifier from the ci dictionary
-        FastAPI pydantic model will auto create the specified optional classifier
-        fields with None value if not provided. This method will remove those fields
-
-        Parameters:
-        ci: The ci dictionary
-        classifier_type: The classifier type that is used
-
-        Returns:
-        The cleaned ci dictionary
-        """
-        for key in Classifiers:
-            if key.value != classifier_type:
-                ci.pop(key.value, None)
-        return ci

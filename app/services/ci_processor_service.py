@@ -263,28 +263,6 @@ class CiProcessorService:
 
         return ci_validator_metadata_list
 
-    def get_latest_ci_metadata(
-            self, survey_id: str, classifier_type: str, classifier_value: str, language: str
-    ) -> CiMetadata | None:
-        """
-        Get the latest CI metadata
-
-        Parameters:
-        survey_id (str): the survey id of the schemas.
-        form_type (str): the form type of the schemas.
-        language (str): the language of the schemas.
-
-        Returns:
-        str: the latest CI schema id
-        """
-        logger.info("Getting latest CI metadata...")
-
-        latest_ci_metadata = self.ci_firebase_repository.get_latest_ci_metadata(
-            survey_id, classifier_type, classifier_value, language
-        )
-
-        return latest_ci_metadata
-
     def get_ci_metadata_with_id(self, guid: str) -> CiMetadata | None:
         """
         Get a CI metadata with id
