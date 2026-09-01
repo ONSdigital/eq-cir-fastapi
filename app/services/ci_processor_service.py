@@ -1,3 +1,5 @@
+from typing import Any
+
 from app.config import logging, settings
 from app.events.publisher import Publisher
 from app.exception import exceptions
@@ -22,38 +24,50 @@ class CiProcessorService:
         self.publisher = publisher
 
     # Posts new CI metadata to Firestore
-    def process_raw_ci(self, post_data: PostCiSchemaV1Data, ci_id, validator_version = "", ci_version = "") -> CiMetadata:
+    def process_raw_ci(
+            self,
+            post_data: PostCiSchemaV1Data,
+            ci_id: str,
+            validator_version: str,
+            ci_version: str
+    ) -> CiMetadata:
         """
         Processes incoming ci
 
         Parameters:
         post_data (PostCiSchemaV1Data): incoming CI metadata
-        """
+        ci_id (str): the guid of the metadata.
+        validator_version (str): validator version of schema
+        ci_version (str): the version of the CI being added
 
-        ci = post_data.__dict__
+        Returns:
+        CiMetadata: the CI metadata of the newly published CI
+        """
+        # model_dump allows extra fields to go through
+        ci: dict[str, Any] = post_data.model_dump()
 
         # Get classifier type and value from ci
         classifier_type = CiClassifierService.get_classifier_type(ci)
         classifier_value = CiClassifierService.get_classifier_value(ci, classifier_type)
-        # Clean up unused classifier fields in ci
-        ci = CiClassifierService.clean_ci_unused_classifier(ci, classifier_type)
 
+        # Check if CI metadata with the same guid already exists
         metadata = self.get_ci_metadata_with_id(ci_id)
-
         if metadata:
             raise exceptions.ExceptionMissingInvalidGuid
 
+        # Build the next version of CI metadata
         next_version_ci_metadata = self.build_next_version_ci_metadata(
             ci_id,
             validator_version,
             classifier_type,
             classifier_value,
-            post_data,
+            ci,
             ci_version
         )
 
         stored_ci_filename = CiSchemaLocationService.get_ci_schema_location(next_version_ci_metadata)
 
+        # Store the new CI in a transaction
         self.process_raw_ci_in_transaction(ci_id, next_version_ci_metadata, ci, stored_ci_filename)
         logger.debug(f"New CI created: {next_version_ci_metadata.model_dump()}")
 
@@ -80,12 +94,12 @@ class CiProcessorService:
             self,
             ci_id: str,
             next_version_ci_metadata: CiMetadata,
-            ci: dict,
+            ci: dict[str, Any],
             stored_ci_filename: str,
     ):
         """
         Process the new CI by calling a transactional function that wrap the procedures
-        Commit if the function is sucessful, rolling back otherwise.
+        Commit if the function is successful, rolling back otherwise.
 
         Parameters:
         ci_id (str): The unique id of the new CI.
@@ -114,7 +128,7 @@ class CiProcessorService:
             validator_version: str,
             classifier_type: str,
             classifier_value: str,
-            post_data: PostCiSchemaV1Data,
+            ci: dict[str, Any],
             ci_version
     ) -> CiMetadata:
         """
@@ -125,28 +139,31 @@ class CiProcessorService:
         validator_version (str): validator version of schema
         classifier_type (str): the classifier type used.
         classifier_value (str): the classier value
-        post_data (PostCiSchemaV1Data): the sds schema of the schema.
+        ci (dict): the dictionary of CI schema
 
         Returns:
         CiMetadata: the next version of CI metadata.
         """
-        current_ci_version = self.calculate_next_ci_version(post_data.survey_id, classifier_type, classifier_value, post_data.language)
+        current_ci_version = self.calculate_next_ci_version(ci["survey_id"], classifier_type, classifier_value, ci["language"])
 
         ci_version = self.validate_ci_version(ci_version, current_ci_version)
 
+        # Get SDS schema from ci, convert to string if it exists, otherwise set to empty string
+        raw_sds_schema = ci.get("sds_schema")
+        sds_schema = "" if raw_sds_schema is None else str(raw_sds_schema)
 
         next_version_ci_metadata = CiMetadata(
             guid=ci_id,
             ci_version=int(ci_version),
             validator_version=validator_version,
-            data_version=post_data.data_version,
+            data_version=ci["data_version"],
             classifier_type=classifier_type,
             classifier_value=classifier_value,
-            language=post_data.language,
+            language=ci["language"],
             published_at=str(DatetimeService.get_current_date_and_time().strftime(settings.PUBLISHED_AT_FORMAT)),
-            sds_schema=post_data.sds_schema,
-            survey_id=post_data.survey_id,
-            title=post_data.title,
+            sds_schema=sds_schema,
+            survey_id=ci["survey_id"],
+            title=ci["title"],
         )
         return next_version_ci_metadata
 
@@ -248,28 +265,6 @@ class CiProcessorService:
 
         return ci_validator_metadata_list
 
-    def get_latest_ci_metadata(
-            self, survey_id: str, classifier_type: str, classifier_value: str, language: str
-    ) -> CiMetadata | None:
-        """
-        Get the latest CI metadata
-
-        Parameters:
-        survey_id (str): the survey id of the schemas.
-        form_type (str): the form type of the schemas.
-        language (str): the language of the schemas.
-
-        Returns:
-        str: the latest CI schema id
-        """
-        logger.info("Getting latest CI metadata...")
-
-        latest_ci_metadata = self.ci_firebase_repository.get_latest_ci_metadata(
-            survey_id, classifier_type, classifier_value, language
-        )
-
-        return latest_ci_metadata
-
     def get_ci_metadata_with_id(self, guid: str) -> CiMetadata | None:
         """
         Get a CI metadata with id
@@ -319,17 +314,9 @@ class CiProcessorService:
             logger.error("Rolling back CI transaction")
             raise exceptions.GlobalException from exc
 
-    def update_ci_validator_version(self, guid: str, metadata: CiMetadata):
-        """
-                Updates CI
-
-                Parameters:
-                guid (str): identifier for ci
-                metadata (CiMetadata): Schema metadata
-                """
-        self.ci_firebase_repository.update_ci_metadata(guid, metadata)
-
     def update_validator_version_and_ci(self, post_data: PostCiSchemaV1Data, ci_metadata: CiMetadata):
-        ci = post_data.__dict__
+        # model_dump allows extra fields to go through
+        ci = post_data.model_dump()
+
         ci_metadata.published_at = str(DatetimeService.get_current_date_and_time().strftime(settings.PUBLISHED_AT_FORMAT))
         self.ci_firebase_repository.update_validator_version_and_ci(ci, ci_metadata)

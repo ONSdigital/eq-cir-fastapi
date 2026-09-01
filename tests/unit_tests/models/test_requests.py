@@ -1,9 +1,10 @@
 import pytest
 
+from app.models.classifier import Classifiers
 from app.models.requests import GetCiMetadataV2Params, PostCiSchemaV1Data
-from tests.test_data.ci_test_data import post_data
+from tests.test_data.ci_test_data import post_data, post_data_with_sds_schema, post_data_with_extra_fields
 
-mock_classifier_type = "form_type"
+mock_classifier_type = Classifiers.FORM_TYPE
 mock_classifier_value = "0005"
 mock_language = "en"
 mock_survey_id = "123"
@@ -69,14 +70,30 @@ class TestPostCiSchemaV1Data:
         """
         post_data_model = PostCiSchemaV1Data(**post_data)
         # Dictionary returned from data model should contain the original input data
-        assert post_data.items() <= post_data_model.model_dump().items()
+        assert post_data.items() == post_data_model.model_dump().items()
+
+    def test_data_model_instantiates_with_valid_post_data_with_sds_schema(self):
+        """
+        `PostCiSchemaV1Data` data model should instantiate successfully if provided with the
+        minimum valid input data and sds_schema
+        """
+        post_data_model = PostCiSchemaV1Data(**post_data_with_sds_schema)
+        # Dictionary returned from data model should contain the original input data
+        assert post_data_with_sds_schema.items() == post_data_model.model_dump().items()
+
+    def test_data_model_instantiates_with_valid_post_data_with_extra_fields(self):
+        """
+        `PostCiSchemaV1Data` data model should instantiate successfully if provided with the
+        minimum valid input data and extra fields
+        """
+        post_data_model = PostCiSchemaV1Data(**post_data_with_extra_fields)
+        # Dictionary returned from data model should contain the original input data
+        assert post_data_with_extra_fields.items() == post_data_model.model_dump().items()
 
     @pytest.mark.parametrize(
         "input_param",
         [
             "data_version",
-            "classifier_type",
-            "classifier_value",
             "language",
             "survey_id",
             "title",
@@ -97,8 +114,6 @@ class TestPostCiSchemaV1Data:
         "input_param",
         [
             "data_version",
-            "classifier_type",
-            "classifier_value",
             "language",
             "survey_id",
             "title",
@@ -119,8 +134,7 @@ class TestPostCiSchemaV1Data:
         "input_param",
         [
             "data_version",
-            "classifier_type",
-            "classifier_value" "language",
+            "language",
             "survey_id",
             "title",
         ],

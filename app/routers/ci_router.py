@@ -1,7 +1,6 @@
 from dataclasses import asdict
 
-from fastapi import APIRouter, Depends, status
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Depends
 
 import app.exception.exception_response_models as erm
 from app.config import Settings, logging
@@ -15,7 +14,7 @@ from app.models.requests import (
     PostCiSchemaV1Data,
     PostCiSchemaV3Params,
 )
-from app.models.responses import CiMetadata, CiValidatorMetadata
+from app.models.responses import CiValidatorMetadata
 from app.services.ci_processor_service import CiProcessorService
 from app.services.ci_schema_location_service import CiSchemaLocationService
 
@@ -92,12 +91,6 @@ async def http_get_ci_metadata_v2(
 @router.get(
     "/v2/retrieve_collection_instrument",
     responses={
-        200: {
-            "model": CiMetadata,
-            "description": (
-                    "Successfully Queried a CI. This is illustrated with the returned response containing the schema of the CI."
-            ),
-        },
         500: {
             "model": ExceptionResponseModel,
             "content": {"application/json": {"example": erm.erm_500_global_exception}},
@@ -150,19 +143,12 @@ async def http_get_ci_schema_v2(
 
     logger.info("Schema successfully retrieved.")
 
-    return JSONResponse(status_code=status.HTTP_200_OK, content=ci_schema)
+    return ci_schema
 
 
 @router.post(
     "/v3/publish_collection_instrument",
     responses={
-        200: {
-            "model": CiMetadata,
-            "description": (
-                    "Successfully created a CI. This is illustrated with the returned response containing the "
-                    "metadata of the CI. "
-            ),
-        },
         400: {
             "model": ExceptionResponseModel,
             "content": {"application/json": {"example": erm.erm_400_incorrect_key_names_exception}},

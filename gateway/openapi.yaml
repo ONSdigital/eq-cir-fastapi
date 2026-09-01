@@ -1,55 +1,5 @@
 components:
   schemas:
-    CiMetadata:
-      description: Model for collection instrument metadata
-      properties:
-        ci_version:
-          title: Ci Version
-          type: integer
-        classifier_type:
-          title: Classifier Type
-          type: string
-        classifier_value:
-          title: Classifier Value
-          type: string
-        data_version:
-          title: Data Version
-          type: string
-        guid:
-          title: Guid
-          type: string
-        language:
-          title: Language
-          type: string
-        published_at:
-          title: Published At
-          type: string
-        sds_schema:
-          default: ''
-          title: Sds Schema
-          type: string
-        survey_id:
-          title: Survey Id
-          type: string
-        title:
-          title: Title
-          type: string
-        validator_version:
-          title: Validator Version
-          type: string
-      required:
-      - ci_version
-      - data_version
-      - validator_version
-      - classifier_type
-      - classifier_value
-      - guid
-      - language
-      - published_at
-      - survey_id
-      - title
-      title: CiMetadata
-      type: object
     CiValidatorMetadata:
       description: Model for collection instrument validator metadata
       properties:
@@ -87,6 +37,7 @@ components:
       title: Classifiers
       type: string
     DeploymentStatus:
+      description: Model for Successful deployment response
       properties:
         status:
           default: OK
@@ -122,6 +73,7 @@ components:
       title: HTTPValidationError
       type: object
     PostCiSchemaV1Data:
+      additionalProperties: true
       description: 'Model for `post_ci_schema_v1` request post data
 
 
@@ -136,54 +88,11 @@ components:
         data_version:
           title: Data Version
           type: string
-        form_type:
-          title: Form Type
-          type: string
         language:
           title: Language
           type: string
-        legal_basis:
-          default: ''
-          title: Legal Basis
-          type: string
-        metadata:
-          items: {}
-          title: Metadata
-          type: array
-        mime_type:
-          default: ''
-          title: Mime Type
-          type: string
-        navigation:
-          additionalProperties: true
-          title: Navigation
-          type: object
-        post_submission:
-          additionalProperties: true
-          title: Post Submission
-          type: object
-        questionnaire_flow:
-          additionalProperties: true
-          title: Questionnaire Flow
-          type: object
-        sds_schema:
-          default: ''
-          title: Sds Schema
-          type: string
-        sections:
-          items: {}
-          title: Sections
-          type: array
-        submission:
-          additionalProperties: true
-          title: Submission
-          type: object
         survey_id:
           title: Survey Id
-          type: string
-        theme:
-          default: ''
-          title: Theme
           type: string
         title:
           title: Title
@@ -197,6 +106,11 @@ components:
       type: object
     ValidationError:
       properties:
+        ctx:
+          title: Context
+          type: object
+        input:
+          title: Input
         loc:
           items:
             anyOf:
@@ -326,10 +240,8 @@ paths:
         '200':
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/CiMetadata'
-          description: 'Successfully created a CI. This is illustrated with the returned
-            response containing the metadata of the CI. '
+              schema: {}
+          description: Successful Response
         '400':
           content:
             application/json:
@@ -374,8 +286,11 @@ paths:
         name: classifier_type
         required: false
         schema:
-          $ref: '#/components/schemas/Classifiers'
+          anyOf:
+          - $ref: '#/components/schemas/Classifiers'
+          - type: 'null'
           description: classifier_type used by the CI
+          title: Classifier Type
       - description: classifier_value used by the CI
         example: '0001'
         in: query
@@ -467,10 +382,8 @@ paths:
         '200':
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/CiMetadata'
-          description: Successfully Queried a CI. This is illustrated with the returned
-            response containing the schema of the CI.
+              schema: {}
+          description: Successful Response
         '400':
           content:
             application/json:
@@ -572,9 +485,8 @@ paths:
         '200':
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/CiMetadata'
-          description: Successfully updated validator version
+              schema: {}
+          description: Successful Response
         '400':
           content:
             application/json:
@@ -703,9 +615,8 @@ paths:
         '200':
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/CiMetadata'
-          description: Successfully updated validator version
+              schema: {}
+          description: Successful Response
         '400':
           content:
             application/json:
@@ -763,8 +674,11 @@ paths:
         name: classifier_type
         required: false
         schema:
-          $ref: '#/components/schemas/Classifiers'
+          anyOf:
+          - $ref: '#/components/schemas/Classifiers'
+          - type: 'null'
           description: classifier_type used by the CI
+          title: Classifier Type
       - description: classifier_value used by the CI
         example: '0001'
         in: query
@@ -861,10 +775,8 @@ paths:
         '200':
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/CiMetadata'
-          description: Successfully Queried a CI. This is illustrated with the returned
-            response containing the schema of the CI.
+              schema: {}
+          description: Successful Response
         '400':
           content:
             application/json:
@@ -947,10 +859,8 @@ paths:
         '200':
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/CiMetadata'
-          description: 'Successfully created a CI. This is illustrated with the returned
-            response containing the metadata of the CI. '
+              schema: {}
+          description: Successful Response
         '400':
           content:
             application/json:
