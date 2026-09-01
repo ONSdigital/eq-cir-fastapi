@@ -8,7 +8,7 @@ dependencies = [
     "fastapi==0.141.1",
     "gcp-storage-emulator==2026.7.19",
     "google-cloud-pubsub==2.39.2",
-    "firebase-admin==7.3.0",
+    "firebase-admin==7.5.0",
     "httpx==0.28.1",
     "mock-firestore==0.11.0",
     "mypy==2.3.1",
