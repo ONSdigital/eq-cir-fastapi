@@ -1,10 +1,10 @@
 from urllib.parse import urlencode, parse_qs
 
 import pytest
-from starlette import status
+from fastapi import status
 
 from app.config import settings
-from app.models.requests import UpdateValidatorVersionV1Params, PostCiSchemaV1Data
+from app.models.requests import UpdateValidatorVersionV1Params
 from app.models.responses import CiMetadata
 from app.services.ci_classifier_service import CiClassifierService
 from tests.integration_tests.utils import make_iap_request, create_post_params

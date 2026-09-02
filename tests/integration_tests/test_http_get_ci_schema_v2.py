@@ -5,7 +5,7 @@ import pytest
 from fastapi import status
 
 from app.config import settings
-from app.models.requests import GetCiSchemaV2Params, PostCiSchemaV1Data
+from app.models.requests import GetCiSchemaV2Params
 from tests.integration_tests.utils import make_iap_request, create_post_params
 from tests.test_config.endpoints import ENDPOINTS, POST_CI, GET_CI_SCHEMA, DELETE_CI
 from tests.test_config.endpoints_loader import EndpointsLoader
