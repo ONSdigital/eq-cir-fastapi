@@ -26,6 +26,8 @@ dependencies = [
     "uvicorn==0.52.4",
     "google-cloud-storage==3.13.1",
     "google-cloud-firestore==2.29.0",
+    "google-auth==2.57.0",
+    "google-cloud-secret-manager==2.30.0",
     #"sds-common==1.0.37",
 #    #"sds-common==1.0.39",
 #    "cloudevents==1.11.0",
