@@ -1,6 +1,6 @@
 from typing import Any
 
-from firebase_admin import firestore
+from google.cloud import firestore
 from google.cloud.firestore import Query, Transaction
 
 from app.config import logging
